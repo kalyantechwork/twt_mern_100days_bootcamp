@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 55: Path Module + fs.promises | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 55</div>
+    <h1>
+      <i class="fas fa-road"></i> 
+      Path Module + Modern fs.promises
+    </h1>
+    <p>Master file paths like a pro! Learn the <strong>Path module</strong> for cross-platform file handling and <strong>fs.promises</strong> for modern async/await file operations.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Clean Code with Path & Promises
+    </div>
+  </div>
+
+  <!-- 1. Why Path Module? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. Why do we need the Path module?</span>
+    </div>
+    <p>Different operating systems use different path separators:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Windows uses backslash: <span class="inline-code">C:\projects\file.txt</span></li>
+      <li>Mac/Linux uses forward slash: <span class="inline-code">/home/user/file.txt</span></li>
+    </ul>
+    <p>The <strong>Path module</strong> solves this problem! It automatically uses the correct separators for any OS. Your code works everywhere.</p>
+    <div class="code-block">
+// Import path module (built-in, no install)
+const path = require('path');
+    </div>
+    <div class="diagram">
+      <i class="fas fa-code-branch"></i> <strong>Write once, run anywhere:</strong> path.join('folder', 'file.txt') → Works on Windows, Mac, Linux!
+    </div>
+  </div>
+
+  <!-- 2. Path Module - Most Useful Methods -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tools"></i>
+      <span>2. Essential Path Methods with Examples</span>
+    </div>
+    
+    <div class="subheading">📂 <span class="inline-code">path.join()</span> – Join path segments safely</div>
+    <div class="code-block" id="joinCode">
+const path = require('path');
+const fullPath = path.join('users', 'john', 'documents', 'resume.pdf');
+console.log(fullPath);
+// On Windows: users\john\documents\resume.pdf
+// On Mac/Linux: users/john/documents/resume.pdf
+    </div>
+    <button class="copy-btn" onclick="copyCode('joinCode')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">📍 <span class="inline-code">path.resolve()</span> – Get absolute path</div>
+    <div class="code-block" id="resolveCode">
+// Resolves a sequence of paths into an absolute path
+const absolute = path.resolve('projects', 'app.js');
+console.log(absolute);
+// Outputs full path from root: /Users/yourname/projects/app.js
+    </div>
+    <button class="copy-btn" onclick="copyCode('resolveCode')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">📛 <span class="inline-code">path.basename()</span> – Get filename from path</div>
+    <div class="code-block" id="basenameCode">
+const filePath = '/home/user/photo.jpg';
+const fileName = path.basename(filePath);
+console.log(fileName); // photo.jpg
+
+// Remove extension too:
+const nameOnly = path.basename(filePath, '.jpg');
+console.log(nameOnly); // photo
+    </div>
+    <button class="copy-btn" onclick="copyCode('basenameCode')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">📁 <span class="inline-code">path.dirname()</span> – Get folder path</div>
+    <div class="code-block" id="dirnameCode">
+const folder = path.dirname('/home/user/photo.jpg');
+console.log(folder); // /home/user
+    </div>
+    <button class="copy-btn" onclick="copyCode('dirnameCode')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">🔌 <span class="inline-code">path.extname()</span> – Get file extension</div>
+    <div class="code-block" id="extnameCode">
+const ext = path.extname('script.js');
+console.log(ext); // .js
+const ext2 = path.extname('style.css');
+console.log(ext2); // .css
+    </div>
+    <button class="copy-btn" onclick="copyCode('extnameCode')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">📋 <span class="inline-code">path.parse()</span> – Get all parts as object</div>
+    <div class="code-block" id="parseCode">
+const parsed = path.parse('/users/anna/project/index.html');
+console.log(parsed);
+// {
+//   root: '/',
+//   dir: '/users/anna/project',
+//   base: 'index.html',
+//   ext: '.html',
+//   name: 'index'
+// }
+    </div>
+    <button class="copy-btn" onclick="copyCode('parseCode')"><i class="far fa-copy"></i> Copy</button>
+  </div>
+
+  <!-- 3. __dirname and __filename with Path -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-folder-open"></i>
+      <span>3. __dirname & __filename – Your Secret Weapons</span>
+    </div>
+    <p>Node.js gives you two special variables in every module:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li><span class="inline-code">__dirname</span> → Current folder path (where your file lives)</li>
+      <li><span class="inline-code">__filename</span> → Full path of current file</li>
+    </ul>
+    <div class="code-block" id="dirnameFilename">
+// In your app.js file
+console.log(__dirname);   // /Users/you/project
+console.log(__filename);  // /Users/you/project/app.js
+
+// Build paths relative to current file (ALWAYS works!)
+const configPath = path.join(__dirname, 'config', 'database.json');
+console.log(configPath);
+    </div>
+    <button class="copy-btn" onclick="copyCode('dirnameFilename')"><i class="far fa-copy"></i> Copy</button>
+    <div class="success-note">
+      <i class="fas fa-star"></i> <strong>Pro Tip:</strong> Always use <span class="inline-code">path.join(__dirname, 'someFolder')</span> to make your file paths work no matter where your project is located!
+    </div>
+  </div>
+
+  <!-- 4. Modern fs.promises API -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-clock"></i>
+      <span>4. Modern File Operations: fs.promises + async/await</span>
+    </div>
+    <p>Remember callbacks from Day 54? Now we use <strong>Promises</strong> – much cleaner code! <span class="inline-code">fs.promises</span> gives you Promise-based versions of all fs methods.</p>
+    <div class="diagram">
+      <i class="fas fa-exchange-alt"></i> Callback Hell → Promises → async/await (Modern & Beautiful!)
+    </div>
+    
+    <div class="subheading">✅ Read file with fs.promises</div>
+    <div class="code-block" id="promisesRead">
+const fs = require('fs').promises;  // Notice .promises!
+
+async function readMyFile() {
+  try {
+    const data = await fs.readFile('welcome.txt', 'utf8');
+    console.log('File content:', data);
+  } catch (error) {
+    console.error('Error reading file:', error.message);
+  }
+}
+readMyFile();
+    </div>
+    <button class="copy-btn" onclick="copyCode('promisesRead')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">✍️ Write file with fs.promises</div>
+    <div class="code-block" id="promisesWrite">
+const fs = require('fs').promises;
+
+async function writeExample() {
+  try {
+    await fs.writeFile('note.txt', 'Hello Telugu WebTech!');
+    console.log('File written!');
+    
+    const data = await fs.readFile('note.txt', 'utf8');
+    console.log('Content:', data);
+  } catch (err) {
+    console.log('Oops:', err);
+  }
+}
+writeExample();
+    </div>
+    <button class="copy-btn" onclick="copyCode('promisesWrite')"><i class="far fa-copy"></i> Copy</button>
+
+    <div class="subheading">📂 Read directory contents</div>
+    <div class="code-block" id="promisesReaddir">
+const fs = require('fs').promises;
+
+async function listFiles() {
+  const files = await fs.readdir(__dirname);
+  console.log('Files in current directory:', files);
+}
+listFiles();
+    </div>
+    <button class="copy-btn" onclick="copyCode('promisesReaddir')"><i class="far fa-copy"></i> Copy</button>
+  </div>
+
+  <!-- 5. Comparison: Callback vs Promise vs async/await -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-line"></i>
+      <span>5. Evolution of File Operations (Visual Comparison)</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-history"></i>
+        <strong>🔴 Old Way (Callbacks) – Messy</strong>
+        <div class="code-block" style="font-size:0.8rem; margin-top:8px;">
+fs.readFile('a.txt', 'utf8', (err, data) => {
+  if(err) throw err;
+  fs.writeFile('b.txt', data, (err) => {
+    if(err) throw err;
+    console.log('Done');
+  });
+});
+        </div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle"></i>
+        <strong>✅ Modern Way (async/await) – Clean!</strong>
+        <div class="code-block" style="font-size:0.8rem; margin-top:8px;">
+const fs = require('fs').promises;
+async function copyFile() {
+  const data = await fs.readFile('a.txt', 'utf8');
+  await fs.writeFile('b.txt', data);
+  console.log('Done');
+}
+        </div>
+      </div>
+    </div>
+    <p class="icon-text"><i class="fas fa-gem"></i> <strong>For MERN projects:</strong> Always use <span class="inline-code">fs.promises</span> + async/await. It's cleaner and easier to debug!</p>
+  </div>
+
+  <!-- 6. Real Project Example: Config Loader -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-cogs"></i>
+      <span>6. Real-World Example: Load Config File Safely</span>
+    </div>
+    <p>In real backends, you often read configuration files. Here's a robust example using Path + fs.promises:</p>
+    <div class="code-block" id="realExample">
+const fs = require('fs').promises;
+const path = require('path');
+
+async function loadConfig() {
+  // Build absolute path to config file (works anywhere!)
+  const configPath = path.join(__dirname, 'config', 'app-config.json');
+  
+  try {
+    const data = await fs.readFile(configPath, 'utf8');
+    const config = JSON.parse(data);
+    console.log('Config loaded:', config);
+    return config;
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error('Config file missing at:', configPath);
+    } else {
+      console.error('Error reading config:', error.message);
+    }
+    return null;
+  }
+}
+
+loadConfig();
+    </div>
+    <button class="copy-btn" onclick="copyCode('realExample')"><i class="far fa-copy"></i> Copy Real Example</button>
+  </div>
+
+  <!-- 7. Path Methods Cheatsheet -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-table-list"></i>
+      <span>7. Path Module – Quick Reference</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>path.join()</strong><br>
+        Joins segments with OS-specific separator
+      </div>
+      <div class="info-box">
+        <strong>path.resolve()</strong><br>
+        Returns absolute path
+      </div>
+      <div class="info-box">
+        <strong>path.basename()</strong><br>
+        Gets filename from path
+      </div>
+      <div class="info-box">
+        <strong>path.dirname()</strong><br>
+        Gets directory name
+      </div>
+      <div class="info-box">
+        <strong>path.extname()</strong><br>
+        Gets file extension (.js, .html)
+      </div>
+      <div class="info-box">
+        <strong>path.parse()</strong><br>
+        Returns object with all parts
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. fs.promises Methods Quick List -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-list-check"></i>
+      <span>8. fs.promises – Common Methods</span>
+    </div>
+    <div class="code-block">
+const fs = require('fs').promises;
+
+fs.readFile()      // Read file
+fs.writeFile()     // Write/overwrite file
+fs.appendFile()    // Add to end of file
+fs.unlink()        // Delete file
+fs.readdir()       // Read folder contents
+fs.mkdir()         // Create folder
+fs.rmdir()         // Remove folder
+fs.rename()        // Rename file/folder
+fs.stat()          // Get file info
+    </div>
+    <p>All these return Promises, so you can use <span class="inline-code">await</span> inside an <span class="inline-code">async function</span>!</p>
+  </div>
+
+  <!-- 9. Common Mistakes -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>9. Mistakes Beginners Make (and How to Fix)</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>❌ Using + to join paths</strong>
+        <p><span class="inline-code">'folder' + '/' + 'file.txt'</span> → Breaks on Windows!</p>
+        <strong>✅ Always use path.join()</strong>
+      </div>
+      <div class="info-box">
+        <strong>❌ Forgetting .promises</strong>
+        <p><span class="inline-code">const fs = require('fs'); await fs.readFile()</span> → Doesn't work!</p>
+        <strong>✅ const fs = require('fs').promises;</strong>
+      </div>
+      <div class="info-box">
+        <strong>❌ Not using try/catch with async/await</strong>
+        <p>Errors crash your app silently.</p>
+        <strong>✅ Always wrap in try/catch</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Day 55 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-laptop-code"></i>
+      <span>10. 🚀 Daily Challenge – File Explorer Tool</span>
+    </div>
+    <p><strong>Task:</strong> Build a simple script that:</p>
+    <ol style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Uses <span class="inline-code">path.join()</span> with __dirname to point to a 'data' folder</li>
+      <li>Creates the 'data' folder if it doesn't exist (using <span class="inline-code">fs.mkdir</span>)</li>
+      <li>Writes a file called 'info.txt' with your name and today's date</li>
+      <li>Reads the file back and prints the content</li>
+      <li>Uses ONLY <span class="inline-code">fs.promises</span> and async/await</li>
+    </ol>
+    <div class="code-block" id="challengeCode">
+const fs = require('fs').promises;
+const path = require('path');
+
+async function fileExplorer() {
+  const dataFolder = path.join(__dirname, 'data');
+  
+  // Create folder if needed
+  try {
+    await fs.mkdir(dataFolder, { recursive: true });
+    console.log('✅ Folder ready');
+  } catch (err) {
+    console.log('Folder exists or error:', err.message);
+  }
+  
+  // Write file
+  const filePath = path.join(dataFolder, 'info.txt');
+  const content = `Name: Telugu WebTech Learner\nDate: ${new Date().toDateString()}`;
+  await fs.writeFile(filePath, content);
+  console.log('✅ File written');
+  
+  // Read file
+  const readContent = await fs.readFile(filePath, 'utf8');
+  console.log('📄 File content:\n', readContent);
+}
+
+fileExplorer();
+    </div>
+    <button class="copy-btn" onclick="copyCode('challengeCode')"><i class="far fa-copy"></i> Copy Challenge</button>
+    <p class="icon-text"><i class="fab fa-youtube"></i> <strong>Telugu WebTech:</strong> Watch the solution video and practice every day!</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 55 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Path Module:</strong> join(), resolve(), basename(), dirname(), extname(), parse()<br>
+    ✅ <strong>__dirname and __filename</strong> – Build paths that work everywhere<br>
+    ✅ <strong>fs.promises API</strong> – Modern async/await file operations<br>
+    ✅ <strong>Real examples</strong> – Config loader, file explorer<br>
+    ✅ <strong>Clean code</strong> – No more callback hell!</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 56 – HTTP Module (Create Your First Server!)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're doing great! 🔥
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-node-js"></i> Day 55 · Path Module + fs.promises · <strong>Telugu WebTech</strong> — Build cross-platform Node.js apps with confidence</p>
+    <p style="font-size: 0.85rem;">💡 Practice path.join() and async/await today. Your future self will thank you!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Try it in your Node.js environment.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

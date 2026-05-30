@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 80: MongoDB Project – Complete Database Application | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .project-checklist {
+      background: #f0fdf4;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+    }
+    .checklist-item {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 80 · PROJECT DAY 🎯</div>
+    <h1>
+      <i class="fas fa-database"></i> 
+      MongoDB Project – Complete Database Application
+    </h1>
+    <p>Build a complete, production-ready MongoDB database for a Learning Management System (LMS)! Combine everything from Phase 8 – schemas, models, relationships, population, pagination, filtering, and aggregation.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Build Your Complete MongoDB Project
+    </div>
+  </div>
+
+  <!-- Project Overview -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bullseye"></i>
+      <span>Project Overview – Learning Management System (LMS)</span>
+    </div>
+    <p>Today we're building a <strong>Complete Learning Management System Database</strong> with multiple interconnected collections:</p>
+    <div class="diagram">
+      <i class="fas fa-microchip"></i> <strong>Technologies & Concepts Used:</strong><br>
+      • Mongoose Schemas & Models (Day 75-76)<br>
+      • Advanced Validation (Day 77)<br>
+      • Relationships & Population (Day 78)<br>
+      • Pagination, Filtering, Sorting (Day 79)<br>
+      • Aggregation Pipelines<br>
+      • Indexing for Performance<br>
+      • Virtual Fields & Methods
+    </div>
+    <div class="project-checklist">
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ User Management (Students, Instructors, Admins)</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Course Management (Create, Publish, Enroll)</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Module & Lesson System</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Enrollment & Progress Tracking</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Reviews & Ratings</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Categories & Tags</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Advanced Queries (Aggregation, Pagination, Filtering)</div>
+    </div>
+  </div>
+
+  <!-- Complete Project Structure -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-folder-tree"></i>
+      <span>Complete Project Structure</span>
+    </div>
+    <div class="code-block">
+lms-backend/
+├── src/
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Course.js
+│   │   ├── Module.js
+│   │   ├── Lesson.js
+│   │   ├── Enrollment.js
+│   │   ├── Review.js
+│   │   └── Category.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── courseController.js
+│   │   ├── enrollmentController.js
+│   │   └── userController.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── courseRoutes.js
+│   │   └── userRoutes.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── validationMiddleware.js
+│   ├── utils/
+│   │   ├── apiFeatures.js
+│   │   ├── appError.js
+│   │   └── catchAsync.js
+│   └── config/
+│       └── db.js
+├── .env
+├── server.js
+└── package.json
+    </div>
+  </div>
+
+  <!-- Models Implementation -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>Complete Models Implementation</span>
+    </div>
+    
+    <div class="subheading">📁 models/User.js</div>
+    <div class="code-block" id="userModel">
+// models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+    minlength: [2, 'Name must be at least 2 characters'],
+    maxlength: [50, 'Name cannot exceed 50 characters']
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters'],
+    select: false
+  },
+  role: {
+    type: String,
+    enum: ['student', 'instructor', 'admin'],
+    default: 'student'
+  },
+  profile: {
+    avatar: String,
+    bio: { type: String, maxlength: 500 },
+    occupation: String,
+    institution: String
+  },
+  enrolledCourses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  }],
+  completedCourses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  }],
+  wishlist: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  }],
+  isActive: { type: Boolean, default: true },
+  lastLogin: Date
+}, { timestamps: true });
+
+// Indexes
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+userSchema.index({ 'profile.institution': 1 });
+
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+// Instance method to check password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Virtual for full profile name
+userSchema.virtual('fullProfile').get(function() {
+  return {
+    name: this.name,
+    email: this.email,
+    role: this.role,
+    bio: this.profile?.bio,
+    avatar: this.profile?.avatar
+  };
+});
+
+const User = mongoose.model('User', userSchema);
+module.exports = User;
+    </div>
+    <button class="copy-btn" onclick="copyCode('userModel')"><i class="far fa-copy"></i> Copy User Model</button>
+
+    <div class="subheading">📁 models/Category.js</div>
+    <div class="code-block" id="categoryModel">
+// models/Category.js
+const mongoose = require('mongoose');
+
+const categorySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+  description: String,
+  icon: String,
+  parentCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
+  courseCount: { type: Number, default: 0 }
+}, { timestamps: true });
+
+// Pre-save middleware to generate slug
+categorySchema.pre('save', function(next) {
+  if (this.isModified('name')) {
+    this.slug = this.name.toLowerCase().replace(/ /g, '-');
+  }
+  next();
+});
+
+const Category = mongoose.model('Category', categorySchema);
+module.exports = Category;
+    </div>
+    <button class="copy-btn" onclick="copyCode('categoryModel')"><i class="far fa-copy"></i> Copy Category Model</button>
+
+    <div class="subheading">📁 models/Course.js</div>
+    <div class="code-block" id="courseModel">
+// models/Course.js
+const mongoose = require('mongoose');
+
+const courseSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, 'Course title is required'],
+    trim: true,
+    minlength: [5, 'Title must be at least 5 characters'],
+    maxlength: [100, 'Title cannot exceed 100 characters']
+  },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+  description: {
+    type: String,
+    required: [true, 'Description is required'],
+    minlength: [20, 'Description must be at least 20 characters']
+  },
+  instructor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: [0, 'Price cannot be negative'],
+    default: 0
+  },
+  thumbnail: String,
+  trailerVideo: String,
+  level: {
+    type: String,
+    enum: ['beginner', 'intermediate', 'advanced', 'all-levels'],
+    default: 'beginner'
+  },
+  duration: { type: Number, default: 0 }, // Total minutes
+  lessonsCount: { type: Number, default: 0 },
+  studentsEnrolled: { type: Number, default: 0 },
+  rating: { type: Number, default: 0, min: 0, max: 5 },
+  ratingCount: { type: Number, default: 0 },
+  tags: [String],
+  prerequisites: [String],
+  learningOutcomes: [String],
+  isPublished: { type: Boolean, default: false },
+  publishedAt: Date
+}, { timestamps: true });
+
+// Indexes for performance
+courseSchema.index({ title: 'text', description: 'text', tags: 'text' });
+courseSchema.index({ category: 1, level: 1 });
+courseSchema.index({ price: 1 });
+courseSchema.index({ rating: -1 });
+courseSchema.index({ studentsEnrolled: -1 });
+
+// Pre-save middleware to generate slug
+courseSchema.pre('save', function(next) {
+  if (this.isModified('title')) {
+    this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+  next();
+});
+
+// Virtual for modules
+courseSchema.virtual('modules', {
+  ref: 'Module',
+  localField: '_id',
+  foreignField: 'course'
+});
+
+// Virtual for reviews
+courseSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'course'
+});
+
+// Virtual for enrollment count
+courseSchema.virtual('enrollmentCount').get(function() {
+  return this.studentsEnrolled;
+});
+
+// Virtual for isFree
+courseSchema.virtual('isFree').get(function() {
+  return this.price === 0;
+});
+
+// Method to update rating
+courseSchema.methods.updateRating = async function() {
+  const Review = mongoose.model('Review');
+  const result = await Review.aggregate([
+    { $match: { course: this._id } },
+    { $group: { _id: null, avgRating: { $avg: '$rating' }, count: { $sum: 1 } } }
+  ]);
+  
+  if (result.length > 0) {
+    this.rating = Math.round(result[0].avgRating * 10) / 10;
+    this.ratingCount = result[0].count;
+    await this.save();
+  }
+};
+
+const Course = mongoose.model('Course', courseSchema);
+module.exports = Course;
+    </div>
+    <button class="copy-btn" onclick="copyCode('courseModel')"><i class="far fa-copy"></i> Copy Course Model</button>
+
+    <div class="subheading">📁 models/Module.js</div>
+    <div class="code-block" id="moduleModel">
+// models/Module.js
+const mongoose = require('mongoose');
+
+const moduleSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true },
+  description: String,
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true
+  },
+  order: { type: Number, required: true },
+  duration: { type: Number, default: 0 }
+}, { timestamps: true });
+
+// Index for efficient querying
+moduleSchema.index({ course: 1, order: 1 });
+
+// Virtual for lessons
+moduleSchema.virtual('lessons', {
+  ref: 'Lesson',
+  localField: '_id',
+  foreignField: 'module'
+});
+
+const Module = mongoose.model('Module', moduleSchema);
+module.exports = Module;
+    </div>
+    <button class="copy-btn" onclick="copyCode('moduleModel')"><i class="far fa-copy"></i> Copy Module Model</button>
+
+    <div class="subheading">📁 models/Lesson.js</div>
+    <div class="code-block" id="lessonModel">
+// models/Lesson.js
+const mongoose = require('mongoose');
+
+const lessonSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true },
+  content: { type: String, required: true },
+  videoUrl: String,
+  duration: { type: Number, default: 0 },
+  module: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Module',
+    required: true
+  },
+  order: { type: Number, required: true },
+  isFree: { type: Boolean, default: false },
+  resources: [{
+    title: String,
+    url: String,
+    type: { type: String, enum: ['pdf', 'video', 'link', 'file'] }
+  }]
+}, { timestamps: true });
+
+lessonSchema.index({ module: 1, order: 1 });
+
+const Lesson = mongoose.model('Lesson', lessonSchema);
+module.exports = Lesson;
+    </div>
+    <button class="copy-btn" onclick="copyCode('lessonModel')"><i class="far fa-copy"></i> Copy Lesson Model</button>
+
+    <div class="subheading">📁 models/Enrollment.js</div>
+    <div class="code-block" id="enrollmentModel">
+// models/Enrollment.js
+const mongoose = require('mongoose');
+
+const enrollmentSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true
+  },
+  progress: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  completedLessons: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lesson'
+  }],
+  lastAccessed: Date,
+  completedAt: Date,
+  certificateIssued: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: ['active', 'completed', 'dropped'],
+    default: 'active'
+  }
+}, { timestamps: true });
+
+// Unique compound index to prevent duplicate enrollments
+enrollmentSchema.index({ user: 1, course: 1 }, { unique: true });
+enrollmentSchema.index({ user: 1, status: 1 });
+enrollmentSchema.index({ course: 1, progress: 1 });
+
+// Method to update progress
+enrollmentSchema.methods.updateProgress = async function() {
+  const Lesson = mongoose.model('Lesson');
+  const Module = mongoose.model('Module');
+  
+  const modules = await Module.find({ course: this.course });
+  let totalLessons = 0;
+  for (const module of modules) {
+    const lessons = await Lesson.find({ module: module._id });
+    totalLessons += lessons.length;
+  }
+  
+  const progress = (this.completedLessons.length / totalLessons) * 100;
+  this.progress = Math.round(progress);
+  
+  if (this.progress === 100 && this.status !== 'completed') {
+    this.status = 'completed';
+    this.completedAt = new Date();
+  }
+  
+  await this.save();
+};
+
+const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
+module.exports = Enrollment;
+    </div>
+    <button class="copy-btn" onclick="copyCode('enrollmentModel')"><i class="far fa-copy"></i> Copy Enrollment Model</button>
+
+    <div class="subheading">📁 models/Review.js</div>
+    <div class="code-block" id="reviewModel">
+// models/Review.js
+const mongoose = require('mongoose');
+
+const reviewSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  comment: {
+    type: String,
+    required: true,
+    maxlength: 500
+  },
+  isApproved: { type: Boolean, default: true }
+}, { timestamps: true });
+
+// Prevent duplicate reviews from same user for same course
+reviewSchema.index({ user: 1, course: 1 }, { unique: true });
+reviewSchema.index({ course: 1, rating: -1 });
+
+// After saving, update course rating
+reviewSchema.post('save', async function() {
+  const Course = mongoose.model('Course');
+  const course = await Course.findById(this.course);
+  if (course) {
+    await course.updateRating();
+  }
+});
+
+reviewSchema.post('remove', async function() {
+  const Course = mongoose.model('Course');
+  const course = await Course.findById(this.course);
+  if (course) {
+    await course.updateRating();
+  }
+});
+
+const Review = mongoose.model('Review', reviewSchema);
+module.exports = Review;
+    </div>
+    <button class="copy-btn" onclick="copyCode('reviewModel')"><i class="far fa-copy"></i> Copy Review Model</button>
+  </div>
+
+  <!-- API Features Utility -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-cogs"></i>
+      <span>API Features Utility (Pagination, Filtering, Sorting)</span>
+    </div>
+    <div class="code-block" id="apiFeaturesUtil">
+// utils/apiFeatures.js
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObj = { ...this.queryString };
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
+    excludedFields.forEach(el => delete queryObj[el]);
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+    
+    this.query = this.query.find(JSON.parse(queryStr));
+    return this;
+  }
+
+  search() {
+    if (this.queryString.search) {
+      this.query = this.query.find({
+        $or: [
+          { title: { $regex: this.queryString.search, $options: 'i' } },
+          { description: { $regex: this.queryString.search, $options: 'i' } },
+          { tags: { $in: [new RegExp(this.queryString.search, 'i')] } }
+        ]
+      });
+    }
+    return this;
+  }
+
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort('-createdAt');
+    }
+    return this;
+  }
+
+  limitFields() {
+    if (this.queryString.fields) {
+      const fields = this.queryString.fields.split(',').join(' ');
+      this.query = this.query.select(fields);
+    } else {
+      this.query = this.query.select('-__v');
+    }
+    return this;
+  }
+
+  paginate() {
+    const page = parseInt(this.queryString.page) || 1;
+    const limit = parseInt(this.queryString.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    this.query = this.query.skip(skip).limit(limit);
+    this.paginationInfo = { page, limit, skip };
+    
+    return this;
+  }
+
+  async getPaginationMetadata(totalDocuments) {
+    const { page, limit } = this.paginationInfo;
+    const totalPages = Math.ceil(totalDocuments / limit);
+    
+    return {
+      currentPage: page,
+      totalPages,
+      totalDocuments,
+      documentsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      nextPage: page < totalPages ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null
+    };
+  }
+}
+
+module.exports = APIFeatures;
+    </div>
+    <button class="copy-btn" onclick="copyCode('apiFeaturesUtil')"><i class="far fa-copy"></i> Copy API Features Utility</button>
+  </div>
+
+  <!-- Sample Routes with Advanced Queries -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-road"></i>
+      <span>Sample Routes with Advanced Queries</span>
+    </div>
+    <div class="code-block" id="sampleRoutes">
+// routes/courseRoutes.js
+const express = require('express');
+const router = express.Router();
+const Course = require('../models/Course');
+const Enrollment = require('../models/Enrollment');
+const APIFeatures = require('../utils/apiFeatures');
+const catchAsync = require('../utils/catchAsync');
+
+// GET /api/courses - Get all courses with advanced filtering
+router.get('/courses', catchAsync(async (req, res) => {
+  const features = new APIFeatures(Course.find({ isPublished: true }), req.query)
+    .filter()
+    .search()
+    .sort()
+    .limitFields()
+    .paginate();
+  
+  const courses = await features.query
+    .populate('instructor', 'name profile.avatar')
+    .populate('category', 'name');
+  
+  const total = await Course.countDocuments({ isPublished: true });
+  const pagination = await features.getPaginationMetadata(total);
+  
+  res.json({
+    success: true,
+    results: courses.length,
+    pagination,
+    data: courses
+  });
+}));
+
+// GET /api/courses/:id - Get course with full details
+router.get('/courses/:id', catchAsync(async (req, res) => {
+  const course = await Course.findById(req.params.id)
+    .populate('instructor', 'name email profile.bio profile.avatar')
+    .populate('category', 'name')
+    .populate({
+      path: 'modules',
+      populate: {
+        path: 'lessons',
+        select: 'title duration order isFree'
+      }
+    })
+    .populate({
+      path: 'reviews',
+      populate: { path: 'user', select: 'name profile.avatar' },
+      options: { limit: 5, sort: { createdAt: -1 } }
+    });
+  
+  if (!course) {
+    return res.status(404).json({ success: false, message: 'Course not found' });
+  }
+  
+  res.json({ success: true, data: course });
+}));
+
+// GET /api/courses/:id/students - Get enrolled students with progress
+router.get('/courses/:id/students', catchAsync(async (req, res) => {
+  const { page = 1, limit = 10, sortBy = 'progress', sortOrder = 'desc' } = req.query;
+  
+  const enrollments = await Enrollment.find({ course: req.params.id })
+    .populate('user', 'name email profile.avatar')
+    .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit));
+  
+  const total = await Enrollment.countDocuments({ course: req.params.id });
+  
+  res.json({
+    success: true,
+    results: enrollments.length,
+    pagination: {
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(total / limit),
+      totalStudents: total
+    },
+    data: enrollments
+  });
+}));
+
+// GET /api/courses/stats/popular - Most popular courses (aggregation)
+router.get('/courses/stats/popular', catchAsync(async (req, res) => {
+  const popularCourses = await Course.aggregate([
+    { $match: { isPublished: true } },
+    { $lookup: {
+        from: 'enrollments',
+        localField: '_id',
+        foreignField: 'course',
+        as: 'enrollments'
+      }
+    },
+    { $addFields: { enrollmentCount: { $size: '$enrollments' } } },
+    { $sort: { enrollmentCount: -1, rating: -1 } },
+    { $limit: 10 },
+    { $project: { title: 1, thumbnail: 1, price: 1, rating: 1, enrollmentCount: 1 } }
+  ]);
+  
+  res.json({ success: true, data: popularCourses });
+}));
+
+// GET /api/courses/stats/by-category - Course count by category
+router.get('/courses/stats/by-category', catchAsync(async (req, res) => {
+  const stats = await Course.aggregate([
+    { $match: { isPublished: true } },
+    { $group: {
+        _id: '$category',
+        count: { $sum: 1 },
+        avgPrice: { $avg: '$price' },
+        avgRating: { $avg: '$rating' },
+        totalStudents: { $sum: '$studentsEnrolled' }
+      }
+    },
+    { $lookup: {
+        from: 'categories',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'categoryInfo'
+      }
+    },
+    { $sort: { count: -1 } }
+  ]);
+  
+  res.json({ success: true, data: stats });
+}));
+
+module.exports = router;
+    </div>
+    <button class="copy-btn" onclick="copyCode('sampleRoutes')"><i class="far fa-copy"></i> Copy Sample Routes</button>
+  </div>
+
+  <!-- Day 80 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Complete the LMS Database</span>
+    </div>
+    <p><strong>Task:</strong> Complete the Learning Management System by implementing:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Add indexes to all models for query optimization</li>
+      <li>Implement a method to automatically update course duration based on modules/lessons</li>
+      <li>Create an aggregation pipeline to get instructor earnings (total revenue from paid courses)</li>
+      <li>Add a certificate generation tracking system</li>
+      <li>Implement a recommendation engine (courses based on user's completed courses)</li>
+      <li>Create a quiz/section model for assessments within lessons</li>
+      <li>Add a discussion forum model for course Q&A</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge – Recommendation Engine Aggregation
+const getRecommendations = async (userId) => {
+  // Get user's enrolled and completed courses
+  const userEnrollments = await Enrollment.find({ user: userId })
+    .select('course');
+  
+  const enrolledCourseIds = userEnrollments.map(e => e.course);
+  
+  // Find courses with similar tags/categories that user hasn't taken
+  const recommendations = await Course.aggregate([
+    { $match: { 
+        isPublished: true,
+        _id: { $nin: enrolledCourseIds }
+      }
+    },
+    { $lookup: {
+        from: 'enrollments',
+        localField: '_id',
+        foreignField: 'course',
+        as: 'popularity'
+      }
+    },
+    { $addFields: {
+        enrollmentCount: { $size: '$popularity' },
+        relevanceScore: {
+          $add: [
+            { $multiply: ['$rating', 2] },
+            { $divide: ['$enrollmentCount', 10] }
+          ]
+        }
+      }
+    },
+    { $sort: { relevanceScore: -1 } },
+    { $limit: 10 },
+    { $project: { title: 1, thumbnail: 1, price: 1, rating: 1, relevanceScore: 1 } }
+  ]);
+  
+  return recommendations;
+};
+
+// Challenge – Instructor Earnings Aggregation
+const getInstructorEarnings = async (instructorId) => {
+  const earnings = await Course.aggregate([
+    { $match: { instructor: instructorId, isPublished: true } },
+    { $lookup: {
+        from: 'enrollments',
+        localField: '_id',
+        foreignField: 'course',
+        as: 'enrollments'
+      }
+    },
+    { $addFields: {
+        enrollmentCount: { $size: '$enrollments' },
+        revenue: { $multiply: ['$price', { $size: '$enrollments' }] }
+      }
+    },
+    { $group: {
+        _id: '$instructor',
+        totalRevenue: { $sum: '$revenue' },
+        totalStudents: { $sum: '$enrollmentCount' },
+        coursesCount: { $sum: 1 },
+        averagePrice: { $avg: '$price' }
+      }
+    }
+  ]);
+  
+  return earnings[0] || { totalRevenue: 0, totalStudents: 0, coursesCount: 0 };
+};
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Solutions</button>
+  </div>
+
+  <!-- What You've Accomplished -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-trophy"></i>
+      <span>🎉 Congratulations! Phase 8 Complete</span>
+    </div>
+    <p>You've just built a production-ready LMS database! This project combines:</p>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-database"></i>
+        <strong>Days 71-74: MongoDB Basics</strong>
+        <p>Installation, Compass, CRUD operations</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-leaf"></i>
+        <strong>Day 75: Mongoose Setup</strong>
+        <p>Connection, ODM basics</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-table"></i>
+        <strong>Day 76: Schemas & Models</strong>
+        <p>Data types, validation, options</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-double"></i>
+        <strong>Day 77: Validation</strong>
+        <p>Built-in and custom validators</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-link"></i>
+        <strong>Day 78: Relationships</strong>
+        <p>Population, referencing, virtuals</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-filter"></i>
+        <strong>Day 79: Pagination</strong>
+        <p>Filtering, sorting, aggregation</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-project-diagram"></i>
+        <strong>Day 80: Complete Project</strong>
+        <p>All concepts integrated!</p>
+      </div>
+    </div>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Phase 9 – Full MERN Stack Integration (Days 81-90)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're ready to connect everything! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-database"></i> Day 80 · MongoDB Complete Project · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 You've mastered MongoDB! Next: Connect MongoDB with Express to build full MERN apps!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Build your complete MongoDB database application.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 64: Controllers – Moving Logic Out of Routes | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300,400,600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.5; scroll-behavior: smooth; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%); border-radius: 2rem; padding: 2rem; margin-bottom: 2.5rem; color: white; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
+    .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero h1 i { background: #facc15; color: #1e3a2f; padding: 8px 12px; border-radius: 60px; font-size: 1.6rem; }
+    .hero-badge { background: #facc15cc; display: inline-block; padding: 0.25rem 1rem; border-radius: 40px; font-size: 0.85rem; font-weight: 600; color: #0a2e25; margin-bottom: 1rem; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 85%; }
+    .channel-link { margin-top: 1.2rem; display: inline-flex; align-items: center; gap: 12px; background: #00000030; backdrop-filter: blur(4px); padding: 0.5rem 1.2rem; border-radius: 60px; font-weight: 500; }
+    .section-card { background: white; border-radius: 1.5rem; padding: 1.8rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .section-card:hover { border-color: #cbd5e1; box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1); }
+    .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; border-left: 6px solid #facc15; padding-left: 1rem; }
+    .section-title i { color: #2d6a4f; font-size: 1.6rem; }
+    .subheading { font-size: 1.25rem; font-weight: 600; margin: 1.2rem 0 0.8rem 0; color: #1e4620; }
+    .code-block { background: #0f172a; color: #e2e8f0; padding: 1rem 1.2rem; border-radius: 1rem; font-family: 'Courier New', 'Fira Code', monospace; font-size: 0.9rem; overflow-x: auto; margin: 1rem 0; white-space: pre-wrap; word-break: break-word; }
+    .inline-code { background: #eef2ff; color: #0c4a6e; font-family: monospace; padding: 0.2rem 0.4rem; border-radius: 8px; font-size: 0.9rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .info-box { background: #f1f5f9; border-radius: 1.2rem; padding: 1.2rem; border-left: 4px solid #facc15; }
+    .diagram { background: #fef9e3; border-radius: 1rem; padding: 1.2rem; text-align: center; margin: 1rem 0; font-weight: 500; border: 1px dashed #facc15; }
+    .comparison-table { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .comparison-card { flex: 1; min-width: 280px; background: #f1f5f9; border-radius: 1rem; padding: 1rem; }
+    button.copy-btn, .show-result-btn { background: #334155; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; margin-right: 10px; transition: background 0.2s; font-weight: 500; }
+    button.copy-btn:hover, .show-result-btn:hover { background: #1e293b; }
+    .show-result-btn { background: #2d6a4f; }
+    .show-result-btn:hover { background: #1e4620; }
+    .result-output { background: #f1f8e9; border-left: 4px solid #facc15; padding: 1rem; border-radius: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; color: #0f172a; display: none; }
+    .result-output.show { display: block; }
+    .explanation-text { background: #fefce8; padding: 0.8rem 1rem; border-radius: 1rem; margin: 0.8rem 0; font-size: 0.95rem; border-left: 3px solid #eab308; }
+    .success-note { background: #e6f7ec; border-left: 4px solid #2e7d32; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    .warning-note { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    footer { text-align: center; margin-top: 3rem; padding: 2rem; border-top: 1px solid #e2e8f0; color: #475569; }
+    @media (max-width: 680px) { .hero p { max-width: 100%; } .section-title { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 64 · Phase 7</div>
+    <h1><i class="fas fa-gamepad"></i> Controllers – Moving Logic Out of Routes</h1>
+    <p>Learn the Controller pattern – the secret to clean, maintainable Express code! Separate your business logic from routes and become a professional backend developer.</p>
+    <div class="channel-link"><i class="fab fa-youtube"></i> Telugu WebTech · Clean Architecture with Controllers</div>
+  </div>
+
+  <!-- Problem: Fat Routes -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-question-circle"></i><span>1. The Problem: Fat Routes (Messy Code)</span></div>
+    <div class="explanation-text"><i class="fas fa-dragon"></i> <strong>Why avoid fat routes?</strong> When you put all logic directly inside route handlers, code becomes unreadable, untestable, and hard to maintain. Controllers solve this by organizing logic into reusable functions.</div>
+    <div class="comparison-table">
+      <div class="comparison-card"><i class="fas fa-times-circle" style="color:#dc2626; font-size:2rem;"></i><h3>❌ Without Controllers</h3><div class="code-block" style="font-size:0.7rem;">app.get('/api/users', (req, res) => { /* validation, DB, filter, pagination, errors mixed */ });</div><p>Hard to read, test, reuse</p></div>
+      <div class="comparison-card"><i class="fas fa-check-circle" style="color:#22c55e; font-size:2rem;"></i><h3>✅ With Controllers</h3><div class="code-block" style="font-size:0.7rem;">app.get('/api/users', userController.getAllUsers);</div><p>Clean, testable, reusable</p></div>
+    </div>
+    <button class="show-result-btn" onclick="showResult('fatRoutesResult')">Show impact example</button>
+    <div id="fatRoutesResult" class="result-output"><strong>❌ Fat route example:</strong> 50+ lines of validation, database calls, filtering all inside one callback. <strong>✅ After refactoring:</strong> route is one line, controller handles logic separately. Easy to test with Jest/Vitest.</div>
+  </div>
+
+  <!-- What is Controller -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-info-circle"></i><span>2. What is a Controller?</span></div>
+    <div class="explanation-text"><i class="fas fa-brain"></i> <strong>Purpose:</strong> Controllers are JavaScript functions that handle the "business logic" for a specific route. They receive request, process data, and send response. They act as the bridge between routes and models/database.</div>
+    <div class="code-block">// Controller signature: (req, res, next) => { ... }
+const getUsers = (req, res) => {
+  // 1. extract data from req.params, req.query, req.body
+  // 2. validate input
+  // 3. interact with model/database
+  // 4. send response or call next(error)
+};</div>
+    <button class="show-result-btn" onclick="showResult('controllerFlow')">See controller flow</button>
+    <div id="controllerFlow" class="result-output">🌊 Flow: Request → Route → Controller → Business logic → Response. Example: POST /users → createUser controller runs → validates input → creates user → sends 201 with new user.</div>
+  </div>
+
+  <!-- User Controller Code -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-cogs"></i><span>3. Basic Controller – User CRUD</span></div>
+    <div class="explanation-text"><i class="fas fa-users"></i> <strong>What it does:</strong> This controller handles all user operations (get all, get by id, create, update, delete). It also processes query filters like ?age=25.</div>
+    <div class="code-block" id="userController">// controllers/userController.js
+let users = [{ id:1, name:'Ramesh', email:'ramesh@example.com', age:25 }];
+
+const getAllUsers = (req, res, next) => {
+  try {
+    let result = [...users];
+    if(req.query.age) result = result.filter(u => u.age === parseInt(req.query.age));
+    res.status(200).json({ success:true, count:result.length, data:result });
+  } catch(error) { next(error); }
+};
+
+const getUserById = (req, res, next) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if(!user) return res.status(404).json({ success:false, message:'User not found' });
+  res.json({ success:true, data:user });
+};
+
+const createUser = (req, res, next) => {
+  const { name, email, age } = req.body;
+  if(!name || !email) return res.status(400).json({ success:false, message:'Name/email required' });
+  const newUser = { id: users.length+1, name, email, age: age || 18 };
+  users.push(newUser);
+  res.status(201).json({ success:true, data:newUser });
+};
+
+const updateUser = (req, res) => { /* update logic */ };
+const deleteUser = (req, res) => { /* delete logic */ };
+module.exports = { getAllUsers, getUserById, createUser, updateUser, deleteUser };</div>
+    <button class="copy-btn" onclick="copyCode('userController')"><i class="far fa-copy"></i> Copy Controller</button>
+    <button class="show-result-btn" onclick="showResult('userControllerResult')">Show sample API response</button>
+    <div id="userControllerResult" class="result-output">📌 GET /api/users → { "success":true, "count":1, "data":[{"id":1,"name":"Ramesh","email":"ramesh@example.com","age":25}] }<br>📌 POST /api/users (body: { "name":"Priya", "email":"priya@test.com" }) → 201 Created returns new user with id=2.</div>
+  </div>
+
+  <!-- Clean Routes using Controllers -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-road"></i><span>4. Clean Routes Using Controllers</span></div>
+    <div class="explanation-text"><i class="fas fa-broom"></i> <strong>Why clean routes?</strong> Routes file should only define endpoints and map them to controller functions — no business logic. This makes your API structure instantly understandable.</div>
+    <div class="code-block" id="cleanRoutes">// routes/userRoutes.js
+const express = require('express');
+const router = express.Router();
+const { getAllUsers, getUserById, createUser, updateUser, deleteUser } = require('../controllers/userController');
+
+router.route('/').get(getAllUsers).post(createUser);
+router.route('/:id').get(getUserById).put(updateUser).delete(deleteUser);
+
+module.exports = router;
+
+// server.js
+app.use('/api/users', userRoutes);</div>
+    <button class="copy-btn" onclick="copyCode('cleanRoutes')"><i class="far fa-copy"></i> Copy Clean Routes</button>
+    <button class="show-result-btn" onclick="showResult('cleanRoutesResult')">Show advantage</button>
+    <div id="cleanRoutesResult" class="result-output">✨ Clean routes: each HTTP method points to a controller. No messy logic inside routes file. Easy to navigate: looking at userRoutes.js you instantly know all user endpoints and which controller handles them.</div>
+  </div>
+
+  <!-- Async Controllers -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-clock"></i><span>5. Async Controllers (Database Ready)</span></div>
+    <div class="explanation-text"><i class="fas fa-database"></i> <strong>When & why:</strong> Real apps use databases (MongoDB, PostgreSQL). Controllers must be async to await database queries. Always use try/catch and pass errors to next() for proper error handling.</div>
+    <div class="code-block" id="asyncControllers">const Product = require('../models/Product');
+
+const getAllProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find();
+    res.json({ success: true, data: products });
+  } catch (error) {
+    next(error); // passes to Express error handler
+  }
+};
+
+const createProduct = async (req, res, next) => {
+  try {
+    const { name, price } = req.body;
+    if(!name || !price) return res.status(400).json({ error: 'Missing fields' });
+    const newProduct = await Product.create({ name, price });
+    res.status(201).json({ success: true, data: newProduct });
+  } catch (err) { next(err); }
+};
+module.exports = { getAllProducts, createProduct };</div>
+    <button class="copy-btn" onclick="copyCode('asyncControllers')"><i class="far fa-copy"></i> Copy Async Controllers</button>
+    <button class="show-result-btn" onclick="showResult('asyncResult')">Explain async flow</button>
+    <div id="asyncResult" class="result-output">⏳ Async controller: When request arrives, controller uses "await Product.find()" (non-blocking). Meanwhile Node.js handles other requests. If DB error occurs, next(error) sends it to global error handler. No server freeze!</div>
+  </div>
+
+  <!-- Async Handler Wrapper -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-magic"></i><span>6. Async Handler Wrapper (No More Try/Catch Repetition)</span></div>
+    <div class="explanation-text"><i class="fas fa-repeat"></i> <strong>Problem:</strong> Writing try-catch in every controller is repetitive. <strong>Solution:</strong> Create a wrapper that automatically catches errors and forwards them to next(). This is a professional pattern used in thousands of projects.</div>
+    <div class="code-block" id="asyncWrapper">// utils/asyncHandler.js
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+module.exports = asyncHandler;
+
+// controllers/userController.js (clean version!)
+const asyncHandler = require('../utils/asyncHandler');
+const User = require('../models/User');
+
+exports.getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find(); // no try/catch needed!
+  res.json({ success: true, data: users });
+});
+
+exports.createUser = asyncHandler(async (req, res) => {
+  const user = await User.create(req.body);
+  res.status(201).json({ success: true, data: user });
+});</div>
+    <button class="copy-btn" onclick="copyCode('asyncWrapper')"><i class="far fa-copy"></i> Copy Async Wrapper</button>
+    <button class="show-result-btn" onclick="showResult('wrapperResult')">Why this is powerful</button>
+    <div id="wrapperResult" class="result-output">⚡ Without wrapper: each controller needs try/catch. With asyncHandler: just write logic, any error automatically sent to Express error middleware. Reduces boilerplate by 60%! Used in production by major Express APIs.</div>
+  </div>
+
+  <!-- Best Practices -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-clipboard-list"></i><span>7. Controller Best Practices</span></div>
+    <div class="grid-2">
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Single responsibility</strong><br>One function does one thing (getAllUsers, getUserById)</div>
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Validate early</strong><br>Check required fields at start of controller</div>
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Consistent response format</strong><br>{ success, data } or { success, message }</div>
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Proper status codes</strong><br>201 for created, 400 for bad request, 404 for not found</div>
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>No business logic in routes</strong><br>Routes only map URL → controller</div>
+      <div class="info-box"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Use next(error)</strong><br>Never swallow errors – pass them to error middleware</div>
+    </div>
+    <button class="show-result-btn" onclick="showResult('bestPracticeResult')">Show real scenario</button>
+    <div id="bestPracticeResult" class="result-output">🏆 Example: A controller that follows best practices -> validates req.body, uses correct status 400 for missing fields, returns { success: false, message: ... }, uses asyncHandler. The route file is clean: <code>router.post('/users', createUser)</code>. This makes debugging and testing straightforward.</div>
+  </div>
+
+  <!-- Complete Todo API -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-code"></i><span>8. Complete Example – Todo API with Controllers</span></div>
+    <div class="explanation-text"><i class="fas fa-check-square"></i> <strong>What you'll learn:</strong> Full CRUD with filtering (completed, priority), proper error handling, and modular organization.</div>
+    <div class="code-block" id="completeExample">// controllers/todoController.js (using asyncHandler)
+const asyncHandler = require('../utils/asyncHandler');
+let todos = [{ id:1, title:'Learn Express', completed:false, priority:'high' }];
+
+exports.getAllTodos = asyncHandler(async (req, res) => {
+  let filtered = [...todos];
+  if(req.query.completed !== undefined) filtered = filtered.filter(t => t.completed === (req.query.completed === 'true'));
+  if(req.query.priority) filtered = filtered.filter(t => t.priority === req.query.priority);
+  res.json({ success:true, count:filtered.length, data:filtered });
+});
+
+exports.getTodoById = asyncHandler(async (req, res) => {
+  const todo = todos.find(t => t.id === parseInt(req.params.id));
+  if(!todo) return res.status(404).json({ success:false, message:'Todo not found' });
+  res.json({ success:true, data:todo });
+});
+
+exports.createTodo = asyncHandler(async (req, res) => {
+  const { title, priority='medium' } = req.body;
+  if(!title) return res.status(400).json({ success:false, message:'Title required' });
+  const newTodo = { id: todos.length+1, title, completed: false, priority };
+  todos.push(newTodo);
+  res.status(201).json({ success:true, data:newTodo });
+});
+
+exports.updateTodo = asyncHandler(async (req, res) => { /* similar logic */ });
+exports.deleteTodo = asyncHandler(async (req, res) => { /* delete logic */ });
+
+// routes/todoRoutes.js
+const router = require('express').Router();
+const todoController = require('../controllers/todoController');
+router.route('/').get(todoController.getAllTodos).post(todoController.createTodo);
+router.route('/:id').get(todoController.getTodoById).put(todoController.updateTodo).delete(todoController.deleteTodo);
+
+// server.js
+app.use('/api/todos', todoRoutes);</div>
+    <button class="copy-btn" onclick="copyCode('completeExample')"><i class="far fa-copy"></i> Copy Todo API</button>
+    <button class="show-result-btn" onclick="showResult('todoApiResult')">Test Todo API example</button>
+    <div id="todoApiResult" class="result-output">📝 GET /api/todos?completed=false → returns incomplete todos<br>📝 POST /api/todos { "title": "Study controllers" } → 201 Created: { id:3, title:"Study controllers", completed:false }<br>📝 GET /api/todos/1 → returns specific todo. Clean, controller-based, easy to extend.</div>
+  </div>
+
+  <!-- Challenge -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-tasks"></i><span>🚀 Daily Challenge – Movie API with Controllers</span></div>
+    <p><strong>Build a Movie API using the controller pattern:</strong> Implement CRUD, filtering by genre & minRating, director-based endpoint.</p>
+    <div class="code-block" id="challengeStarter">// controllers/movieController.js (starter)
+const asyncHandler = require('../utils/asyncHandler');
+let movies = [
+  { id:1, title:'Inception', director:'Nolan', year:2010, rating:4.8, genre:'Sci-Fi' },
+  { id:2, title:'Dark Knight', director:'Nolan', year:2008, rating:4.9, genre:'Action' }
+];
+
+// TODO: getAllMovies with ?genre=action&minRating=4
+// TODO: getMoviesByDirector (GET /api/movies/director/:directorName)
+// TODO: createMovie (validation: title, director, rating 1-5)
+// TODO: updateMovie & deleteMovie
+
+module.exports = { /* export functions */ };</div>
+    <button class="copy-btn" onclick="copyCode('challengeStarter')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+    <button class="show-result-btn" onclick="showResult('challengeHint')">Show hint & sample output</button>
+    <div id="challengeHint" class="result-output">🎬 Hint: getAllMovies should filter movies.filter(m => (!genre || m.genre === genre) && (!minRating || m.rating >= parseFloat(minRating))); <br>📌 Sample GET /api/movies?genre=Action&minRating=4.5 → returns Dark Knight.<br>📌 GET /api/movies/director/Nolan → returns both Inception and Dark Knight. Use req.params.directorName. implement using asyncHandler.</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-graduation-cap"></i><span>Day 64 Summary – Controllers Mastered</span></div>
+    <p>✅ <strong>What:</strong> Controllers are functions that contain business logic for routes<br>
+    ✅ <strong>Why:</strong> Clean architecture, testability, reusability, separation of concerns<br>
+    ✅ <strong>Basic CRUD:</strong> Built userController with getAll, getById, create, update, delete<br>
+    ✅ <strong>Clean routes:</strong> Routes become declarative: <code>.get(userController.getAll)</code><br>
+    ✅ <strong>Async controllers:</strong> Use async/await with try/catch for databases<br>
+    ✅ <strong>Async handler wrapper:</strong> Eliminate repetitive try/catch blocks<br>
+    ✅ <strong>Best practices:</strong> Validation, status codes, consistent responses, error forwarding<br>
+    ✅ <strong>Real example:</strong> Full Todo API demonstrating controller pattern</p>
+    <div class="diagram"><i class="fas fa-arrow-right"></i> <strong>Next Up: Day 65 – Middleware (The Power of Express)</strong><br>Telugu WebTech MERN roadmap – You're building professional backend architecture! 🚀</div>
+  </div>
+  <footer><p><i class="fab fa-express"></i> Day 64 · Controllers · <strong>Telugu WebTech</strong></p><p style="font-size:0.85rem;">💡 Practice: Refactor any existing route logic into controllers – you'll instantly see code clarity improve!</p></footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Controller code copied! Add to your Express project.');
+    }).catch(() => alert('⚠️ Copy manually.'));
+  }
+  function showResult(resultId) {
+    const resultDiv = document.getElementById(resultId);
+    if (resultDiv.classList.contains('show')) resultDiv.classList.remove('show');
+    else resultDiv.classList.add('show');
+  }
+  // Pre-fill the challenge starter to be interactive
+  document.getElementById('challengeStarter').innerText = `// controllers/movieController.js
+const asyncHandler = require('../utils/asyncHandler');
+let movies = [
+  { id:1, title:'Inception', director:'Nolan', year:2010, rating:4.8, genre:'Sci-Fi' },
+  { id:2, title:'Dark Knight', director:'Nolan', year:2008, rating:4.9, genre:'Action' }
+];
+
+// 1. getAllMovies with query filters
+const getAllMovies = asyncHandler(async (req, res) => {
+  let { genre, minRating } = req.query;
+  let filtered = [...movies];
+  if(genre) filtered = filtered.filter(m => m.genre.toLowerCase() === genre.toLowerCase());
+  if(minRating) filtered = filtered.filter(m => m.rating >= parseFloat(minRating));
+  res.json({ success: true, count: filtered.length, data: filtered });
+});
+
+// 2. getMoviesByDirector
+const getMoviesByDirector = asyncHandler(async (req, res) => {
+  const directorName = req.params.directorName;
+  const result = movies.filter(m => m.director.toLowerCase() === directorName.toLowerCase());
+  res.json({ success: true, data: result });
+});
+
+// 3. createMovie with validation
+const createMovie = asyncHandler(async (req, res) => {
+  const { title, director, year, rating, genre } = req.body;
+  if(!title || !director) return res.status(400).json({ success: false, message: 'Title and director required' });
+  if(rating && (rating < 1 || rating > 5)) return res.status(400).json({ success: false, message: 'Rating must be 1-5' });
+  const newMovie = { id: movies.length+1, title, director, year, rating, genre };
+  movies.push(newMovie);
+  res.status(201).json({ success: true, data: newMovie });
+});
+
+// 4. updateMovie, deleteMovie (similar pattern)
+module.exports = { getAllMovies, getMoviesByDirector, createMovie };`;
+</script>
+</body>
+</html>

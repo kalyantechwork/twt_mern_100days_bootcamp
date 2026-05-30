@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 40: React Performance Basics | Memo, useCallback, useMemo + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .perf-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .render-counter {
+      background: #334155;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      display: inline-block;
+      margin-top: 12px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 40 · React Performance Basics (Memo, useCallback, useMemo) — Show Results</div>
+  </div>
+
+  <h1>⚡ React Performance Basics<br><span style="font-size:1rem;">React.memo · useCallback · useMemo · Avoid Unnecessary Re-renders — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: Why Performance Matters -->
+  <div class="section-title">1️⃣ Why Performance Matters in React</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>React re-renders components when state or props change. Unnecessary re-renders can slow down your app, especially with large component trees, expensive calculations, or frequent updates. Performance optimization helps your app feel fast and responsive.</p>
+    <p><strong>Where it's used:</strong> Large lists, complex dashboards, real-time data apps, e-commerce sites, and any component that does expensive calculations.</p>
+  </div>
+  <div class="diagram">
+    State Change → Component Re-renders → Child Components Re-render → (Potentially hundreds of components)
+  </div>
+
+  <!-- Section 2: React.memo Demo -->
+  <div class="section-title">2️⃣ React.memo — Prevent Child Re-renders</div>
+  <div class="topic-explanation">
+    <h4>📌 What is React.memo?</h4>
+    <p><strong>React.memo</strong> is a higher-order component that memoizes a component — it only re-renders when its props actually change. Without memo, child components re-render every time the parent re-renders, even if their props are identical.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      import { memo } from 'react';<br>
+      const MemoizedChild = memo(function Child({ data }) {<br>
+        return &lt;div&gt;{data}&lt;/div&gt;;<br>
+      });
+    </div>
+    <button class="btn-show" data-target="memoResult">🧠 Show React.memo Demo</button>
+    <div id="memoResult" class="result-area">
+      <div class="perf-card">
+        <strong>🧠 React.memo Simulation</strong>
+        <div style="margin: 16px 0;">
+          <p>Parent state: <strong id="parentState">0</strong></p>
+          <button class="demo-btn" id="updateParent">🔄 Update Parent (re-renders parent)</button>
+          <button class="demo-btn" id="updateChildProp">📦 Update Child Prop</button>
+          <div id="childRenderMemo" class="render-counter">Child renders: 0 (only when prop changes)</div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ React.memo prevents unnecessary child re-renders<br>
+        ✅ Child only re-renders when its props actually change<br>
+        💡 Great for expensive components or components that re-render frequently
+      </div>
+      <script>
+        let parentMemoCount = 0;
+        let childMemoProp = "Initial";
+        let childMemoRenders = 0;
+        const parentStateSpan = document.getElementById("parentState");
+        const childRenderSpan = document.getElementById("childRenderMemo");
+        function updateMemoUI() {
+          parentStateSpan.textContent = parentMemoCount;
+          childRenderSpan.innerHTML = `Child renders: ${childMemoRenders} (only when prop changes)`;
+        }
+        document.getElementById("updateParent")?.addEventListener("click", () => {
+          parentMemoCount++;
+          updateMemoUI();
+        });
+        document.getElementById("updateChildProp")?.addEventListener("click", () => {
+          childMemoProp = childMemoProp === "Initial" ? "Updated" : "Initial";
+          childMemoRenders++;
+          updateMemoUI();
+        });
+        updateMemoUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: useCallback Demo -->
+  <div class="section-title">3️⃣ useCallback — Memoize Functions</div>
+  <div class="topic-explanation">
+    <h4>📌 What is useCallback?</h4>
+    <p><strong>useCallback</strong> returns a memoized version of a function that only changes if dependencies change. Without useCallback, functions are re-created on every render, causing memoized child components to re-render unnecessarily.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useCallback } from 'react';<br>
+      const memoizedCallback = useCallback(() => {<br>
+        doSomething(a, b);<br>
+      }, [a, b]); // Only re-creates when a or b change
+    </div>
+    <button class="btn-show" data-target="callbackResult">📦 Show useCallback Demo</button>
+    <div id="callbackResult" class="result-area">
+      <div class="perf-card">
+        <strong>📦 useCallback Simulation</strong>
+        <div style="margin: 16px 0;">
+          <p>Count: <strong id="callbackCount">0</strong></p>
+          <button class="demo-btn" id="incCallbackCount">➕ Increment (re-creates function)</button>
+          <button class="demo-btn" id="callFunctionBtn">📞 Call Memoized Function</button>
+          <div id="callbackLog" class="render-counter">Function re-creations: 0</div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ useCallback memoizes functions — same reference across renders<br>
+        ✅ Prevents child components from re-rendering unnecessarily<br>
+        💡 Always use when passing functions to memoized child components!
+      </div>
+      <script>
+        let callbackCount = 0;
+        let functionCreations = 0;
+        let memoizedFunction;
+        const callbackDisplay = document.getElementById("callbackCount");
+        const callbackLogSpan = document.getElementById("callbackLog");
+        function updateCallbackUI() {
+          callbackDisplay.textContent = callbackCount;
+          callbackLogSpan.innerHTML = `Function re-creations: ${functionCreations} (would be 1 with useCallback)`;
+        }
+        function createNewFunction() {
+          functionCreations++;
+          return () => { alert(`Function called! Count is ${callbackCount}`); };
+        }
+        document.getElementById("incCallbackCount")?.addEventListener("click", () => {
+          callbackCount++;
+          memoizedFunction = createNewFunction();
+          updateCallbackUI();
+        });
+        document.getElementById("callFunctionBtn")?.addEventListener("click", () => {
+          if(memoizedFunction) memoizedFunction();
+          else alert("Click increment first to create function");
+        });
+        memoizedFunction = createNewFunction();
+        updateCallbackUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: useMemo Demo -->
+  <div class="section-title">4️⃣ useMemo — Memoize Expensive Calculations</div>
+  <div class="topic-explanation">
+    <h4>📌 What is useMemo?</h4>
+    <p><strong>useMemo</strong> memoizes the result of an expensive calculation, only recomputing when dependencies change. Without useMemo, expensive calculations run on EVERY render, slowing down your app.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useMemo } from 'react';<br>
+      const expensiveResult = useMemo(() => {<br>
+        return expensiveCalculation(data);<br>
+      }, [data]); // Only recomputes when data changes
+    </div>
+    <button class="btn-show" data-target="memoValueResult">🧮 Show useMemo Demo</button>
+    <div id="memoValueResult" class="result-area">
+      <div class="perf-card">
+        <strong>🧮 useMemo Simulation (Expensive Calculation)</strong>
+        <div style="margin: 16px 0;">
+          <p>Number: <strong id="memoNumber">0</strong></p>
+          <button class="demo-btn" id="incNumberBtn">➕ Increment Number</button>
+          <button class="demo-btn" id="forceCalcBtn">⚡ Force Recalculate</button>
+          <div id="memoResultDisplay" style="margin-top: 12px;">Result: 0</div>
+          <div id="calcCountDisplay" class="render-counter">Calculations: 0 (with useMemo, only when number changes)</div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ useMemo caches calculation results<br>
+        ✅ Only recalculates when dependencies change<br>
+        💡 Perfect for: filtering large arrays, sorting, complex math, data transformations
+      </div>
+      <script>
+        let memoNumber = 0;
+        let calcCount = 0;
+        let cachedResult = 0;
+        const numberSpan = document.getElementById("memoNumber");
+        const resultSpan = document.getElementById("memoResultDisplay");
+        const calcSpan = document.getElementById("calcCountDisplay");
+        function expensiveDouble() {
+          calcCount++;
+          return memoNumber * 2;
+        }
+        function updateMemoValueUI() {
+          numberSpan.textContent = memoNumber;
+          resultSpan.innerHTML = `Result: ${cachedResult}`;
+          calcSpan.innerHTML = `Calculations: ${calcCount} (with useMemo, only when number changes)`;
+        }
+        document.getElementById("incNumberBtn")?.addEventListener("click", () => {
+          memoNumber++;
+          cachedResult = expensiveDouble(); // Would only recalc if number changed in useMemo
+          updateMemoValueUI();
+        });
+        document.getElementById("forceCalcBtn")?.addEventListener("click", () => {
+          cachedResult = expensiveDouble();
+          updateMemoValueUI();
+        });
+        cachedResult = expensiveDouble();
+        updateMemoValueUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: When to Use Each -->
+  <div class="section-title">5️⃣ When to Use What — Cheat Sheet</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Tool</th><th>Purpose</th><th>When to Use</th></tr></thead>
+      <tbody>
+        <tr><td>React.memo</span></td>看作是Prevent child re-renders</span></td>看作是Child component receives same props frequently</span></td>
+        <tr><td>useCallback</span></td><td>Memoize functions</span></td>看作是Passing functions to memoized children</span></td>
+        <tr><td>useMemo</span></td>看作是Memoize computed values</span></td>看作是Expensive calculations (sorting, filtering large arrays)</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 6: Performance Anti-Patterns -->
+  <div class="section-title">6️⃣ Performance Anti-Patterns (What NOT to Do)</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="antipatternsResult">⚠️ Show Anti-Patterns</button>
+    <div id="antipatternsResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Memoizing EVERY component — adds memory overhead, only memoize expensive components</li>
+        <li>❌ Using useCallback/useMemo for simple values (over-optimization hurts readability)</li>
+        <li>❌ Creating new objects/arrays in props without memoization → breaks React.memo</li>
+        <li>❌ Not using keys in lists (causes full re-renders of all items)</li>
+        <li>❌ Optimizing before measuring — always profile first with React DevTools!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 7: React DevTools Profiler -->
+  <div class="section-title">7️⃣ React DevTools Profiler — Find Performance Issues</div>
+  <div class="highlight-box">
+    🔧 <strong>How to profile:</strong><br>
+    1. Install React DevTools browser extension<br>
+    2. Open DevTools → Components → Profiler tab<br>
+    3. Click "Start profiling" → Interact with app → "Stop profiling"<br>
+    4. Analyze which components re-rendered unnecessarily → Optimize those first!
+  </div>
+
+  <!-- Section 8: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Product List</strong> with 1000+ items and search filter — use useMemo to optimize filtering<br>
+    2. Create a <strong>Button component</strong> wrapped in React.memo — pass onClick with useCallback to prevent re-renders<br>
+    3. Create an <strong>Expensive Chart component</strong> — only re-render when data actually changes<br>
+    4. Use React DevTools Profiler to verify fewer re-renders
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common Performance Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesPerfResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesPerfResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using index as key in dynamic lists → re-renders wrong items or loses state. Use unique IDs!</li>
+        <li>❌ Creating functions inside render that get passed to children → breaks React.memo</li>
+        <li>❌ Creating new objects/arrays in props: <span class="inline-code">value={{ name: "test" }}</span> → new object every render</li>
+        <li>❌ Not using <span class="inline-code">React.memo</span> for expensive components that re-render often</li>
+        <li>❌ Optimizing prematurely — always measure first, then optimize!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 10: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is React.memo?</h3><p>Higher-order component that memoizes a component — only re-renders when props actually change.</p></div>
+    <div class="card"><h3>❓ When to use useCallback?</h3><p>When passing functions to memoized child components to prevent unnecessary re-renders.</p></div>
+    <div class="card"><h3>❓ useMemo vs useCallback?</h3><p>useMemo memoizes values/results, useCallback memoizes functions themselves.</p></div>
+    <div class="card"><h3>❓ When NOT to optimize?</h3><p>Don't optimize prematurely — only when you see actual performance issues via profiling.</p></div>
+  </div>
+
+  <!-- Section 11: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔍 Task 1</h3><p>Build a <strong>Search Filter</strong> with 1000 items — use useMemo to optimize filtering performance.</p></div>
+    <div class="card"><h3>👪 Task 2</h3><p>Create a <strong>Parent-Child</strong> demo showing unnecessary re-renders, then fix with React.memo and useCallback.</p></div>
+    <div class="card"><h3>📊 Task 3</h3><p>Profile an existing app with React DevTools Profiler and identify optimization opportunities.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 40 - React Performance)</div>
+  <div class="card-grid">
+    <div class="card">✔️ React.memo — memoize entire components, prevent unnecessary child re-renders</div>
+    <div class="card">✔️ useCallback — memoize functions, keep stable references across renders</div>
+    <div class="card">✔️ useMemo — memoize expensive calculation results, recompute only when needed</div>
+    <div class="card">✔️ React DevTools Profiler — measure performance, find bottlenecks</div>
+    <div class="card">✔️ Optimize only when necessary — measure first, then optimize!</div>
+  </div>
+
+  <!-- Day 40 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 40 Ending Message</strong><br>
+    "Performance optimization makes good React apps great. Now you know when and how to use memo, useCallback, and useMemo — your apps will be faster, smoother, and more professional. Remember: measure first, optimize second!"
+  </div>
+
+  <!-- Next: Day 41 -->
+  <div class="section-title">🔜 Next — Day 41 : React Project Structure & Best Practices</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📁 Folder Structure</span>
+    <span class="badge">🧹 Code Organization</span>
+    <span class="badge">🎨 Styling Approaches</span>
+    <span class="badge">📦 Component Patterns</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 40 Completed ✅<br>
+    Click "Show Result" on each example to see performance optimizations in action. Practice building fast, efficient React apps!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

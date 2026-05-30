@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 93: Payment Gateway Integration | Stripe & Razorpay</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .payment-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .product-item {
+      background: #334155;
+      margin: 8px 0;
+      padding: 12px 16px;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .checkout-summary {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">💳</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 93 · Payment Gateway Integration (Stripe/Razorpay)</div>
+  </div>
+
+  <h1>💳 Payment Gateway Integration<br><span style="font-size:1rem;">Stripe · Razorpay · Checkout Flow · Payment Intents · Webhooks</span></h1>
+
+  <!-- Section 1: Why Payment Gateway -->
+  <div class="section-title">1️⃣ Why Payment Gateway? (E-commerce Essential)</div>
+  <p>A <strong>payment gateway</strong> securely processes online payments. Stripe and Razorpay are the most popular choices for MERN applications.</p>
+  <div class="diagram">
+    Customer → Frontend (Checkout) → Backend (Create Payment Intent) → Payment Gateway → Success/Failure → Update Order
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Popular Options:</strong> Stripe (global, excellent docs), Razorpay (India-focused, UPI support), PayPal (widely recognized).
+  </div>
+
+  <!-- Section 2: Stripe vs Razorpay -->
+  <div class="card-grid">
+    <div class="card"><h3>🌍 Stripe</h3><p>✓ Global support (USD, EUR, etc)<br>✓ Excellent developer experience<br>✓ Webhooks, subscriptions<br>✓ PCI compliant</p></div>
+    <div class="card"><h3>🇮🇳 Razorpay</h3><p>✓ Best for India (INR)<br>✓ UPI, NetBanking, Cards<br>✓ Easy integration<br>✓ Indian business support</p></div>
+  </div>
+
+  <!-- Section 3: Stripe Setup -->
+  <div class="section-title">3️⃣ Stripe Setup — Installation & Keys</div>
+  <div class="code-block">
+    # Backend installation<br>
+    npm install stripe<br><br>
+    # Frontend installation<br>
+    npm install @stripe/stripe-js @stripe/react-stripe-js
+  </div>
+  <div class="highlight-box">
+    🔑 <strong>Get Keys:</strong> Sign up at stripe.com → Dashboard → Developers → API Keys<br>
+    Publishable Key (frontend) + Secret Key (backend) — never expose secret key!
+  </div>
+
+  <!-- Section 4: Stripe Backend (Create Payment Intent) -->
+  <div class="section-title">4️⃣ Stripe Backend — Create Payment Intent</div>
+  <div class="code-block">
+    // backend/routes/payment.js<br>
+    const express = require('express');<br>
+    const Stripe = require('stripe');<br>
+    const router = express.Router();<br>
+    const stripe = Stripe(process.env.STRIPE_SECRET_KEY);<br><br>
+    router.post('/create-payment-intent', async (req, res) => {<br>
+      try {<br>
+        const { amount, currency = 'usd' } = req.body;<br>
+        const paymentIntent = await stripe.paymentIntents.create({<br>
+          amount: Math.round(amount * 100), // Convert to cents<br>
+          currency,<br>
+          metadata: { orderId: req.body.orderId }<br>
+        });<br>
+        res.json({ clientSecret: paymentIntent.client_secret });<br>
+      } catch (error) {<br>
+        res.status(500).json({ error: error.message });<br>
+      }<br>
+    });<br><br>
+    module.exports = router;
+  </div>
+
+  <!-- Section 5: Stripe Frontend (React) -->
+  <div class="section-title">5️⃣ Stripe Frontend — Checkout Form</div>
+  <div class="code-block">
+    // frontend/src/components/CheckoutForm.jsx<br>
+    import { useState } from 'react';<br>
+    import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';<br><br>
+    function CheckoutForm({ amount }) {<br>
+      const stripe = useStripe();<br>
+      const elements = useElements();<br>
+      const [loading, setLoading] = useState(false);<br>
+      const [error, setError] = useState(null);<br>
+      <br>
+      const handleSubmit = async (e) => {<br>
+        e.preventDefault();<br>
+        if (!stripe || !elements) return;<br>
+        setLoading(true);<br>
+        const { error: submitError } = await stripe.confirmPayment({<br>
+          elements,<br>
+          confirmParams: { return_url: `${window.location.origin}/payment-success` },<br>
+        });<br>
+        if (submitError) setError(submitError.message);<br>
+        setLoading(false);<br>
+      };<br>
+      <br>
+      return (<br>
+        &lt;form onSubmit={handleSubmit}&gt;<br>
+          &lt;PaymentElement /&gt;<br>
+          &lt;button type="submit" disabled={!stripe || loading}&gt;<br>
+            {loading ? 'Processing...' : `Pay $${amount}`}<br>
+          &lt;/button&gt;<br>
+          {error && &lt;p style={{color: 'red'}}&gt;{error}&lt;/p&gt;}<br>
+        &lt;/form&gt;<br>
+      );<br>
+    }
+  </div>
+
+  <!-- Section 6: Razorpay Setup -->
+  <div class="section-title">6️⃣ Razorpay Setup (India)</div>
+  <div class="code-block">
+    # Backend installation<br>
+    npm install razorpay<br><br>
+    # Frontend — include Razorpay script<br>
+    &lt;script src="https://checkout.razorpay.com/v1/checkout.js"&gt;&lt;/script&gt;
+  </div>
+
+  <!-- Section 7: Razorpay Backend -->
+  <div class="section-title">7️⃣ Razorpay Backend — Create Order</div>
+  <div class="code-block">
+    // backend/routes/razorpay.js<br>
+    const Razorpay = require('razorpay');<br>
+    const crypto = require('crypto');<br><br>
+    const razorpay = new Razorpay({<br>
+      key_id: process.env.RAZORPAY_KEY_ID,<br>
+      key_secret: process.env.RAZORPAY_KEY_SECRET<br>
+    });<br><br>
+    router.post('/create-order', async (req, res) => {<br>
+      const options = {<br>
+        amount: req.body.amount * 100, // Amount in paise<br>
+        currency: 'INR',<br>
+        receipt: `receipt_${Date.now()}`<br>
+      };<br>
+      const order = await razorpay.orders.create(options);<br>
+      res.json(order);<br>
+    });<br><br>
+    router.post('/verify-payment', (req, res) => {<br>
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;<br>
+      const body = razorpay_order_id + '|' + razorpay_payment_id;<br>
+      const expectedSignature = crypto<br>
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)<br>
+        .update(body.toString())<br>
+        .digest('hex');<br>
+      if (expectedSignature === razorpay_signature) {<br>
+        res.json({ success: true });<br>
+      } else {<br>
+        res.status(400).json({ success: false });<br>
+      }<br>
+    });
+  </div>
+
+  <!-- Section 8: Razorpay Frontend -->
+  <div class="section-title">8️⃣ Razorpay Frontend — Checkout</div>
+  <div class="code-block">
+    // frontend/src/components/RazorpayCheckout.jsx<br>
+    const loadRazorpayScript = () => {<br>
+      return new Promise((resolve) => {<br>
+        const script = document.createElement('script');<br>
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';<br>
+        script.onload = () => resolve(true);<br>
+        script.onerror = () => resolve(false);<br>
+        document.body.appendChild(script);<br>
+      });<br>
+    };<br><br>
+    const handlePayment = async () => {<br>
+      const res = await loadRazorpayScript();<br>
+      if (!res) { alert('Razorpay SDK failed to load'); return; }<br>
+      const order = await axios.post('/api/razorpay/create-order', { amount: 500 });<br>
+      const options = {<br>
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,<br>
+        amount: order.data.amount,<br>
+        currency: order.data.currency,<br>
+        name: 'My Store',<br>
+        order_id: order.data.id,<br>
+        handler: async (response) => {<br>
+          const verifyRes = await axios.post('/api/razorpay/verify-payment', response);<br>
+          if (verifyRes.data.success) alert('Payment Successful!');<br>
+        }<br>
+      };<br>
+      const rzp = new window.Razorpay(options);<br>
+      rzp.open();<br>
+    };
+  </div>
+
+  <!-- Section 9: Live Demo — Payment Simulation -->
+  <div class="section-title">9️⃣ Live Demo — Shopping Cart Checkout</div>
+  <div class="live-demo">
+    <div class="payment-preview">
+      <strong>🛒 Demo Shopping Cart:</strong>
+      <div class="product-item">
+        <span>🎧 Wireless Headphones</span>
+        <span>$79.99</span>
+      </div>
+      <div class="product-item">
+        <span>⌚ Smart Watch</span>
+        <span>$199.99</span>
+      </div>
+      <div class="checkout-summary">
+        <strong>Total: $279.98</strong>
+        <button class="demo-btn" id="demoCheckoutBtn" style="width: 100%; margin-top: 12px;">💳 Proceed to Checkout (Simulated)</button>
+      </div>
+      <div id="demoPaymentStatus" style="margin-top: 12px;"></div>
+    </div>
+    <script>
+      document.getElementById("demoCheckoutBtn")?.addEventListener("click", () => {
+        const statusDiv = document.getElementById("demoPaymentStatus");
+        statusDiv.innerHTML = '<span class="inline-code">⏳ Processing payment simulation...</span>';
+        setTimeout(() => {
+          statusDiv.innerHTML = '<span class="inline-code" style="color:#22c55e;">✅ Payment Successful! (Demo Mode) — In production, this would process real payment via Stripe/Razorpay.</span>';
+        }, 2000);
+      });
+    </script>
+  </div>
+
+  <!-- Section 10: Webhooks (Important for Production) -->
+  <div class="section-title">🔟 Webhooks — Payment Confirmation (Backend)</div>
+  <div class="code-block">
+    // backend/webhooks/stripe-webhook.js<br>
+    router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {<br>
+      const sig = req.headers['stripe-signature'];<br>
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;<br>
+      let event;<br>
+      try {<br>
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);<br>
+      } catch (err) { return res.status(400).send(`Webhook Error: ${err.message}`); }<br>
+      if (event.type === 'payment_intent.succeeded') {<br>
+        const paymentIntent = event.data.object;<br>
+        // Update order status in database<br>
+        await Order.findByIdAndUpdate(paymentIntent.metadata.orderId, { status: 'paid' });<br>
+      }<br>
+      res.json({ received: true });<br>
+    });
+  </div>
+
+  <!-- Section 11: Environment Variables -->
+  <div class="section-title">🔐 Environment Variables (Never Commit!)</div>
+  <div class="code-block">
+    # backend/.env<br>
+    STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxx<br>
+    STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx<br>
+    RAZORPAY_KEY_ID=rzp_live_xxxxxxxx<br>
+    RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxx<br><br>
+    # frontend/.env<br>
+    VITE_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxxxxxxx<br>
+    VITE_RAZORPAY_KEY_ID=rzp_live_xxxxxxxx
+  </div>
+
+  <!-- Section 12: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Set up a Stripe account and get API keys (test mode)<br>
+    2. Create a backend endpoint to create Payment Intents<br>
+    3. Build a React checkout form using Stripe Elements<br>
+    4. Implement a success page that shows order confirmation<br>
+    5. (Bonus) Add webhook to update order status when payment succeeds
+  </div>
+
+  <!-- Section 13: Common Mistakes -->
+  <div class="section-title">⚠️ Common Payment Integration Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Exposing secret keys in frontend code → never commit .env files</li>
+    <li>❌ Not verifying webhook signatures → security risk</li>
+    <li>❌ Using production keys in development → test mode first</li>
+    <li>❌ Not handling currency conversion (cents/paise)</li>
+  </ul>
+
+  <!-- Section 14: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is a Payment Intent?</h3><p>Stripe object that tracks payment status from creation to confirmation.</p></div>
+    <div class="card"><h3>❓ Why use webhooks?</h3><p>To get async confirmation of payment success and update order status.</p></div>
+    <div class="card"><h3>❓ Difference between Stripe and Razorpay?</h3><p>Stripe for global, Razorpay best for Indian market (UPI, local methods).</p></div>
+  </div>
+
+  <!-- Section 15: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Integrate Stripe Checkout (redirect method) for a one-time payment.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Implement subscription payments with Stripe.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Add refund functionality from admin panel.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 93)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why payment gateways are essential</div>
+    <div class="card">✔️ Stripe vs Razorpay comparison</div>
+    <div class="card">✔️ Stripe: Payment Intents + Elements</div>
+    <div class="card">✔️ Razorpay: Orders + Checkout script</div>
+    <div class="card">✔️ Webhooks for payment confirmation</div>
+    <div class="card">✔️ Environment variables for security</div>
+  </div>
+
+  <!-- Day 93 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 93 Ending Message</strong><br>
+    "Payment integration turns your app into a real business! With Stripe or Razorpay, you can accept payments securely. Start with test mode, then go live — your e-commerce app is now complete!"
+  </div>
+
+  <!-- Next: Day 94 -->
+  <div class="section-title">🔜 Next — Day 94 : Email Sending (Nodemailer) & OTP Authentication</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📧 Nodemailer</span>
+    <span class="badge">🔢 OTP Generation</span>
+    <span class="badge">✅ Email Verification</span>
+    <span class="badge">🔐 Password Reset Email</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 93 Completed ✅<br>
+    Payment integration is a highly valued skill — add it to your portfolio!
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 61: Introduction to Express.js | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .comparison-table {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .comparison-card {
+      flex: 1;
+      min-width: 250px;
+      background: #f1f5f9;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 61 · Phase 7 Starts!</div>
+    <h1>
+      <i class="fab fa-express"></i> 
+      Introduction to Express.js – Backend Framework
+    </h1>
+    <p>Welcome to Express.js! The most popular Node.js framework that makes backend development super easy. Say goodbye to complex HTTP module code!</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master Express.js for MERN Stack
+    </div>
+  </div>
+
+  <!-- 1. What is Express.js? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is Express.js?</span>
+    </div>
+    <p><strong>Express.js</strong> is a fast, unopinionated, and minimalist web framework for Node.js. It provides powerful features to build web applications and REST APIs with less code.</p>
+    <div class="diagram">
+      <i class="fab fa-node-js"></i> + <i class="fab fa-express"></i> = <i class="fas fa-rocket"></i> <strong>Powerful Backend in Minutes!</strong><br>
+      Express sits on top of Node.js and simplifies everything!
+    </div>
+    <div class="comparison-table">
+      <div class="comparison-card">
+        <i class="fas fa-code" style="font-size: 2rem; color: #dc2626;"></i>
+        <h3>❌ Without Express (Raw Node.js)</h3>
+        <p>Manual routing, manual body parsing, complex request handling</p>
+        <div class="code-block" style="font-size:0.7rem; margin-top:8px;">
+const http = require('http');
+const server = http.createServer((req,res)=>{
+  if(req.url === '/'){...}
+  else if(req.url === '/users'){...}
+});
+        </div>
+      </div>
+      <div class="comparison-card">
+        <i class="fab fa-express" style="font-size: 2rem; color: #22c55e;"></i>
+        <h3>✅ With Express.js</h3>
+        <p>Clean routes, automatic body parsing, middleware support</p>
+        <div class="code-block" style="font-size:0.7rem; margin-top:8px;">
+const express = require('express');
+const app = express();
+app.get('/', (req,res)=>{...});
+app.get('/users', (req,res)=>{...});
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Why Express.js? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-star"></i>
+      <span>2. Why Express.js? (Key Features)</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-road"></i>
+        <strong>Simple Routing</strong>
+        <p>Define routes for different HTTP methods and URLs with clean syntax</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-layer-group"></i>
+        <strong>Middleware Support</strong>
+        <p>Add functionality like logging, authentication, body parsing easily</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-database"></i>
+        <strong>Integration with Databases</strong>
+        <p>Works perfectly with MongoDB, MySQL, PostgreSQL</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Security Features</strong>
+        <p>Helps protect against common web vulnerabilities</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-tachometer-alt"></i>
+        <strong>High Performance</strong>
+        <p>Very fast and built on Node.js async nature</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-users"></i>
+        <strong>Huge Community</strong>
+        <p>Most popular Node.js framework - millions of developers</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Installing Express -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-download"></i>
+      <span>3. Installing Express.js</span>
+    </div>
+    <div class="code-block" id="install">
+# Create a new project
+mkdir express-intro
+cd express-intro
+npm init -y
+
+# Install Express.js
+npm install express
+
+# Install nodemon for development (optional but recommended)
+npm install --save-dev nodemon
+    </div>
+    <button class="copy-btn" onclick="copyCode('install')"><i class="far fa-copy"></i> Copy Installation Commands</button>
+    <div class="success-note">
+      <i class="fas fa-check-circle"></i> <strong>That's it!</strong> Express is now installed. No other dependencies needed!
+    </div>
+  </div>
+
+  <!-- 4. Your First Express Server -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-play-circle"></i>
+      <span>4. Your First Express Server (Hello World!)</span>
+    </div>
+    <div class="code-block" id="firstExpress">
+// server.js - Your first Express server
+const express = require('express');
+
+// Create an Express application
+const app = express();
+
+// Define a route for GET request to homepage
+app.get('/', (req, res) => {
+  res.send('Hello from Telugu WebTech Express Server! 🚀');
+});
+
+// Define a route for /about page
+app.get('/about', (req, res) => {
+  res.send('<h1>About Us</h1><p>Learning Express.js with Telugu WebTech</p>');
+});
+
+// Define a route for /api/users
+app.get('/api/users', (req, res) => {
+  res.json([
+    { id: 1, name: 'Ramesh' },
+    { id: 2, name: 'Priya' }
+  ]);
+});
+
+// Start the server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
+  console.log(`📝 Try these routes:`);
+  console.log(`   - http://localhost:${PORT}/`);
+  console.log(`   - http://localhost:${PORT}/about`);
+  console.log(`   - http://localhost:${PORT}/api/users`);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('firstExpress')"><i class="far fa-copy"></i> Copy First Express Server</button>
+    <div class="subheading">▶️ Run the server:</div>
+    <div class="code-block">
+node server.js
+# or with nodemon for auto-restart
+npx nodemon server.js
+    </div>
+    <div class="diagram">
+      <i class="fas fa-globe"></i> Open browser at <strong>http://localhost:3000</strong> → You'll see "Hello from Telugu WebTech Express Server! 🚀"
+    </div>
+  </div>
+
+  <!-- 5. Understanding Express Basics -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>5. Understanding Express Basics</span>
+    </div>
+    
+    <div class="subheading">📝 app.get(), app.post(), app.put(), app.delete()</div>
+    <div class="code-block" id="httpMethods">
+const express = require('express');
+const app = express();
+
+// GET - Read data
+app.get('/users', (req, res) => {
+  res.json({ message: 'Get all users' });
+});
+
+// POST - Create new data
+app.post('/users', (req, res) => {
+  res.json({ message: 'Create a new user' });
+});
+
+// PUT - Update entire data
+app.put('/users/:id', (req, res) => {
+  res.json({ message: `Update user ${req.params.id}` });
+});
+
+// DELETE - Remove data
+app.delete('/users/:id', (req, res) => {
+  res.json({ message: `Delete user ${req.params.id}` });
+});
+
+app.listen(3000);
+    </div>
+    <button class="copy-btn" onclick="copyCode('httpMethods')"><i class="far fa-copy"></i> Copy HTTP Methods</button>
+
+    <div class="subheading">📝 Route Parameters (Dynamic URLs)</div>
+    <div class="code-block" id="routeParams">
+// :id is a dynamic parameter
+app.get('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  res.send(`User ID: ${userId}`);
+});
+
+// Multiple parameters
+app.get('/products/:category/:productId', (req, res) => {
+  const { category, productId } = req.params;
+  res.send(`Category: ${category}, Product: ${productId}`);
+});
+
+// Example: /users/123 → Output: "User ID: 123"
+// Example: /products/electronics/456 → Output: "Category: electronics, Product: 456"
+    </div>
+    <button class="copy-btn" onclick="copyCode('routeParams')"><i class="far fa-copy"></i> Copy Route Params</button>
+
+    <div class="subheading">📝 Query Parameters (URL ?key=value)</div>
+    <div class="code-block" id="queryParams">
+// Query parameters: /search?q=express&page=2
+app.get('/search', (req, res) => {
+  const query = req.query.q;
+  const page = req.query.page || 1;
+  res.send(`Searching for "${query}" on page ${page}`);
+});
+
+// Example: /search?q=nodejs&page=3 
+// Output: "Searching for 'nodejs' on page 3"
+    </div>
+    <button class="copy-btn" onclick="copyCode('queryParams')"><i class="far fa-copy"></i> Copy Query Params</button>
+  </div>
+
+  <!-- 6. Request and Response Objects -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exchange-alt"></i>
+      <span>6. Request (req) and Response (res) Objects</span>
+    </div>
+    <div class="code-block" id="reqRes">
+app.get('/demo', (req, res) => {
+  // REQUEST object (what browser sends)
+  console.log('URL:', req.url);
+  console.log('Method:', req.method);
+  console.log('Headers:', req.headers);
+  console.log('Params:', req.params);
+  console.log('Query:', req.query);
+  console.log('IP:', req.ip);
+  
+  // RESPONSE object (what we send back)
+  // Send HTML
+  res.send('<h1>Hello</h1>');
+  
+  // Send JSON
+  // res.json({ name: 'Express' });
+  
+  // Send status code
+  // res.status(201).send('Created');
+  
+  // Redirect
+  // res.redirect('/new-page');
+  
+  // Send file
+  // res.sendFile('index.html');
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('reqRes')"><i class="far fa-copy"></i> Copy req/res Examples</button>
+  </div>
+
+  <!-- 7. Serving Static Files -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-file-alt"></i>
+      <span>7. Serving Static Files (HTML, CSS, Images)</span>
+    </div>
+    <p>Express makes it super easy to serve static files like HTML, CSS, and images:</p>
+    <div class="code-block" id="staticFiles">
+// Create a 'public' folder with your static files
+// public/index.html, public/style.css, public/logo.png
+
+const express = require('express');
+const app = express();
+
+// Serve all files from 'public' folder
+app.use(express.static('public'));
+
+// Now any file in public folder is accessible:
+// http://localhost:3000/index.html
+// http://localhost:3000/style.css
+// http://localhost:3000/logo.png
+
+app.listen(3000);
+    </div>
+    <button class="copy-btn" onclick="copyCode('staticFiles')"><i class="far fa-copy"></i> Copy Static Files Setup</button>
+    <div class="success-note">
+      <i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> <span class="inline-code">express.static()</span> is a <strong>middleware</strong> – functions that run between request and response. We'll learn more about middleware tomorrow!
+    </div>
+  </div>
+
+  <!-- 8. Parsing Request Body (JSON & Form Data) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-inbox"></i>
+      <span>8. Parsing Request Body (Getting Data from POST)</span>
+    </div>
+    <p>To read data sent in POST requests (JSON or form data), Express provides built-in middleware:</p>
+    <div class="code-block" id="bodyParser">
+const express = require('express');
+const app = express();
+
+// Built-in middleware to parse JSON data
+app.use(express.json());
+
+// Built-in middleware to parse form data (URL-encoded)
+app.use(express.urlencoded({ extended: true }));
+
+// POST endpoint to receive JSON
+app.post('/api/users', (req, res) => {
+  const { name, email } = req.body; // Access parsed data
+  console.log('Received:', name, email);
+  res.json({ message: `User ${name} created!` });
+});
+
+// Test with curl:
+// curl -X POST http://localhost:3000/api/users \
+//   -H "Content-Type: application/json" \
+//   -d '{"name":"Ramesh","email":"ramesh@example.com"}'
+
+app.listen(3000);
+    </div>
+    <button class="copy-btn" onclick="copyCode('bodyParser')"><i class="far fa-copy"></i> Copy Body Parser Setup</button>
+  </div>
+
+  <!-- 9. Express vs Raw Node.js Comparison -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-simple"></i>
+      <span>9. Express vs Raw Node.js – Why Express Wins</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-times-circle" style="color:#dc2626;"></i>
+        <strong>Raw Node.js HTTP Module</strong>
+        <div class="code-block" style="font-size:0.7rem; margin-top:8px;">
+const http = require('http');
+const server = http.createServer((req,res)=>{
+  const url = req.url;
+  if(url === '/' && req.method === 'GET'){
+    res.writeHead(200);
+    res.end('Home');
+  }
+  else if(url === '/users' && req.method === 'GET'){
+    let body = '';
+    req.on('data', chunk => body+=chunk);
+    req.on('end',()=>{
+      const data = JSON.parse(body);
+      res.writeHead(200);
+      res.end(JSON.stringify(data));
+    });
+  }
+});
+        </div>
+        <p>❌ Manual routing<br>❌ Manual body parsing<br>❌ Complex code<br>❌ More bugs</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color:#22c55e;"></i>
+        <strong>Express.js</strong>
+        <div class="code-block" style="font-size:0.7rem; margin-top:8px;">
+const express = require('express');
+const app = express();
+app.use(express.json());
+app.get('/', (req,res)=>{
+  res.send('Home');
+});
+app.post('/users', (req,res)=>{
+  const data = req.body;
+  res.json(data);
+});
+app.listen(3000);
+        </div>
+        <p>✅ Clean routing<br>✅ Auto body parsing<br>✅ Less code<br>✅ More readable</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Day 61 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>10. 🚀 Daily Challenge – Build Your First Express API</span>
+    </div>
+    <p><strong>Task:</strong> Create an Express server with the following endpoints:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>GET <span class="inline-code">/</span> → Welcome message</li>
+      <li>GET <span class="inline-code">/greet/:name</span> → Returns "Hello, [name]!"</li>
+      <li>GET <span class="inline-code">/calculator/add?a=5&b=3</span> → Returns sum as JSON</li>
+      <li>POST <span class="inline-code">/api/messages</span> → Accepts JSON { "text": "Hello" } and returns { "received": "Hello" }</li>
+      <li>GET <span class="inline-code">/*</span> (any other route) → Returns 404 with custom message</li>
+    </ul>
+    <div class="code-block" id="challengeCode">
+// Day 61 Challenge Solution
+const express = require('express');
+const app = express();
+
+// Parse JSON bodies
+app.use(express.json());
+
+// 1. Home route
+app.get('/', (req, res) => {
+  res.send('🎉 Welcome to my first Express API!');
+});
+
+// 2. Dynamic greeting route
+app.get('/greet/:name', (req, res) => {
+  const name = req.params.name;
+  res.send(`Hello, ${name}! Welcome to Telugu WebTech Express course.`);
+});
+
+// 3. Calculator with query parameters
+app.get('/calculator/add', (req, res) => {
+  const a = parseFloat(req.query.a);
+  const b = parseFloat(req.query.b);
+  
+  if (isNaN(a) || isNaN(b)) {
+    return res.status(400).json({ error: 'Please provide valid numbers for a and b' });
+  }
+  
+  res.json({ 
+    operation: 'addition',
+    a: a, 
+    b: b, 
+    result: a + b 
+  });
+});
+
+// 4. POST endpoint for messages
+app.post('/api/messages', (req, res) => {
+  const { text } = req.body;
+  
+  if (!text) {
+    return res.status(400).json({ error: 'Text field is required' });
+  }
+  
+  res.json({ 
+    received: text,
+    length: text.length,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 5. 404 handler for any other route
+app.use('*', (req, res) => {
+  res.status(404).send(`
+    <h1>❌ 404 - Page Not Found</h1>
+    <p>The route ${req.originalUrl} does not exist on this server.</p>
+    <p>Try these routes: /, /greet/Ramesh, /calculator/add?a=5&b=3, POST /api/messages</p>
+  `);
+});
+
+// Start server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log('=' .repeat(50));
+  console.log('✅ Express Challenge Server Running!');
+  console.log('=' .repeat(50));
+  console.log(`📍 http://localhost:${PORT}`);
+  console.log('\n📝 Test these routes:');
+  console.log(`   GET  http://localhost:${PORT}/`);
+  console.log(`   GET  http://localhost:${PORT}/greet/Ramesh`);
+  console.log(`   GET  http://localhost:${PORT}/calculator/add?a=10&b=20`);
+  console.log(`   POST http://localhost:${PORT}/api/messages (with JSON body)`);
+  console.log('=' .repeat(50));
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('challengeCode')"><i class="far fa-copy"></i> Copy Challenge Solution</button>
+    <p class="icon-text"><i class="fab fa-youtube"></i> <strong>Telugu WebTech:</strong> Complete this challenge to master Express basics!</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 61 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>What is Express.js:</strong> A fast, minimalist web framework for Node.js<br>
+    ✅ <strong>Why Express:</strong> Simpler routing, middleware, body parsing, huge community<br>
+    ✅ <strong>Installation:</strong> npm install express<br>
+    ✅ <strong>First Server:</strong> Created a working Express server in minutes!<br>
+    ✅ <strong>HTTP Methods:</strong> GET, POST, PUT, DELETE<br>
+    ✅ <strong>Route Parameters:</strong> Dynamic URLs like /users/:id<br>
+    ✅ <strong>Query Parameters:</strong> /search?q=express<br>
+    ✅ <strong>Request & Response:</strong> req.params, req.query, req.body, res.send, res.json<br>
+    ✅ <strong>Static Files:</strong> Serving HTML/CSS with express.static()<br>
+    ✅ <strong>Body Parsing:</strong> express.json() and express.urlencoded()</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 62 – Express Server Setup (Project Structure & Best Practices)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – Express makes backend development fun! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-express"></i> Day 61 · Introduction to Express.js · <strong>Telugu WebTech</strong> — You've just learned the most popular Node.js framework!</p>
+    <p style="font-size: 0.85rem;">💡 Practice creating different routes today. Tomorrow we'll set up a proper project structure!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Run "npm install express" and then "node filename.js"');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

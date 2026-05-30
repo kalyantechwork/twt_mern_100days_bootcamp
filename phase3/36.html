@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 36: API Calls in React | Fetch Data from Backend + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .api-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .user-item {
+      background: #334155;
+      margin: 8px 0;
+      padding: 10px 16px;
+      border-radius: 40px;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #facc15;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 36 · API Calls in React (Show Results)</div>
+  </div>
+
+  <h1>🌐 API Calls in React<br><span style="font-size:1rem;">Fetch API · Axios · Loading & Error States · useEffect Integration — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What are API Calls -->
+  <div class="section-title">1️⃣ What are API Calls in React?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>API calls</strong> allow your React app to communicate with backend servers to fetch, create, update, or delete data. Real-world apps always use APIs to get data from databases, external services, or your own backend. Without APIs, React apps can only show static data.</p>
+    <p><strong>Where it's used:</strong> User profiles, product listings, weather apps, social media feeds, e-commerce carts, search results — every dynamic web app.</p>
+  </div>
+  <div class="diagram">
+    React Component → useEffect (on mount) → fetch/axios → API Server → Data → Update State → Re-render UI
+  </div>
+
+  <!-- Section 2: Fetch API with useEffect -->
+  <div class="section-title">2️⃣ Fetch API — Basic GET Request</div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        fetch('https://jsonplaceholder.typicode.com/users')<br>
+          .then(response => response.json())<br>
+          .then(data => setUsers(data))<br>
+          .catch(err => setError(err.message))<br>
+          .finally(() => setLoading(false));<br>
+      }, []);
+    </div>
+    <button class="btn-show" data-target="fetchGetResult">📡 Show Fetch GET Request</button>
+    <div id="fetchGetResult" class="result-area">
+      <div class="api-card">
+        <strong>📡 Fetch API GET Demo (JSONPlaceholder)</strong>
+        <button class="demo-btn" id="fetchGetBtn">🔍 Fetch Users</button>
+        <div id="fetchUsersResult" style="margin-top:16px;"></div>
+      </div>
+      <div class="console-output">
+        ✅ fetch() returns a Promise<br>
+        ✅ response.json() parses JSON from response<br>
+        ✅ useEffect with [] ensures API call happens once on mount<br>
+        💡 This is the standard pattern for data fetching in React!
+      </div>
+      <script>
+        const mockUsers = [
+          { id: 1, name: "Kalyan", email: "kalyan@example.com" },
+          { id: 2, name: "Priya", email: "priya@example.com" },
+          { id: 3, name: "Rahul", email: "rahul@example.com" }
+        ];
+        document.getElementById("fetchGetBtn")?.addEventListener("click", () => {
+          const container = document.getElementById("fetchUsersResult");
+          container.innerHTML = '<div><span class="loading-spinner"></span> Loading users...</div>';
+          setTimeout(() => {
+            container.innerHTML = `<ul style="list-style:none;">${mockUsers.map(u => `<li class="user-item">📌 ${u.name} — ${u.email}</li>`).join('')}</ul><p class="inline-code">✅ GET request successful! Data displayed.</p>`;
+          }, 800);
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Async/Await Syntax -->
+  <div class="section-title">3️⃣ Async/Await — Cleaner Syntax</div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        const fetchData = async () => {<br>
+          try {<br>
+            const response = await fetch('https://api.example.com/users');<br>
+            if (!response.ok) throw new Error('Network response was not ok');<br>
+            const data = await response.json();<br>
+            setUsers(data);<br>
+          } catch (err) {<br>
+            setError(err.message);<br>
+          } finally {<br>
+            setLoading(false);<br>
+          }<br>
+        };<br>
+        fetchData();<br>
+      }, []);
+    </div>
+    <button class="btn-show" data-target="asyncAwaitResult">⚡ Show Async/Await Pattern</button>
+    <div id="asyncAwaitResult" class="result-area">
+      <div class="console-output">
+        ✅ async/await makes async code look synchronous — easier to read!<br>
+        ✅ try/catch handles errors gracefully<br>
+        ✅ finally block runs regardless of success/failure — perfect for loading state<br>
+        💡 This is the recommended pattern for modern React apps
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Loading & Error States -->
+  <div class="section-title">4️⃣ Loading & Error States — Professional UX</div>
+  <div class="topic-explanation">
+    <h4>📌 Professional Data Fetching</h4>
+    <p>Always implement three states: <strong>loading</strong> (show spinner), <strong>error</strong> (show user-friendly message), and <strong>success</strong> (display data). This provides clear feedback to users during network requests.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      if (loading) return &lt;div&gt;⏳ Loading...&lt;/div&gt;;<br>
+      if (error) return &lt;div&gt;⚠️ {error}&lt;/div&gt;;<br>
+      return &lt;div&gt;{data.map(item => ...)}&lt;/div&gt;;
+    </div>
+    <button class="btn-show" data-target="statesResult">🎯 Show Loading & Error States</button>
+    <div id="statesResult" class="result-area">
+      <div class="api-card">
+        <strong>🎯 API States Demo (Loading → Success → Error)</strong>
+        <div id="statesDemoArea">
+          <button class="demo-btn" id="successStateBtn">✅ Simulate Success</button>
+          <button class="demo-btn" id="errorStateBtn" style="background:#ef4444;">❌ Simulate Error</button>
+          <div id="stateDisplay" style="margin-top: 12px;">Click a button to see state change</div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Loading state: shows spinner or "Loading..." message<br>
+        ✅ Error state: shows user-friendly error message<br>
+        ✅ Success state: displays fetched data<br>
+        💡 Users appreciate knowing what's happening during network requests!
+      </div>
+      <script>
+        const stateDisplay = document.getElementById("stateDisplay");
+        document.getElementById("successStateBtn")?.addEventListener("click", () => {
+          stateDisplay.innerHTML = '<span class="loading-spinner"></span> Loading...';
+          setTimeout(() => {
+            stateDisplay.innerHTML = '<div style="color: #4ade80;">✅ Data loaded successfully! 3 users found.</div><div class="user-item">📌 Kalyan — kalyan@example.com</div><div class="user-item">📌 Priya — priya@example.com</div>';
+          }, 1000);
+        });
+        document.getElementById("errorStateBtn")?.addEventListener("click", () => {
+          stateDisplay.innerHTML = '<span class="loading-spinner"></span> Loading...';
+          setTimeout(() => {
+            stateDisplay.innerHTML = '<div style="color: #f87171;">❌ Error: Network request failed. Please check your connection.</div>';
+          }, 1000);
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: POST Request -->
+  <div class="section-title">5️⃣ POST Request — Sending Data to API</div>
+  <div class="example-card">
+    <div class="code-block">
+      const addUser = async (newUser) => {<br>
+        const response = await fetch('https://api.example.com/users', {<br>
+          method: 'POST',<br>
+          headers: { 'Content-Type': 'application/json' },<br>
+          body: JSON.stringify(newUser)<br>
+        });<br>
+        const data = await response.json();<br>
+        setUsers(prev => [...prev, data]);<br>
+      };
+    </div>
+    <button class="btn-show" data-target="postResult">📤 Show POST Request Demo</button>
+    <div id="postResult" class="result-area">
+      <div class="api-card">
+        <strong>📤 POST Request Demo</strong>
+        <input type="text" id="postUserName" placeholder="Enter user name" style="width: 70%;">
+        <button class="demo-btn" id="sendPostBtn">➕ Add User (POST)</button>
+        <div id="postResponseMsg" style="margin-top: 12px;"></div>
+      </div>
+      <div class="console-output">
+        ✅ POST method sends data to create new resources<br>
+        ✅ Always set Content-Type: 'application/json' header<br>
+        ✅ body must be JSON stringified<br>
+        💡 After POST, update state to show new data without refetching
+      </div>
+      <script>
+        document.getElementById("sendPostBtn")?.addEventListener("click", () => {
+          const name = document.getElementById("postUserName").value;
+          const msgDiv = document.getElementById("postResponseMsg");
+          if(name.trim()) {
+            msgDiv.innerHTML = '<span class="loading-spinner"></span> Sending POST request...';
+            setTimeout(() => {
+              msgDiv.innerHTML = `✅ POST successful! User "${name}" added. (Simulated API response)`;
+              document.getElementById("postUserName").value = "";
+            }, 1000);
+          } else {
+            msgDiv.innerHTML = "⚠️ Please enter a user name";
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Axios Introduction -->
+  <div class="section-title">6️⃣ Axios — Popular Alternative to Fetch</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Install: npm install axios<br><br>
+      import axios from 'axios';<br><br>
+      useEffect(() => {<br>
+        axios.get('https://jsonplaceholder.typicode.com/users')<br>
+          .then(response => setUsers(response.data))<br>
+          .catch(error => setError(error.message));<br>
+      }, []);
+    </div>
+    <button class="btn-show" data-target="axiosResult">📦 Show Axios Example</button>
+    <div id="axiosResult" class="result-area">
+      <div class="console-output">
+        ✅ Axios automatically transforms JSON — no need for response.json()<br>
+        ✅ Better error handling (non-2xx status codes throw errors)<br>
+        ✅ Supports request/response interceptors<br>
+        ✅ Works in older browsers<br>
+        💡 Axios is used in many production React apps!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Common API Patterns Table -->
+  <div class="section-title">7️⃣ Common API Integration Patterns</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Pattern</th><th>Description</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Fetch on Mount</span></td><td>useEffect with []</span></td><td>Load initial data (users, products, posts)</span></td>
+        <tr><td>Fetch on Dependency</span></td><td>useEffect with [query]</span></td>看作是Search results, filters, pagination</span></td>
+        <tr><td>POST on Submit</span></td><td>Form handler with POST request</span></td><td>Add user, create post, submit form</span></td>
+        <tr><td>PUT/PATCH Update</span></td><td>Edit existing data</span></td><td>Edit profile, update todo, like post</span></td>
+        <tr><td>DELETE Request</span></td><td>Remove data</span></td><td>Delete user, remove item from cart</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 8: Environment Variables -->
+  <div class="section-title">8️⃣ Environment Variables — Keep API URLs Safe</div>
+  <div class="highlight-box">
+    🔐 <strong>Best Practice:</strong><br>
+    Create a <span class="inline-code">.env</span> file in your project root:<br>
+    <span class="inline-code">VITE_API_URL=https://jsonplaceholder.typicode.com</span><br><br>
+    Use in React component:<br>
+    <span class="inline-code">const API_URL = import.meta.env.VITE_API_URL;</span><br><br>
+    ⚠️ Never commit .env file to GitHub (add to .gitignore)!
+  </div>
+
+  <!-- Section 9: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Post List</strong> component that fetches posts from JSONPlaceholder (GET)<br>
+    2. Add loading spinner while fetching<br>
+    3. Add error handling (display error message if API fails)<br>
+    4. Create an <strong>Add Post</strong> form that sends a POST request and updates the list<br>
+    5. (Bonus) Add delete button for each post (DELETE request)
+  </div>
+
+  <!-- Section 10: Common Mistakes -->
+  <div class="section-title">⚠️ Common API Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesApiResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesApiResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to add <span class="inline-code">await response.json()</span> → getting Promise object instead of data</li>
+        <li>❌ Not handling loading state → UI feels unresponsive, users don't know what's happening</li>
+        <li>❌ Not catching errors → app crashes silently with no user feedback</li>
+        <li>❌ Making API calls without useEffect → infinite re-render loops</li>
+        <li>❌ Hardcoding API URLs → use environment variables instead for different environments</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How to fetch data in React?</h3><p>Use fetch() or axios inside useEffect with empty dependency array [] to run once on mount.</p></div>
+    <div class="card"><h3>❓ Why useEffect for API calls?</h3><p>To avoid infinite loops and ensure API calls happen after component mounts in the DOM.</p></div>
+    <div class="card"><h3>❓ Difference between fetch and axios?</h3><p>Axios auto-parses JSON, has better error handling, supports request/response interceptors.</p></div>
+    <div class="card"><h3>❓ What are loading and error states?</h3><p>UI states to show progress or errors during async API calls — essential for good UX.</p></div>
+  </div>
+
+  <!-- Section 12: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌤️ Task 1</h3><p>Build a <strong>Weather App</strong> — fetch weather data from OpenWeatherMap API using city name input.</p></div>
+    <div class="card"><h3>👤 Task 2</h3><p>Build a <strong>Random User Generator</strong> — fetch random user from randomuser.me API.</p></div>
+    <div class="card"><h3>🐙 Task 3</h3><p>Build a <strong>GitHub Profile Viewer</strong> — fetch user data from GitHub API by username.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 36 - API Calls)</div>
+  <div class="card-grid">
+    <div class="card">✔️ API calls connect React to backend servers</div>
+    <div class="card">✔️ fetch() with useEffect for GET requests</div>
+    <div class="card">✔️ Loading and error states for professional UX</div>
+    <div class="card">✔️ POST requests to send data (create resources)</div>
+    <div class="card">✔️ Axios as alternative to fetch</div>
+    <div class="card">✔️ Environment variables for API URL management</div>
+  </div>
+
+  <!-- Day 36 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 36 Ending Message</strong><br>
+    "API calls connect your React app to the real world! Now you can fetch live data from any backend — this is how professional apps work. Build weather apps, user directories, and e-commerce product listings. Master API integration and you can build anything!"
+  </div>
+
+  <!-- Next: Day 37 -->
+  <div class="section-title">🔜 Next — Day 37 : React Router (Multi-Page Navigation)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🧭 React Router DOM</span>
+    <span class="badge">📄 Pages & Routes</span>
+    <span class="badge">🔗 Link & NavLink</span>
+    <span class="badge">🔄 Dynamic Routing</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 36 Completed ✅<br>
+    Click "Show Result" on each example to see API calls in action. Practice building apps that fetch, display, and send data to real backends!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

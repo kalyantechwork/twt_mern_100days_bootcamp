@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 31: Conditional Rendering in React | if/else, Ternary, && Operator + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .status-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 31 · Conditional Rendering in React (Show Results)</div>
+  </div>
+
+  <h1>⚡ Conditional Rendering in React<br><span style="font-size:1rem;">if/else · Ternary Operator · && Operator · Dynamic UI — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is Conditional Rendering -->
+  <div class="section-title">1️⃣ What is Conditional Rendering?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Conditional rendering</strong> in React means showing different UI elements based on certain conditions (like user login status, data loading state, or error messages). Just like if/else in JavaScript, but adapted for JSX. This is essential for building dynamic, user-friendly applications.</p>
+    <p><strong>Where it's used:</strong> Login/Logout buttons, loading spinners, error messages, user role-based dashboards, form validation feedback, feature toggles, and dark/light mode.</p>
+  </div>
+  <div class="diagram">
+    Condition → True → Show Component A<br>
+    Condition → False → Show Component B
+  </div>
+
+  <!-- Section 2: if/else (Outside JSX) -->
+  <div class="section-title">2️⃣ Method 1: if/else (Outside return statement)</div>
+  <div class="topic-explanation">
+    <h4>📌 When to Use if/else</h4>
+    <p>Use if/else when you have complex logic or multiple conditions. The condition must be evaluated <strong>outside</strong> the JSX return statement, and you store the result in a variable.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserGreeting({ isLoggedIn }) {<br>
+        let message;<br>
+        if (isLoggedIn) {<br>
+          message = &lt;h1&gt;Welcome back, User!&lt;/h1&gt;;<br>
+        } else {<br>
+          message = &lt;h1&gt;Please log in to continue&lt;/h1&gt;;<br>
+        }<br>
+        return &lt;div&gt;{message}&lt;/div&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="ifElseResult">🔀 Show if/else Demo</button>
+    <div id="ifElseResult" class="result-area">
+      <div class="status-card">
+        <h3>🔀 if/else Demo</h3>
+        <div id="ifElseMessage"><h1>Welcome back, User!</h1></div>
+        <button class="demo-btn" id="ifElseToggle">🔄 Toggle Login Status</button>
+      </div>
+      <div class="console-output" style="margin-top: 8px;">
+        ✅ if/else works OUTSIDE the return statement<br>
+        ✅ Use when you have complex logic or multiple conditions<br>
+        💡 Cannot use if/else directly inside JSX return
+      </div>
+      <script>
+        let isLoggedInIf = true;
+        const ifElseDiv = document.getElementById("ifElseMessage");
+        const ifElseBtn = document.getElementById("ifElseToggle");
+        function updateIfElse() {
+          if(ifElseDiv) {
+            if(isLoggedInIf) ifElseDiv.innerHTML = "<h1>✨ Welcome back, User!</h1>";
+            else ifElseDiv.innerHTML = "<h1>🔐 Please log in to continue</h1>";
+          }
+        }
+        ifElseBtn?.addEventListener("click", () => { isLoggedInIf = !isLoggedInIf; updateIfElse(); });
+        updateIfElse();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Ternary Operator -->
+  <div class="section-title">3️⃣ Method 2: Ternary Operator (condition ? true : false)</div>
+  <div class="topic-explanation">
+    <h4>📌 When to Use Ternary</h4>
+    <p>The ternary operator is the most popular method in React. Use it when you have two simple options (true/false). It's concise and can be used directly inside JSX.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserGreeting({ isLoggedIn }) {<br>
+        return (&lt;div&gt;<br>
+          {isLoggedIn ? (<br>
+            &lt;h1&gt;✨ Welcome back, User!&lt;/h1&gt;<br>
+          ) : (<br>
+            &lt;h1&gt;🔐 Please log in&lt;/h1&gt;<br>
+          )}<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="ternaryResult">❓ Show Ternary Operator Demo</button>
+    <div id="ternaryResult" class="result-area">
+      <div class="status-card">
+        <h3>❓ Ternary Operator Demo</h3>
+        <div id="ternaryMessage"><h1>✨ Welcome back, User!</h1></div>
+        <button class="demo-btn" id="ternaryToggle">🔄 Toggle Login Status</button>
+      </div>
+      <div class="console-output" style="margin-top: 8px;">
+        ✅ Ternary is the MOST COMMON method in React!<br>
+        ✅ Syntax: {condition ? valueIfTrue : valueIfFalse}<br>
+        ✅ Can be used directly inside JSX return
+      </div>
+      <script>
+        let isLoggedInTernary = true;
+        const ternaryDiv = document.getElementById("ternaryMessage");
+        const ternaryBtn = document.getElementById("ternaryToggle");
+        function updateTernary() {
+          if(ternaryDiv) {
+            if(isLoggedInTernary) ternaryDiv.innerHTML = "<h1>✨ Welcome back, User!</h1>";
+            else ternaryDiv.innerHTML = "<h1>🔐 Please log in</h1>";
+          }
+        }
+        ternaryBtn?.addEventListener("click", () => { isLoggedInTernary = !isLoggedInTernary; updateTernary(); });
+        updateTernary();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: && Operator -->
+  <div class="section-title">4️⃣ Method 3: && Operator (Show or Nothing)</div>
+  <div class="topic-explanation">
+    <h4>📌 When to Use &&</h4>
+    <p>Use the && operator when you want to render something OR nothing (no else case). It's perfect for conditional badges, error messages, notifications, and loading spinners.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function Notification({ hasMessage }) {<br>
+        return (&lt;div&gt;<br>
+          {hasMessage && &lt;p&gt;🔔 You have a new message!&lt;/p&gt;}<br>
+          &lt;h1&gt;Dashboard&lt;/h1&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="andResult">&& Show && Operator Demo</button>
+    <div id="andResult" class="result-area">
+      <div class="status-card">
+        <h3>&& Operator Demo</h3>
+        <div id="andMessage"><p>🔔 You have a new message!</p></div>
+        <button class="demo-btn" id="andToggle">📩 Toggle Message</button>
+      </div>
+      <div class="console-output" style="margin-top: 8px;">
+        ✅ && renders element ONLY if condition is true<br>
+        ✅ Perfect for: error messages, notifications, badges<br>
+        ⚠️ Warning: Don't use && with numbers (0 is falsy and renders 0!)
+      </div>
+      <script>
+        let hasMessage = true;
+        const andDiv = document.getElementById("andMessage");
+        const andBtn = document.getElementById("andToggle");
+        function updateAnd() {
+          if(andDiv) {
+            if(hasMessage) andDiv.innerHTML = "<p>🔔 You have a new message!</p>";
+            else andDiv.innerHTML = "";
+          }
+        }
+        andBtn?.addEventListener("click", () => { hasMessage = !hasMessage; updateAnd(); });
+        updateAnd();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Method Comparison Table -->
+  <div class="section-title">5️⃣ Which Method to Use When?</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Method</th><th>Use Case</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>if/else (outside)</span></td><td>Complex logic with multiple conditions</span></td><td>Setting different component structures or variables</span></td>
+        <tr><td>Ternary operator</span></td><td>Two simple options (true/false)</span></td><td>Login/Logout button, light/dark mode, showing one of two components</span></td>
+        <tr><td>&& operator</span></td><td>Show OR hide (nothing for false)</span></td><td>Error message, notification badge, loading spinner</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 6: Login/Logout Example -->
+  <div class="section-title">6️⃣ Real Example: Login/Logout Button with State</div>
+  <div class="example-card">
+    <div class="code-block">
+      function LoginControl() {<br>
+        const [isLoggedIn, setIsLoggedIn] = useState(false);<br>
+        return (&lt;div&gt;<br>
+          {isLoggedIn ? (<br>
+            &lt;&gt;&lt;h2&gt;Welcome to your dashboard!&lt;/h2&gt;<br>
+            &lt;button onClick={() => setIsLoggedIn(false)}&gt;Logout&lt;/button&gt;&lt;/&gt;<br>
+          ) : (<br>
+            &lt;&gt;&lt;h2&gt;Please log in to continue&lt;/h2&gt;<br>
+            &lt;button onClick={() => setIsLoggedIn(true)}&gt;Login&lt;/button&gt;&lt;/&gt;<br>
+          )}<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="loginExampleResult">🔐 Show Login/Logout Demo</button>
+    <div id="loginExampleResult" class="result-area">
+      <div class="status-card">
+        <h3>🔐 Login/Logout Example</h3>
+        <div id="loginMessage"><h2>Please log in to continue</h2></div>
+        <button class="demo-btn" id="loginBtn">🔑 Login</button>
+        <button class="demo-btn" id="logoutBtn">🚪 Logout</button>
+      </div>
+      <div class="console-output">
+        ✅ Uses useState with ternary operator<br>
+        ✅ Clicking Login/Logout changes the UI dynamically
+      </div>
+      <script>
+        let isLoggedInApp = false;
+        const loginMsgDiv = document.getElementById("loginMessage");
+        const loginBtnDemo = document.getElementById("loginBtn");
+        const logoutBtnDemo = document.getElementById("logoutBtn");
+        function updateLoginUI() {
+          if(loginMsgDiv) {
+            if(isLoggedInApp) loginMsgDiv.innerHTML = "<h2>✨ Welcome to your dashboard!</h2>";
+            else loginMsgDiv.innerHTML = "<h2>🔐 Please log in to continue</h2>";
+          }
+        }
+        loginBtnDemo?.addEventListener("click", () => { isLoggedInApp = true; updateLoginUI(); });
+        logoutBtnDemo?.addEventListener("click", () => { isLoggedInApp = false; updateLoginUI(); });
+        updateLoginUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Loading State Example -->
+  <div class="section-title">7️⃣ Loading State Pattern (Ternary)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function DataDisplay() {<br>
+        const [isLoading, setIsLoading] = useState(true);<br>
+        return (&lt;div&gt;<br>
+          {isLoading ? (<br>
+            &lt;p&gt;⏳ Loading...&lt;/p&gt;<br>
+          ) : (<br>
+            &lt;p&gt;📊 Data loaded successfully!&lt;/p&gt;<br>
+          )}<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="loadingResult">⏳ Show Loading State Demo</button>
+    <div id="loadingResult" class="result-area">
+      <div class="status-card">
+        <h3>⏳ Loading State Demo</h3>
+        <div id="loadingMessage"><p>⏳ Loading...</p></div>
+        <button class="demo-btn" id="loadDataBtn">📡 Simulate API Call</button>
+      </div>
+      <div class="console-output">
+        ✅ Shows loading indicator while data is being fetched<br>
+        ✅ After 1 second, switches to loaded state<br>
+        💡 This pattern is used in every real-world app!
+      </div>
+      <script>
+        let isLoading = true;
+        const loadingDiv = document.getElementById("loadingMessage");
+        const loadBtn = document.getElementById("loadDataBtn");
+        function updateLoadingUI() {
+          if(loadingDiv) {
+            if(isLoading) loadingDiv.innerHTML = "<p>⏳ Loading...</p>";
+            else loadingDiv.innerHTML = "<p>✅ Data loaded successfully!</p>";
+          }
+        }
+        loadBtn?.addEventListener("click", () => {
+          isLoading = true;
+          updateLoadingUI();
+          setTimeout(() => {
+            isLoading = false;
+            updateLoadingUI();
+          }, 1500);
+        });
+        updateLoadingUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Error Message Pattern -->
+  <div class="section-title">8️⃣ Error Message Pattern (&& Operator)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function FormWithError() {<br>
+        const [error, setError] = useState("");<br>
+        return (&lt;div&gt;<br>
+          {error && &lt;p style={{color: "red"}}&gt;⚠️ {error}&lt;/p&gt;}<br>
+          &lt;button onClick={() => setError("Email is required!")}&gt;Submit&lt;/button&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="errorResult">⚠️ Show Error Message Demo</button>
+    <div id="errorResult" class="result-area">
+      <div class="status-card">
+        <h3>⚠️ Error Message Demo</h3>
+        <div id="errorMessage"></div>
+        <button class="demo-btn" id="showErrorBtn">Submit Form</button>
+        <button class="demo-btn" id="clearErrorBtn">Clear Error</button>
+      </div>
+      <div class="console-output">
+        ✅ && operator shows error ONLY when error variable has value<br>
+        ✅ Perfect for form validation feedback<br>
+        💡 Error messages appear conditionally without else clause
+      </div>
+      <script>
+        let currentError = "";
+        const errorDiv = document.getElementById("errorMessage");
+        const showError = document.getElementById("showErrorBtn");
+        const clearError = document.getElementById("clearErrorBtn");
+        function updateErrorUI() {
+          if(errorDiv) {
+            if(currentError) errorDiv.innerHTML = `<p style="color: #ffcccc; background: #7f1a1a; padding: 8px; border-radius: 12px;">⚠️ ${currentError}</p>`;
+            else errorDiv.innerHTML = "";
+          }
+        }
+        showError?.addEventListener("click", () => { currentError = "Email is required!"; updateErrorUI(); });
+        clearError?.addEventListener("click", () => { currentError = ""; updateErrorUI(); });
+        updateErrorUI();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 9: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Theme Toggle</strong> — show "Light Mode ☀️" or "Dark Mode 🌙" based on state (ternary)<br>
+    2. Create a <strong>Notification Badge</strong> — show "🔴 3 new messages" only if count > 0 (&& operator)<br>
+    3. Create an <strong>Age Verifier</strong> — if age >= 18 show "Access Granted ✅", else "Access Denied ❌"<br>
+    4. Create a <strong>Loading Button</strong> — button shows "Loading..." while processing (ternary)
+  </div>
+
+  <!-- Section 10: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesConditionalResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesConditionalResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using if/else directly inside JSX return → not allowed! Move logic outside return or use ternary.</li>
+        <li>❌ Forgetting curly braces around ternary: <span class="inline-code">{condition ? true : false}</span> — braces are required.</li>
+        <li>❌ Using && with numbers: <span class="inline-code">{count && &lt;p&gt;You have {count} items&lt;/p&gt;}</span> — if count is 0, it renders "0". Fix: <span class="inline-code">{count > 0 && ...}</span></li>
+        <li>❌ Too many nested ternaries → hard to read. Extract logic to a variable or use if/else.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How to conditionally render in React?</h3><p>Using if/else (outside JSX), ternary operator, or && operator.</p></div>
+    <div class="card"><h3>❓ Can we use if/else inside JSX?</h3><p>No, but you can use ternary or extract logic outside return.</p></div>
+    <div class="card"><h3>❓ When to use && operator?</h3><p>When you want to render something OR nothing (no else case).</p></div>
+    <div class="card"><h3>❓ What is the most common conditional rendering method?</h3><p>Ternary operator — it's concise and works directly inside JSX.</p></div>
+  </div>
+
+  <!-- Section 12: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🗳️ Task 1</h3><p>Create a <strong>Voting Eligibility</strong> component showing "You can vote" if age ≥ 18.</p></div>
+    <div class="card"><h3>📦 Task 2</h3><p>Create a <strong>Product Stock</strong> badge — show "✅ In Stock" (green) or "❌ Out of Stock" (red).</p></div>
+    <div class="card"><h3>📋 Task 3</h3><p>Create a <strong>Toggle Details</strong> button that shows/hide extra information using ternary.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 31 - Conditional Rendering)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Conditional rendering — showing different UI based on conditions</div>
+    <div class="card">✔️ if/else outside return (complex logic, multiple conditions)</div>
+    <div class="card">✔️ Ternary operator (condition ? true : false) — MOST COMMON</div>
+    <div class="card">✔️ && operator (show element only if condition is true)</div>
+    <div class="card">✔️ Real patterns: login/logout, loading states, error messages, notifications</div>
+  </div>
+
+  <!-- Day 31 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 31 Ending Message</strong><br>
+    "Conditional rendering brings your React app to life! Now you can show different content based on user status, loading states, error conditions, and data availability. Master these three patterns — they'll be used in EVERY React component you write!"
+  </div>
+
+  <!-- Next: Day 32 -->
+  <div class="section-title">🔜 Next — Day 32 : Lists & Keys in React (Rendering Arrays with map())</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📋 Rendering Lists</span>
+    <span class="badge">🔑 Importance of Keys</span>
+    <span class="badge">🔄 map() method</span>
+    <span class="badge">📁 Key best practices</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 31 Completed ✅<br>
+    Click "Show Result" on each example to see conditional rendering in action. Practice building toggles, login screens, and dynamic components!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

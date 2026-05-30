@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 48: Tailwind Components | Cards, Navbar, Buttons, Forms + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .component-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+    .card-preview {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      max-width: 280px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🧩</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 48 · Tailwind Components (Show Results)</div>
+  </div>
+
+  <h1>🧩 Tailwind Components<br><span style="font-size:1rem;">Reusable UI Components · Cards · Navbar · Buttons · Forms · Modals — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: Why Component Libraries -->
+  <div class="section-title">1️⃣ Why Build Reusable Components with Tailwind?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>Tailwind makes it easy to build consistent, reusable components. Instead of writing custom CSS for every button or card, you compose utility classes. This creates a design system that ensures consistency across your entire application and speeds up development dramatically.</p>
+    <p><strong>Where it's used:</strong> Every professional React project — component libraries are the foundation of scalable applications. Companies like Shopify, GitHub, and Vercel all have their own design systems built with Tailwind.</p>
+  </div>
+  <div class="diagram">
+    Utility Classes → Composed into Components → Consistent Design → Faster Development → Less Bug Fixes
+  </div>
+
+  <!-- Section 2: Button Component -->
+  <div class="section-title">2️⃣ Button Component — Multiple Variants</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Button.jsx with multiple variants<br>
+      const variants = {<br>
+        primary: 'bg-blue-500 hover:bg-blue-600 text-white',<br>
+        secondary: 'bg-gray-500 hover:bg-gray-600 text-white',<br>
+        danger: 'bg-red-500 hover:bg-red-600 text-white',<br>
+        outline: 'border border-blue-500 text-blue-500 hover:bg-blue-50'<br>
+      };
+    </div>
+    <button class="btn-show" data-target="buttonResult">🔘 Show Button Variants</button>
+    <div id="buttonResult" class="result-area">
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition">Primary</button>
+        <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition">Secondary</button>
+        <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition">Danger</button>
+        <button class="border border-blue-500 text-blue-500 hover:bg-blue-50 px-4 py-2 rounded-lg font-semibold transition">Outline</button>
+      </div>
+      <div class="console-output">✅ Button variants allow consistent styling across the app — change once, update everywhere!</div>
+    </div>
+  </div>
+
+  <!-- Section 3: Card Component -->
+  <div class="section-title">3️⃣ Card Component — Product/Profile Display</div>
+  <div class="example-card">
+    <div class="code-block">
+      // ProductCard.jsx<br>
+      &lt;div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white hover:shadow-xl transition-shadow"&gt;<br>
+        &lt;img className="w-full h-48 object-cover" /&gt;<br>
+        &lt;div className="px-6 py-4"&gt;&lt;h3 className="font-bold text-xl mb-2"&gt;{title}&lt;/h3&gt;&lt;/div&gt;<br>
+      &lt;/div&gt;
+    </div>
+    <button class="btn-show" data-target="cardResult">🃏 Show Card Component Demo</button>
+    <div id="cardResult" class="result-area">
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+        <div class="card-preview">
+          <div class="bg-gray-300 h-48 w-full"></div>
+          <div class="px-6 py-4">
+            <h3 class="font-bold text-xl mb-2">Wireless Headphones</h3>
+            <p class="text-gray-700">Premium sound quality with noise cancellation</p>
+          </div>
+          <div class="px-6 pt-4 pb-6 flex justify-between items-center">
+            <span class="text-xl font-bold text-blue-600">$79.99</span>
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Add to Cart</button>
+          </div>
+        </div>
+        <div class="card-preview">
+          <div class="bg-gray-300 h-48 w-full"></div>
+          <div class="px-6 py-4">
+            <h3 class="font-bold text-xl mb-2">Smart Watch</h3>
+            <p class="text-gray-700">Track your fitness and stay connected</p>
+          </div>
+          <div class="px-6 pt-4 pb-6 flex justify-between items-center">
+            <span class="text-xl font-bold text-blue-600">$199.99</span>
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="console-output">✅ Card components are reusable — same component, different data, infinite use cases!</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Navbar Component -->
+  <div class="section-title">4️⃣ Navbar Component — Responsive Navigation</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Responsive Navbar with mobile menu<br>
+      &lt;nav className="bg-gray-800 text-white p-4"&gt;<br>
+        &lt;div className="flex flex-col md:flex-row justify-between items-center gap-4"&gt;<br>
+          &lt;div className="text-xl font-bold"&gt;Logo&lt;/div&gt;<br>
+          &lt;div className="flex flex-col md:flex-row gap-4"&gt;...&lt;/div&gt;<br>
+        &lt;/div&gt;<br>
+      &lt;/nav&gt;
+    </div>
+    <button class="btn-show" data-target="navbarResult">🧭 Show Navbar Component</button>
+    <div id="navbarResult" class="result-area">
+      <div class="bg-gray-800 text-white p-4 rounded-lg">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="text-xl font-bold">🛍️ ShopHub</div>
+          <div class="flex flex-col md:flex-row gap-4 md:gap-6">
+            <a href="#" class="hover:text-yellow-400">Home</a>
+            <a href="#" class="hover:text-yellow-400">Products</a>
+            <a href="#" class="hover:text-yellow-400">About</a>
+            <a href="#" class="hover:text-yellow-400">Contact</a>
+          </div>
+          <div class="relative">🛒 <span class="absolute -top-2 -right-2 bg-yellow-500 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center">3</span></div>
+        </div>
+      </div>
+      <div class="console-output">✅ Responsive navbar: stacks vertically on mobile, horizontal on desktop with hover effects</div>
+    </div>
+  </div>
+
+  <!-- Section 5: Form Inputs -->
+  <div class="section-title">5️⃣ Input & Form Components</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Input component with validation styling<br>
+      &lt;input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500" /&gt;
+    </div>
+    <button class="btn-show" data-target="formResult">📝 Show Form Input Components</button>
+    <div id="formResult" class="result-area">
+      <div class="component-preview">
+        <div class="mb-4">
+          <label class="block text-white font-semibold mb-2">Email Address</label>
+          <input type="email" placeholder="you@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-black" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-white font-semibold mb-2">Password</label>
+          <input type="password" placeholder="Enter password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-black" />
+        </div>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">Sign In</button>
+      </div>
+      <div class="console-output">✅ Consistent form styling with focus rings, borders, and error state support</div>
+    </div>
+  </div>
+
+  <!-- Section 6: Modal Component -->
+  <div class="section-title">6️⃣ Modal Component — Popup Dialog</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Modal.jsx with overlay, title, and actions<br>
+      &lt;div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"&gt;<br>
+        &lt;div className="bg-white rounded-lg w-full max-w-md mx-4"&gt;...&lt;/div&gt;<br>
+      &lt;/div&gt;
+    </div>
+    <button class="btn-show" data-target="modalResult">📋 Show Modal Component Preview</button>
+    <div id="modalResult" class="result-area">
+      <div class="bg-white rounded-lg shadow-xl max-w-md mx-auto p-4 border">
+        <div class="flex justify-between items-center border-b pb-2">
+          <h2 class="text-xl font-bold">Modal Title</h2>
+          <button class="text-gray-500 hover:text-gray-700">✕</button>
+        </div>
+        <div class="py-4">Modal content goes here. This is where you put your form or message.</div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
+          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg">Confirm</button>
+        </div>
+      </div>
+      <div class="console-output">✅ Modal component pattern — fixed positioning, overlay backdrop, centered content</div>
+    </div>
+  </div>
+
+  <!-- Section 7: Alert Component -->
+  <div class="section-title">7️⃣ Alert Component — Notifications</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Alert variants: success, error, warning, info<br>
+      &lt;div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded"&gt;Success message&lt;/div&gt;
+    </div>
+    <button class="btn-show" data-target="alertResult">🔔 Show Alert Variants</button>
+    <div id="alertResult" class="result-area">
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded mb-3">✅ Success! Your product has been added to cart.</div>
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-3">❌ Error! Something went wrong. Please try again.</div>
+      <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded mb-3">⚠️ Warning! Your session will expire soon.</div>
+      <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded">ℹ️ Info: New features available. Update your app.</div>
+      <div class="console-output">✅ Alert components provide user feedback with color-coded messages for different scenarios</div>
+    </div>
+  </div>
+
+  <!-- Section 8: @apply Directive -->
+  <div class="section-title">8️⃣ @apply Directive — Creating Custom Classes</div>
+  <div class="example-card">
+    <div class="code-block">
+      /* In your main CSS file */<br>
+      @layer components {<br>
+        .btn-primary {<br>
+          @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200;<br>
+        }<br>
+        .card {<br>
+          @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow;<br>
+        }<br>
+      }
+    </div>
+    <div class="console-output">
+      ⚠️ Use @apply sparingly — Tailwind works best with utility classes directly in JSX.<br>
+      ✅ @apply is useful for complex repeated patterns like buttons across multiple components.
+    </div>
+  </div>
+
+  <!-- Section 9: Complete E-commerce Component -->
+  <div class="section-title">📁 Complete E-commerce Component Example</div>
+  <div class="example-card">
+    <div class="code-block">
+      export function ProductCard({ product, onAddToCart }) {<br>
+        return (&lt;div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"&gt;<br>
+          &lt;img src={product.image} alt={product.name} className="w-full h-48 object-cover" /&gt;<br>
+          &lt;div className="p-4"&gt;<br>
+            &lt;h3 className="font-semibold text-lg mb-2"&gt;{product.name}&lt;/h3&gt;<br>
+            &lt;p className="text-gray-600 text-sm mb-3"&gt;{product.description}&lt;/p&gt;<br>
+            &lt;div className="flex justify-between items-center"&gt;<br>
+              &lt;span className="text-2xl font-bold text-blue-600"&gt;${product.price}&lt;/span&gt;<br>
+              &lt;button onClick={() => onAddToCart(product)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"&gt;Add to Cart&lt;/button&gt;<br>
+            &lt;/div&gt;<br>
+          &lt;/div&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Button component library</strong> with 5+ variants (primary, secondary, success, danger, outline, disabled)<br>
+    2. Build a <strong>Testimonial Card</strong> component (avatar, name, role, testimonial text)<br>
+    3. Create a <strong>Pagination component</strong> with Next/Previous buttons and page numbers<br>
+    4. Build a <strong>Tab component</strong> that switches between different content panels<br>
+    5. Convert the Day 45 e-commerce project to use your new component library
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Component Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesCompTailwindResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesCompTailwindResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Making components too specific → harder to reuse. Make components configurable via props.</li>
+        <li>❌ Not using props for customization → component becomes inflexible, leads to duplicate code.</li>
+        <li>❌ Hardcoding colors and values instead of using Tailwind utilities → defeats the purpose.</li>
+        <li>❌ Forgetting responsive design in components → components break on mobile.</li>
+        <li>❌ Not extracting repeated patterns into components → code duplication.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How do you create reusable components in React?</h3><p>Use props for configuration, children for composition, and consistent styling with Tailwind classes.</p></div>
+    <div class="card"><h3>❓ What is the @apply directive?</h3><p>Tailwind feature to compose utility classes into custom CSS classes — use sparingly.</p></div>
+    <div class="card"><h3>❓ Why build a component library?</h3><p>Consistency, faster development, easier maintenance, and better team collaboration.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>⭐ Task 1</h3><p>Create a <strong>Rating Stars</strong> component (1-5 stars) using Tailwind for product reviews.</p></div>
+    <div class="card"><h3>📋 Task 2</h3><p>Build a <strong>Dropdown Menu</strong> component with Tailwind transitions and animations.</p></div>
+    <div class="card"><h3>⏳ Task 3</h3><p>Create a <strong>Loading Spinner</strong> component with Tailwind CSS animations.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 48 - Tailwind Components)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Button Component with variants (primary, secondary, danger, outline)</div>
+    <div class="card">✔️ Card Component for products/profiles with hover effects</div>
+    <div class="card">✔️ Responsive Navbar with mobile menu and cart count</div>
+    <div class="card">✔️ Form Inputs with validation styling and focus rings</div>
+    <div class="card">✔️ Modal and Alert components for dialogs and notifications</div>
+    <div class="card">✔️ @apply directive for creating custom CSS classes</div>
+  </div>
+
+  <!-- Day 48 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 48 Ending Message</strong><br>
+    "You now have a reusable component library! Building with components makes you faster, your code cleaner, and your apps more consistent. Every professional React developer maintains their own component library — start yours today and watch your productivity soar!"
+  </div>
+
+  <!-- Next: Day 49 -->
+  <div class="section-title">🔜 Next — Day 49 : Dark Mode with Tailwind (Theme Toggle)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🌙 Dark Mode Setup</span>
+    <span class="badge">🎨 dark: Prefix</span>
+    <span class="badge">🔄 Theme Toggle</span>
+    <span class="badge">💾 LocalStorage Persistence</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 48 Completed ✅<br>
+    Click "Show Result" on each example to see Tailwind components in action. Build your component library — reuse it across all your projects!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

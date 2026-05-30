@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 83: Full CRUD Operations | Create, Read, Update, Delete</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .crud-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .product-item {
+      background: #334155;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .edit-input {
+      background: #1e293b;
+      border: 1px solid #facc15;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 40px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔄</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 83 · Full CRUD Operations</div>
+  </div>
+
+  <h1>🔄 Full CRUD Operations<br><span style="font-size:1rem;">Create · Read · Update · Delete · Complete CRUD Application</span></h1>
+
+  <!-- Section 1: What is CRUD -->
+  <div class="section-title">1️⃣ What is CRUD?</div>
+  <p><strong>CRUD</strong> stands for <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate, <strong>D</strong>elete — the four basic operations for persistent storage. Every application uses CRUD!</p>
+  <div class="diagram">
+    Create (POST) → Read (GET) → Update (PUT/PATCH) → Delete (DELETE) → Complete Data Management
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Real-world examples:</strong> Adding a tweet (Create), viewing feed (Read), editing profile (Update), deleting a post (Delete). CRUD everywhere!
+  </div>
+
+  <!-- Section 2: CRUD HTTP Methods -->
+  <table>
+    <thead><tr><th>Operation</th><th>HTTP Method</th><th>Endpoint Example</th><th>SQL Equivalent</th></tr></thead>
+    <tbody>
+      <tr><td>Create</span></span><td>POST</span></span><td>POST /api/products</span><td>INSERT</span></td></tr>
+      <tr><td>Read</span></span><td>GET</span></span><td>GET /api/products</span><td>SELECT</span></td></tr>
+      <tr><td>Read (single)</span></span><td>GET</span></span><td>GET /api/products/:id</span><td>SELECT WHERE id</span></td></tr>
+      <tr><td>Update</span></span><td>PUT / PATCH</span></span><td>PUT /api/products/:id</span><td>UPDATE</span></td></tr>
+      <tr><td>Delete</span></span><td>DELETE</span></span><td>DELETE /api/products/:id</span><td>DELETE</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 3: Backend CRUD API (Express) -->
+  <div class="section-title">3️⃣ Backend CRUD API — Express Routes</div>
+  <div class="code-block">
+    // routes/products.js<br>
+    const express = require('express');<br>
+    const router = express.Router();<br>
+    <br>
+    let products = [<br>
+      { id: 1, name: "Laptop", price: 999, inStock: true },<br>
+      { id: 2, name: "Phone", price: 499, inStock: true }<br>
+    ];<br>
+    <br>
+    // CREATE - POST<br>
+    router.post('/', (req, res) => {<br>
+      const newProduct = { id: Date.now(), ...req.body };<br>
+      products.push(newProduct);<br>
+      res.status(201).json(newProduct);<br>
+    });<br>
+    <br>
+    // READ all - GET<br>
+    router.get('/', (req, res) => {<br>
+      res.json(products);<br>
+    });<br>
+    <br>
+    // READ single - GET by ID<br>
+    router.get('/:id', (req, res) => {<br>
+      const product = products.find(p => p.id === parseInt(req.params.id));<br>
+      if (!product) return res.status(404).json({ error: "Product not found" });<br>
+      res.json(product);<br>
+    });<br>
+    <br>
+    // UPDATE - PUT<br>
+    router.put('/:id', (req, res) => {<br>
+      const index = products.findIndex(p => p.id === parseInt(req.params.id));<br>
+      if (index === -1) return res.status(404).json({ error: "Product not found" });<br>
+      products[index] = { ...products[index], ...req.body };<br>
+      res.json(products[index]);<br>
+    });<br>
+    <br>
+    // DELETE - DELETE<br>
+    router.delete('/:id', (req, res) => {<br>
+      const index = products.findIndex(p => p.id === parseInt(req.params.id));<br>
+      if (index === -1) return res.status(404).json({ error: "Product not found" });<br>
+      products.splice(index, 1);<br>
+      res.status(204).send();<br>
+    });<br>
+    <br>
+    module.exports = router;
+  </div>
+
+  <!-- Section 4: Frontend CRUD with Axios -->
+  <div class="section-title">4️⃣ Frontend CRUD — Axios Service</div>
+  <div class="code-block">
+    // services/productService.js<br>
+    import axios from 'axios';<br>
+    <br>
+    const API_URL = 'http://localhost:5000/api/products';<br>
+    <br>
+    export const productService = {<br>
+      // CREATE<br>
+      create: async (product) => {<br>
+        const response = await axios.post(API_URL, product);<br>
+        return response.data;<br>
+      },<br>
+      // READ (all)<br>
+      getAll: async () => {<br>
+        const response = await axios.get(API_URL);<br>
+        return response.data;<br>
+      },<br>
+      // READ (single)<br>
+      getById: async (id) => {<br>
+        const response = await axios.get(`${API_URL}/${id}`);<br>
+        return response.data;<br>
+      },<br>
+      // UPDATE<br>
+      update: async (id, product) => {<br>
+        const response = await axios.put(`${API_URL}/${id}`, product);<br>
+        return response.data;<br>
+      },<br>
+      // DELETE<br>
+      delete: async (id) => {<br>
+        await axios.delete(`${API_URL}/${id}`);<br>
+      }<br>
+    };
+  </div>
+
+  <!-- Section 5: React CRUD Component -->
+  <div class="section-title">5️⃣ React CRUD Component — Complete UI</div>
+  <div class="live-demo">
+    <div class="crud-preview">
+      <strong>📦 Product Management (Full CRUD Demo):</strong>
+      <div style="margin: 16px 0;">
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+          <input type="text" id="productName" placeholder="Product name" style="flex:1; padding:8px; border-radius:40px; border:none;">
+          <input type="number" id="productPrice" placeholder="Price" style="width:100px; padding:8px; border-radius:40px; border:none;">
+          <button class="demo-btn" id="createProductBtn">➕ Create</button>
+        </div>
+        <div id="productList"></div>
+      </div>
+    </div>
+    <script>
+      let products = [
+        { id: 1, name: "Laptop", price: 999 },
+        { id: 2, name: "Phone", price: 499 }
+      ];
+      let editingId = null;
+      function renderProducts() {
+        const container = document.getElementById("productList");
+        container.innerHTML = products.map(p => `
+          <div class="product-item">
+            ${editingId === p.id ? `
+              <input type="text" id="editName-${p.id}" value="${p.name}" class="edit-input" style="flex:1;">
+              <input type="number" id="editPrice-${p.id}" value="${p.price}" class="edit-input" style="width:80px;">
+              <button class="demo-btn" style="padding:4px 12px;" onclick="saveEdit(${p.id})">💾 Save</button>
+              <button class="demo-btn" style="padding:4px 12px;" onclick="cancelEdit()">❌ Cancel</button>
+            ` : `
+              <span><strong>${p.name}</strong> - $${p.price}</span>
+              <div>
+                <button class="demo-btn" style="padding:4px 12px;" onclick="startEdit(${p.id})">✏️ Edit</button>
+                <button class="demo-btn" style="padding:4px 12px; background:#ef4444;" onclick="deleteProduct(${p.id})">🗑️ Delete</button>
+              </div>
+            `}
+          </div>
+        `).join('');
+      }
+      window.startEdit = (id) => { editingId = id; renderProducts(); };
+      window.cancelEdit = () => { editingId = null; renderProducts(); };
+      window.saveEdit = (id) => {
+        const newName = document.getElementById(`editName-${id}`)?.value;
+        const newPrice = document.getElementById(`editPrice-${id}`)?.value;
+        if(newName && newPrice) {
+          const index = products.findIndex(p => p.id === id);
+          if(index !== -1) products[index] = { ...products[index], name: newName, price: parseFloat(newPrice) };
+        }
+        editingId = null;
+        renderProducts();
+      };
+      window.deleteProduct = (id) => { products = products.filter(p => p.id !== id); renderProducts(); };
+      document.getElementById("createProductBtn")?.addEventListener("click", () => {
+        const name = document.getElementById("productName").value;
+        const price = parseFloat(document.getElementById("productPrice").value);
+        if(name && !isNaN(price)) {
+          const newProduct = { id: Date.now(), name, price };
+          products.push(newProduct);
+          document.getElementById("productName").value = "";
+          document.getElementById("productPrice").value = "";
+          renderProducts();
+        }
+      });
+      renderProducts();
+    </script>
+  </div>
+
+  <!-- Section 6: CRUD with API — Complete React Component -->
+  <div class="section-title">6️⃣ Complete React CRUD Component (Real API)</div>
+  <div class="code-block">
+    function ProductManager() {<br>
+      const [products, setProducts] = useState([]);<br>
+      const [form, setForm] = useState({ name: '', price: '' });<br>
+      const [editing, setEditing] = useState(null);<br>
+      <br>
+      useEffect(() => { loadProducts(); }, []);<br>
+      <br>
+      const loadProducts = async () => {<br>
+        const data = await productService.getAll();<br>
+        setProducts(data);<br>
+      };<br>
+      <br>
+      const handleCreate = async () => {<br>
+        const newProduct = await productService.create(form);<br>
+        setProducts([...products, newProduct]);<br>
+        setForm({ name: '', price: '' });<br>
+      };<br>
+      <br>
+      const handleUpdate = async () => {<br>
+        const updated = await productService.update(editing.id, form);<br>
+        setProducts(products.map(p => p.id === editing.id ? updated : p));<br>
+        setEditing(null);<br>
+        setForm({ name: '', price: '' });<br>
+      };<br>
+      <br>
+      const handleDelete = async (id) => {<br>
+        await productService.delete(id);<br>
+        setProducts(products.filter(p => p.id !== id));<br>
+      };<br>
+      <br>
+      return ( /* JSX for product management UI */ );<br>
+    }
+  </div>
+
+  <!-- Section 7: CRUD Flow Diagram -->
+  <div class="section-title">7️⃣ CRUD Flow Diagram</div>
+  <div class="diagram">
+    User Action → React Component → Axios → Express Route → Controller → Database → Response → React Updates UI
+  </div>
+
+  <!-- Section 8: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Build a complete <strong>Todo App</strong> with CRUD operations (Create, Read, Update, Delete)<br>
+    2. Add a backend API with Express and in-memory array (or MongoDB later)<br>
+    3. Create React components: TodoList, TodoForm, TodoItem<br>
+    4. Implement edit functionality with inline editing or modal<br>
+    5. Add loading and error states for all operations<br>
+    6. Add confirmation dialog before delete
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common CRUD Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Not updating UI after Create/Update/Delete → state not refreshed</li>
+    <li>❌ Using wrong HTTP method (GET for delete, POST for update)</li>
+    <li>❌ Not handling loading states → UI freezes during API calls</li>
+    <li>❌ Not validating data before sending to backend</li>
+    <li>❌ Forgetting to import/use async/await properly</li>
+  </ul>
+
+  <!-- Section 10: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is CRUD?</h3><p>Create, Read, Update, Delete — the four basic operations for data management.</p></div>
+    <div class="card"><h3>❓ HTTP methods for CRUD?</h3><p>POST (Create), GET (Read), PUT/PATCH (Update), DELETE (Delete).</p></div>
+    <div class="card"><h3>❓ Difference between PUT and PATCH?</h3><p>PUT replaces entire resource, PATCH partially updates.</p></div>
+  </div>
+
+  <!-- Section 11: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a <strong>Contact Manager</strong> with full CRUD (name, email, phone).</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add search/filter functionality to your CRUD app.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement pagination for large datasets.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 83)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is CRUD — Create, Read, Update, Delete</div>
+    <div class="card">✔️ HTTP methods mapping to CRUD operations</div>
+    <div class="card">✔️ Backend CRUD API with Express</div>
+    <div class="card">✔️ Frontend CRUD with Axios and React</div>
+    <div class="card">✔️ Complete product management example</div>
+  </div>
+
+  <!-- Day 83 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 83 Ending Message</strong><br>
+    "CRUD is the foundation of every application! Whether it's a todo app, e-commerce site, or social media platform — you're always doing Create, Read, Update, Delete. Master these patterns and you can build anything!"
+  </div>
+
+  <!-- Next: Day 84 -->
+  <div class="section-title">🔜 Next — Day 84 : Authentication Basics (Login/Register)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🔐 Login/Register</span>
+    <span class="badge">🔑 Password Hashing (bcrypt)</span>
+    <span class="badge">🎫 JWT Tokens</span>
+    <span class="badge">🛡️ Protected Routes</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 83 Completed ✅<br>
+    Build a complete CRUD app from scratch — it's the best way to master full-stack development!
+  </div>
+</div>
+</body>
+</html>

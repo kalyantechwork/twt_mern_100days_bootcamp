@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 3: HTML Basics | Live Outputs for Every Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Brand header */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .subsection-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.8rem;
+      color: #1e293b;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.2rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.1s ease;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .code-snippet {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 0.8rem 1rem;
+      border-radius: 18px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      white-space: pre-wrap;
+      font-weight: 500;
+    }
+    .output-preview {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 20px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      margin-bottom: 0.2rem;
+      transition: background 0.1s;
+    }
+    .output-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.2rem;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 1rem; }
+      .two-col-grid { grid-template-columns: 1fr; }
+    }
+    .form-demo input, .form-demo button, .form-demo select {
+      margin: 4px 0;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📄</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 3 · HTML Basics (Live Outputs)</div>
+  </div>
+
+  <h1>🏷️ HTML Basics<br><span style="font-size: 1rem; color:#2c3e66;">Every code example → see live result instantly</span></h1>
+
+  <!-- Section 1 -->
+  <div class="section-title">1️⃣ What is HTML?</div>
+  <p><strong>HTML</strong> = HyperText Markup Language. Skeleton of webpages.</p>
+  <div class="highlight-box">
+    🏠 Analogy: HTML = Walls & rooms (structure) · CSS = Paint & design · JS = Electricity
+  </div>
+
+  <!-- 2. First HTML file + live preview -->
+  <div class="section-title">2️⃣ Your First HTML Skeleton (Live demo)</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📄 Basic index.html code</h3>
+      <div class="code-snippet">
+        &lt;!DOCTYPE html&gt;<br>
+        &lt;html&gt;<br>
+        &lt;head&gt;&lt;title&gt;My First Page&lt;/title&gt;&lt;/head&gt;<br>
+        &lt;body&gt;<br>
+        &nbsp;&nbsp;&lt;h1&gt;Welcome to HTML&lt;/h1&gt;<br>
+        &nbsp;&nbsp;&lt;p&gt;This is my first webpage.&lt;/p&gt;<br>
+        &lt;/body&gt;&lt;/html&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>✨ Live Output</h3>
+      <div class="output-preview">
+        <div class="output-label">▶️ Browser renders:</div>
+        <h1 style="font-size: 1.6rem; margin: 5px 0;">Welcome to HTML</h1>
+        <p>This is my first webpage.</p>
+        <small style="color: gray;">(tab title would be "My First Page")</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3: Headings h1-h6 -->
+  <div class="section-title">3️⃣ Headings (h1 to h6) + Live Output</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>🔤 Code Example</h3>
+      <div class="code-snippet">
+        &lt;h1&gt;Main Title (h1)&lt;/h1&gt;<br>
+        &lt;h2&gt;Section Title (h2)&lt;/h2&gt;<br>
+        &lt;h3&gt;Subsection (h3)&lt;/h3&gt;<br>
+        &lt;h4&gt;Details (h4)&lt;/h4&gt;<br>
+        &lt;h5&gt;Small heading (h5)&lt;/h5&gt;<br>
+        &lt;h6&gt;Smallest (h6)&lt;/h6&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🎯 Live Headings</h3>
+      <div class="output-preview">
+        <div class="output-label">▶️ Output:</div>
+        <h1 style="margin: 4px 0; font-size:1.7rem;">Main Title (h1)</h1>
+        <h2 style="margin: 4px 0;">Section Title (h2)</h2>
+        <h3 style="margin: 4px 0;">Subsection (h3)</h3>
+        <h4 style="margin: 4px 0;">Details (h4)</h4>
+        <h5 style="margin: 4px 0;">Small heading (h5)</h5>
+        <h6 style="margin: 4px 0;">Smallest (h6)</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: Paragraph, line break, formatting -->
+  <div class="section-title">4️⃣ Paragraph & Text Formatting (Live)</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📝 Code</h3>
+      <div class="code-snippet">
+        &lt;p&gt;This is a paragraph. HTML is fun!&lt;/p&gt;<br>
+        First line &lt;br&gt; Second line after break.<br>
+        &lt;hr&gt; horizontal rule<br>
+        &lt;b&gt;Bold&lt;/b&gt;, &lt;i&gt;Italic&lt;/i&gt;, &lt;u&gt;Underline&lt;/u&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🎨 Rendered Result</h3>
+      <div class="output-preview">
+        <p>This is a paragraph. HTML is fun!</p>
+        First line <br> Second line after break.
+        <hr style="margin: 8px 0;">
+        <b>Bold</b>, <i>Italic</i>, <u>Underline</u>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: Lists (ul / ol) -->
+  <div class="section-title">5️⃣ Lists - Unordered & Ordered</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📋 Unordered list (ul)</h3>
+      <div class="code-snippet">
+        &lt;ul&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;Apple&lt;/li&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;Mango&lt;/li&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;Grapes&lt;/li&gt;<br>
+        &lt;/ul&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🍎 Output</h3>
+      <div class="output-preview">
+        <ul style="margin-left: 1.2rem;">
+          <li>Apple</li>
+          <li>Mango</li>
+          <li>Grapes</li>
+        </ul>
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🔢 Ordered list (ol)</h3>
+      <div class="code-snippet">
+        &lt;ol&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;HTML&lt;/li&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;CSS&lt;/li&gt;<br>
+        &nbsp;&nbsp;&lt;li&gt;JS&lt;/li&gt;<br>
+        &lt;/ol&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>✅ Output</h3>
+      <div class="output-preview">
+        <ol style="margin-left: 1.2rem;">
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JS</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: Links anchor tag -->
+  <div class="section-title">6️⃣ Links (Anchor Tags) - Live Clickable</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>🔗 Code</h3>
+      <div class="code-snippet">
+        &lt;a href="https://google.com"&gt;Go to Google&lt;/a&gt;<br>
+        &lt;a href="https://youtube.com" target="_blank"&gt;YouTube (new tab)&lt;/a&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🌍 Live Links</h3>
+      <div class="output-preview">
+        <a href="https://google.com" target="_blank">🔍 Go to Google</a><br>
+        <a href="https://youtube.com" target="_blank">📺 YouTube (new tab)</a>
+        <div style="font-size: 0.7rem; margin-top: 6px;">✅ clicks work in real browser</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7: Images -->
+  <div class="section-title">7️⃣ Images with alt attribute</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>🖼️ Code</h3>
+      <div class="code-snippet">
+        &lt;img src="https://picsum.photos/id/1015/150/100" alt="Mountain landscape"&gt;<br>
+        &lt;img src="https://picsum.photos/id/26/150/100" alt="beach"&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>📸 Rendered Images</h3>
+      <div class="output-preview">
+        <img src="https://picsum.photos/id/1015/150/100" alt="Mountain landscape" style="border-radius: 12px; margin: 5px;">
+        <img src="https://picsum.photos/id/26/150/100" alt="beach" style="border-radius: 12px; margin: 5px;">
+        <div><small>random placeholder images from Lorem Picsum</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: Tables -->
+  <div class="section-title">8️⃣ Tables (Students data)</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📊 Table code</h3>
+      <div class="code-snippet">
+        &lt;table border="1"&gt;<br>
+        &nbsp;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;<br>
+        &nbsp;&lt;tr&gt;&lt;td&gt;Krishna&lt;/td&gt;&lt;td&gt;25&lt;/td&gt;&lt;/tr&gt;<br>
+        &nbsp;&lt;tr&gt;&lt;td&gt;Priya&lt;/td&gt;&lt;td&gt;23&lt;/td&gt;&lt;/tr&gt;<br>
+        &lt;/table&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>📌 Live Table</h3>
+      <div class="output-preview">
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr><th>Name</th><th>Age</th></tr>
+          <tr><td>Krishna</td><td>25</td></tr>
+          <tr><td>Priya</td><td>23</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: Forms multiple inputs -->
+  <div class="section-title">9️⃣ Forms - Collect User Data</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📝 Registration Form Code</h3>
+      <div class="code-snippet">
+        &lt;form&gt;<br>
+        &nbsp;&lt;input type="text" placeholder="Full Name"&gt;<br>
+        &nbsp;&lt;input type="email" placeholder="Email"&gt;<br>
+        &nbsp;&lt;input type="password" placeholder="Password"&gt;<br>
+        &nbsp;&lt;input type="date"&gt;<br>
+        &nbsp;&lt;button&gt;Register&lt;/button&gt;<br>
+        &lt;/form&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>✨ Interactive Form (try it)</h3>
+      <div class="output-preview form-demo">
+        <form onsubmit="return false;">
+          <input type="text" placeholder="Full Name" style="width: 90%; padding: 6px; margin: 4px 0; border-radius: 12px; border: 1px solid #ccc;"><br>
+          <input type="email" placeholder="Email" style="width: 90%; padding: 6px; margin: 4px 0; border-radius: 12px;"><br>
+          <input type="password" placeholder="Password" style="width: 90%; padding: 6px; margin: 4px 0;"><br>
+          <input type="date" style="margin: 4px 0;"><br>
+          <button type="button" style="margin-top: 6px;">Register</button>
+        </form>
+        <small>📌 All fields are interactive (demo)</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Types summary table + extra live types -->
+  <div class="subsection-title">🔢 Additional Input Types Live Demo</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>🎛️ Different Inputs Code</h3>
+      <div class="code-snippet">
+        &lt;input type="number" placeholder="age"&gt;<br>
+        &lt;input type="range"&gt;<br>
+        &lt;input type="color"&gt;<br>
+        &lt;select&gt;&lt;option&gt;Select&lt;/option&gt;&lt;/select&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🎨 Live Examples</h3>
+      <div class="output-preview">
+        <input type="number" placeholder="Age" style="margin: 3px;"> <br>
+        Range: <input type="range" style="width: 120px;"><br>
+        Color picker: <input type="color" value="#facc15"><br>
+        <select><option>HTML</option><option>CSS</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10: Semantic Tags Visual Preview -->
+  <div class="section-title">🏗️ Semantic Tags (Header, Nav, Section, Footer)</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>📐 Semantic Code</h3>
+      <div class="code-snippet">
+        &lt;header&gt;🌟 My Website Header&lt;/header&gt;<br>
+        &lt;nav&gt;Home | About | Contact&lt;/nav&gt;<br>
+        &lt;section&gt;Main content section&lt;/section&gt;<br>
+        &lt;footer&gt;© 2026 Telugu WebTech&lt;/footer&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🏠 Semantic Live Demo</h3>
+      <div class="output-preview" style="background: #fef9e3;">
+        <div style="background: #facc1540; padding: 8px; border-radius: 16px; font-weight: bold;">🌟 My Website Header</div>
+        <div style="background: #e2e8f0; padding: 6px; margin: 6px 0; border-radius: 20px;">🏠 Home | 📖 About | 📞 Contact</div>
+        <div style="padding: 8px; background: white; border-radius: 20px;">Main content section — articles go here</div>
+        <div style="margin-top: 8px; font-size: 0.7rem; text-align: center; border-top: 1px solid #ddd; padding: 6px;">© 2026 Telugu WebTech</div>
+        <small>✨ semantic tags improve accessibility & SEO</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini complete Project -->
+  <div class="section-title">✅ Complete Mini Project (Live Preview)</div>
+  <div class="two-col-grid">
+    <div class="example-card">
+      <h3>💻 Full HTML Code</h3>
+      <div class="code-snippet" style="max-height: 280px; overflow-y: auto;">
+        &lt;!DOCTYPE html&gt;<br>
+        &lt;html&gt;<br>
+        &lt;head&gt;&lt;title&gt;My First Project&lt;/title&gt;&lt;/head&gt;<br>
+        &lt;body&gt;<br>
+        &nbsp;&nbsp;&lt;h1&gt;Welcome to My Website&lt;/h1&gt;<br>
+        &nbsp;&nbsp;&lt;p&gt;Learning HTML is very interesting.&lt;/p&gt;<br>
+        &nbsp;&nbsp;&lt;hr&gt;<br>
+        &nbsp;&nbsp;&lt;h2&gt;Technologies I learn&lt;/h2&gt;<br>
+        &nbsp;&nbsp;&lt;ul&gt;&lt;li&gt;HTML&lt;/li&gt;&lt;li&gt;CSS&lt;/li&gt;&lt;li&gt;JavaScript&lt;/li&gt;&lt;/ul&gt;<br>
+        &nbsp;&nbsp;&lt;h2&gt;Contact Form&lt;/h2&gt;<br>
+        &nbsp;&nbsp;&lt;form&gt;&lt;input type="text" placeholder="Name"&gt;&lt;br&gt;&lt;input type="email" placeholder="Email"&gt;&lt;br&gt;&lt;button&gt;Submit&lt;/button&gt;&lt;/form&gt;<br>
+        &lt;/body&gt;<br>
+        &lt;/html&gt;
+      </div>
+    </div>
+    <div class="example-card">
+      <h3>🌟 Rendered Mini Project</h3>
+      <div class="output-preview" style="max-height: 350px; overflow-y: auto;">
+        <h1 style="font-size: 1.6rem;">Welcome to My Website</h1>
+        <p>Learning HTML is very interesting.</p>
+        <hr>
+        <h2>Technologies I learn</h2>
+        <ul><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+        <h2>Contact Form</h2>
+        <form onsubmit="return false;">
+          <input type="text" placeholder="Name" style="margin: 4px;"><br>
+          <input type="email" placeholder="Email" style="margin: 4px;"><br>
+          <button type="button">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Mistakes & Solutions</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Not closing tags → always use <span class="inline-code">&lt;/h1&gt;</span> etc.</li>
+    <li>❌ Wrong file extension → save as <span class="inline-code">.html</span></li>
+    <li>❌ Typing &lt;hl&gt; instead of &lt;h1&gt;</li>
+    <li>❌ Forgetting alt attribute → always add meaningful alt</li>
+  </ul>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>📝 Task 1</h3><p>Create webpage: heading, paragraph, image, list + link.</p></div>
+    <div class="example-card"><h3>📊 Task 2</h3><p>Student table (Name, Subject, Marks).</p></div>
+    <div class="example-card"><h3>📋 Task 3</h3><p>Registration form: name, email, password, DOB, submit button.</p></div>
+  </div>
+
+  <!-- Summary & Day 3 message -->
+  <div class="section-title">📖 Beginner Summary (Day 3)</div>
+  <div class="card-grid">
+    <div class="example-card">✔️ HTML structure & skeleton</div>
+    <div class="example-card">✔️ Headings h1-h6</div>
+    <div class="example-card">✔️ Paragraphs, breaks, formatting</div>
+    <div class="example-card">✔️ Lists (ul/ol) + tables & forms</div>
+    <div class="example-card">✔️ Links & images with live preview</div>
+    <div class="example-card">✔️ Semantic layout tags</div>
+  </div>
+
+  <!-- Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 3 Ending Message</strong><br>
+    “Now you understand the foundation of every website. From tomorrow, we will learn advanced HTML concepts and build better webpages.”
+  </div>
+
+  <!-- Next video -->
+  <div class="section-title">🔜 Next — Day 4 : Advanced HTML</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🎵 Audio & Video</span>
+    <span class="badge">🖼️ iframe (embed maps, YouTube)</span>
+    <span class="badge">📅 Advanced input types</span>
+    <span class="badge">♿ Accessibility basics</span>
+    <span class="badge">🔍 SEO meta tags</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 3 Completed ✅<br>
+    Practice HTML daily · Build mini webpages · Every example shows output!
+  </div>
+</div>
+</body>
+</html>

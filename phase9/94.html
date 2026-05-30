@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 94: Email Sending (Nodemailer) & OTP Authentication</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .email-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .otp-input {
+      background: #334155;
+      border: none;
+      padding: 12px;
+      border-radius: 40px;
+      color: white;
+      text-align: center;
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📧</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 94 · Email Sending (Nodemailer) & OTP Authentication</div>
+  </div>
+
+  <h1>📧 Email Sending & OTP Authentication<br><span style="font-size:1rem;">Nodemailer · OTP Generation · Email Verification · Password Reset</span></h1>
+
+  <!-- Section 1: Why Email in Web Apps -->
+  <div class="section-title">1️⃣ Why Email Integration is Essential</div>
+  <p>Email is critical for modern web applications: user verification, password reset, notifications, OTP authentication, and marketing emails.</p>
+  <div class="diagram">
+    User Action → Backend → Send Email (Nodemailer) → User Receives Email → Verify/Reset/Authenticate
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Use Cases:</strong> Welcome emails, OTP login, password reset, order confirmation, newsletter subscriptions, email verification.
+  </div>
+
+  <!-- Section 2: Nodemailer Setup -->
+  <div class="section-title">2️⃣ Nodemailer — Send Emails from Node.js</div>
+  <div class="code-block">
+    npm install nodemailer<br><br>
+    const nodemailer = require('nodemailer');<br><br>
+    // Create transporter (using Gmail as example)<br>
+    const transporter = nodemailer.createTransport({<br>
+      service: 'gmail',<br>
+      auth: {<br>
+        user: process.env.EMAIL_USER,<br>
+        pass: process.env.EMAIL_PASS  // App password (not regular password)<br>
+      }<br>
+    });
+  </div>
+  <div class="highlight-box">
+    🔐 <strong>Gmail Setup:</strong> Enable 2-Factor Authentication → Generate App Password (16 characters). Never use regular password!
+  </div>
+
+  <!-- Section 3: Sending Basic Email -->
+  <div class="section-title">3️⃣ Sending Basic Email</div>
+  <div class="code-block">
+    const sendEmail = async (to, subject, text, html) => {<br>
+      const mailOptions = {<br>
+        from: `"My App" <${process.env.EMAIL_USER}>`,<br>
+        to,<br>
+        subject,<br>
+        text,      // Plain text version<br>
+        html       // HTML version (optional)<br>
+      };<br>
+      try {<br>
+        const info = await transporter.sendMail(mailOptions);<br>
+        console.log('Email sent:', info.messageId);<br>
+        return true;<br>
+      } catch (error) {<br>
+        console.error('Email error:', error);<br>
+        return false;<br>
+      }<br>
+    };<br><br>
+    // Usage<br>
+    sendEmail('user@example.com', 'Welcome!', 'Thanks for signing up', '&lt;h1&gt;Welcome!&lt;/h1&gt;&lt;p&gt;Thanks for signing up&lt;/p&gt;');
+  </div>
+
+  <!-- Section 4: OTP Generation -->
+  <div class="section-title">4️⃣ OTP Generation — One-Time Password</div>
+  <div class="code-block">
+    const crypto = require('crypto');<br><br>
+    // Generate 6-digit OTP<br>
+    const generateOTP = () => {<br>
+      return Math.floor(100000 + Math.random() * 900000).toString();<br>
+    };<br><br>
+    // Generate crypto-random OTP (more secure)<br>
+    const generateSecureOTP = () => {<br>
+      return crypto.randomInt(100000, 999999).toString();<br>
+    };<br><br>
+    // Store OTP in database with expiry<br>
+    const otpSchema = new mongoose.Schema({<br>
+      email: { type: String, required: true },<br>
+      otp: { type: String, required: true },<br>
+      expiresAt: { type: Date, default: () => Date.now() + 10 * 60 * 1000 } // 10 minutes<br>
+    });
+  </div>
+
+  <!-- Section 5: OTP Email Sending -->
+  <div class="section-title">5️⃣ OTP Email — Complete Flow</div>
+  <div class="code-block">
+    // backend/routes/auth.js<br>
+    router.post('/send-otp', async (req, res) => {<br>
+      const { email } = req.body;<br>
+      const otp = generateOTP();<br>
+      // Save OTP to database<br>
+      await OTP.findOneAndUpdate(<br>
+        { email },<br>
+        { otp, expiresAt: Date.now() + 10 * 60 * 1000 },<br>
+        { upsert: true }<br>
+      );<br>
+      // Send email<br>
+      const html = `<br>
+        &lt;h1&gt;Your OTP Code&lt;/h1&gt;<br>
+        &lt;p&gt;Your verification code is: &lt;strong&gt;${otp}&lt;/strong&gt;&lt;/p&gt;<br>
+        &lt;p&gt;This code expires in 10 minutes.&lt;/p&gt;<br>
+      `;<br>
+      await sendEmail(email, 'Your Verification Code', `Your OTP is: ${otp}`, html);<br>
+      res.json({ message: 'OTP sent successfully' });<br>
+    });<br><br>
+    router.post('/verify-otp', async (req, res) => {<br>
+      const { email, otp } = req.body;<br>
+      const record = await OTP.findOne({ email, otp });<br>
+      if (!record || record.expiresAt < Date.now()) {<br>
+        return res.status(400).json({ error: 'Invalid or expired OTP' });<br>
+      }<br>
+      await OTP.deleteOne({ email });<br>
+      res.json({ success: true, message: 'OTP verified' });<br>
+    });
+  </div>
+
+  <!-- Section 6: Password Reset Email -->
+  <div class="section-title">6️⃣ Password Reset — Email with Reset Link</div>
+  <div class="code-block">
+    const crypto = require('crypto');<br><br>
+    router.post('/forgot-password', async (req, res) => {<br>
+      const { email } = req.body;<br>
+      const user = await User.findOne({ email });<br>
+      if (!user) return res.status(404).json({ error: 'User not found' });<br>
+      // Generate reset token<br>
+      const resetToken = crypto.randomBytes(32).toString('hex');<br>
+      user.resetToken = resetToken;<br>
+      user.resetTokenExpiry = Date.now() + 3600000; // 1 hour<br>
+      await user.save();<br>
+      // Send reset email<br>
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;<br>
+      const html = `<br>
+        &lt;h1&gt;Password Reset Request&lt;/h1&gt;<br>
+        &lt;p&gt;Click the link below to reset your password (expires in 1 hour):&lt;/p&gt;<br>
+        &lt;a href="${resetLink}"&gt;${resetLink}&lt;/a&gt;<br>
+      `;<br>
+      await sendEmail(email, 'Password Reset', `Reset your password: ${resetLink}`, html);<br>
+      res.json({ message: 'Reset email sent' });<br>
+    });
+  </div>
+
+  <!-- Section 7: Welcome Email Template -->
+  <div class="section-title">7️⃣ Welcome Email — HTML Template</div>
+  <div class="code-block">
+    const getWelcomeEmail = (name) => `<!DOCTYPE html><br>
+    &lt;html&gt;<br>
+    &lt;head&gt;&lt;style&gt;body { font-family: Arial; }&lt;/style&gt;&lt;/head&gt;<br>
+    &lt;body&gt;<br>
+      &lt;h1&gt;Welcome ${name}! 🎉&lt;/h1&gt;<br>
+      &lt;p&gt;Thanks for joining MyApp. We're excited to have you!&lt;/p&gt;<br>
+      &lt;p&gt;Get started by completing your profile.&lt;/p&gt;<br>
+      &lt;a href="${process.env.FRONTEND_URL}/dashboard" style="background:#facc15; padding:10px 20px; text-decoration:none; color:#0f172a; border-radius:40px;"&gt;<br>
+        Go to Dashboard<br>
+      &lt;/a&gt;<br>
+    &lt;/body&gt;<br>
+    &lt;/html&gt;`;
+  </div>
+
+  <!-- Section 8: Live Demo — OTP Simulation -->
+  <div class="section-title">8️⃣ Live Demo — OTP Authentication Simulation</div>
+  <div class="live-demo">
+    <div class="email-preview">
+      <strong>🔢 OTP Authentication Demo:</strong>
+      <div style="margin: 16px 0;">
+        <input type="email" id="demoEmail" placeholder="Enter your email" class="otp-input" style="width: 100%; margin-bottom: 12px;">
+        <button class="demo-btn" id="sendOtpBtn" style="width: 100%;">📧 Send OTP</button>
+      </div>
+      <div id="otpSection" style="display: none;">
+        <input type="text" id="demoOtp" placeholder="Enter 6-digit OTP" class="otp-input" style="width: 100%; margin-bottom: 12px;">
+        <button class="demo-btn" id="verifyOtpBtn" style="width: 100%;">✅ Verify OTP</button>
+      </div>
+      <div id="otpStatus" style="margin-top: 12px;"></div>
+      <p class="inline-code">✨ In production, OTP is sent to actual email via Nodemailer!</p>
+    </div>
+    <script>
+      let sentOtp = null;
+      document.getElementById("sendOtpBtn")?.addEventListener("click", () => {
+        const email = document.getElementById("demoEmail").value;
+        if(email) {
+          sentOtp = Math.floor(100000 + Math.random() * 900000).toString();
+          document.getElementById("otpSection").style.display = "block";
+          document.getElementById("otpStatus").innerHTML = `<span class="inline-code" style="color:#22c55e;">✅ OTP sent to ${email} (Demo: ${sentOtp})</span>`;
+        } else {
+          document.getElementById("otpStatus").innerHTML = `<span class="inline-code" style="color:#ef4444;">❌ Please enter an email</span>`;
+        }
+      });
+      document.getElementById("verifyOtpBtn")?.addEventListener("click", () => {
+        const enteredOtp = document.getElementById("demoOtp").value;
+        if(enteredOtp === sentOtp) {
+          document.getElementById("otpStatus").innerHTML = `<span class="inline-code" style="color:#22c55e;">✅ OTP Verified! Authentication successful.</span>`;
+        } else {
+          document.getElementById("otpStatus").innerHTML = `<span class="inline-code" style="color:#ef4444;">❌ Invalid OTP. Please try again.</span>`;
+        }
+      });
+    </script>
+  </div>
+
+  <!-- Section 9: Email Service Best Practices -->
+  <div class="section-title">9️⃣ Email Best Practices</div>
+  <div class="card-grid">
+    <div class="card"><h3>📊 Transactional vs Marketing</h3><p>Use different services: Nodemailer for transactional, SendGrid/Brevo for marketing campaigns.</p></div>
+    <div class="card"><h3>⏱️ Rate Limiting</h3><p>Limit OTP requests per email (e.g., 3 attempts per hour) to prevent abuse.</p></div>
+    <div class="card"><h3>🔐 Security</h3><p>Never log OTPs, expire them quickly (5-10 min), use rate limiting.</p></div>
+    <div class="card"><h3>🎨 HTML Templates</h3><p>Use responsive HTML templates that render well on mobile and desktop.</p></div>
+  </div>
+
+  <!-- Section 10: Environment Variables -->
+  <div class="section-title">🔟 Environment Variables for Email</div>
+  <div class="code-block">
+    # backend/.env<br>
+    EMAIL_USER=your-email@gmail.com<br>
+    EMAIL_PASS=your-app-password-16-chars<br>
+    FRONTEND_URL=http://localhost:5173<br>
+    SMTP_HOST=smtp.gmail.com<br>
+    SMTP_PORT=587
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Set up Nodemailer with Gmail (use App Password)<br>
+    2. Implement "Forgot Password" flow: user enters email → sends reset link → user resets password<br>
+    3. Build OTP login: user enters email → receives OTP → verifies OTP → logs in<br>
+    4. Send welcome email after successful registration<br>
+    5. Add rate limiting to prevent OTP abuse
+  </div>
+
+  <!-- Section 12: Common Mistakes -->
+  <div class="section-title">⚠️ Common Email Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Using regular Gmail password (use App Password instead)</li>
+    <li>❌ Storing OTP in plain text without expiry</li>
+    <li>❌ Not rate-limiting OTP requests → abuse risk</li>
+    <li>❌ Emails going to spam (use proper authentication, SPF/DKIM)</li>
+  </ul>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Nodemailer?</h3><p>Node.js module to send emails from server using SMTP.</p></div>
+    <div class="card"><h3>❓ Why OTP instead of password?</h3><p>Passwordless auth is simpler for users, no password to remember/reset.</p></div>
+    <div class="card"><h3>❓ How to prevent OTP brute force?</h3><p>Rate limiting, short expiry (5-10 min), limit attempts per email.</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a complete "Forgot Password" flow with email reset link.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Implement email verification after registration (send verification link).</p></div>
+    <div class="card"><h3>Task 3</h3><p>Create an order confirmation email with order details.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 94)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Nodemailer setup and configuration</div>
+    <div class="card">✔️ Sending basic and HTML emails</div>
+    <div class="card">✔️ OTP generation and email delivery</div>
+    <div class="card">✔️ Password reset flow with tokens</div>
+    <div class="card">✔️ Email templates and best practices</div>
+    <div class="card">✔️ Rate limiting and security considerations</div>
+  </div>
+
+  <!-- Day 94 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 94 Ending Message</strong><br>
+    "Email and OTP authentication make your app production-ready! Now users can reset passwords, verify accounts, and login securely without remembering passwords — just like modern apps like WhatsApp and Telegram."
+  </div>
+
+  <!-- Next: Day 95 -->
+  <div class="section-title">🔜 Next — Day 95 : Docker Basics for MERN Apps</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🐳 Dockerfile</span>
+    <span class="badge">📦 docker-compose</span>
+    <span class="badge">🚢 Containerization</span>
+    <span class="badge">⚡ MERN in Docker</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 94 Completed ✅<br>
+    Email integration is a must-have skill — add OTP auth to your projects!
+  </div>
+</div>
+</body>
+</html>

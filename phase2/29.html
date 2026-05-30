@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 29: State in React (useState Hook) | Making Components Dynamic + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .counter-demo {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 24px;
+      color: white;
+    }
+    .counter-number {
+      font-size: 4rem;
+      font-weight: 800;
+      margin: 20px 0;
+    }
+    .state-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 8px;
+    }
+    .state-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    .todo-demo {
+      background: white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #f1f5f9;
+      border-radius: 12px;
+    }
+    .delete-todo {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🪝</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 29 · State in React (useState Hook) — Show Results</div>
+  </div>
+
+  <h1>🪝 State in React (useState Hook)<br><span style="font-size:1rem;">Making Components Dynamic · Counter Example · State vs Props · Arrays & Objects — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is State -->
+  <div class="section-title">1️⃣ What is State? (Dynamic Data)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>State</strong> is data that changes over time inside a React component. Unlike props (which are read-only from parent), state is managed internally and can be updated. When state changes, React automatically re-renders the component to reflect the new UI.</p>
+    <p><strong>Where it's used:</strong> Every interactive React application — counters, forms, toggles, shopping carts, user authentication, data fetching, and anything that changes over time.</p>
+  </div>
+  <div class="diagram">
+    User Action → State Updates → Component Re-renders → UI Updates Automatically
+  </div>
+
+  <!-- Section 2: useState Syntax -->
+  <div class="section-title">2️⃣ useState Hook — The Syntax</div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useState } from 'react';<br><br>
+      function Counter() {<br>
+        // Array destructuring: [currentState, setterFunction]<br>
+        const [count, setCount] = useState(0);<br>
+        <br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;p&gt;Count: {count}&lt;/p&gt;<br>
+            &lt;button onClick={() => setCount(count + 1)}&gt;Increase&lt;/button&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="useStateSyntax">🪝 Show useState Syntax</button>
+    <div id="useStateSyntax" class="result-area">
+      <div class="diagram">
+        useState(initialValue) → returns [state, setStateFunction]
+      </div>
+      <div class="console-output">
+        ✅ useState is a Hook — special function that "hooks into" React features<br>
+        ✅ Returns an array with two items: current state and a function to update it<br>
+        ✅ Array destructuring: const [count, setCount] = useState(0)<br>
+        💡 'count' is the current value, 'setCount' updates it and triggers re-render
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Counter Demo -->
+  <div class="section-title">3️⃣ Live Counter Demo — useState in Action</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="counterDemo">📊 Show Interactive Counter</button>
+    <div id="counterDemo" class="result-area">
+      <div class="counter-demo">
+        <h3>⚛️ React Counter (Simulated with useState)</h3>
+        <div class="counter-number" id="counterDisplay">0</div>
+        <button class="state-btn" id="incrementBtn">➕ Increase</button>
+        <button class="state-btn" id="decrementBtn">➖ Decrease</button>
+        <button class="state-btn" id="resetCounterBtn">🔄 Reset</button>
+      </div>
+      <div class="console-output">
+        ✅ useState(0) initializes count to 0<br>
+        ✅ setCount(count + 1) updates state and triggers re-render<br>
+        ✅ Component re-renders automatically when state changes!
+      </div>
+      <script>
+        let counterValue = 0;
+        const counterDisplay = document.getElementById("counterDisplay");
+        const updateCounterDisplay = () => { if(counterDisplay) counterDisplay.textContent = counterValue; };
+        document.getElementById("incrementBtn")?.addEventListener("click", () => { counterValue++; updateCounterDisplay(); });
+        document.getElementById("decrementBtn")?.addEventListener("click", () => { counterValue--; updateCounterDisplay(); });
+        document.getElementById("resetCounterBtn")?.addEventListener("click", () => { counterValue = 0; updateCounterDisplay(); });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: Updating State -->
+  <div class="section-title">4️⃣ Updating State — setState Function</div>
+  <div class="example-card">
+    <div class="code-block">
+      const [count, setCount] = useState(0);<br><br>
+      // Direct new value<br>
+      setCount(10);  // count becomes 10<br><br>
+      // Using previous value (safer for async updates)<br>
+      setCount(prevCount => prevCount + 1);<br><br>
+      // With objects<br>
+      const [user, setUser] = useState({ name: "Kalyan", age: 25 });<br>
+      setUser({ ...user, age: 26 });  // Spread operator to keep other properties
+    </div>
+    <button class="btn-show" data-target="updateStateResult">📝 Show State Update Patterns</button>
+    <div id="updateStateResult" class="result-area">
+      <div class="console-output">
+        ✅ setCount(10) — directly sets new value<br>
+        ✅ setCount(prev => prev + 1) — functional update (safer for async)<br>
+        ✅ For objects: spread (...) to preserve existing properties<br>
+        ✅ NEVER mutate state directly: count++ ❌ use setCount(count + 1) ✅
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Multiple State Variables -->
+  <div class="section-title">5️⃣ Multiple State Variables</div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserForm() {<br>
+        const [name, setName] = useState("");<br>
+        const [email, setEmail] = useState("");<br>
+        const [isSubscribed, setIsSubscribed] = useState(false);<br>
+        <br>
+        return (&lt;div&gt;...&lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="multiStateResult">📋 Show Multiple State Example</button>
+    <div id="multiStateResult" class="result-area">
+      <div class="console-output">
+        ✅ You can use useState multiple times in one component!<br>
+        ✅ Each state variable is independent<br>
+        ✅ Good practice: separate state for separate concerns<br>
+        💡 Example: name, email, and isSubscribed are separate state variables
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: State with Objects -->
+  <div class="section-title">6️⃣ State with Objects (Remember to Spread!)</div>
+  <div class="example-card">
+    <div class="code-block">
+      const [form, setForm] = useState({ username: "", password: "" });<br><br>
+      // ✅ Correct — preserves other fields<br>
+      const handleChange = (e) => {<br>
+        setForm({ ...form, [e.target.name]: e.target.value });<br>
+      };<br><br>
+      // ❌ Wrong — overwrites entire object<br>
+      setForm({ username: "newName" });  // password is lost!
+    </div>
+    <button class="btn-show" data-target="objectStateResult">📦 Show Object State Demo</button>
+    <div id="objectStateResult" class="result-area">
+      <div class="console-output">
+        🔑 When updating object state, ALWAYS spread existing properties!<br>
+        ✅ Correct: setForm({ ...form, name: "New" })<br>
+        ❌ Wrong: setForm({ name: "New" }) — deletes other properties<br>
+        💡 This is one of the most common React mistakes!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: State with Arrays -->
+  <div class="section-title">7️⃣ State with Arrays (Adding/Removing Items)</div>
+  <div class="example-card">
+    <div class="code-block">
+      const [items, setItems] = useState(["Apple", "Mango"]);<br><br>
+      // Add item<br>
+      const addItem = () => {<br>
+        setItems([...items, "Orange"]);<br>
+      };<br><br>
+      // Remove item by index<br>
+      const removeItem = (index) => {<br>
+        setItems(items.filter((_, i) => i !== index));<br>
+      };<br><br>
+      // Update item<br>
+      const updateItem = (index, newValue) => {<br>
+        const updated = [...items];<br>
+        updated[index] = newValue;<br>
+        setItems(updated);<br>
+      };
+    </div>
+    <button class="btn-show" data-target="arrayStateResult">🍎 Show Array State Demo</button>
+    <div id="arrayStateResult" class="result-area">
+      <div class="console-output">
+        ✅ Add: setItems([...items, newItem]) — spread then add<br>
+        ✅ Remove: setItems(items.filter(item => item !== target))<br>
+        ✅ Update: create new array with [...items], modify, then set<br>
+        💡 Never mutate arrays directly — always create new arrays!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Todo Example -->
+  <div class="section-title">📁 Complete Example: Todo List with useState</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="todoStateResult">✅ Show Todo App with State</button>
+    <div id="todoStateResult" class="result-area">
+      <div class="todo-demo">
+        <h3>📝 Todo List</h3>
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <input type="text" id="todoInput" placeholder="Add a task..." style="flex:1;">
+          <button class="state-btn" id="addTodoBtn" style="padding: 8px 20px;">Add</button>
+        </div>
+        <div id="todoListContainer"></div>
+      </div>
+      <div class="console-output">
+        ✅ This demonstrates: useState with arrays, adding items, removing items<br>
+        💡 In real React, this would re-render automatically when state changes!
+      </div>
+      <script>
+        let todos = [];
+        const todoContainer = document.getElementById("todoListContainer");
+        const renderTodos = () => {
+          if(todoContainer) {
+            todoContainer.innerHTML = "";
+            todos.forEach((todo, idx) => {
+              const div = document.createElement("div");
+              div.className = "todo-item";
+              div.innerHTML = `<span>${todo}</span><button class="delete-todo" data-index="${idx}">Delete</button>`;
+              todoContainer.appendChild(div);
+            });
+            document.querySelectorAll(".delete-todo").forEach(btn => {
+              btn.addEventListener("click", (e) => {
+                const idx = parseInt(btn.getAttribute("data-index"));
+                todos = todos.filter((_, i) => i !== idx);
+                renderTodos();
+              });
+            });
+          }
+        };
+        document.getElementById("addTodoBtn")?.addEventListener("click", () => {
+          const input = document.getElementById("todoInput");
+          if(input.value.trim()) {
+            todos.push(input.value.trim());
+            renderTodos();
+            input.value = "";
+          }
+        });
+        renderTodos();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 9: State vs Props -->
+  <div class="section-title">8️⃣ State vs Props — Key Differences</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Feature</th><th>Props</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>Mutability</span></td><td>Read-only (immutable)</span></td><td>Mutable (can change)</span></td>
+        <tr><td>Who manages?</span></td><td>Parent component</span></td><td>Component itself</span></td>
+        <tr><td>Purpose</span></td><td>Pass data to child</span></td><td>Manage dynamic data inside component</span></td>
+        <tr><td>Changes trigger re-render?</span></td><td>Yes (when parent re-renders)</span></td><td>Yes (when setState is called)</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Counter</strong> component with increment, decrement, and reset buttons<br>
+    2. Create a <strong>Toggle</strong> component that shows "ON" or "OFF" with a button to toggle<br>
+    3. Create a <strong>Name List</strong> component where users can add names to a list (use array state)<br>
+    4. Create a <strong>Form</strong> with multiple fields using object state
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesStateResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesStateResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Directly mutating state: <span class="inline-code">state.count++</span> ❌ → always use setter function: <span class="inline-code">setCount(count + 1)</span> ✅</li>
+        <li>❌ Forgetting to spread objects when updating: <span class="inline-code">setUser({ age: 26 })</span> ❌ loses other properties → use <span class="inline-code">setUser({ ...user, age: 26 })</span> ✅</li>
+        <li>❌ Calling setState in a loop without batching → React handles this, but be mindful of performance</li>
+        <li>❌ Using state value immediately after setState (setState is async) → use functional update or useEffect</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is state in React?</h3><p>Data that changes over time inside a component. Triggers re-render when updated.</p></div>
+    <div class="card"><h3>❓ What is the useState hook?</h3><p>A React hook that lets you add state to functional components. Returns [state, setState].</p></div>
+    <div class="card"><h3>❓ Difference between state and props?</h3><p>Props are passed from parent (read-only). State is internal (mutable).</p></div>
+    <div class="card"><h3>❓ Why use spread operator with object state?</h3><p>To preserve existing properties when updating only one field.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌡️ Task 1</h3><p>Create a <strong>Temperature</strong> component with Celsius and Fahrenheit toggle using state.</p></div>
+    <div class="card"><h3>⭐ Task 2</h3><p>Create a <strong>Rating</strong> component (1-5 stars) using state.</p></div>
+    <div class="card"><h3>✏️ Task 3</h3><p>Create a <strong>User Profile</strong> editor where you can edit name and email using object state.</p></div>
+    <div class="card"><h3>🔄 Task 4</h3><p>Create a component that toggles between light and dark mode using boolean state.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 29 - useState Hook)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is state — data that changes over time, triggers re-renders</div>
+    <div class="card">✔️ useState syntax: [state, setState] = useState(initialValue)</div>
+    <div class="card">✔️ Updating state with setter function (never mutate directly)</div>
+    <div class="card">✔️ State with different types: numbers, strings, booleans, objects, arrays</div>
+    <div class="card">✔️ Spread operator (...) for objects and arrays when updating</div>
+    <div class="card">✔️ State vs Props — understanding the difference</div>
+  </div>
+
+  <!-- Day 29 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 29 Ending Message</strong><br>
+    "State makes React components come alive! Now you can build interactive apps — counters, forms, toggles, todo lists. This is where React's power really shines. Master useState — it's the most important Hook you'll ever learn!"
+  </div>
+
+  <!-- Next: Day 30 -->
+  <div class="section-title">🔜 Next — Day 30 : Event Handling in React (onClick, onChange, onSubmit)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🖱️ onClick</span>
+    <span class="badge">📝 onChange</span>
+    <span class="badge">📋 onSubmit</span>
+    <span class="badge">🎯 Event Object (e)</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 29 Completed ✅<br>
+    Click "Show Result" on each example to see useState in action. Practice building interactive components daily!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

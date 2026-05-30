@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 85: JWT Authentication Deep Dive | Tokens, Verification, Refresh Tokens</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .jwt-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .token-display {
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      word-break: break-all;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🎫</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 85 · JWT Authentication Deep Dive</div>
+  </div>
+
+  <h1>🎫 JWT Authentication Deep Dive<br><span style="font-size:1rem;">Token Generation · Verification · Refresh Tokens · Security Best Practices</span></h1>
+
+  <!-- Section 1: JWT Structure -->
+  <div class="section-title">1️⃣ JWT Structure — What's Inside?</div>
+  <p><strong>JWT (JSON Web Token)</strong> is an open standard for securely transmitting information between parties. It consists of three parts separated by dots.</p>
+  <div class="diagram">
+    xxxxx.yyyyy.zzzzz
+    Header.Payload.Signature
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>📋 Header</h3><p>{ "alg": "HS256", "typ": "JWT" }<br>Algorithm & token type</p></div>
+    <div class="card"><h3>📦 Payload</h3><p>{ "id": 123, "email": "user@example.com", "exp": 1234567890 }<br>Claims (user data + expiry)</p></div>
+    <div class="card"><h3>🔐 Signature</h3><p>HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)<br>Verifies token wasn't tampered</p></div>
+  </div>
+  <div class="live-demo">
+    <div class="jwt-preview">
+      <strong>🔍 Sample JWT Token:</strong>
+      <div class="token-display" style="font-size:0.7rem;">
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM1NjI5NDAwLCJleHAiOjE3MzYyMzQyMDB9.sFzKpPjKpB8Y9VpRvz8yXyWJKqF2JpLQy8zPZxMqVpE
+      </div>
+      <p class="inline-code">Header (red) . Payload (green) . Signature (blue)</p>
+    </div>
+  </div>
+
+  <!-- Section 2: Generating JWT -->
+  <div class="section-title">2️⃣ Generating JWT (jsonwebtoken library)</div>
+  <div class="code-block">
+    npm install jsonwebtoken<br><br>
+    const jwt = require('jsonwebtoken');<br>
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-min-32-chars';<br>
+    const JWT_EXPIRES_IN = '7d'; // 7 days<br><br>
+    // Generate token<br>
+    const generateToken = (user) => {<br>
+      return jwt.sign(<br>
+        { id: user._id, email: user.email, role: user.role },  // payload<br>
+        JWT_SECRET,                                             // secret<br>
+        { expiresIn: JWT_EXPIRES_IN }                          // options<br>
+      );<br>
+    };<br><br>
+    // Example usage in login route<br>
+    const token = generateToken(user);<br>
+    res.json({ user, token });
+  </div>
+
+  <!-- Section 3: Verifying JWT -->
+  <div class="section-title">3️⃣ Verifying JWT — Authentication Middleware</div>
+  <div class="code-block">
+    const verifyToken = (req, res, next) => {<br>
+      try {<br>
+        // Get token from Authorization header<br>
+        const authHeader = req.headers.authorization;<br>
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {<br>
+          return res.status(401).json({ error: 'No token provided' });<br>
+        }<br>
+        <br>
+        const token = authHeader.split(' ')[1];<br>
+        const decoded = jwt.verify(token, JWT_SECRET);<br>
+        req.user = decoded; // Attach user info to request<br>
+        next();<br>
+      } catch (error) {<br>
+        if (error.name === 'TokenExpiredError') {<br>
+          return res.status(401).json({ error: 'Token expired' });<br>
+        }<br>
+        return res.status(403).json({ error: 'Invalid token' });<br>
+      }<br>
+    };<br><br>
+    // Use in protected routes<br>
+    router.get('/profile', verifyToken, (req, res) => {<br>
+      res.json({ user: req.user });<br>
+    });
+  </div>
+
+  <!-- Section 4: Token Expiration & Handling -->
+  <div class="section-title">4️⃣ Token Expiration — What Happens When Token Expires?</div>
+  <table>
+    <thead><tr><th>Scenario</th><th>Response</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>Token expired</span></span><td>401 Unauthorized with 'Token expired'</span></span><td>Redirect to login or refresh token</span></td></tr>
+      <tr><td>Invalid token</span></span><td>403 Forbidden with 'Invalid token'</span></span><td>Redirect to login</span></td></tr>
+      <tr><td>No token</span></span><td>401 Unauthorized with 'No token provided'</span></span><td>Redirect to login</span></td></tr>
+      <tr><td>Valid token</span></span><td>200 OK with protected data</span></span><td>Continue</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 5: Refresh Tokens -->
+  <div class="section-title">5️⃣ Refresh Tokens — Seamless User Experience</div>
+  <div class="code-block">
+    // Refresh token model (store in database)<br>
+    const refreshTokenSchema = new mongoose.Schema({<br>
+      token: { type: String, required: true },<br>
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },<br>
+      expiresAt: { type: Date, required: true }<br>
+    });<br><br>
+    // Generate refresh token (longer expiry)<br>
+    const generateRefreshToken = (userId) => {<br>
+      const refreshToken = jwt.sign({ id: userId }, REFRESH_SECRET, { expiresIn: '30d' });<br>
+      // Save to database<br>
+      await RefreshToken.create({ token: refreshToken, userId, expiresAt: new Date(Date.now() + 30*24*60*60*1000) });<br>
+      return refreshToken;<br>
+    };<br><br>
+    // Refresh endpoint<br>
+    router.post('/refresh-token', async (req, res) => {<br>
+      const { refreshToken } = req.body;<br>
+      const storedToken = await RefreshToken.findOne({ token: refreshToken });<br>
+      if (!storedToken || storedToken.expiresAt < new Date()) {<br>
+        return res.status(401).json({ error: 'Invalid refresh token' });<br>
+      }<br>
+      const decoded = jwt.verify(refreshToken, REFRESH_SECRET);<br>
+      const newAccessToken = generateToken({ _id: decoded.id });<br>
+      res.json({ accessToken: newAccessToken });<br>
+    });
+  </div>
+  <div class="highlight-box">
+    🔄 <strong>Refresh Token Flow:</strong> Access token (short-lived, 15min) → expires → use refresh token → get new access token → user stays logged in.
+  </div>
+
+  <!-- Section 6: JWT Security Best Practices -->
+  <div class="section-title">6️⃣ JWT Security Best Practices</div>
+  <ul style="margin-left:1.5rem; background:#eef2ff; padding:1rem; border-radius:24px;">
+    <li>✅ Use strong JWT secret (min 32 characters, random string)</li>
+    <li>✅ Store JWT_SECRET in environment variables (.env), never in code</li>
+    <li>✅ Set short expiry for access tokens (15 minutes to 1 hour)</li>
+    <li>✅ Use refresh tokens for long-lived sessions</li>
+    <li>✅ Store tokens in httpOnly cookies (more secure) instead of localStorage</li>
+    <li>✅ Always use HTTPS in production</li>
+    <li>✅ Don't store sensitive data in JWT payload (it's base64 encoded, not encrypted)</li>
+  </ul>
+
+  <!-- Section 7: Complete JWT Auth Flow -->
+  <div class="section-title">7️⃣ Complete JWT Authentication Flow</div>
+  <div class="diagram">
+    Register/Login → Server validates credentials → Generates Access Token + Refresh Token → Client stores tokens
+    ↓
+    Client sends Access Token in Authorization header for protected requests
+    ↓
+    Server verifies token → valid → serves data
+    ↓
+    Access Token expires → Client sends Refresh Token to /refresh endpoint → Server issues new Access Token
+  </div>
+
+  <!-- Section 8: Frontend JWT Handling -->
+  <div class="section-title">8️⃣ Frontend JWT Handling — Axios Interceptors</div>
+  <div class="code-block">
+    // axiosConfig.js<br>
+    import axios from 'axios';<br>
+    <br>
+    const api = axios.create({<br>
+      baseURL: process.env.VITE_API_URL<br>
+    });<br>
+    <br>
+    // Request interceptor — add token<br>
+    api.interceptors.request.use((config) => {<br>
+      const token = localStorage.getItem('accessToken');<br>
+      if (token) config.headers.Authorization = `Bearer ${token}`;<br>
+      return config;<br>
+    });<br>
+    <br>
+    // Response interceptor — handle token expiry<br>
+    api.interceptors.response.use(<br>
+      (response) => response,<br>
+      async (error) => {<br>
+        const originalRequest = error.config;<br>
+        if (error.response?.status === 401 && !originalRequest._retry) {<br>
+          originalRequest._retry = true;<br>
+          try {<br>
+            const refreshToken = localStorage.getItem('refreshToken');<br>
+            const response = await axios.post('/api/auth/refresh-token', { refreshToken });<br>
+            localStorage.setItem('accessToken', response.data.accessToken);<br>
+            originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;<br>
+            return api(originalRequest);<br>
+          } catch (refreshError) {<br>
+            localStorage.removeItem('accessToken');<br>
+            localStorage.removeItem('refreshToken');<br>
+            window.location = '/login';<br>
+          }<br>
+        }<br>
+        return Promise.reject(error);<br>
+      }<br>
+    );
+  </div>
+
+  <!-- Section 9: Live Demo — JWT in Action -->
+  <div class="section-title">9️⃣ Live Demo — JWT Authentication Simulation</div>
+  <div class="live-demo">
+    <div class="jwt-preview">
+      <strong>🎫 JWT Flow Demo:</strong>
+      <div id="jwtStatus" style="margin-bottom: 16px; padding: 8px; background: #334155; border-radius: 40px; text-align: center;">
+        Status: <span id="jwtLoginStatus">Not Authenticated</span>
+      </div>
+      <div id="jwtLoginSection">
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <input type="text" id="jwtUsername" placeholder="Username" class="inline-code" style="flex:1; padding:8px; border-radius:40px; border:none;">
+          <button class="demo-btn" id="jwtLoginBtn">🔑 Login (Generate JWT)</button>
+        </div>
+      </div>
+      <div id="jwtUserInfo" style="display: none;">
+        <div class="token-display" style="background:#1e293b;">
+          <strong>Access Token:</strong><br>
+          <span id="jwtTokenDisplay" style="font-size:0.65rem; word-break:break-all;"></span>
+        </div>
+        <button class="demo-btn" id="jwtProtectedBtn">🔒 Access Protected Data</button>
+        <button class="demo-btn" id="jwtLogoutBtn">🚪 Logout</button>
+        <div id="protectedDataResult" style="margin-top: 12px;"></div>
+      </div>
+    </div>
+    <script>
+      let accessToken = null;
+      let loggedIn = false;
+      const jwtStatusSpan = document.getElementById("jwtLoginStatus");
+      const loginSection = document.getElementById("jwtLoginSection");
+      const userInfoDiv = document.getElementById("jwtUserInfo");
+      const tokenDisplay = document.getElementById("jwtTokenDisplay");
+      const protectedResult = document.getElementById("protectedDataResult");
+      function updateJWTUI() {
+        if(loggedIn && accessToken) {
+          jwtStatusSpan.textContent = "Authenticated ✅";
+          loginSection.style.display = "none";
+          userInfoDiv.style.display = "block";
+          tokenDisplay.textContent = accessToken.substring(0, 80) + "...";
+        } else {
+          jwtStatusSpan.textContent = "Not Authenticated ❌";
+          loginSection.style.display = "block";
+          userInfoDiv.style.display = "none";
+          protectedResult.innerHTML = "";
+        }
+      }
+      document.getElementById("jwtLoginBtn")?.addEventListener("click", () => {
+        const username = document.getElementById("jwtUsername")?.value || "User";
+        const payload = { id: 1, email: `${username}@example.com`, exp: Math.floor(Date.now() / 1000) + 3600 };
+        const fakeToken = btoa(JSON.stringify({ header: { alg: "HS256" }, payload })) + ".signature";
+        accessToken = fakeToken;
+        loggedIn = true;
+        updateJWTUI();
+      });
+      document.getElementById("jwtProtectedBtn")?.addEventListener("click", () => {
+        if(loggedIn && accessToken) {
+          protectedResult.innerHTML = `<div class="code-block" style="background:#1e293b;">✅ Protected data accessed! Token verified.<br>User data: ${atob(accessToken.split('.')[0])}</div>`;
+        } else {
+          protectedResult.innerHTML = `<div class="code-block" style="background:#ef4444;">❌ Unauthorized! Please login first.</div>`;
+        }
+      });
+      document.getElementById("jwtLogoutBtn")?.addEventListener("click", () => {
+        accessToken = null;
+        loggedIn = false;
+        updateJWTUI();
+      });
+      updateJWTUI();
+    </script>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Implement JWT access tokens with 15-minute expiry<br>
+    2. Add refresh tokens stored in database with 7-day expiry<br>
+    3. Create a /refresh-token endpoint that issues new access tokens<br>
+    4. Add Axios interceptor to automatically refresh expired tokens<br>
+    5. Store refresh token in httpOnly cookie for better security<br>
+    6. Implement logout that invalidates refresh token in database
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common JWT Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Storing sensitive data in JWT payload (it's base64 encoded, not encrypted!)</li>
+    <li>❌ Using too long expiry for access tokens (security risk)</li>
+    <li>❌ Hardcoding JWT secret in code (use environment variables)</li>
+    <li>❌ Not validating token signature on every request</li>
+  </ul>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What are the parts of a JWT?</h3><p>Header, Payload, Signature (Base64 encoded, separated by dots).</p></div>
+    <div class="card"><h3>❓ Why use refresh tokens?</h3><p>Access tokens are short-lived for security; refresh tokens allow obtaining new access tokens without re-login.</p></div>
+    <div class="card"><h3>❓ Where to store JWT on frontend?</h3><p>localStorage (simple) or httpOnly cookies (more secure for production).</p></div>
+    <div class="card"><h3>❓ Can JWT be decoded without secret?</h3><p>Yes, payload is base64 encoded, not encrypted. Never store passwords in JWT!</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Implement role-based authorization (admin/user) using JWT claims.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add token blacklist on logout to prevent expired token reuse.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement device-based session tracking with refresh tokens.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 85)</div>
+  <div class="card-grid">
+    <div class="card">✔️ JWT structure: Header, Payload, Signature</div>
+    <div class="card">✔️ Generating and verifying JWT tokens</div>
+    <div class="card">✔️ Token expiration handling</div>
+    <div class="card">✔️ Refresh tokens for seamless UX</div>
+    <div class="card">✔️ Security best practices</div>
+    <div class="card">✔️ Axios interceptors for token management</div>
+  </div>
+
+  <!-- Day 85 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 85 Ending Message</strong><br>
+    "JWT is the backbone of modern web authentication. Now you understand tokens inside out — from generation to verification to refresh flows. This is production-ready authentication!"
+  </div>
+
+  <!-- Next: Day 86 -->
+  <div class="section-title">🔜 Next — Day 86 : Password Hashing with bcrypt (Deep Dive)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🔐 bcrypt hashing</span>
+    <span class="badge">🧂 Salt rounds</span>
+    <span class="badge">⚖️ compare passwords</span>
+    <span class="badge">🛡️ Security best practices</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 85 Completed ✅<br>
+    JWT mastery is essential for every backend developer. Implement refresh tokens and secure your apps!
+  </div>
+</div>
+</body>
+</html>

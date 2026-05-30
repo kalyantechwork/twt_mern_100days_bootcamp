@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 88: Role-Based Access Control (Admin vs User Permissions)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .rbac-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .role-selector {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .role-btn {
+      background: #334155;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .role-btn.active {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .admin-panel {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 16px;
+    }
+    .user-panel {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">👑</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 88 · Role-Based Access Control (RBAC)</div>
+  </div>
+
+  <h1>👑 Role-Based Access Control (RBAC)<br><span style="font-size:1rem;">Admin vs User Permissions · Frontend & Backend Authorization · Role Middleware</span></h1>
+
+  <!-- Section 1: What is RBAC -->
+  <div class="section-title">1️⃣ What is Role-Based Access Control (RBAC)?</div>
+  <p><strong>RBAC</strong> is a method of restricting system access to authorized users based on their role (e.g., admin, user, moderator, guest). Different roles have different permissions.</p>
+  <div class="diagram">
+    User Login → Check Role → Admin → Access Admin Dashboard, Delete Users, View Analytics
+    User Login → Check Role → Regular User → Access Profile, View Products, Add to Cart
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> Hotel key cards — guests can only access their room and lobby, staff can access maintenance areas, managers can access all areas.
+  </div>
+
+  <!-- Section 2: Common User Roles -->
+  <div class="card-grid">
+    <div class="card"><h3>👑 Admin</h3><p>Full system access — manage users, view analytics, delete content, configure settings</p></div>
+    <div class="card"><h3>👤 Regular User</h3><p>Basic access — view profile, edit own data, create content, leave comments</p></div>
+    <div class="card"><h3>✍️ Editor/Moderator</h3><p>Content management — edit/delete posts, manage comments, approve content</p></div>
+    <div class="card"><h3>👁️ Guest</h3><p>View-only — read public content, cannot interact or modify anything</p></div>
+  </div>
+
+  <!-- Section 3: User Model with Role -->
+  <div class="section-title">3️⃣ User Model — Adding Role Field (Backend)</div>
+  <div class="code-block">
+    // models/User.js<br>
+    const userSchema = new mongoose.Schema({<br>
+      name: { type: String, required: true },<br>
+      email: { type: String, required: true, unique: true },<br>
+      password: { type: String, required: true },<br>
+      role: {<br>
+        type: String,<br>
+        enum: ['user', 'admin', 'moderator'],<br>
+        default: 'user'<br>
+      }<br>
+    });<br><br>
+    // During registration, default role is 'user'<br>
+    // Admin can create other admins via special route
+  </div>
+
+  <!-- Section 4: JWT with Role -->
+  <div class="section-title">4️⃣ JWT Token — Include User Role</div>
+  <div class="code-block">
+    // When generating JWT, include role in payload<br>
+    const generateToken = (user) => {<br>
+      return jwt.sign(<br>
+        { id: user._id, email: user.email, role: user.role },<br>
+        JWT_SECRET,<br>
+        { expiresIn: '7d' }<br>
+      );<br>
+    };<br><br>
+    // Frontend can decode token to get role<br>
+    const decoded = jwt.decode(token);<br>
+    console.log(decoded.role); // 'admin' or 'user'
+  </div>
+
+  <!-- Section 5: Backend Role Middleware -->
+  <div class="section-title">5️⃣ Backend Role Middleware — Protect API Routes</div>
+  <div class="code-block">
+    // middleware/roleMiddleware.js<br>
+    const authorize = (...allowedRoles) => {<br>
+      return (req, res, next) => {<br>
+        if (!req.user) {<br>
+          return res.status(401).json({ error: 'Not authenticated' });<br>
+        }<br>
+        if (!allowedRoles.includes(req.user.role)) {<br>
+          return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });<br>
+        }<br>
+        next();<br>
+      };<br>
+    };<br><br>
+    // Usage in routes<br>
+    router.get('/admin/users', authenticate, authorize('admin'), async (req, res) => {<br>
+      const users = await User.find({});<br>
+      res.json(users);<br>
+    });<br><br>
+    router.delete('/admin/users/:id', authenticate, authorize('admin'), async (req, res) => {<br>
+      await User.findByIdAndDelete(req.params.id);<br>
+      res.json({ message: 'User deleted' });<br>
+    });<br><br>
+    router.put('/posts/:id', authenticate, authorize('admin', 'moderator'), async (req, res) => {<br>
+      // Admin OR moderator can edit posts<br>
+    });
+  </div>
+
+  <!-- Section 6: Frontend Role-Based Rendering -->
+  <div class="section-title">6️⃣ Frontend — Conditional Rendering by Role</div>
+  <div class="code-block">
+    // components/Dashboard.jsx<br>
+    import { useAuth } from '../context/AuthContext';<br><br>
+    function Dashboard() {<br>
+      const { user } = useAuth();<br><br>
+      return (<br>
+        &lt;div&gt;<br>
+          &lt;h1&gt;Welcome, {user.name}!&lt;/h1&gt;<br>
+          &lt;p&gt;Your role: {user.role}&lt;/p&gt;<br>
+          <br>
+          {/* Admin-only section */}<br>
+          {user.role === 'admin' && (<br>
+            &lt;div className="admin-section"&gt;<br>
+              &lt;h2&gt;Admin Controls&lt;/h2&gt;<br>
+              &lt;button&gt;Manage Users&lt;/button&gt;<br>
+              &lt;button&gt;View Analytics&lt;/button&gt;<br>
+              &lt;button&gt;System Settings&lt;/button&gt;<br>
+            &lt;/div&gt;<br>
+          )}<br>
+          <br>
+          {/* Moderator + Admin section */}<br>
+          {(user.role === 'admin' || user.role === 'moderator') && (<br>
+            &lt;div className="moderator-section"&gt;<br>
+              &lt;h2&gt;Content Management&lt;/h2&gt;<br>
+              &lt;button&gt;Edit Posts&lt;/button&gt;<br>
+              &lt;button&gt;Manage Comments&lt;/button&gt;<br>
+            &lt;/div&gt;<br>
+          )}<br>
+          <br>
+          {/* All authenticated users */}<br>
+          &lt;div className="user-section"&gt;<br>
+            &lt;h2&gt;My Profile&lt;/h2&gt;<br>
+            &lt;button&gt;Edit Profile&lt;/button&gt;<br>
+          &lt;/div&gt;<br>
+        &lt;/div&gt;<br>
+      );<br>
+    }
+  </div>
+
+  <!-- Section 7: Live Demo — RBAC Simulation -->
+  <div class="section-title">7️⃣ Live Demo — Admin vs User Dashboard</div>
+  <div class="live-demo">
+    <div class="rbac-preview">
+      <strong>👑 Role-Based Access Demo (Simulated):</strong>
+      <div class="role-selector">
+        <div class="role-btn" data-role="guest">👁️ Guest (Not Logged In)</div>
+        <div class="role-btn" data-role="user">👤 Regular User</div>
+        <div class="role-btn" data-role="moderator">✍️ Moderator</div>
+        <div class="role-btn" data-role="admin">👑 Admin</div>
+      </div>
+      <div id="rbacContent">
+        <div class="user-panel">
+          <h3>📋 User Dashboard</h3>
+          <p>View Profile • Edit Profile • View Orders • Add to Cart</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      const roleContent = {
+        guest: `<div class="user-panel"><h3>👁️ Guest View</h3><p>📖 Browse Products • Read Articles • View Public Content</p><p class="inline-code">Login to access more features</p></div>`,
+        user: `<div class="user-panel"><h3>👤 User Dashboard</h3><p>✅ View Profile • ✏️ Edit Profile • 📦 My Orders • 🛒 Shopping Cart • 💬 Leave Comments</p></div><div class="admin-panel" style="background:#ef4444; opacity:0.5;"><h3>🔒 Admin Area (Locked)</h3><p>You need admin privileges to access this area.</p></div>`,
+        moderator: `<div class="user-panel"><h3>👤 User Dashboard</h3><p>✅ View Profile • ✏️ Edit Profile • 📦 My Orders</p></div><div class="admin-panel"><h3>✍️ Moderator Tools</h3><p>📝 Edit Posts • 💬 Moderate Comments • 🚫 Flag Content</p></div>`,
+        admin: `<div class="user-panel"><h3>👤 User Dashboard</h3><p>✅ View Profile • ✏️ Edit Profile</p></div><div class="admin-panel"><h3>👑 Admin Dashboard</h3><p>👥 Manage Users • 📊 View Analytics • ⚙️ System Settings • 🗑️ Delete Content • 📧 Email Users</p></div>`
+      };
+      document.querySelectorAll(".role-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const role = btn.getAttribute("data-role");
+          document.getElementById("rbacContent").innerHTML = roleContent[role];
+          document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+      document.querySelector(".role-btn[data-role='user']").classList.add("active");
+    </script>
+  </div>
+
+  <!-- Section 8: Protected Route with Role -->
+  <div class="section-title">8️⃣ ProtectedRoute Component with Role Checking</div>
+  <div class="code-block">
+    // components/RoleBasedRoute.jsx<br>
+    function RoleBasedRoute({ children, allowedRoles }) {<br>
+      const { user, loading } = useAuth();<br>
+      const navigate = useNavigate();<br><br>
+      if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;<br>
+      if (!user) return &lt;Navigate to="/login" replace /&gt;;<br>
+      if (!allowedRoles.includes(user.role)) {<br>
+        return &lt;Navigate to="/unauthorized" replace /&gt;;<br>
+      }<br>
+      return children;<br>
+    }<br><br>
+    // Usage in App.jsx<br>
+    &lt;Route path="/admin" element={<br>
+      &lt;RoleBasedRoute allowedRoles={['admin']}&gt;<br>
+        &lt;AdminDashboard /&gt;<br>
+      &lt;/RoleBasedRoute&gt;<br>
+    } /&gt;<br><br>
+    &lt;Route path="/moderator" element={<br>
+      &lt;RoleBasedRoute allowedRoles={['admin', 'moderator']}&gt;<br>
+        &lt;ModeratorPanel /&gt;<br>
+      &lt;/RoleBasedRoute&gt;<br>
+    } /&gt;
+  </div>
+
+  <!-- Section 9: Permission-Based Component Rendering -->
+  <div class="section-title">9️⃣ Permission-Based Rendering Hook</div>
+  <div class="code-block">
+    // hooks/usePermissions.js<br>
+    export function usePermissions() {<br>
+      const { user } = useAuth();<br><br>
+      const hasRole = (roles) => {<br>
+        if (!user) return false;<br>
+        return roles.includes(user.role);<br>
+      };<br><br>
+      const isAdmin = () => user?.role === 'admin';<br>
+      const isModerator = () => user?.role === 'moderator';<br>
+      const isUser = () => user?.role === 'user';<br>
+      <br>
+      return { hasRole, isAdmin, isModerator, isUser };<br>
+    }<br><br>
+    // Usage in component<br>
+    function DeleteButton({ postId }) {<br>
+      const { isAdmin } = usePermissions();<br>
+      if (!isAdmin()) return null;<br>
+      return &lt;button onClick={() => deletePost(postId)}&gt;Delete Post&lt;/button&gt;;<br>
+    }
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Add 'role' field to your User model (default: 'user')<br>
+    2. Include role in JWT payload when generating tokens<br>
+    3. Create backend middleware to restrict routes by role (admin only, moderator only)<br>
+    4. Create separate dashboards: UserDashboard and AdminDashboard<br>
+    5. Add role-based navigation (show/hide Admin link based on role)<br>
+    6. Implement an "Unauthorized" page for insufficient permissions
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common RBAC Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Only checking roles on frontend — backend must also validate!</li>
+    <li>❌ Hardcoding role checks everywhere (create reusable middleware/hooks)</li>
+    <li>❌ Not defaulting new users to 'user' role — accidentally creating admins</li>
+    <li>❌ Storing role in localStorage without backend verification</li>
+  </ul>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is RBAC?</h3><p>Role-Based Access Control — restricting access based on user role (admin, user, etc).</p></div>
+    <div class="card"><h3>❓ How to implement RBAC in backend?</h3><p>Create role middleware that checks user.role from JWT and allows/denies access.</p></div>
+    <div class="card"><h3>❓ Why check roles on both frontend AND backend?</h3><p>Frontend for UX (hide buttons), backend for security (prevent API abuse).</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Create an admin panel where admin can view all users and delete accounts.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add moderator role that can edit but not delete posts.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement a feature where admin can change roles of other users.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 88)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is RBAC — role-based permissions</div>
+    <div class="card">✔️ User model with role field (enum)</div>
+    <div class="card">✔️ JWT payload includes role</div>
+    <div class="card">✔️ Backend role middleware for API protection</div>
+    <div class="card">✔️ Frontend conditional rendering by role</div>
+    <div class="card">✔️ Role-based route protection</div>
+  </div>
+
+  <!-- Day 88 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 88 Ending Message</strong><br>
+    "Role-Based Access Control separates regular users from admins and moderators. Now you can build apps where different users see different features — essential for admin panels, dashboards, and enterprise applications!"
+  </div>
+
+  <!-- Next: Day 89 -->
+  <div class="section-title">🔜 Next — Day 89 : File Upload with Multer (Express)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📁 File Upload</span>
+    <span class="badge">🖼️ Image Upload</span>
+    <span class="badge">📦 Multer Middleware</span>
+    <span class="badge">💾 Cloudinary Integration</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 88 Completed ✅<br>
+    Implement RBAC in your app — it's the standard for any multi-user application!
+  </div>
+</div>
+</body>
+</html>

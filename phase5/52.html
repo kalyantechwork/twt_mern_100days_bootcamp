@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 52: NPM & Modules | Node Package Manager + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .npm-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📦</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 52 · NPM & Modules (Node Package Manager) — Show Results</div>
+  </div>
+
+  <h1>📦 NPM & Modules<br><span style="font-size:1rem;">Node Package Manager · package.json · Dependencies · CommonJS Modules — Click "Show Result" for demos</span></h1>
+
+  <!-- Section 1: What is NPM -->
+  <div class="section-title">1️⃣ What is NPM? (Node Package Manager)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>NPM (Node Package Manager)</strong> is the default package manager for Node.js. It has over 2 million packages and is the largest software registry in the world! NPM allows you to install, manage, and share reusable JavaScript code packages.</p>
+    <p><strong>Where it's used:</strong> Every Node.js project — install Express for servers, React for frontend, testing libraries, build tools, and thousands of utilities.</p>
+  </div>
+  <div class="diagram">
+    NPM Registry (cloud) → npm install → node_modules (local) → Use in your code
+  </div>
+
+  <!-- Section 2: Benefits of NPM -->
+  <div class="section-title">2️⃣ Why NPM? (Benefits)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔧 Code Reuse</h3><p>Millions of pre-built packages — don't reinvent the wheel!</p></div>
+    <div class="card"><h3>🔒 Version Management</h3><p>Specify exact versions, update safely with semver</p></div>
+    <div class="card"><h3>📋 package.json</h3><p>Single file that tracks all dependencies</p></div>
+    <div class="card"><h3>⚡ Scripts Runner</h3><p>Run custom scripts like `npm start`, `npm test`</p></div>
+  </div>
+
+  <!-- Section 3: Verify Installation -->
+  <div class="section-title">3️⃣ Verify NPM Installation</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Check NPM version<br>
+      npm --version<br><br>
+      # Check Node version (NPM comes with Node.js)<br>
+      node --version
+    </div>
+    <button class="btn-show" data-target="npmVersionResult">🔧 Show NPM Version Check</button>
+    <div id="npmVersionResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b; color:#facc15;">
+          $ npm --version<br>
+          10.2.4<br><br>
+          $ node --version<br>
+          v20.11.0
+        </div>
+      </div>
+      <div class="console-output">✅ NPM comes bundled with Node.js. If Node is installed, NPM is available!</div>
+    </div>
+  </div>
+
+  <!-- Section 4: npm init -->
+  <div class="section-title">4️⃣ Initializing a Project — npm init</div>
+  <div class="example-card">
+    <div class="code-block">
+      mkdir my-npm-project<br>
+      cd my-npm-project<br>
+      npm init -y   # creates package.json with defaults
+    </div>
+    <button class="btn-show" data-target="npmInitResult">📄 Show npm init -y Output</button>
+    <div id="npmInitResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b;">
+          {<br>
+            "name": "my-npm-project",<br>
+            "version": "1.0.0",<br>
+            "description": "",<br>
+            "main": "index.js",<br>
+            "scripts": {<br>
+              "test": "echo \"Error: no test specified\" && exit 1"<br>
+            },<br>
+            "keywords": [],<br>
+            "author": "",<br>
+            "license": "ISC"<br>
+          }
+        </div>
+      </div>
+      <div class="console-output">✅ package.json is the heart of every Node.js project — it tracks dependencies, scripts, and metadata.</div>
+    </div>
+  </div>
+
+  <!-- Section 5: package.json Fields -->
+  <div class="section-title">5️⃣ package.json — Key Fields Explained</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Field</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>name</span></td><td>Project name (unique in registry)</span></td><td>"my-app"</span></td>
+        <tr><td>version</span></td><td>Semantic versioning (major.minor.patch)</span></td>看作是"1.0.0"</span></td>
+        <tr><td>main</span></td><td>Entry point file</span></td>看作是"index.js"</span></td>
+        <tr><td>scripts</span></td><td>Custom command shortcuts</span></td>看作是"start": "node server.js"</span></td>
+        <tr><td>dependencies</span></td>看作是Production packages</span></td>看作是"express": "^4.18.2"</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 6: npm install -->
+  <div class="section-title">6️⃣ Installing Packages — npm install</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Install a package (adds to dependencies)<br>
+      npm install lodash<br><br>
+      # Install as dev dependency (for testing/building)<br>
+      npm install --save-dev nodemon<br><br>
+      # Install multiple packages<br>
+      npm install express mongoose dotenv
+    </div>
+    <button class="btn-show" data-target="npmInstallResult">📦 Show npm install Demo</button>
+    <div id="npmInstallResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b; color:#a5f3c3;">
+          $ npm install chalk<br>
+          added 1 package in 2s<br><br>
+          package.json updated:<br>
+          "dependencies": {<br>
+            "chalk": "^5.3.0"<br>
+          }
+        </div>
+      </div>
+      <div class="console-output">✅ npm install downloads packages to node_modules/ and updates package.json automatically!</div>
+    </div>
+  </div>
+
+  <!-- Section 7: Semantic Versioning -->
+  <div class="section-title">7️⃣ Semantic Versioning (semver)</div>
+  <div class="example-card">
+    <div class="code-block">
+      "express": "^4.18.2"<br><br>
+      // ^4.18.2 means: >=4.18.2 but <5.0.0 (compatible updates)<br>
+      // ~4.18.2 means: >=4.18.2 but <4.19.0 (patch updates only)<br>
+      // 4.18.2 means: exact version only
+    </div>
+    <div class="card-grid" style="grid-template-columns: repeat(3,1fr); margin-top:8px;">
+      <div class="card"><h3>🔴 MAJOR</h3><p>Breaking changes</p></div>
+      <div class="card"><h3>🟡 MINOR</h3><p>New features</p></div>
+      <div class="card"><h3>🟢 PATCH</h3><p>Bug fixes</p></div>
+    </div>
+  </div>
+
+  <!-- Section 8: npm Scripts -->
+  <div class="section-title">8️⃣ npm Scripts — Custom Commands</div>
+  <div class="example-card">
+    <div class="code-block">
+      "scripts": {<br>
+        "start": "node index.js",<br>
+        "dev": "nodemon index.js",<br>
+        "test": "jest"<br>
+      }<br><br>
+      // Run scripts<br>
+      npm start      # runs `node index.js`<br>
+      npm run dev    # runs `nodemon index.js`
+    </div>
+    <button class="btn-show" data-target="scriptsResult">⚡ Show npm Scripts Demo</button>
+    <div id="scriptsResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b; color:#22c55e;">
+          $ npm run dev<br>
+          > nodemon index.js<br>
+          [nodemon] starting `node index.js`<br>
+          Server running on port 3000
+        </div>
+      </div>
+      <div class="console-output">✅ npm scripts simplify running common commands — no need to remember long command lines!</div>
+    </div>
+  </div>
+
+  <!-- Section 9: CommonJS Modules -->
+  <div class="section-title">9️⃣ Node.js Modules — require() and module.exports</div>
+  <div class="example-card">
+    <div class="code-block">
+      // math.js (module)<br>
+      const add = (a, b) => a + b;<br>
+      const subtract = (a, b) => a - b;<br>
+      module.exports = { add, subtract };<br><br>
+      // app.js (main file)<br>
+      const math = require('./math.js');<br>
+      console.log(math.add(5, 3));  // 8
+    </div>
+    <button class="btn-show" data-target="modulesResult">📁 Show CommonJS Modules Demo</button>
+    <div id="modulesResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b; color:#a5f3c3;">
+          // math.js exports functions<br>
+          module.exports = { add, subtract };<br><br>
+          // index.js imports and uses<br>
+          const math = require('./math');<br>
+          console.log(math.add(10, 5)); // 15
+        </div>
+      </div>
+      <div class="console-output">✅ require() imports modules, module.exports exports them — this is the CommonJS pattern used in Node.js!</div>
+    </div>
+  </div>
+
+  <!-- Section 10: Core Modules -->
+  <div class="section-title">🔟 Node.js Core Modules (No Installation Required)</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Module</th><th>Purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>fs</span></td><td>File system operations</span><td>readFile, writeFile</span></td>
+        <tr><td>path</span></td><td>Work with file/directory paths</span><td>path.join, path.resolve</span></td>
+        <tr><td>http</span></td><td>Create HTTP servers</span><td>http.createServer</span></td>
+        <tr><td>os</span></td><td>Operating system info</span><td>os.cpus, os.freemem</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 11: Third-Party Package Example -->
+  <div class="section-title">1️⃣1️⃣ Example: Using `chalk` Package (Colored Console)</div>
+  <div class="example-card">
+    <div class="code-block">
+      npm install chalk<br><br>
+      const chalk = require('chalk');<br>
+      console.log(chalk.blue('Hello world!'));<br>
+      console.log(chalk.red.bold('Error!'));
+    </div>
+    <button class="btn-show" data-target="chalkResult">🎨 Show Chalk Package Demo</button>
+    <div id="chalkResult" class="result-area">
+      <div class="npm-preview">
+        <div class="code-block" style="background:#1e293b; margin-top:12px; color:#60a5fa;">
+          Hello world!
+        </div>
+        <div class="code-block" style="background:#1e293b; margin-top:4px; color:#ef4444; font-weight:bold;">
+          Error!
+        </div>
+      </div>
+      <div class="console-output">✅ Third-party packages like chalk extend Node.js functionality — install once, use everywhere!</div>
+    </div>
+  </div>
+
+  <!-- Section 12: node_modules & .gitignore -->
+  <div class="section-title">1️⃣2️⃣ node_modules & package-lock.json</div>
+  <div class="example-card">
+    <div class="code-block">
+      # .gitignore — always include this!<br>
+      node_modules/<br>
+      .env<br>
+      dist/
+    </div>
+    <div class="console-output">
+      ✅ node_modules/ should NEVER be committed to Git (huge, can be regenerated)<br>
+      ✅ package-lock.json SHOULD be committed — it locks exact versions for consistent installs<br>
+      💡 Always run `npm install` after cloning a project to restore dependencies!
+    </div>
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a new folder and run <span class="inline-code">npm init -y</span><br>
+    2. Install the <span class="inline-code">chalk</span> package and write a script that prints colored messages<br>
+    3. Install <span class="inline-code">nodemon</span> as a dev dependency<br>
+    4. Add a script in package.json called "dev" that runs your file with nodemon<br>
+    5. Create your own module (math.js) and import it into index.js using require
+  </div>
+
+  <!-- Section 14: Common Mistakes -->
+  <div class="section-title">⚠️ Common NPM Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesNpmResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesNpmResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to add <span class="inline-code">node_modules/</span> to .gitignore → repository becomes huge (hundreds of MB)</li>
+        <li>❌ Installing packages globally when not needed (use `--save-dev` or no flag for local)</li>
+        <li>❌ Running `npm install` without package.json — nothing to install!</li>
+        <li>❌ Using outdated packages — regularly run `npm update` for security fixes</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 15: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is NPM?</h3><p>Node Package Manager — default package manager for Node.js with millions of packages.</p></div>
+    <div class="card"><h3>❓ What is package.json?</h3><p>Manifest file containing project metadata, dependencies, and scripts.</p></div>
+    <div class="card"><h3>❓ Difference between dependencies and devDependencies?</h3><p>dependencies are for production, devDependencies are for development only (testing, building).</p></div>
+    <div class="card"><h3>❓ What is the difference between require and import?</h3><p>require is CommonJS (Node.js default). import is ES6 (modern, needs type:module).</p></div>
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🚀 Task 1</h3><p>Create a package.json for a new project and install express.js</p></div>
+    <div class="card"><h3>📝 Task 2</h3><p>Create a custom module called `greetings.js` that exports `sayHello` and `sayGoodbye` functions.</p></div>
+    <div class="card"><h3>⚙️ Task 3</h3><p>Install the `lodash` package and use its `_.capitalize` function on a string.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 52 - NPM & Modules)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is NPM — Node Package Manager, world's largest software registry</div>
+    <div class="card">✔️ npm init — creates package.json with project metadata</div>
+    <div class="card">✔️ npm install — adds dependencies to node_modules/ and package.json</div>
+    <div class="card">✔️ Semantic versioning (semver): MAJOR.MINOR.PATCH</div>
+    <div class="card">✔️ npm scripts — custom commands like start, dev, test</div>
+    <div class="card">✔️ CommonJS modules — require() to import, module.exports to export</div>
+    <div class="card">✔️ Core modules (fs, path, http) vs third-party packages (chalk, express)</div>
+  </div>
+
+  <!-- Day 52 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 52 Ending Message</strong><br>
+    "NPM unlocks the entire JavaScript ecosystem! Now you can install any package — Express, React, Lodash, Moment — and build amazing applications faster. You're ready to explore millions of open-source libraries and become a more productive developer!"
+  </div>
+
+  <!-- Next: Day 53 -->
+  <div class="section-title">🔜 Next — Day 53 : File System Module (fs) — Reading/Writing Files</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📁 readFile</span>
+    <span class="badge">📝 writeFile</span>
+    <span class="badge">🗑️ unlink</span>
+    <span class="badge">📂 mkdir</span>
+    <span class="badge">🔄 readdir</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 52 Completed ✅<br>
+    Click "Show Result" on each example to see NPM commands in action. Master NPM — it's your gateway to the entire JavaScript ecosystem!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

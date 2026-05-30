@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 82: Axios | Complete HTTP Client Guide (GET, POST, PUT, DELETE)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .axios-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .todo-item {
+      background: #334155;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 82 · Axios (HTTP Client)</div>
+  </div>
+
+  <h1>📡 Axios — Complete HTTP Client<br><span style="font-size:1rem;">GET, POST, PUT, DELETE Requests · Interceptors · Error Handling</span></h1>
+
+  <!-- Section 1: What is Axios -->
+  <div class="section-title">1️⃣ What is Axios?</div>
+  <p><strong>Axios</strong> is a promise-based HTTP client for making API requests from browser (React) or Node.js. It's the most popular alternative to fetch() with better features.</p>
+  <div class="diagram">
+    React Component → Axios → API Server → Response → React Updates UI
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Why Axios over fetch?</strong> Auto JSON parsing, better error handling, request/response interceptors, supports older browsers, shorter syntax, cancels requests.
+  </div>
+
+  <!-- Section 2: Installation -->
+  <div class="section-title">2️⃣ Installation</div>
+  <div class="code-block">
+    # Install Axios in React project<br>
+    npm install axios<br><br>
+    # For Node.js backend (same command)<br>
+    npm install axios
+  </div>
+
+  <!-- Section 3: Axios vs Fetch Comparison -->
+  <div class="section-title">3️⃣ Axios vs Fetch — Syntax Comparison</div>
+  <table>
+    <thead><tr><th>Operation</th><th>Fetch</th><th>Axios</th></tr></thead>
+    <tbody>
+      <tr><td>GET</span></span><td>fetch(url).then(res => res.json())</span></span><td>axios.get(url).then(res => res.data)</span></td></tr>
+      <tr><td>POST</span></span><td>fetch(url, { method:'POST', body: JSON.stringify(data), headers })</span></span><td>axios.post(url, data)</span></td></tr>
+      <tr><td>Error Handling</span></span><td>Need to check response.ok</span></span><td>Automatic (catches 4xx/5xx)</span></td></tr>
+      <tr><td>Timeouts</span></span><td>Not built-in</span></span><td>axios.defaults.timeout = 5000</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 4: GET Request -->
+  <div class="section-title">4️⃣ GET Request — Fetch Data</div>
+  <div class="code-block">
+    import axios from 'axios';<br>
+    <br>
+    // Basic GET<br>
+    const fetchUsers = async () => {<br>
+      try {<br>
+        const response = await axios.get('https://jsonplaceholder.typicode.com/users');<br>
+        console.log(response.data); // Data is automatically parsed<br>
+      } catch (error) {<br>
+        console.error('Error:', error.message);<br>
+      }<br>
+    };<br>
+    <br>
+    // GET with query parameters<br>
+    const fetchUser = async (id) => {<br>
+      const response = await axios.get(`/api/users/${id}`);<br>
+      // OR: axios.get('/api/users', { params: { id } })<br>
+      return response.data;<br>
+    };
+  </div>
+
+  <!-- Section 5: POST Request -->
+  <div class="section-title">5️⃣ POST Request — Send Data</div>
+  <div class="code-block">
+    const addUser = async (userData) => {<br>
+      try {<br>
+        const response = await axios.post('https://jsonplaceholder.typicode.com/users', {<br>
+          name: userData.name,<br>
+          email: userData.email,<br>
+        });<br>
+        console.log('User created:', response.data);<br>
+        return response.data;<br>
+      } catch (error) {<br>
+        console.error('POST error:', error.response?.data || error.message);<br>
+      }<br>
+    };
+  </div>
+
+  <!-- Section 6: PUT Request (Update) -->
+  <div class="section-title">6️⃣ PUT Request — Update Entire Resource</div>
+  <div class="code-block">
+    const updateUser = async (id, userData) => {<br>
+      try {<br>
+        const response = await axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, {<br>
+          name: userData.name,<br>
+          email: userData.email,<br>
+        });<br>
+        console.log('User updated:', response.data);<br>
+        return response.data;<br>
+      } catch (error) {<br>
+        console.error('PUT error:', error.message);<br>
+      }<br>
+    };
+  </div>
+
+  <!-- Section 7: DELETE Request -->
+  <div class="section-title">7️⃣ DELETE Request — Remove Resource</div>
+  <div class="code-block">
+    const deleteUser = async (id) => {<br>
+      try {<br>
+        await axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`);<br>
+        console.log(`User ${id} deleted`);<br>
+        return true;<br>
+      } catch (error) {<br>
+        console.error('DELETE error:', error.message);<br>
+        return false;<br>
+      }<br>
+    };
+  </div>
+
+  <!-- Section 8: Complete CRUD Example -->
+  <div class="section-title">8️⃣ Complete Example — Todo App with Axios</div>
+  <div class="live-demo">
+    <div class="axios-preview">
+      <strong>✅ Todo CRUD with Axios (Simulated):</strong>
+      <div id="axiosTodoList" style="margin: 16px 0;">
+        <div class="todo-item">
+          <span>Learn Axios</span>
+          <div><button class="demo-btn" style="padding:4px 12px;">Edit</button><button class="demo-btn" style="padding:4px 12px; background:#ef4444;">Delete</button></div>
+        </div>
+        <div class="todo-item">
+          <span>Build API</span>
+          <div><button class="demo-btn" style="padding:4px 12px;">Edit</button><button class="demo-btn" style="padding:4px 12px; background:#ef4444;">Delete</button></div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <input type="text" id="newTodoInput" placeholder="New todo..." style="flex:1; padding:8px; border-radius:40px; border:none;">
+        <button class="demo-btn" id="addTodoAxiosBtn">➕ Add</button>
+      </div>
+      <p class="inline-code" style="margin-top:12px;">✨ POST adds, DELETE removes, PUT updates — all via Axios!</p>
+    </div>
+    <script>
+      let todos = ["Learn Axios", "Build API", "Connect React"];
+      const todoContainer = document.getElementById("axiosTodoList");
+      function renderTodos() {
+        todoContainer.innerHTML = todos.map((todo, idx) => `
+          <div class="todo-item">
+            <span>${todo}</span>
+            <div>
+              <button class="demo-btn" style="padding:4px 12px;" onclick="editTodo(${idx})">Edit</button>
+              <button class="demo-btn" style="padding:4px 12px; background:#ef4444;" onclick="deleteTodo(${idx})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      window.deleteTodo = (idx) => { todos.splice(idx, 1); renderTodos(); };
+      window.editTodo = (idx) => { const newVal = prompt("Edit todo:", todos[idx]); if(newVal) todos[idx] = newVal; renderTodos(); };
+      document.getElementById("addTodoAxiosBtn")?.addEventListener("click", () => {
+        const input = document.getElementById("newTodoInput");
+        if(input.value.trim()) { todos.push(input.value.trim()); input.value = ""; renderTodos(); }
+      });
+      renderTodos();
+    </script>
+  </div>
+
+  <!-- Section 9: Axios Instance (Base URL) -->
+  <div class="section-title">9️⃣ Axios Instance — DRY Configuration</div>
+  <div class="code-block">
+    // services/api.js<br>
+    import axios from 'axios';<br>
+    <br>
+    const api = axios.create({<br>
+      baseURL: 'http://localhost:5000/api',<br>
+      timeout: 10000,<br>
+      headers: { 'Content-Type': 'application/json' }<br>
+    });<br>
+    <br>
+    // Add auth token to all requests<br>
+    api.interceptors.request.use(config => {<br>
+      const token = localStorage.getItem('token');<br>
+      if (token) config.headers.Authorization = `Bearer ${token}`;<br>
+      return config;<br>
+    });<br>
+    <br>
+    export const getUsers = () => api.get('/users');<br>
+    export const getUser = (id) => api.get(`/users/${id}`);<br>
+    export const createUser = (data) => api.post('/users', data);<br>
+    export const updateUser = (id, data) => api.put(`/users/${id}`, data);<br>
+    export const deleteUser = (id) => api.delete(`/users/${id}`);
+  </div>
+
+  <!-- Section 10: Interceptors -->
+  <div class="section-title">🔟 Interceptors — Global Request/Response Handling</div>
+  <div class="code-block">
+    // Request Interceptor (before request is sent)<br>
+    api.interceptors.request.use(<br>
+      config => {<br>
+        console.log(`Making request to ${config.url}`);<br>
+        // Add loading indicator<br>
+        return config;<br>
+      },<br>
+      error => Promise.reject(error)<br>
+    );<br>
+    <br>
+    // Response Interceptor (after response is received)<br>
+    api.interceptors.response.use(<br>
+      response => {<br>
+        console.log('Response received:', response.status);<br>
+        return response;<br>
+      },<br>
+      error => {<br>
+        if (error.response?.status === 401) {<br>
+          // Redirect to login<br>
+          window.location = '/login';<br>
+        }<br>
+        return Promise.reject(error);<br>
+      }<br>
+    );
+  </div>
+  <div class="highlight-box">
+    🚨 <strong>Interceptors use case:</strong> Add auth tokens to all requests, log errors globally, show/hide loading spinners automatically.
+  </div>
+
+  <!-- Section 11: Error Handling -->
+  <div class="section-title">1️⃣1️⃣ Axios Error Handling</div>
+  <div class="code-block">
+    try {<br>
+      const response = await api.get('/users');<br>
+    } catch (error) {<br>
+      if (error.response) {<br>
+        // Server responded with error status (4xx, 5xx)<br>
+        console.log('Status:', error.response.status);<br>
+        console.log('Data:', error.response.data);<br>
+      } else if (error.request) {<br>
+        // Request was made but no response<br>
+        console.log('Network error:', error.message);<br>
+      } else {<br>
+        // Something else<br>
+        console.log('Error:', error.message);<br>
+      }<br>
+    }
+  </div>
+
+  <!-- Section 12: Concurrent Requests -->
+  <div class="section-title">1️⃣2️⃣ Concurrent Requests (Promise.all)</div>
+  <div class="code-block">
+    const fetchMultiple = async () => {<br>
+      try {<br>
+        const [users, posts, comments] = await Promise.all([<br>
+          api.get('/users'),<br>
+          api.get('/posts'),<br>
+          api.get('/comments')<br>
+        ]);<br>
+        console.log('All data loaded:', { users: users.data, posts: posts.data });<br>
+      } catch (error) {<br>
+        console.error('One of the requests failed:', error);<br>
+      }<br>
+    };
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create an Axios instance with base URL configuration<br>
+    2. Implement GET request to fetch products from a fake API (JSONPlaceholder)<br>
+    3. Create a form that sends POST request to add a new product<br>
+    4. Add PUT (edit) and DELETE functionality to your todo app<br>
+    5. Add request interceptor to log all outgoing requests<br>
+    6. Implement proper error handling with user-friendly messages
+  </div>
+
+  <!-- Section 14: Common Mistakes -->
+  <div class="section-title">⚠️ Common Axios Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Forgetting <span class="inline-code">await</span> or <span class="inline-code">.then()</span> → Promise not resolved</li>
+    <li>❌ Not handling errors with try/catch → app crashes silently</li>
+    <li>❌ Not using Axios instance → repeated base URL configuration</li>
+    <li>❌ Not checking <span class="inline-code">error.response</span> before accessing → TypeError</li>
+  </ul>
+
+  <!-- Section 15: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Axios?</h3><p>Promise-based HTTP client for browser and Node.js, popular alternative to fetch.</p></div>
+    <div class="card"><h3>❓ Axios vs fetch?</h3><p>Axios auto-parses JSON, better error handling, interceptors, cancel requests, timeout support.</p></div>
+    <div class="card"><h3>❓ What are interceptors?</h3><p>Functions that intercept requests/responses globally — for auth tokens, logging, loading states.</p></div>
+    <div class="card"><h3>❓ How to set default headers in Axios?</h3><p><span class="inline-code">axios.defaults.headers.common['Authorization'] = token</span> or use instance config.</p></div>
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a <strong>Movie Search App</strong> using Axios to fetch from OMDB API.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Create a <strong>Weather App</strong> with Axios calling OpenWeatherMap API.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement request/response interceptors for loading spinners.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 82)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Axios — powerful HTTP client</div>
+    <div class="card">✔️ GET, POST, PUT, DELETE requests</div>
+    <div class="card">✔️ Axios instance with base URL</div>
+    <div class="card">✔️ Interceptors for global request/response handling</div>
+    <div class="card">✔️ Error handling patterns</div>
+    <div class="card">✔️ Concurrent requests with Promise.all</div>
+  </div>
+
+  <!-- Day 82 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 82 Ending Message</strong><br>
+    "Axios makes API calls effortless! With interceptors, instances, and clean error handling, you're ready to build robust full-stack apps. Master these patterns — they're used everywhere in production!"
+  </div>
+
+  <!-- Next: Day 83 -->
+  <div class="section-title">🔜 Next — Day 83 : Full CRUD Operations (Create, Read, Update, Delete)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📝 Create (POST)</span>
+    <span class="badge">📖 Read (GET)</span>
+    <span class="badge">✏️ Update (PUT/PATCH)</span>
+    <span class="badge">🗑️ Delete (DELETE)</span>
+    <span class="badge">🔄 Complete CRUD App</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 82 Completed ✅<br>
+    Axios is your best friend for API calls. Practice building CRUD apps to master it!
+  </div>
+</div>
+</body>
+</html>

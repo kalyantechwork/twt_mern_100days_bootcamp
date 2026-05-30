@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 90: MERN Project Integration | Full Stack Complete App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .architecture-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .folder-structure {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🚀</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 90 · MERN Project Integration (Full Stack Complete)</div>
+  </div>
+
+  <h1>🚀 MERN Project Integration<br><span style="font-size:1rem;">Frontend + Backend + Database · Complete Full Stack Application</span></h1>
+
+  <!-- Section 1: MERN Architecture Review -->
+  <div class="section-title">1️⃣ MERN Architecture — The Complete Picture</div>
+  <p>Today we integrate everything learned in Phase 9 into a <strong>complete, production-ready MERN application</strong> with authentication, CRUD operations, file upload, and database integration.</p>
+  <div class="diagram">
+    React Frontend (Port 5173) ↔ API Calls (Axios) ↔ Express Backend (Port 5000) ↔ MongoDB Database
+  </div>
+  <div class="architecture-preview">
+    <strong>📦 Full Stack Components:</strong>
+    <ul style="margin-top: 12px; margin-left: 20px;">
+      <li>✅ React — Frontend UI (Components, Router, Context, Hooks)</li>
+      <li>✅ Express — Backend API Server (Routes, Controllers, Middleware)</li>
+      <li>✅ MongoDB + Mongoose — Database (Schemas, Models, Queries)</li>
+      <li>✅ JWT + bcrypt — Authentication & Password Hashing</li>
+      <li>✅ Multer — File Upload (Avatars, Product Images)</li>
+      <li>✅ Axios — HTTP Client for API Calls</li>
+    </ul>
+  </div>
+
+  <!-- Section 2: Complete Project Structure -->
+  <div class="section-title">2️⃣ Complete MERN Project Folder Structure</div>
+  <div class="folder-structure">
+    mern-app/<br>
+    ├── backend/<br>
+    │   ├── config/<br>
+    │   │   └── db.js<br>
+    │   ├── controllers/<br>
+    │   │   ├── authController.js<br>
+    │   │   ├── productController.js<br>
+    │   │   └── userController.js<br>
+    │   ├── middleware/<br>
+    │   │   ├── authMiddleware.js<br>
+    │   │   └── uploadMiddleware.js<br>
+    │   ├── models/<br>
+    │   │   ├── User.js<br>
+    │   │   └── Product.js<br>
+    │   ├── routes/<br>
+    │   │   ├── authRoutes.js<br>
+    │   │   ├── productRoutes.js<br>
+    │   │   └── userRoutes.js<br>
+    │   ├── uploads/<br>
+    │   ├── .env<br>
+    │   ├── server.js<br>
+    │   └── package.json<br>
+    ├── frontend/<br>
+    │   ├── public/<br>
+    │   ├── src/<br>
+    │   │   ├── components/<br>
+    │   │   │   ├── Navbar.jsx<br>
+    │   │   │   ├── ProductCard.jsx<br>
+    │   │   │   ├── ProtectedRoute.jsx<br>
+    │   │   │   └── FileUpload.jsx<br>
+    │   │   ├── context/<br>
+    │   │   │   └── AuthContext.jsx<br>
+    │   │   ├── pages/<br>
+    │   │   │   ├── Home.jsx<br>
+    │   │   │   ├── Login.jsx<br>
+    │   │   │   ├── Register.jsx<br>
+    │   │   │   ├── Dashboard.jsx<br>
+    │   │   │   └── Products.jsx<br>
+    │   │   ├── services/<br>
+    │   │   │   └── api.js<br>
+    │   │   ├── App.jsx<br>
+    │   │   └── main.jsx<br>
+    │   ├── .env<br>
+    │   └── package.json<br>
+    └── README.md
+  </div>
+
+  <!-- Section 3: Backend Server (server.js) -->
+  <div class="section-title">3️⃣ Backend Server — Complete Setup</div>
+  <div class="code-block">
+    // backend/server.js<br>
+    const express = require('express');<br>
+    const mongoose = require('mongoose');<br>
+    const cors = require('cors');<br>
+    const dotenv = require('dotenv');<br>
+    const path = require('path');<br><br>
+    dotenv.config();<br>
+    const app = express();<br><br>
+    // Middleware<br>
+    app.use(cors());<br>
+    app.use(express.json());<br>
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));<br><br>
+    // Database connection<br>
+    mongoose.connect(process.env.MONGO_URI)<br>
+      .then(() => console.log('MongoDB connected'))<br>
+      .catch(err => console.log(err));<br><br>
+    // Routes<br>
+    app.use('/api/auth', require('./routes/authRoutes'));<br>
+    app.use('/api/products', require('./routes/productRoutes'));<br>
+    app.use('/api/users', require('./routes/userRoutes'));<br><br>
+    const PORT = process.env.PORT || 5000;<br>
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  </div>
+
+  <!-- Section 4: Frontend API Service -->
+  <div class="section-title">4️⃣ Frontend API Service (Axios)</div>
+  <div class="code-block">
+    // frontend/src/services/api.js<br>
+    import axios from 'axios';<br><br>
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';<br><br>
+    const api = axios.create({ baseURL: API_URL });<br><br>
+    // Add token to requests<br>
+    api.interceptors.request.use((config) => {<br>
+      const token = localStorage.getItem('token');<br>
+      if (token) config.headers.Authorization = `Bearer ${token}`;<br>
+      return config;<br>
+    });<br><br>
+    // Auth APIs<br>
+    export const register = (data) => api.post('/auth/register', data);<br>
+    export const login = (data) => api.post('/auth/login', data);<br>
+    export const getProfile = () => api.get('/users/profile');<br><br>
+    // Product APIs<br>
+    export const getProducts = () => api.get('/products');<br>
+    export const createProduct = (data) => api.post('/products', data);<br>
+    export const updateProduct = (id, data) => api.put(`/products/${id}`, data);<br>
+    export const deleteProduct = (id) => api.delete(`/products/${id}`);
+  </div>
+
+  <!-- Section 5: Complete Product Model -->
+  <div class="section-title">5️⃣ Product Model (Mongoose)</div>
+  <div class="code-block">
+    // backend/models/Product.js<br>
+    const mongoose = require('mongoose');<br><br>
+    const productSchema = new mongoose.Schema({<br>
+      name: { type: String, required: true },<br>
+      description: { type: String, required: true },<br>
+      price: { type: Number, required: true },<br>
+      image: { type: String, default: '' },<br>
+      category: { type: String, default: 'general' },<br>
+      createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },<br>
+      createdAt: { type: Date, default: Date.now }<br>
+    });<br><br>
+    module.exports = mongoose.model('Product', productSchema);
+  </div>
+
+  <!-- Section 6: Complete Auth Context -->
+  <div class="section-title">6️⃣ Auth Context (Frontend Global State)</div>
+  <div class="code-block">
+    // frontend/src/context/AuthContext.jsx<br>
+    import { createContext, useContext, useState, useEffect } from 'react';<br>
+    import { login as loginAPI, register as registerAPI, getProfile } from '../services/api';<br><br>
+    const AuthContext = createContext();<br><br>
+    export function AuthProvider({ children }) {<br>
+      const [user, setUser] = useState(null);<br>
+      const [loading, setLoading] = useState(true);<br><br>
+      useEffect(() => {<br>
+        const token = localStorage.getItem('token');<br>
+        if (token) {<br>
+          getProfile().then(res => setUser(res.data)).catch(() => localStorage.removeItem('token')).finally(() => setLoading(false));<br>
+        } else setLoading(false);<br>
+      }, []);<br><br>
+      const login = async (email, password) => {<br>
+        const res = await loginAPI({ email, password });<br>
+        localStorage.setItem('token', res.data.token);<br>
+        setUser(res.data.user);<br>
+        return res.data;<br>
+      };<br><br>
+      const logout = () => { localStorage.removeItem('token'); setUser(null); };<br><br>
+      return (&lt;AuthContext.Provider value={{ user, login, logout, loading }}&gt;{children}&lt;/AuthContext.Provider&gt;);<br>
+    }<br><br>
+    export const useAuth = () => useContext(AuthContext);
+  </div>
+
+  <!-- Section 7: Complete Product List Component -->
+  <div class="section-title">7️⃣ Product List Component (CRUD)</div>
+  <div class="code-block">
+    // frontend/src/pages/Products.jsx<br>
+    import { useState, useEffect } from 'react';<br>
+    import { getProducts, deleteProduct } from '../services/api';<br>
+    import { useAuth } from '../context/AuthContext';<br><br>
+    function Products() {<br>
+      const [products, setProducts] = useState([]);<br>
+      const [loading, setLoading] = useState(true);<br>
+      const { user } = useAuth();<br><br>
+      useEffect(() => { loadProducts(); }, []);<br><br>
+      const loadProducts = async () => {<br>
+        const res = await getProducts();<br>
+        setProducts(res.data);<br>
+        setLoading(false);<br>
+      };<br><br>
+      const handleDelete = async (id) => {<br>
+        await deleteProduct(id);<br>
+        loadProducts();<br>
+      };<br><br>
+      if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;<br>
+      return (&lt;div className="products-grid"&gt;<br>
+        {products.map(product => (<br>
+          &lt;div key={product._id} className="product-card"&gt;<br>
+            &lt;h3&gt;{product.name}&lt;/h3&gt;<br>
+            &lt;p&gt;${product.price}&lt;/p&gt;<br>
+            {user && &lt;button onClick={() => handleDelete(product._id)}&gt;Delete&lt;/button&gt;}<br>
+          &lt;/div&gt;<br>
+        ))}<br>
+      &lt;/div&gt;);<br>
+    }
+  </div>
+
+  <!-- Section 8: Running Both Servers -->
+  <div class="section-title">8️⃣ Running the Complete MERN App</div>
+  <div class="code-block">
+    # Terminal 1: Start Backend<br>
+    cd backend<br>
+    npm install express mongoose cors dotenv bcryptjs jsonwebtoken multer<br>
+    npm run dev  # or node server.js<br><br>
+    # Terminal 2: Start Frontend<br>
+    cd frontend<br>
+    npm install axios react-router-dom<br>
+    npm run dev<br><br>
+    # Open browser: http://localhost:5173<br>
+    # Backend API: http://localhost:5000/api
+  </div>
+
+  <!-- Section 9: Environment Variables -->
+  <div class="section-title">9️⃣ Environment Variables</div>
+  <div class="code-block">
+    # backend/.env<br>
+    PORT=5000<br>
+    MONGO_URI=mongodb://localhost:27017/mern_app<br>
+    JWT_SECRET=your_super_secret_key_min_32_characters<br>
+    CLOUD_NAME=your_cloudinary_name<br>
+    CLOUD_API_KEY=your_api_key<br>
+    CLOUD_API_SECRET=your_api_secret<br><br>
+    # frontend/.env<br>
+    VITE_API_URL=http://localhost:5000/api
+  </div>
+
+  <!-- Section 10: Mini Assignment — Build Your Complete MERN App -->
+  <div class="section-title">📌 Mini Assignment — Build Your Own MERN App</div>
+  <div class="highlight-box">
+    <strong>🎯 Final Project Task — Build a Complete MERN Application:</strong><br><br>
+    ✅ <strong>Backend Requirements:</strong><br>
+    • User authentication (JWT + bcrypt)<br>
+    • CRUD API for products/tasks/posts<br>
+    • File upload for images (Multer)<br>
+    • Protected routes (authentication middleware)<br>
+    • Role-based access (admin/user)<br><br>
+    ✅ <strong>Frontend Requirements:</strong><br>
+    • React Router for navigation<br>
+    • Login/Register pages with JWT<br>
+    • Dashboard for authenticated users<br>
+    • Product/Task listing with CRUD<br>
+    • Image upload component<br>
+    • Protected routes on frontend<br>
+    • Auth Context for global state<br><br>
+    ✅ <strong>Deployment (Bonus):</strong><br>
+    • Deploy backend to Render/Railway<br>
+    • Deploy frontend to Vercel/Netlify<br>
+    • Use MongoDB Atlas for database
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Integration Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ CORS not configured → frontend can't call backend</li>
+    <li>❌ Missing environment variables → app fails on different machine</li>
+    <li>❌ Not handling async/await errors → silent failures</li>
+    <li>❌ Forgetting to add token to API requests → 401 errors</li>
+  </ul>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ Explain MERN stack workflow?</h3><p>React sends request → Express API handles → MongoDB stores data → Response returns to React → UI updates.</p></div>
+    <div class="card"><h3>❓ How to handle authentication in MERN?</h3><p>JWT tokens stored in localStorage, sent in Authorization header, verified on backend.</p></div>
+    <div class="card"><h3>❓ How to deploy MERN app?</h3><p>Backend on Render/Railway, Frontend on Vercel/Netlify, MongoDB Atlas for database.</p></div>
+  </div>
+
+  <!-- Phase 9 Completion Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32; margin-top: 2rem;">
+    <strong>🎉 Congratulations! Phase 9 (Full MERN Stack Integration) Complete!</strong><br><br>
+    You've learned:<br>
+    • Complete MERN architecture design<br>
+    • Full CRUD operations with MongoDB<br>
+    • JWT authentication with bcrypt<br>
+    • File upload with Multer<br>
+    • Frontend-backend integration with Axios<br>
+    • Complete folder structure for production apps<br><br>
+    <strong>Next: Phase 10 — Advanced MERN & Deployment (Days 91-100)</strong>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Day 90 Summary</div>
+  <div class="card-grid">
+    <div class="card">✔️ Complete MERN architecture overview</div>
+    <div class="card">✔️ Full project folder structure</div>
+    <div class="card">✔️ Backend server setup with Express + MongoDB</div>
+    <div class="card">✔️ Frontend API integration with Axios</div>
+    <div class="card">✔️ Auth Context and Protected Routes</div>
+    <div class="card">✔️ Complete CRUD product management</div>
+  </div>
+
+  <!-- Day 90 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 90 Ending Message</strong><br>
+    "You've built a complete MERN application! From authentication to CRUD to file upload — everything is connected. You are now a full-stack MERN developer. Deploy your app and add it to your portfolio — this is a major achievement!"
+  </div>
+
+  <!-- Next: Phase 10 -->
+  <div class="section-title">🔜 Next — Phase 10 : Advanced MERN & Deployment (Days 91-100)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🚀 Deployment (Vercel + Render)</span>
+    <span class="badge">⚛️ Redux Toolkit</span>
+    <span class="badge">🔐 Payment Gateway</span>
+    <span class="badge">🐳 Docker Basics</span>
+    <span class="badge">📧 Email & OTP</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Phase 9 Completed ✅<br>
+    Your complete MERN app is ready for deployment. Celebrate this milestone — you're a full-stack developer!
+  </div>
+</div>
+</body>
+</html>

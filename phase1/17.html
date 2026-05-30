@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 17: Advanced JavaScript | Closures, Event Bubbling, Debouncing, Throttling</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+    }
+    .bubble-parent {
+      background: #cbd5e1;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 28px;
+      cursor: pointer;
+    }
+    .bubble-child {
+      background: #facc15;
+      padding: 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🚀</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 17 · Advanced JavaScript (Show Results)</div>
+  </div>
+
+  <h1>🚀 Advanced JavaScript Concepts<br><span style="font-size:1rem;">Closures · Higher-Order Functions · Event Bubbling · Debouncing · Throttling — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: Higher Order Functions -->
+  <div class="section-title">1️⃣ Higher-Order Functions (Functions that accept/return functions)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Higher-Order Functions</strong> either take a function as an argument or return a function. They enable functional programming patterns like map, filter, reduce, and callbacks.</p>
+    <p><strong>Where it's used:</strong> Array methods (map, filter, reduce), event handlers, setTimeout, Promises, custom hooks in React.</p>
+  </div>
+  <div class="example-card">
+    <h3>⚡ Higher-Order Function Example</h3>
+    <div class="code-block">
+      function greet(name) { return `Hello ${name}`; }<br>
+      function processUser(name, callback) {<br>
+        return callback(name);<br>
+      }<br>
+      processUser("Kalyan", greet);  // "Hello Kalyan"
+    </div>
+    <button class="btn-show" data-target="hofResult">🔍 Show Higher-Order Function</button>
+    <div id="hofResult" class="result-area">
+      <div class="result-label">📋 Higher-Order Function in Action:</div>
+      <div class="console-output" id="hofOutput"></div>
+      <script>
+        document.getElementById("hofResult").addEventListener("showresult", function() {
+          function greet(name) { return `Hello ${name}`; }
+          function processUser(name, callback) { return callback(name); }
+          let result = processUser("Kalyan", greet);
+          document.getElementById("hofOutput").innerHTML = `processUser("Kalyan", greet) → "${result}"<br>✅ map, filter, reduce are also higher-order functions.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 2: Closures -->
+  <div class="section-title">2️⃣ Closures (Function remembers outer variables)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Closures</strong> occur when a function "remembers" variables from its outer scope even after the outer function has finished executing. This enables data privacy and stateful functions.</p>
+    <p><strong>Where it's used:</strong> React hooks (useState, useEffect), module patterns, event handlers, debounce/throttle functions, currying.</p>
+  </div>
+  <div class="example-card">
+    <h3>🔒 Closure Counter Example</h3>
+    <div class="code-block">
+      function createCounter() {<br>
+        let count = 0;<br>
+        return function() {<br>
+          count++;<br>
+          return count;<br>
+        };<br>
+      }<br>
+      const counter = createCounter();<br>
+      counter(); // 1, counter(); // 2
+    </div>
+    <button class="btn-show" data-target="closureResult">🔒 Show Closure Demo</button>
+    <div id="closureResult" class="result-area">
+      <div class="result-label">📦 Closure Counter:</div>
+      <button class="demo-button" id="closureCounterBtn">➡️ Increment Counter</button>
+      <div class="console-output" id="closureOutput">Counter value: 0</div>
+      <script>
+        let closureCount = 0;
+        const closureOutput = document.getElementById("closureOutput");
+        document.getElementById("closureCounterBtn")?.addEventListener("click", () => {
+          closureCount++;
+          closureOutput.innerHTML = `Counter value: ${closureCount}<br>✅ Closure remembers 'count' between calls!`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Lexical Scope -->
+  <div class="section-title">3️⃣ Lexical Scope (Inner functions can access outer variables)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Lexical Scope</strong> means that inner functions can access variables defined in their outer scope. This is the foundation of closures.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      let global = "Global";<br>
+      function outer() {<br>
+        let outerVar = "Outer";<br>
+        function inner() {<br>
+          console.log(outerVar); // ✅ accessible<br>
+        }<br>
+        inner();<br>
+      }
+    </div>
+    <button class="btn-show" data-target="scopeResult">🔍 Show Lexical Scope</button>
+    <div id="scopeResult" class="result-area">
+      <div class="console-output">✅ inner() can access outerVar from outer() function.<br>✅ inner() can also access global variables.<br>✅ This creates the "scope chain" — inner → outer → global.</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Event Bubbling -->
+  <div class="section-title">4️⃣ Event Bubbling (Child → Parent → Document)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Event Bubbling</strong> is when an event starts from the target element and bubbles up to the root. Useful for event delegation, but can cause unexpected behavior if not managed.</p>
+    <p><strong>Where it's used:</strong> Modal clicks, dropdown menus, event delegation for dynamic lists, preventing unwanted parent triggers.</p>
+  </div>
+  <div class="example-card">
+    <h3>🫧 Event Bubbling Demo (Click below)</h3>
+    <button class="btn-show" data-target="bubblingResult">🔘 Show Bubbling Demo</button>
+    <div id="bubblingResult" class="result-area">
+      <div class="result-label">🖱️ Click on child/parent to see bubbling:</div>
+      <div class="bubble-parent" id="bubbleParent" style="margin-top: 10px;">
+        📦 PARENT Div
+        <div class="bubble-child" id="bubbleChild">
+          🔘 CHILD Button Area (click me)
+        </div>
+      </div>
+      <div class="console-output" id="bubbleOutput">Click somewhere to see event bubbling...</div>
+      <script>
+        const parentDiv = document.getElementById("bubbleParent");
+        const childDiv = document.getElementById("bubbleChild");
+        const bubbleOut = document.getElementById("bubbleOutput");
+        if(parentDiv) parentDiv.addEventListener("click", () => bubbleOut.innerHTML = "🔵 PARENT clicked (bubbled from child)<br>➡️ Event bubbled up!");
+        if(childDiv) childDiv.addEventListener("click", (e) => {
+          e.stopPropagation();
+          bubbleOut.innerHTML = "🟢 CHILD clicked. <br>✅ stopPropagation() prevents bubbling to parent.";
+        });
+      </script>
+      <p class="inline-code">⚠️ Click child → only child logs. Click parent → parent logs. This demonstrates bubbling direction!</p>
+    </div>
+  </div>
+
+  <!-- Section 5: Debouncing -->
+  <div class="section-title">5️⃣ Debouncing (Wait before execution — Search optimization)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Debouncing</strong> delays function execution until after a pause in events. Prevents excessive API calls during typing.</p>
+    <p><strong>Where it's used:</strong> Search bars (Google search), autocomplete, form validation, resize event handlers, save drafts.</p>
+  </div>
+  <div class="example-card">
+    <h3>🔍 Debounced Search Input</h3>
+    <div class="code-block">
+      function debounce(func, delay) {<br>
+        let timer;<br>
+        return function() {<br>
+          clearTimeout(timer);<br>
+          timer = setTimeout(func, delay);<br>
+        };<br>
+      }
+    </div>
+    <button class="btn-show" data-target="debounceResult">🔍 Show Debounce Demo</button>
+    <div id="debounceResult" class="result-area">
+      <div class="result-label">⌨️ Type in search box — API call after you stop typing:</div>
+      <input type="text" id="debounceSearch" placeholder="Type something..." style="width:100%; padding:12px; border-radius:60px; border:1px solid #ccc; margin: 10px 0;">
+      <div class="console-output" id="debounceOutput">Waiting for input...</div>
+      <script>
+        function debounce(func, delay) {
+          let timer;
+          return function() {
+            clearTimeout(timer);
+            timer = setTimeout(func, delay);
+          };
+        }
+        const searchInput = document.getElementById("debounceSearch");
+        const debounceOut = document.getElementById("debounceOutput");
+        const simulateApiCall = () => { debounceOut.innerHTML = `✅ API Called for: "${searchInput.value}" (after ${800}ms pause)`; };
+        if(searchInput) {
+          searchInput.addEventListener("keyup", debounce(simulateApiCall, 800));
+          searchInput.addEventListener("keyup", () => debounceOut.innerHTML = "⏳ Typing... waiting for pause");
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Throttling -->
+  <div class="section-title">6️⃣ Throttling (Limit execution frequency — Scroll/Resize)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Throttling</strong> ensures a function is called at most once in a specified time interval. Prevents excessive execution during rapid events.</p>
+    <p><strong>Where it's used:</strong> Scroll event handlers, window resize, button spamming prevention, game controls, infinite scroll.</p>
+  </div>
+  <div class="example-card">
+    <h3>⏱️ Throttled Button (Max 1 click per second)</h3>
+    <button class="btn-show" data-target="throttleResult">⏱️ Show Throttle Demo</button>
+    <div id="throttleResult" class="result-area">
+      <div class="result-label">🔥 Click rapidly — throttled to 1 per second:</div>
+      <button class="demo-button" id="throttleBtnDemo">Click Me (Throttled)</button>
+      <div class="console-output" id="throttleOutput">Click count: 0</div>
+      <script>
+        function throttle(func, limit) {
+          let inThrottle;
+          return function() {
+            if (!inThrottle) {
+              func();
+              inThrottle = true;
+              setTimeout(() => inThrottle = false, limit);
+            }
+          };
+        }
+        let throttleCount = 0;
+        const throttleOut = document.getElementById("throttleOutput");
+        const throttledClick = throttle(() => {
+          throttleCount++;
+          throttleOut.innerHTML = `✅ Click executed! Total: ${throttleCount} (max 1 per second)`;
+        }, 1000);
+        document.getElementById("throttleBtnDemo")?.addEventListener("click", throttledClick);
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Debouncing vs Throttling Comparison -->
+  <div class="section-title">📊 Debouncing vs Throttling — When to Use</div>
+  <div class="card-grid">
+    <div class="card"><h3>🛑 Debouncing</h3><p>Waits until user stops typing — saves API calls. Best for search, autocomplete.</p></div>
+    <div class="card"><h3>⏱️ Throttling</h3><p>Executes at regular intervals — limits frequency. Best for scroll, resize, game controls.</p></div>
+  </div>
+
+  <!-- Section 8: call, apply, bind -->
+  <div class="section-title">8️⃣ call(), apply(), bind() (Control `this`)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>These methods explicitly set the <span class="inline-code">this</span> value for a function. <strong>call/apply</strong> invoke immediately, <strong>bind</strong> returns a new function.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function greet() { return `Hello ${this.name}`; }<br>
+      let user = { name: "Kalyan" };<br>
+      greet.call(user);     // "Hello Kalyan"<br>
+      let bound = greet.bind(user);<br>
+      bound();              // "Hello Kalyan"
+    </div>
+    <button class="btn-show" data-target="bindResult">🔗 Show call/apply/bind</button>
+    <div id="bindResult" class="result-area">
+      <div class="console-output">
+        ✅ call() — invokes with given this and arguments<br>
+        ✅ apply() — similar but takes array of arguments<br>
+        ✅ bind() — returns a new function with this bound permanently<br>
+        💡 Used in React for event handlers, currying, function borrowing.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: this in Arrow Functions -->
+  <div class="section-title">9️⃣ `this` Keyword & Arrow Functions</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Arrow functions</strong> don't have their own <span class="inline-code">this</span> — they inherit from the surrounding scope. This makes them perfect for callbacks but unsuitable for object methods that need their own this.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      let obj = {<br>
+        name: "Kalyan",<br>
+        regular: function() { console.log(this.name); }, // ✅ "Kalyan"<br>
+        arrow: () => console.log(this.name)              // ❌ undefined<br>
+      };
+    </div>
+    <button class="btn-show" data-target="thisResult">🎯 Show Arrow Function this</button>
+    <div id="thisResult" class="result-area">
+      <div class="console-output">
+        ✅ Regular functions: 'this' refers to the calling object.<br>
+        ❌ Arrow functions: 'this' refers to parent scope (lexical this).<br>
+        💡 Use regular functions for object methods, arrow functions for callbacks.
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini Project: Search with Debouncing -->
+  <div class="section-title">📁 Mini Project: Debounced Product Search</div>
+  <div class="example-card">
+    <h3>🛒 Live Product Search (Debounced)</h3>
+    <button class="btn-show" data-target="miniProjectResult">🔍 Show Debounced Search</button>
+    <div id="miniProjectResult" class="result-area">
+      <div class="result-label">📦 Search products (fake API):</div>
+      <input type="text" id="productSearch" placeholder="Search for laptop, phone, tablet..." style="width:100%; padding:12px; border-radius:60px; border:1px solid #ccc;">
+      <div id="productResults" class="console-output" style="margin-top: 8px;">Type to search (debounced 500ms)</div>
+      <script>
+        const products = ["Laptop Dell", "iPhone 15", "Samsung Tablet", "MacBook Pro", "Google Pixel", "iPad Air", "Gaming Laptop"];
+        const productSearch = document.getElementById("productSearch");
+        const resultsDiv = document.getElementById("productResults");
+        function searchProducts() {
+          const query = productSearch.value.toLowerCase();
+          if(query.length < 2) { resultsDiv.innerHTML = "Type at least 2 characters..."; return; }
+          const filtered = products.filter(p => p.toLowerCase().includes(query));
+          resultsDiv.innerHTML = filtered.length ? `🔍 Found: ${filtered.join(", ")}` : "❌ No products found";
+        }
+        const debouncedSearch = (function() {
+          let timer;
+          return function() {
+            clearTimeout(timer);
+            timer = setTimeout(searchProducts, 500);
+          };
+        })();
+        if(productSearch) productSearch.addEventListener("keyup", debouncedSearch);
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesAdvancedResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesAdvancedResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">clearTimeout</span> in debounce → multiple timers run. Always clear previous timeout.</li>
+        <li>❌ Assuming arrow functions bind own <span class="inline-code">this</span> → they don't. Use regular functions for object methods.</li>
+        <li>❌ Not stopping propagation when needed (modal closes unexpectedly) → use <span class="inline-code">e.stopPropagation()</span>.</li>
+        <li>❌ Overusing throttling where debounce is better (search needs debounce, scroll needs throttle).</li>
+        <li>❌ Creating closures in loops without block scope → use let or IIFE.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔒 Task 1</h3><p>Create a closure-based counter that increments and returns current value, with reset function.</p></div>
+    <div class="card"><h3>🛑 Task 2</h3><p>Implement debounce function and attach to search input (log API call after pause).</p></div>
+    <div class="card"><h3>⏱️ Task 3</h3><p>Implement throttle on window scroll event (console.log scroll position at most every 500ms).</p></div>
+    <div class="card"><h3>🫧 Task 4</h3><p>Create nested HTML elements and demonstrate event bubbling with/without stopPropagation().</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 17 - Advanced JS)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Higher-Order Functions (functions as arguments/returns)</div>
+    <div class="card">✔️ Closures (function remembers outer variables)</div>
+    <div class="card">✔️ Lexical Scope & this binding rules</div>
+    <div class="card">✔️ Event Bubbling & stopPropagation()</div>
+    <div class="card">✔️ Debouncing (wait for pause — search)</div>
+    <div class="card">✔️ Throttling (limit frequency — scroll)</div>
+    <div class="card">✔️ call(), apply(), bind() for this control</div>
+  </div>
+
+  <!-- Day 17 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 17 Ending Message</strong><br>
+    “Now you understand advanced JavaScript concepts used in professional frontend development and React applications. These patterns are essential for building performant, scalable web apps.”
+  </div>
+
+  <!-- Next: Day 18 -->
+  <div class="section-title">🔜 Next — Day 18 : Introduction to React (Components, JSX, Virtual DOM)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚛️ What is React</span>
+    <span class="badge">📦 Components</span>
+    <span class="badge">✨ JSX</span>
+    <span class="badge">🖥️ Virtual DOM</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 17 Completed ✅<br>
+    Click "Show Result" on each example to see live advanced JS demos. Master these concepts — they're key to React!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

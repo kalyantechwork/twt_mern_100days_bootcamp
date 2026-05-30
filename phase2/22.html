@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 22: GitHub Basics | Push Code to GitHub Like a Pro + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🐙</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 22 · GitHub Basics (Push, Clone, Pull) — Show Results</div>
+  </div>
+
+  <h1>🐙 GitHub Basics<br><span style="font-size:1rem;">Create Repository · git remote · git push · git clone · git pull · Professional Workflow — Click "Show Result" for command demos</span></h1>
+
+  <!-- Section 1: What is GitHub -->
+  <div class="section-title">1️⃣ What is GitHub? (Cloud for Git Repositories)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>GitHub</strong> is a cloud platform that hosts Git repositories online — like Google Drive for code, but built specifically for developers. It adds collaboration features (pull requests, issues, project boards), and serves as your professional portfolio.</p>
+    <p><strong>Where it's used:</strong> Every tech company — Microsoft, Google, Netflix, Spotify, Airbnb. Open source projects (React, Vue, TensorFlow) live on GitHub.</p>
+  </div>
+  <div class="diagram">
+    Local Git Repository ↔ git push → GitHub Cloud ↔ git clone/pull → Other Developers
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>💡 Git vs GitHub</h3><p>Git = version control tool (runs on your computer)<br>GitHub = cloud platform (stores repositories online)</p></div>
+    <div class="card"><h3>🏆 Why GitHub?</h3><p>✓ Portfolio for recruiters<br>✓ Team collaboration<br>✓ Backup your code<br>✓ Open source contributions</p></div>
+  </div>
+
+  <!-- Section 2: Create GitHub Account -->
+  <div class="section-title">2️⃣ Create GitHub Account & First Repository</div>
+  <div class="topic-explanation">
+    <h4>📌 Steps to Create Your First Repository</h4>
+    <p>Go to <strong>github.com</strong>, sign up (free account), then click the "+" icon → "New repository". Name it (e.g., "my-first-project"), keep it public, and click "Create Repository". GitHub will show commands to push your local code.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Steps:<br>
+      1. Go to github.com and sign up (free)<br>
+      2. Click "New Repository"<br>
+      3. Name your repo (e.g., "my-first-project")<br>
+      4. Click "Create Repository"<br>
+      5. Copy the repository URL (https://github.com/username/repo.git)
+    </div>
+    <button class="btn-show" data-target="createRepoResult">🐙 Show Repository Creation Steps</button>
+    <div id="createRepoResult" class="result-area">
+      <div class="console-output">
+        ✅ After creating, GitHub shows these commands:<br><br>
+        git remote add origin https://github.com/yourusername/my-first-project.git<br>
+        git branch -M main<br>
+        git push -u origin main<br><br>
+        📌 Always copy the repository URL — you'll need it for git remote add.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: git remote add -->
+  <div class="section-title">3️⃣ Connect Local Git to GitHub (git remote add origin)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is git remote?</h4>
+    <p><span class="inline-code">git remote add</span> links your local repository to a GitHub repository. "origin" is the conventional name for the main remote. After this, Git knows where to push/pull from.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Inside your project folder (after git init)<br>
+      git remote add origin https://github.com/username/repo-name.git<br><br>
+      # Verify remote connection<br>
+      git remote -v
+    </div>
+    <button class="btn-show" data-target="remoteResult">🔗 Show git remote Command</button>
+    <div id="remoteResult" class="result-area">
+      <div class="console-output">
+        $ git remote add origin https://github.com/kalyan/my-portfolio.git<br>
+        $ git remote -v<br>
+        origin  https://github.com/kalyan/my-portfolio.git (fetch)<br>
+        origin  https://github.com/kalyan/my-portfolio.git (push)<br><br>
+        ✅ Your local repo is now linked to GitHub!<br>
+        ⚠️ "origin" is just a nickname — you can name it anything, but "origin" is standard.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: git push -->
+  <div class="section-title">4️⃣ Push Code to GitHub (git push)</div>
+  <div class="topic-explanation">
+    <h4>📌 What does git push do?</h4>
+    <p><span class="inline-code">git push</span> uploads your local commits to GitHub. The first push needs <span class="inline-code">-u</span> to set the upstream branch. After that, just <span class="inline-code">git push</span> works.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # First push (set upstream)<br>
+      git push -u origin main<br><br>
+      # Or if your default branch is master<br>
+      git push -u origin master<br><br>
+      # Subsequent pushes<br>
+      git push
+    </div>
+    <button class="btn-show" data-target="pushResult">📤 Show git push Command</button>
+    <div id="pushResult" class="result-area">
+      <div class="console-output">
+        $ git push -u origin main<br>
+        Enumerating objects: 5, done.<br>
+        Counting objects: 100% (5/5), done.<br>
+        Writing objects: 100% (5/5), done.<br>
+        To https://github.com/username/repo.git<br>
+         * [new branch]      main -> main<br>
+        Branch 'main' set up to track remote branch 'main' from 'origin'.<br><br>
+        ✅ Your code is now LIVE on GitHub!<br>
+        🔑 Authentication: Use Personal Access Token (not password) — Settings → Developer settings → Tokens.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: git clone -->
+  <div class="section-title">5️⃣ git clone — Download Repository from GitHub</div>
+  <div class="topic-explanation">
+    <h4>📌 What does git clone do?</h4>
+    <p><span class="inline-code">git clone</span> downloads an entire repository from GitHub to your local machine, including all commit history and branches. It automatically sets up the remote connection.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Clone a repository (downloads to folder with repo name)<br>
+      git clone https://github.com/username/repo-name.git<br><br>
+      # Clone into specific folder name<br>
+      git clone https://github.com/username/repo-name.git my-custom-folder
+    </div>
+    <button class="btn-show" data-target="cloneResult">📦 Show git clone Command</button>
+    <div id="cloneResult" class="result-area">
+      <div class="console-output">
+        $ git clone https://github.com/facebook/react.git<br>
+        Cloning into 'react'...<br>
+        remote: Enumerating objects: 250000, done.<br>
+        Receiving objects: 100% (250000/250000), done.<br><br>
+        ✅ After cloning, you have a complete local copy!<br>
+        💡 No need to run git init — clone creates the .git folder automatically.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: git pull -->
+  <div class="section-title">6️⃣ git pull — Download Latest Changes from GitHub</div>
+  <div class="topic-explanation">
+    <h4>📌 What does git pull do?</h4>
+    <p><span class="inline-code">git pull</span> fetches the latest changes from GitHub and merges them into your local branch. Always pull before starting work to avoid conflicts.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Inside your local repository<br>
+      git pull origin main<br><br>
+      # Or if upstream is configured<br>
+      git pull
+    </div>
+    <button class="btn-show" data-target="pullResult">📥 Show git pull Command</button>
+    <div id="pullResult" class="result-area">
+      <div class="console-output">
+        $ git pull origin main<br>
+        remote: Enumerating objects: 5, done.<br>
+        From https://github.com/username/repo<br>
+         * branch            main       -> FETCH_HEAD<br>
+        Updating a1b2c3d..e4f5g6h<br>
+        Fast-forward<br>
+         index.html | 2 +-<br>
+        1 file changed, 1 insertion(+), 1 deletion(-)<br><br>
+        ✅ Your local repository is now up to date with GitHub!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Push vs Pull vs Clone Comparison -->
+  <div class="section-title">7️⃣ Command Comparison: Push, Pull, Clone</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Command</th><th>Direction</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>git push</td><td>Local → GitHub</td><td>Upload your commits</td></tr>
+        <tr><td>git pull</td><td>GitHub → Local</td><td>Download latest changes</td></tr>
+        <tr><td>git clone</td><td>GitHub → Local</td><td>First-time download (full repo)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 8: Complete Professional Workflow -->
+  <div class="section-title">8️⃣ Complete Professional GitHub Workflow</div>
+  <div class="example-card">
+    <div class="code-block">
+      # 1. Create project locally<br>
+      mkdir awesome-app && cd awesome-app<br>
+      git init<br>
+      echo "# Awesome App" > README.md<br>
+      git add .<br>
+      git commit -m "Initial commit"<br><br>
+      # 2. Create repo on GitHub (no README, no .gitignore)<br>
+      # 3. Connect and push<br>
+      git remote add origin https://github.com/username/awesome-app.git<br>
+      git branch -M main<br>
+      git push -u origin main<br><br>
+      # 4. Make changes, commit, push<br>
+      echo "new feature" > feature.js<br>
+      git add .<br>
+      git commit -m "Add new feature"<br>
+      git push<br><br>
+      # 5. Another developer clones and pulls<br>
+      git clone https://github.com/username/awesome-app.git<br>
+      cd awesome-app<br>
+      git pull
+    </div>
+    <button class="btn-show" data-target="workflowCompleteResult">🔄 Show Complete Workflow</button>
+    <div id="workflowCompleteResult" class="result-area">
+      <div class="diagram">
+        Write Code → git add → git commit → git push → GitHub → git clone/git pull → Latest Code
+      </div>
+      <div class="console-output">
+        ✅ This is the exact workflow used by developers at companies worldwide!<br>
+        🔁 Repeat daily: pull → work → commit → push
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: GitHub Portfolio Importance -->
+  <div class="section-title">🌟 Why GitHub is Critical for Your Developer Career</div>
+  <div class="card-grid">
+    <div class="card"><h3>📊 Recruiters Check GitHub</h3><p>• Active contributions (green squares)<br>• Project quality and organization<br>• Clean commit history<br>• README files and documentation</p></div>
+    <div class="card"><h3>📁 Projects to Upload</h3><p>Weather App, Notes App, Calculator, Portfolio, Todo App, MERN projects — every project you build!</p></div>
+  </div>
+
+  <!-- Section 10: Authentication (Personal Access Token) -->
+  <div class="section-title">🔐 GitHub Authentication — Personal Access Token (PAT)</div>
+  <div class="topic-explanation">
+    <h4>📌 Important: Passwords No Longer Work</h4>
+    <p>GitHub no longer accepts account passwords for Git operations. You MUST use a <strong>Personal Access Token (PAT)</strong> or SSH key. Generate one at: GitHub Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token.</p>
+  </div>
+  <div class="highlight-box">
+    🔑 When git push asks for password, enter your Personal Access Token (not your GitHub password).<br>
+    💡 Save the token somewhere safe — you won't see it again!
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes & Solutions</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesGitHubResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesGitHubResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Wrong repository URL → use exact URL from GitHub. Check with <span class="inline-code">git remote -v</span>.</li>
+        <li>❌ Forgetting to commit before push → <span class="inline-code">git status</span> shows uncommitted changes.</li>
+        <li>❌ Authentication failed → use Personal Access Token instead of password. Generate one in GitHub Settings.</li>
+        <li>❌ Branch name mismatch (master vs main) → use <span class="inline-code">git branch -M main</span> to rename.</li>
+        <li>❌ Push rejected because remote has changes → <span class="inline-code">git pull</span> first, then push.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: GitHub Desktop (GUI Alternative) -->
+  <div class="section-title">🖥️ GitHub Desktop (Beginner-Friendly GUI)</div>
+  <div class="highlight-box">
+    📀 If terminal commands feel overwhelming, download <strong>GitHub Desktop</strong> from <span class="inline-code">desktop.github.com</span>. It provides a visual interface for clone, commit, push, pull — great for learning!
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>📁 Student Portfolio on GitHub</strong><br>
+    1. Create repository <span class="inline-code">student-portfolio</span> on GitHub (public)<br>
+    2. Create local folder with index.html (your portfolio page)<br>
+    3. Run: <span class="inline-code">git init</span> → <span class="inline-code">git add .</span> → <span class="inline-code">git commit -m "Initial portfolio"</span><br>
+    4. Connect remote: <span class="inline-code">git remote add origin YOUR_URL</span><br>
+    5. Push: <span class="inline-code">git push -u origin main</span><br>
+    6. Make a change, commit, push again<br>
+    7. Clone your own repository to another folder to verify it works!
+  </div>
+
+  <!-- Section 14: Interview Questions -->
+  <div class="section-title">💼 Common Git/GitHub Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ Git vs GitHub?</h3><p>Git = version control tool (local). GitHub = cloud hosting platform for Git repos.</p></div>
+    <div class="card"><h3>❓ What does git clone do?</h3><p>Downloads entire repository from GitHub to local machine with full history.</p></div>
+    <div class="card"><h3>❓ What does git push do?</h3><p>Uploads local commits to remote GitHub repository.</p></div>
+    <div class="card"><h3>❓ What is origin?</h3><p>Default name for the remote repository (the GitHub URL).</p></div>
+  </div>
+
+  <!-- Section 15: Real Developer Day-to-Day -->
+  <div class="section-title">🏢 Real Developer Day-to-Day with GitHub</div>
+  <div class="code-block">
+    # Morning: pull latest changes from team<br>
+    git pull origin main<br><br>
+    # Work on feature, commit locally<br>
+    git add .<br>
+    git commit -m "Implement search feature"<br><br>
+    # End of day: push to GitHub<br>
+    git push origin main
+  </div>
+  <div class="diagram">
+    Code → Commit → Push → GitHub → Team Pulls → Continue 🚀
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🐙 Task 1</h3><p>Create GitHub account (if not already) and verify email.</p></div>
+    <div class="card"><h3>📤 Task 2</h3><p>Push your Weather App (from Day 20) to GitHub using git push.</p></div>
+    <div class="card"><h3>📥 Task 3</h3><p>Clone a public repository (your own or any open source) to another folder.</p></div>
+    <div class="card"><h3>🔄 Task 4</h3><p>Make a change to a file, commit, and push again. Then pull on another machine/clone to verify.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 22 - GitHub Basics)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Git vs GitHub — tool vs platform</div>
+    <div class="card">✔️ Create repository on GitHub (web UI)</div>
+    <div class="card">✔️ git remote add origin (link local to remote)</div>
+    <div class="card">✔️ git push -u origin main (first push)</div>
+    <div class="card">✔️ git push (subsequent pushes)</div>
+    <div class="card">✔️ git clone URL (download repository)</div>
+    <div class="card">✔️ git pull (get latest changes)</div>
+    <div class="card">✔️ Personal Access Token for authentication</div>
+  </div>
+
+  <!-- Day 22 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 22 Ending Message</strong><br>
+    “GitHub is your developer portfolio and collaboration hub. Push every project you build — it shows your growth, consistency, and skills to future employers. Start building your GitHub presence today!”
+  </div>
+
+  <!-- Next: Day 23 -->
+  <div class="section-title">🔜 Next — Day 23 : Branching & Pull Requests (Team Collaboration)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🌿 Git Branches</span>
+    <span class="badge">🔄 git merge</span>
+    <span class="badge">🔀 Pull Requests (PR)</span>
+    <span class="badge">👥 Team workflow</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 22 Completed ✅<br>
+    Click "Show Result" on each example to see GitHub commands explained. Push your projects to GitHub today!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

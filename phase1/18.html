@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 18: Introduction to React | Components · JSX · SPA · Vite</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+    }
+    .react-demo {
+      background: #e6f7ff;
+      border-radius: 24px;
+      padding: 20px;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚛️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 18 · Introduction to React (Show Results)</div>
+  </div>
+
+  <h1>⚛️ Introduction to React<br><span style="font-size:1rem;">What is React · SPA · JSX · Components · Vite Setup · Events — Click "Show Result" for examples</span></h1>
+
+  <!-- Section 1: What is React -->
+  <div class="section-title">1️⃣ What is React?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>React</strong> is a JavaScript library for building user interfaces, created by Meta (Facebook). It helps developers build fast, interactive, and reusable UI components using a declarative approach.</p>
+    <p><strong>Where it's used:</strong> Facebook, Instagram, Netflix, WhatsApp Web, Airbnb, UberEats — thousands of modern web applications.</p>
+  </div>
+  <div class="example-card">
+    <h3>⚡ React at a Glance</h3>
+    <div class="code-block">
+      function Welcome() {<br>
+        return &lt;h1&gt;Hello from React!&lt;/h1&gt;;<br>
+      }<br>
+      // Component is reusable, composable, and reactive
+    </div>
+    <button class="btn-show" data-target="reactBasicResult">⚛️ Show React Concept</button>
+    <div id="reactBasicResult" class="result-area">
+      <div class="console-output">
+        ✅ React uses a component-based architecture.<br>
+        ✅ Each component returns JSX (HTML-like syntax).<br>
+        ✅ React updates only the changed parts (Virtual DOM).<br>
+        ✅ Makes building complex UIs much easier.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Why React (Traditional vs React) -->
+  <div class="section-title">2️⃣ Why React? (Traditional JS vs React)</div>
+  <div class="topic-explanation">
+    <h4>📌 The Problem React Solves</h4>
+    <p><strong>Traditional JavaScript</strong> requires manual DOM manipulation (<span class="inline-code">document.getElementById, innerHTML</span>) which becomes messy for large apps. <strong>React</strong> uses a declarative approach — you describe what the UI should look like, and React handles updates efficiently.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      // Traditional JS<br>
+      const el = document.getElementById("counter");<br>
+      let count = 0;<br>
+      el.innerHTML = count;<br>
+      // React — declarative<br>
+      function Counter() {<br>
+        const [count, setCount] = useState(0);<br>
+        return &lt;button onClick={() => setCount(count+1)}&gt;{count}&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="whyReactResult">🎯 Show React Advantage</button>
+    <div id="whyReactResult" class="result-area">
+      <div class="console-output">
+        ✅ React = Declarative (what you want) vs Imperative (how to do it)<br>
+        ✅ Virtual DOM makes updates fast<br>
+        ✅ Components are reusable and maintainable<br>
+        ✅ React is used by industry giants for a reason!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: SPA -->
+  <div class="section-title">3️⃣ SPA (Single Page Application)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is SPA?</h4>
+    <p><strong>Single Page Application</strong> loads a single HTML page and dynamically updates content without full page reloads. React apps are SPAs by default, providing smooth user experience like Gmail, YouTube, Facebook.</p>
+  </div>
+  <div class="diagram">
+    Traditional: Page 1 → Reload → Page 2 → Reload → Page 3<br>
+    SPA: Page 1 → Content updates → Content updates (No reload) 🚀
+  </div>
+
+  <!-- Section 4: Create React Project (Vite) -->
+  <div class="section-title">4️⃣ Create React Project using Vite (Fast & Modern)</div>
+  <div class="topic-explanation">
+    <h4>📌 Setup Steps</h4>
+    <p><strong>Vite</strong> is a modern build tool that creates React projects quickly with fast hot module replacement.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Step 1: Create project<br>
+      npm create vite@latest my-react-app<br><br>
+      # Step 2: Select React + JavaScript<br>
+      # Step 3: Install dependencies<br>
+      cd my-react-app<br>
+      npm install<br><br>
+      # Step 4: Run dev server<br>
+      npm run dev
+    </div>
+    <button class="btn-show" data-target="viteResult">📦 Show Vite Setup</button>
+    <div id="viteResult" class="result-area">
+      <div class="console-output">
+        ✅ After running npm run dev, open http://localhost:5173<br>
+        ✅ You'll see your first React app!<br>
+        ✅ Vite provides instant hot reloading when you edit files.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Project Structure -->
+  <div class="section-title">5️⃣ React Project Structure</div>
+  <div class="code-block">
+    my-react-app/<br>
+    ├── src/<br>
+    │   ├── App.jsx      // Main component<br>
+    │   ├── main.jsx     // Entry point (renders App)<br>
+    │   └── App.css      // Component styles<br>
+    ├── index.html<br>
+    ├── package.json<br>
+    └── vite.config.js
+  </div>
+
+  <!-- Section 6: JSX -->
+  <div class="section-title">6️⃣ JSX (JavaScript XML) – HTML inside JavaScript</div>
+  <div class="topic-explanation">
+    <h4>📌 JSX Explained</h4>
+    <p><strong>JSX</strong> allows you to write HTML-like syntax directly in JavaScript. It gets compiled to <span class="inline-code">React.createElement</span> calls. JSX makes React components readable and intuitive.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function Greeting() {<br>
+        let name = "Kalyan";<br>
+        return &lt;h1&gt;Hello {name}!&lt;/h1&gt;;  // Embed JS with { }<br>
+      }
+    </div>
+    <button class="btn-show" data-target="jsxResult">✨ Show JSX Demo</button>
+    <div id="jsxResult" class="result-area">
+      <div class="result-label">📦 JSX Output Simulation:</div>
+      <div class="react-demo">
+        <h1 style="margin: 0;">Hello Kalyan!</h1>
+        <p style="margin-top: 8px;">✅ JSX allows HTML + JavaScript together</p>
+      </div>
+      <div class="console-output">JSX is transformed to React.createElement('h1', null, 'Hello Kalyan!')</div>
+    </div>
+  </div>
+
+  <!-- Section 7: React Components -->
+  <div class="section-title">7️⃣ React Components (Reusable UI Blocks)</div>
+  <div class="topic-explanation">
+    <h4>📌 Component-Based Architecture</h4>
+    <p><strong>Components</strong> are independent, reusable pieces of UI. Think of them as LEGO blocks — you can combine them to build complex interfaces.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function Header() {<br>
+        return &lt;header&gt;My Website&lt;/header&gt;;<br>
+      }<br>
+      function Footer() {<br>
+        return &lt;footer&gt;© 2024&lt;/footer&gt;;<br>
+      }<br>
+      function App() {<br>
+        return (&lt;&gt;&lt;Header /&gt;&lt;Footer /&gt;&lt;/&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="componentResult">🧩 Show Components Example</button>
+    <div id="componentResult" class="result-area">
+      <div class="react-demo">
+        <div style="background:#0f172a; color:white; padding:12px; border-radius:12px;">📌 Header Component</div>
+        <div style="padding:12px; background:#f1f5f9; margin:8px 0; border-radius:12px;">📄 Main Content Area</div>
+        <div style="background:#e2e8f0; padding:8px; border-radius:12px; text-align:center;">© 2024 Footer Component</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Fragments -->
+  <div class="section-title">8️⃣ React Fragments (<>&lt;/&gt;)</div>
+  <div class="example-card">
+    <div class="code-block">
+      // ✅ Correct: Fragment avoids extra div<br>
+      function App() {<br>
+        return (<br>
+          &lt;&gt;<br>
+            &lt;h1&gt;Title&lt;/h1&gt;<br>
+            &lt;p&gt;Paragraph&lt;/p&gt;<br>
+          &lt;/&gt;<br>
+        );<br>
+      }
+    </div>
+  </div>
+
+  <!-- Section 9: Dynamic Data in JSX -->
+  <div class="section-title">9️⃣ Dynamic Data & Expressions ({})</div>
+  <div class="example-card">
+    <div class="code-block">
+      function Profile() {<br>
+        let user = "Kalyan";<br>
+        let age = 25;<br>
+        let isActive = true;<br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;h2&gt;{user} is {age} years old&lt;/h2&gt;<br>
+            &lt;p&gt;Status: {isActive ? "Active" : "Inactive"}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="dynamicResult">📊 Show Dynamic JSX</button>
+    <div id="dynamicResult" class="result-area">
+      <div class="react-demo">
+        <h2>Kalyan is 25 years old</h2>
+        <p>Status: Active</p>
+      </div>
+      <div class="console-output">✅ Use { } to embed any JavaScript expression in JSX!</div>
+    </div>
+  </div>
+
+  <!-- Section 10: React Events -->
+  <div class="section-title">🔟 React Events (onClick, onChange)</div>
+  <div class="topic-explanation">
+    <h4>📌 Events in React</h4>
+    <p>React events are named using <strong>camelCase</strong> (<span class="inline-code">onClick</span> instead of <span class="inline-code">onclick</span>). Event handlers are functions passed as references.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      function App() {<br>
+        const handleClick = () => {<br>
+          alert("Button clicked in React!");<br>
+        };<br>
+        return &lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="eventResult">🎯 Show React Event Demo</button>
+    <div id="eventResult" class="result-area">
+      <div class="result-label">🖱️ React-style Event Button:</div>
+      <button class="demo-button" id="reactEventBtn">Click Me (React-style)</button>
+      <div class="console-output" style="margin-top: 8px;">✅ onClick={handler} (camelCase, function reference)</div>
+      <script>
+        document.getElementById("reactEventBtn")?.addEventListener("click", () => alert("Button clicked! This simulates React's onClick event."));
+      </script>
+    </div>
+  </div>
+
+  <!-- Mini Project: Interactive Button -->
+  <div class="section-title">📁 Mini Project: React Interactive Button</div>
+  <div class="example-card">
+    <div class="code-block">
+      function App() {<br>
+        const [message, setMessage] = React.useState("");<br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;button onClick={() => setMessage("Welcome to React!")}&gt;Greet&lt;/button&gt;<br>
+            &lt;p&gt;{message}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="miniProjectResult">🎉 Show Interactive Demo</button>
+    <div id="miniProjectResult" class="result-area">
+      <div class="react-demo">
+        <p id="welcomeMessage" style="margin-bottom: 10px;"></p>
+        <button class="demo-button" id="greetBtn">Greet</button>
+      </div>
+      <script>
+        document.getElementById("greetBtn")?.addEventListener("click", () => {
+          document.getElementById("welcomeMessage").innerHTML = "✅ Welcome to React! (State update simulation)";
+        });
+      </script>
+      <div class="console-output">✅ In real React, useState would manage this message state!</div>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes in React</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesReactResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesReactResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using <span class="inline-code">class</span> instead of <span class="inline-code">className</span> for CSS classes in JSX. Fix: <span class="inline-code">className="title"</span>.</li>
+        <li>❌ Not returning single parent element → use fragments <span class="inline-code">&lt;&gt; &lt;/&gt;</span>.</li>
+        <li>❌ Component names not starting with capital letter → <span class="inline-code">function app()</span> ❌, <span class="inline-code">function App()</span> ✅.</li>
+        <li>❌ Forgetting to export component → <span class="inline-code">export default App</span> is required.</li>
+        <li>❌ Calling functions in render instead of passing reference: <span class="inline-code">onClick={handleClick()}</span> ❌ vs <span class="inline-code">onClick={handleClick}</span> ✅.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World Applications -->
+  <div class="section-title">🌍 Where is React Used?</div>
+  <div class="card-grid">
+    <div class="card">📱 Social Media (Facebook, Instagram)</div>
+    <div class="card">🛒 E-commerce (Amazon, Shopify)</div>
+    <div class="card">📊 Admin Dashboards & Analytics</div>
+    <div class="card">🎬 Streaming Platforms (Netflix)</div>
+    <div class="card">💳 Banking & Fintech Apps</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>🖥️ Task 1</h3><p>Install Node.js (if not already) and verify with <span class="inline-code">node -v</span> and <span class="inline-code">npm -v</span>.</p></div>
+    <div class="card"><h3>⚛️ Task 2</h3><p>Create a new React project using Vite and run the dev server successfully.</p></div>
+    <div class="card"><h3>🧩 Task 3</h3><p>Create a simple <strong>Header</strong> component and a <strong>Footer</strong> component, then use them in App.jsx.</p></div>
+    <div class="card"><h3>🎯 Task 4</h3><p>Add a button that updates a message when clicked (use useState).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 18 - Introduction to React)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is React & why it's industry standard</div>
+    <div class="card">✔️ Single Page Application (SPA) concept</div>
+    <div class="card">✔️ Creating React app with Vite (npm create vite@latest)</div>
+    <div class="card">✔️ JSX (HTML + JavaScript together)</div>
+    <div class="card">✔️ Functional Components & Fragments</div>
+    <div class="card">✔️ Dynamic data in JSX using { }</div>
+    <div class="card">✔️ React Events (onClick, camelCase)</div>
+  </div>
+
+  <!-- Day 18 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 18 Ending Message</strong><br>
+    “Congratulations! You have officially started React — one of the most important frontend technologies in modern web development. Set up your first React project and explore JSX!”
+  </div>
+
+  <!-- Next: Day 19 -->
+  <div class="section-title">🔜 Next — Day 19 : React Components & Props (Reusable UI, Parent-Child Communication)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Props (Passing data)</span>
+    <span class="badge">🔄 Reusable Components</span>
+    <span class="badge">👪 Parent-Child Communication</span>
+    <span class="badge">🎨 Dynamic Rendering</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 18 Completed ✅<br>
+    Click "Show Result" on each example to see React concepts explained. Set up your React project today!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 37: React Router | Multi-Page Navigation + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .router-demo {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .nav-link {
+      background: #334155;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .nav-link:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .active-page {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid #334155;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🧭</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 37 · React Router (Show Results)</div>
+  </div>
+
+  <h1>🧭 React Router DOM<br><span style="font-size:1rem;">Multi-Page Navigation · Routes · Links · Dynamic Routing · SPA Navigation — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is React Router -->
+  <div class="section-title">1️⃣ What is React Router? (Navigation in React)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>React Router</strong> is the standard library for routing in React apps. It allows you to create multi-page experiences without actually reloading the page — true Single Page Application (SPA) navigation. React Router synchronizes your UI with the URL, making bookmarking and sharing links work naturally.</p>
+    <p><strong>Where it's used:</strong> Every multi-page React app — dashboards, e-commerce sites, blogs, admin panels, portfolio websites, and any app with multiple views/screens.</p>
+  </div>
+  <div class="diagram">
+    URL changes → React Router matches route → Renders corresponding component → No page reload
+  </div>
+
+  <!-- Section 2: Installation -->
+  <div class="section-title">2️⃣ Installation</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Install React Router DOM (v6 is current)<br>
+      npm install react-router-dom<br><br>
+      # Or with yarn<br>
+      yarn add react-router-dom
+    </div>
+    <button class="btn-show" data-target="installResult">📦 Show Installation Command</button>
+    <div id="installResult" class="result-area">
+      <div class="console-output">
+        ✅ react-router-dom version 6.x is the latest stable version<br>
+        ✅ After installation, you can import BrowserRouter, Routes, Route, Link, etc.<br>
+        💡 Always check package.json to confirm installation
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Basic Setup -->
+  <div class="section-title">3️⃣ Basic Setup — BrowserRouter</div>
+  <div class="example-card">
+    <div class="code-block">
+      // main.jsx or index.js (entry point)<br>
+      import { BrowserRouter } from 'react-router-dom';<br>
+      import App from './App';<br><br>
+      ReactDOM.createRoot(document.getElementById('root')).render(<br>
+        &lt;BrowserRouter&gt;<br>
+          &lt;App /&gt;<br>
+        &lt;/BrowserRouter&gt;<br>
+      );
+    </div>
+    <button class="btn-show" data-target="setupResult">🔧 Show BrowserRouter Setup</button>
+    <div id="setupResult" class="result-area">
+      <div class="console-output">
+        ✅ BrowserRouter wraps your entire app — enables routing functionality across all components<br>
+        ✅ Alternative routers: HashRouter (for static file hosting), MemoryRouter (for testing)<br>
+        💡 Without BrowserRouter, useNavigate() and Link won't work!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Defining Routes -->
+  <div class="section-title">4️⃣ Defining Routes — Routes & Route</div>
+  <div class="example-card">
+    <div class="code-block">
+      // App.jsx<br>
+      import { Routes, Route } from 'react-router-dom';<br>
+      import Home from './pages/Home';<br>
+      import About from './pages/About';<br>
+      import Contact from './pages/Contact';<br><br>
+      function App() {<br>
+        return (&lt;Routes&gt;<br>
+          &lt;Route path="/" element={&lt;Home /&gt;} /&gt;<br>
+          &lt;Route path="/about" element={&lt;About /&gt;} /&gt;<br>
+          &lt;Route path="/contact" element={&lt;Contact /&gt;} /&gt;<br>
+        &lt;/Routes&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="routesResult">🧭 Show Routes Demo</button>
+    <div id="routesResult" class="result-area">
+      <div class="router-demo">
+        <strong>🧭 React Router Simulation:</strong>
+        <div class="nav-links" id="simNavLinks">
+          <div class="nav-link" data-page="home">🏠 Home</div>
+          <div class="nav-link" data-page="about">📖 About</div>
+          <div class="nav-link" data-page="contact">📞 Contact</div>
+        </div>
+        <div id="simPageContent" class="active-page">
+          🏠 Welcome to the Home Page!
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Routes component wraps all route definitions<br>
+        ✅ Route component maps URL path to a component<br>
+        ✅ path="/" is the home route<br>
+        💡 Order matters — more specific routes should come before general ones
+      </div>
+      <script>
+        const simPages = {
+          home: { title: "🏠 Home Page", content: "Welcome to the Home Page! This is the main landing page." },
+          about: { title: "📖 About Page", content: "Learn about our company and mission. This is the About page." },
+          contact: { title: "📞 Contact Page", content: "Get in touch with us through email or phone. Contact us anytime!" }
+        };
+        const simLinks = document.querySelectorAll("#simNavLinks .nav-link");
+        const simContent = document.getElementById("simPageContent");
+        simLinks.forEach(link => {
+          link.addEventListener("click", () => {
+            const page = link.getAttribute("data-page");
+            if(page && simPages[page]) {
+              simContent.innerHTML = `<strong>${simPages[page].title}</strong><br><br>${simPages[page].content}`;
+            }
+          });
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Link vs NavLink -->
+  <div class="section-title">5️⃣ Link & NavLink — Navigation Components</div>
+  <div class="example-card">
+    <div class="code-block">
+      import { Link, NavLink } from 'react-router-dom';<br><br>
+      // Basic Link (like &lt;a&gt; tag but no reload)<br>
+      &lt;Link to="/about"&gt;About&lt;/Link&gt;<br><br>
+      // NavLink (adds 'active' class when route matches)<br>
+      &lt;NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}&gt;Home&lt;/NavLink&gt;
+    </div>
+    <button class="btn-show" data-target="linkResult">🔗 Show Link vs NavLink</button>
+    <div id="linkResult" class="result-area">
+      <div class="console-output">
+        ✅ Link component prevents full page reload — client-side navigation!<br>
+        ✅ NavLink adds an "active" class automatically when route matches (great for styling)<br>
+        ✅ Use "end" prop on NavLink for exact matching: &lt;NavLink to="/" end&gt;Home&lt;/NavLink&gt;<br>
+        💡 Never use &lt;a href&gt; in React Router apps — it causes full page reloads!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Dynamic Routing -->
+  <div class="section-title">6️⃣ Dynamic Routing — URL Parameters (:id)</div>
+  <div class="topic-explanation">
+    <h4>📌 Dynamic Routes</h4>
+    <p>Dynamic routes use URL parameters (like :id) to create flexible paths. The <span class="inline-code">useParams()</span> hook extracts these values, allowing you to show different content based on the URL.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      // Route definition<br>
+      &lt;Route path="/users/:userId" element={&lt;UserProfile /&gt;} /&gt;<br><br>
+      // UserProfile component<br>
+      import { useParams } from 'react-router-dom';<br>
+      function UserProfile() {<br>
+        const { userId } = useParams();<br>
+        return &lt;div&gt;Showing profile for user: {userId}&lt;/div&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="dynamicResult">🔗 Show Dynamic Routing Demo</button>
+    <div id="dynamicResult" class="result-area">
+      <div class="router-demo">
+        <strong>🔗 Dynamic Routing Demo</strong>
+        <div class="nav-links">
+          <div class="nav-link" data-user="1">👤 User 1</div>
+          <div class="nav-link" data-user="2">👤 User 2</div>
+          <div class="nav-link" data-user="3">👤 User 3</div>
+        </div>
+        <div id="dynamicUserContent" class="active-page">
+          Click a user to see profile
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ useParams() extracts URL parameters like :id, :userId, etc.<br>
+        ✅ Perfect for product pages, user profiles, blog posts<br>
+        💡 Example URL: /products/123 → useParams().productId = "123"
+      </div>
+      <script>
+        const userLinks = document.querySelectorAll("#dynamicResult .nav-link");
+        const dynamicDiv = document.getElementById("dynamicUserContent");
+        userLinks.forEach(link => {
+          link.addEventListener("click", () => {
+            const userId = link.getAttribute("data-user");
+            dynamicDiv.innerHTML = `<strong>👤 User Profile</strong><br><br>Showing profile for user ID: ${userId}<br>In React Router, useParams().userId = "${userId}"`;
+          });
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Programmatic Navigation -->
+  <div class="section-title">7️⃣ Programmatic Navigation (useNavigate)</div>
+  <div class="topic-explanation">
+    <h4>📌 Navigate Programmatically</h4>
+    <p>The <span class="inline-code">useNavigate()</span> hook allows you to navigate to different routes from within functions — perfect for redirecting after form submissions, logins, or button clicks.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useNavigate } from 'react-router-dom';<br><br>
+      function LoginPage() {<br>
+        const navigate = useNavigate();<br>
+        const handleLogin = () => {<br>
+          // After successful login, redirect to dashboard<br>
+          navigate('/dashboard');<br>
+        };<br>
+        return &lt;button onClick={handleLogin}&gt;Login&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="navigateResult">🎯 Show Programmatic Navigation</button>
+    <div id="navigateResult" class="result-area">
+      <div class="router-demo">
+        <strong>🎯 Programmatic Navigation Demo</strong>
+        <button class="demo-btn" id="navigateDemoBtn">📱 Go to Dashboard (Simulated)</button>
+        <div id="navigationMessage" class="active-page" style="margin-top: 12px;">Click the button — it will simulate navigation</div>
+      </div>
+      <div class="console-output">
+        ✅ useNavigate() returns a function to navigate programmatically<br>
+        ✅ navigate('/path') — goes to specified route<br>
+        ✅ navigate(-1) — go back, navigate(1) — go forward<br>
+        💡 Essential for login redirects, form submissions, and error handling
+      </div>
+      <script>
+        document.getElementById("navigateDemoBtn")?.addEventListener("click", () => {
+          const msgDiv = document.getElementById("navigationMessage");
+          msgDiv.innerHTML = "🚀 Navigating to dashboard... (In real React Router, this would change the URL and render Dashboard component)";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Nested Routes -->
+  <div class="section-title">8️⃣ Nested Routes — Layouts & Sub-Pages</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Dashboard layout component<br>
+      function Dashboard() {<br>
+        return (&lt;div&gt;&lt;h1&gt;Dashboard&lt;/h1&gt;&lt;Outlet /&gt;&lt;/div&gt;);<br>
+      }<br><br>
+      // Routes configuration<br>
+      &lt;Route path="/dashboard" element={&lt;Dashboard /&gt;}&gt;<br>
+        &lt;Route index element={&lt;DashboardHome /&gt;} /&gt;<br>
+        &lt;Route path="profile" element={&lt;Profile /&gt;} /&gt;<br>
+        &lt;Route path="settings" element={&lt;Settings /&gt;} /&gt;<br>
+      &lt;/Route&gt;
+    </div>
+    <div class="console-output" style="margin-top: 8px;">
+      ✅ Outlet component is where child routes render<br>
+      ✅ Nested routes share the same layout<br>
+      💡 Perfect for dashboards, admin panels, and multi-step forms
+    </div>
+  </div>
+
+  <!-- Section 9: 404 Page -->
+  <div class="section-title">9️⃣ 404 Not Found Page</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;<br><br>
+      function NotFound() {<br>
+        return &lt;div&gt;404 - Page Not Found&lt;/div&gt;;<br>
+      }
+    </div>
+    <div class="console-output">
+      ✅ path="*" catches any undefined routes<br>
+      ✅ Always add this as the last route<br>
+      💡 Provides better user experience when users visit non-existent pages
+    </div>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a React app with React Router DOM installed<br>
+    2. Create 4 pages: Home, About, Services, Contact<br>
+    3. Build a navigation bar using NavLink with active styling<br>
+    4. Add a dynamic route: /blog/:postId that shows different blog posts<br>
+    5. Add a "Go Back" button using useNavigate()<br>
+    6. Add a 404 Not Found page for undefined routes
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common React Router Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesRouterResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesRouterResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to wrap app with <span class="inline-code">&lt;BrowserRouter&gt;</span> → routes won't work, useNavigate() throws error</li>
+        <li>❌ Using &lt;a href&gt; instead of &lt;Link to&gt; → causes full page reloads (defeats SPA purpose)</li>
+        <li>❌ Path order: specific paths before general paths (e.g., /users/:id before /users/new)</li>
+        <li>❌ Forgetting to import Routes and Route components → component not found errors</li>
+        <li>❌ Not adding trailing slash handling → inconsistent matching</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is React Router?</h3><p>Standard routing library for React — enables navigation without page reloads in SPAs.</p></div>
+    <div class="card"><h3>❓ Difference between Link and NavLink?</h3><p>NavLink adds 'active' class when route matches — ideal for navigation bars.</p></div>
+    <div class="card"><h3>❓ How to get URL parameters?</h3><p>Use the <span class="inline-code">useParams()</span> hook inside the component.</p></div>
+    <div class="card"><h3>❓ How to navigate programmatically?</h3><p>Use the <span class="inline-code">useNavigate()</span> hook, then call navigate('/path').</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📁 Task 1</h3><p>Build a <strong>Portfolio Website</strong> with Home, Projects, and Contact pages using React Router.</p></div>
+    <div class="card"><h3>📦 Task 2</h3><p>Create a <strong>Product Catalog</strong> with dynamic routes: /products/:id showing product details.</p></div>
+    <div class="card"><h3>🚧 Task 3</h3><p>Add a 404 Not Found page for undefined routes with a "Go Home" button.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 37 - React Router)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is React Router — navigation for Single Page Applications</div>
+    <div class="card">✔️ BrowserRouter, Routes, Route setup (entry point configuration)</div>
+    <div class="card">✔️ Link and NavLink for client-side navigation</div>
+    <div class="card">✔️ Dynamic routing with useParams() for URL parameters</div>
+    <div class="card">✔️ Programmatic navigation with useNavigate() for redirects</div>
+    <div class="card">✔️ Nested Routes with Outlet for shared layouts</div>
+  </div>
+
+  <!-- Day 37 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 37 Ending Message</strong><br>
+    "React Router turns your single-page app into a multi-page experience! Now you can build full websites with Home, About, Contact pages — all without page reloads. Your users get a smooth, app-like experience with bookmarkable URLs. Master routing and you can build any multi-page React application!"
+  </div>
+
+  <!-- Next: Day 38 -->
+  <div class="section-title">🔜 Next — Day 38 : Context API (Global State Management)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🌍 Global State</span>
+    <span class="badge">📦 createContext</span>
+    <span class="badge">🔄 useContext</span>
+    <span class="badge">🎯 Theme & Auth</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 37 Completed ✅<br>
+    Click "Show Result" on each example to see React Router concepts. Practice building multi-page apps with smooth navigation!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

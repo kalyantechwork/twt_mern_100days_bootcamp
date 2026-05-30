@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 57: Events Module – Event-Driven Architecture | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 57</div>
+    <h1>
+      <i class="fas fa-broadcast-tower"></i> 
+      Events Module – Event-Driven Architecture
+    </h1>
+    <p>Learn how Node.js handles events like a pro! Understand EventEmitter, create custom events, and build reactive applications.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master Node.js Events
+    </div>
+  </div>
+
+  <!-- 1. What is Event-Driven Architecture? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is Event-Driven Architecture?</span>
+    </div>
+    <p>Node.js is <strong>event-driven</strong> – meaning it reacts to events as they happen. Instead of waiting for tasks to complete, Node.js listens for events and responds immediately.</p>
+    <div class="diagram">
+      <i class="fas fa-chart-line"></i> <strong>Real World Example:</strong><br>
+      📱 You order food on Swiggy/Zomato → "Order Placed" event triggers →<br>
+      → Restaurant gets notification → Delivery partner assigned → You get SMS<br>
+      <strong>Everything happens because of EVENTS!</strong>
+    </div>
+    <div class="success-note">
+      <i class="fas fa-lightbulb"></i> <strong>Key Concept:</strong> In event-driven programming, we have:<br>
+      • <strong>Event Emitters</strong> – Things that create events<br>
+      • <strong>Event Listeners</strong> – Functions that wait for events and respond
+    </div>
+  </div>
+
+  <!-- 2. The Events Module - EventEmitter -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plug"></i>
+      <span>2. The Events Module & EventEmitter Class</span>
+    </div>
+    <p>The <span class="inline-code">events</span> module is built into Node.js. It provides the <strong>EventEmitter</strong> class – the heart of event-driven programming.</p>
+    <div class="code-block" id="basicEmitter">
+// Import events module
+const EventEmitter = require('events');
+
+// Create an instance of EventEmitter
+const myEmitter = new EventEmitter();
+
+// Register a listener (wait for event)
+myEmitter.on('greet', (name) => {
+  console.log(`Hello ${name}! Welcome to Telugu WebTech`);
+});
+
+// Emit (trigger) the event
+myEmitter.emit('greet', 'Ramesh');
+// Output: Hello Ramesh! Welcome to Telugu WebTech
+    </div>
+    <button class="copy-btn" onclick="copyCode('basicEmitter')"><i class="far fa-copy"></i> Copy Code</button>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>How it works:</strong><br>
+      myEmitter.on('eventName', callback) → Listener (waits)<br>
+      myEmitter.emit('eventName', data) → Trigger (shout out!)<br>
+      When emit happens → all listeners run immediately
+    </div>
+  </div>
+
+  <!-- 3. Creating Custom Events -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plus-circle"></i>
+      <span>3. Creating Your Own Custom Events</span>
+    </div>
+    <p>You can create any event name you want! Here are practical examples:</p>
+    <div class="code-block" id="customEvents">
+const EventEmitter = require('events');
+const orderEmitter = new EventEmitter();
+
+// Listener for 'orderPlaced' event
+orderEmitter.on('orderPlaced', (orderDetails) => {
+  console.log(`📦 New order received: ${orderDetails.item} - ₹${orderDetails.price}`);
+  console.log(`📧 Sending confirmation email to ${orderDetails.email}`);
+});
+
+// Listener for 'paymentSuccess' event
+orderEmitter.on('paymentSuccess', (amount) => {
+  console.log(`✅ Payment of ₹${amount} successful!`);
+  console.log(`📱 Sending payment receipt via SMS`);
+});
+
+// Listener for 'orderDelivered' event
+orderEmitter.on('orderDelivered', (orderId) => {
+  console.log(`🎉 Order ${orderId} delivered to customer!`);
+  console.log(`⭐ Request customer for feedback`);
+});
+
+// Trigger events in sequence
+orderEmitter.emit('orderPlaced', { item: 'MERN Course', price: 999, email: 'student@example.com' });
+orderEmitter.emit('paymentSuccess', 999);
+orderEmitter.emit('orderDelivered', 'ORD-1234');
+
+/* OUTPUT:
+📦 New order received: MERN Course - ₹999
+📧 Sending confirmation email to student@example.com
+✅ Payment of ₹999 successful!
+📱 Sending payment receipt via SMS
+🎉 Order ORD-1234 delivered to customer!
+⭐ Request customer for feedback
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('customEvents')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- 4. Multiple Listeners for Same Event -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-layer-group"></i>
+      <span>4. Multiple Listeners for the Same Event</span>
+    </div>
+    <p>You can attach multiple functions to the same event. All of them will run when the event is emitted!</p>
+    <div class="code-block" id="multipleListeners">
+const EventEmitter = require('events');
+const userEmitter = new EventEmitter();
+
+// Listener 1: Save to database
+userEmitter.on('userRegistered', (user) => {
+  console.log(`💾 Saving user ${user.name} to MongoDB...`);
+});
+
+// Listener 2: Send welcome email
+userEmitter.on('userRegistered', (user) => {
+  console.log(`📧 Sending welcome email to ${user.email}`);
+});
+
+// Listener 3: Create default playlist for user
+userEmitter.on('userRegistered', (user) => {
+  console.log(`🎵 Creating default playlist for ${user.name}`);
+});
+
+// Trigger the event
+userEmitter.emit('userRegistered', { name: 'Priya', email: 'priya@example.com' });
+
+/* OUTPUT:
+💾 Saving user Priya to MongoDB...
+📧 Sending welcome email to priya@example.com
+🎵 Creating default playlist for Priya
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('multipleListeners')"><i class="far fa-copy"></i> Copy Code</button>
+    <div class="info-box">
+      <i class="fas fa-chart-simple"></i> <strong>Useful methods:</strong><br>
+      <span class="inline-code">emitter.listenerCount('event')</span> → How many listeners?<br>
+      <span class="inline-code">emitter.removeListener('event', listener)</span> → Remove specific listener
+    </div>
+  </div>
+
+  <!-- 5. Once Method (One-Time Events) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-hourglass-half"></i>
+      <span>5. One-Time Events with .once()</span>
+    </div>
+    <p>Sometimes you want an event to trigger only <strong>once</strong>, even if emit is called multiple times. Use <span class="inline-code">.once()</span>!</p>
+    <div class="code-block" id="onceExample">
+const EventEmitter = require('events');
+const appEmitter = new EventEmitter();
+
+// This will run only ONCE
+appEmitter.once('appStarted', () => {
+  console.log('🚀 Application started! (This message appears only once)');
+});
+
+appEmitter.emit('appStarted');
+appEmitter.emit('appStarted');
+appEmitter.emit('appStarted');
+
+// Output: "🚀 Application started! (This message appears only once)"
+// The message appears only ONE time, subsequent emits do nothing
+    </div>
+    <button class="copy-btn" onclick="copyCode('onceExample')"><i class="far fa-copy"></i> Copy Code</button>
+    <div class="warning-note">
+      <i class="fas fa-info-circle"></i> <strong>Real use case:</strong> Database connection – you only want to log "Connected" once, not every time you query!
+    </div>
+  </div>
+
+  <!-- 6. Passing Data with Events -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exchange-alt"></i>
+      <span>6. Passing Data with Events (Multiple Arguments)</span>
+    </div>
+    <div class="code-block" id="passData">
+const EventEmitter = require('events');
+const logger = new EventEmitter();
+
+// Can pass multiple arguments
+logger.on('error', (statusCode, message, timestamp) => {
+  console.log(`❌ ERROR [${timestamp}]: ${message} (Status: ${statusCode})`);
+});
+
+logger.on('success', (...args) => {  // Spread operator for any number of args
+  console.log(`✅ SUCCESS:`, ...args);
+});
+
+// Emit with data
+logger.emit('error', 404, 'Page not found', new Date().toISOString());
+logger.emit('success', 'User logged in', 'user@example.com', 'Admin role');
+
+/* OUTPUT:
+❌ ERROR [2025-01-15T10:30:00.000Z]: Page not found (Status: 404)
+✅ SUCCESS: User logged in user@example.com Admin role
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('passData')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- 7. Extending EventEmitter (Creating Custom Classes) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code-branch"></i>
+      <span>7. Creating Your Own EventEmitter Classes</span>
+    </div>
+    <p>In real projects, you create classes that <strong>extend EventEmitter</strong> to add event capabilities to your own objects.</p>
+    <div class="code-block" id="extendEmitter">
+const EventEmitter = require('events');
+
+// Create a custom class that can emit events
+class BankAccount extends EventEmitter {
+  constructor(owner, balance = 0) {
+    super(); // Call parent constructor
+    this.owner = owner;
+    this.balance = balance;
+  }
+  
+  deposit(amount) {
+    this.balance += amount;
+    // Emit an event when money is deposited
+    this.emit('deposit', { owner: this.owner, amount, newBalance: this.balance });
+    return this.balance;
+  }
+  
+  withdraw(amount) {
+    if (amount > this.balance) {
+      this.emit('insufficientFunds', { owner: this.owner, attempted: amount, balance: this.balance });
+      return false;
+    }
+    this.balance -= amount;
+    this.emit('withdraw', { owner: this.owner, amount, newBalance: this.balance });
+    return true;
+  }
+}
+
+// Create an account
+const rameshAccount = new BankAccount('Ramesh', 5000);
+
+// Listen to events
+rameshAccount.on('deposit', (data) => {
+  console.log(`💰 ${data.owner} deposited ₹${data.amount}. New balance: ₹${data.newBalance}`);
+});
+
+rameshAccount.on('withdraw', (data) => {
+  console.log(`💸 ${data.owner} withdrew ₹${data.amount}. Remaining: ₹${data.newBalance}`);
+});
+
+rameshAccount.on('insufficientFunds', (data) => {
+  console.log(`⚠️ ${data.owner} tried to withdraw ₹${data.attempted} but only has ₹${data.balance}`);
+});
+
+// Test the account
+rameshAccount.deposit(2000);
+rameshAccount.withdraw(1000);
+rameshAccount.withdraw(10000); // This will trigger insufficientFunds
+
+/* OUTPUT:
+💰 Ramesh deposited ₹2000. New balance: ₹7000
+💸 Ramesh withdrew ₹1000. Remaining: ₹6000
+⚠️ Ramesh tried to withdraw ₹10000 but only has ₹6000
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('extendEmitter')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- 8. Real Node.js Built-in Events -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-cogs"></i>
+      <span>8. Built-in Events in Node.js (HTTP, Streams, etc.)</span>
+    </div>
+    <p>Many Node.js modules use events internally. For example, the HTTP server emits events!</p>
+    <div class="code-block" id="builtinEvents">
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end('Hello Events!');
+});
+
+// Server emits 'request' event (same as the callback above)
+server.on('request', (req, res) => {
+  console.log(`📨 Request received: ${req.method} ${req.url}`);
+});
+
+// Server emits 'listening' event
+server.on('listening', () => {
+  console.log('🎧 Server is listening on port 3000');
+});
+
+// Server emits 'close' event
+server.on('close', () => {
+  console.log('🛑 Server has been closed');
+});
+
+server.listen(3000);
+
+// To close server after 5 seconds:
+setTimeout(() => {
+  server.close();
+}, 5000);
+
+/* OUTPUT:
+🎧 Server is listening on port 3000
+📨 Request received: GET /
+📨 Request received: GET /about
+🛑 Server has been closed
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('builtinEvents')"><i class="far fa-copy"></i> Copy Code</button>
+    <div class="success-note">
+      <i class="fas fa-star"></i> <strong>Did you know?</strong> Streams (readable/writable), Child Processes, and many core modules inherit from EventEmitter!
+    </div>
+  </div>
+
+  <!-- 9. Error Handling with Events -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>9. Error Events – Always Listen to 'error'!</span>
+    </div>
+    <p>If an error occurs in an EventEmitter and no listener handles it, Node.js throws an exception and crashes. <strong>Always listen for 'error' events!</strong></p>
+    <div class="code-block" id="errorHandling">
+const EventEmitter = require('events');
+const safeEmitter = new EventEmitter();
+
+// GOOD: Listen to error events
+safeEmitter.on('error', (err) => {
+  console.error('❌ Caught error:', err.message);
+  console.log('Application continues running...');
+});
+
+// Emit an error (won't crash)
+safeEmitter.emit('error', new Error('Something went wrong'));
+
+// Without error listener, Node.js would crash!
+console.log('✅ Program keeps running normally');
+
+/* OUTPUT:
+❌ Caught error: Something went wrong
+Application continues running...
+✅ Program keeps running normally
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('errorHandling')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- 10. Day 57 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>10. 🚀 Daily Challenge – Build a Smart Home Event System</span>
+    </div>
+    <p><strong>Task:</strong> Create an event-driven smart home system with these features:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Events: <span class="inline-code">doorOpen</span>, <span class="inline-code">doorClose</span>, <span class="inline-code">motionDetected</span>, <span class="inline-code">alarmTriggered</span></li>
+      <li>When door opens → turn on light & log "Door opened"</li>
+      <li>When motion detected after 10pm → trigger alarm</li>
+      <li>Count how many times door opened (use a variable)</li>
+      <li>Use <span class="inline-code">.once()</span> for first motion of the day</li>
+    </ul>
+    <div class="code-block" id="challengeCode">
+const EventEmitter = require('events');
+
+class SmartHome extends EventEmitter {
+  constructor() {
+    super();
+    this.doorOpenCount = 0;
+    this.isAlarmOn = false;
+  }
+  
+  openDoor() {
+    this.doorOpenCount++;
+    this.emit('doorOpen', { count: this.doorOpenCount, time: new Date().toLocaleTimeString() });
+  }
+  
+  closeDoor() {
+    this.emit('doorClose');
+  }
+  
+  detectMotion(hour) {
+    this.emit('motionDetected', { hour });
+  }
+  
+  triggerAlarm(reason) {
+    this.isAlarmOn = true;
+    this.emit('alarmTriggered', { reason, time: new Date().toLocaleTimeString() });
+  }
+}
+
+const myHome = new SmartHome();
+
+// Event listeners
+myHome.on('doorOpen', (data) => {
+  console.log(`🚪 DOOR OPENED! (Count: ${data.count}) at ${data.time}`);
+  console.log(`💡 Turning ON the lights...`);
+});
+
+myHome.on('doorClose', () => {
+  console.log(`🚪 Door closed. Lights staying on for 30 seconds.`);
+});
+
+myHome.on('motionDetected', (data) => {
+  console.log(`🏃 Motion detected at ${data.hour}:00`);
+  if (data.hour >= 22 || data.hour < 6) {
+    myHome.triggerAlarm('Motion detected after 10 PM');
+  }
+});
+
+myHome.once('motionDetected', () => {
+  console.log(`📱 [FIRST MOTION OF THE DAY] Sending notification to owner`);
+});
+
+myHome.on('alarmTriggered', (data) => {
+  console.log(`🔔🚨 ALARM! ${data.reason} at ${data.time}`);
+  console.log(`📞 Calling security...`);
+});
+
+// Simulate activities
+myHome.openDoor();
+myHome.closeDoor();
+myHome.detectMotion(14); // 2 PM - no alarm
+myHome.detectMotion(23); // 11 PM - triggers alarm!
+myHome.openDoor();
+
+/* Expected output includes door events, first motion special message, and alarm */
+    </div>
+    <button class="copy-btn" onclick="copyCode('challengeCode')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+    <p class="icon-text"><i class="fab fa-youtube"></i> <strong>Telugu WebTech:</strong> Build this smart home system and experiment with events!</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 57 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Event-Driven Architecture:</strong> Understanding how Node.js reacts to events<br>
+    ✅ <strong>EventEmitter Class:</strong> Creating and using event emitters<br>
+    ✅ <strong>.on() vs .once():</strong> Permanent vs one-time listeners<br>
+    ✅ <strong>Custom Events:</strong> Building real-world event systems (orders, bank, smart home)<br>
+    ✅ <strong>Extending EventEmitter:</strong> Adding event capabilities to your classes<br>
+    ✅ <strong>Error Handling:</strong> Preventing crashes with 'error' events<br>
+    ✅ <strong>Built-in Events:</strong> HTTP server, streams and more</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 58 – Nodemon (Auto-restart Server on Changes)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – Events make your apps powerful! 🔥
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-node-js"></i> Day 57 · Events Module · <strong>Telugu WebTech</strong> — Build reactive, event-driven Node.js applications</p>
+    <p style="font-size: 0.85rem;">💡 Events are everywhere in Node.js! Practice creating your own event systems today.</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Create a .js file and run with "node filename.js"');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

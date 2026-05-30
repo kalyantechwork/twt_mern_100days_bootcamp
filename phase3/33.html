@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 33: Forms in React | Controlled Components + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .form-demo {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    input, select, textarea {
+      background: #334155;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 40px;
+      color: white;
+      width: 100%;
+      margin: 8px 0;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #94a3b8;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .error-text {
+      color: #f87171;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📝</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 33 · Forms in React (Controlled Components) — Show Results</div>
+  </div>
+
+  <h1>📝 Forms in React<br><span style="font-size:1rem;">Controlled Components · Two-Way Binding · Form Submission · Validation — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What are Controlled Components -->
+  <div class="section-title">1️⃣ What are Controlled Components?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Controlled components</strong> are form elements (input, textarea, select) whose value is controlled by React state. Instead of the DOM maintaining the value, React state is the "single source of truth". When the user types, an onChange event updates the state, which then updates the input value.</p>
+    <p><strong>Where it's used:</strong> Every form in React — login forms, registration forms, search bars, comment boxes, settings panels, data entry forms.</p>
+  </div>
+  <div class="diagram">
+    State → Input Value → User Types → onChange → Updates State → Input Shows New Value
+  </div>
+
+  <!-- Section 2: Simple Controlled Input -->
+  <div class="section-title">2️⃣ Simple Controlled Input Example</div>
+  <div class="example-card">
+    <div class="code-block">
+      function SimpleForm() {<br>
+        const [name, setName] = useState("");<br>
+        return (&lt;div&gt;<br>
+          &lt;input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name"/&gt;<br>
+          &lt;p&gt;You typed: {name}&lt;/p&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="controlledInputResult">📝 Show Controlled Input Demo</button>
+    <div id="controlledInputResult" class="result-area">
+      <div class="form-demo">
+        <strong>📝 Controlled Input:</strong>
+        <input type="text" id="controlledNameInput" placeholder="Enter your name" style="margin: 10px 0;">
+        <p id="livePreview">You typed: </p>
+      </div>
+      <div class="console-output">
+        ✅ value is controlled by state (simulated here)<br>
+        ✅ onChange updates state on every keystroke<br>
+        ✅ This is called "two-way binding" — state → input, input → state
+      </div>
+      <script>
+        const controlledInput = document.getElementById("controlledNameInput");
+        const preview = document.getElementById("livePreview");
+        controlledInput?.addEventListener("input", (e) => {
+          preview.textContent = `You typed: ${e.target.value}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Multiple Inputs -->
+  <div class="section-title">3️⃣ Handling Multiple Inputs (One State Object)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function RegistrationForm() {<br>
+        const [form, setForm] = useState({ name: "", email: "", password: "" });<br>
+        const handleChange = (e) => {<br>
+          setForm({ ...form, [e.target.name]: e.target.value });<br>
+        };<br>
+        return (&lt;div&gt;<br>
+          &lt;input name="name" value={form.name} onChange={handleChange} placeholder="Name"/&gt;<br>
+          &lt;input name="email" value={form.email} onChange={handleChange} placeholder="Email"/&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="multipleInputsResult">📋 Show Multiple Inputs Demo</button>
+    <div id="multipleInputsResult" class="result-area">
+      <div class="form-demo">
+        <strong>📋 Registration Form (Controlled):</strong>
+        <input type="text" id="multiName" placeholder="Name">
+        <input type="email" id="multiEmail" placeholder="Email">
+        <input type="password" id="multiPassword" placeholder="Password">
+        <div style="margin-top: 12px; background:#334155; padding:10px; border-radius:12px;">
+          <strong>Live Preview:</strong><br>
+          <span id="previewName"></span><br>
+          <span id="previewEmail"></span><br>
+          <span id="previewPassword"></span>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ One state object for all form fields<br>
+        ✅ One handleChange function using computed property name: [e.target.name]<br>
+        ✅ Spread operator (...) preserves other fields when updating
+      </div>
+      <script>
+        const nameField = document.getElementById("multiName");
+        const emailField = document.getElementById("multiEmail");
+        const passwordField = document.getElementById("multiPassword");
+        const previewName = document.getElementById("previewName");
+        const previewEmail = document.getElementById("previewEmail");
+        const previewPassword = document.getElementById("previewPassword");
+        function updatePreview() {
+          previewName.textContent = `Name: ${nameField.value || "—"}`;
+          previewEmail.textContent = `Email: ${emailField.value || "—"}`;
+          previewPassword.textContent = `Password: ${passwordField.value ? "••••••" : "—"}`;
+        }
+        nameField?.addEventListener("input", updatePreview);
+        emailField?.addEventListener("input", updatePreview);
+        passwordField?.addEventListener("input", updatePreview);
+        updatePreview();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: Textarea -->
+  <div class="section-title">4️⃣ Textarea (Controlled)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function CommentBox() {<br>
+        const [comment, setComment] = useState("");<br>
+        return (&lt;div&gt;<br>
+          &lt;textarea value={comment} onChange={(e) => setComment(e.target.value)} rows="4" placeholder="Write comment..."/&gt;<br>
+          &lt;p&gt;Characters: {comment.length}&lt;/p&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="textareaResult">💬 Show Textarea Demo</button>
+    <div id="textareaResult" class="result-area">
+      <div class="form-demo">
+        <strong>💬 Comment Box:</strong>
+        <textarea id="commentText" rows="3" placeholder="Write your comment..." style="width:100%; border-radius:20px;"></textarea>
+        <p id="charCount">Characters: 0</p>
+      </div>
+      <div class="console-output">
+        ✅ Textarea value is controlled by state<br>
+        ✅ Same pattern as input — value + onChange<br>
+        ✅ Great for character counters
+      </div>
+      <script>
+        const commentArea = document.getElementById("commentText");
+        const charSpan = document.getElementById("charCount");
+        commentArea?.addEventListener("input", (e) => {
+          charSpan.textContent = `Characters: ${e.target.value.length}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Select Dropdown -->
+  <div class="section-title">5️⃣ Select Dropdown (Controlled)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function CitySelector() {<br>
+        const [city, setCity] = useState("");<br>
+        return (&lt;div&gt;<br>
+          &lt;select value={city} onChange={(e) => setCity(e.target.value)}&gt;<br>
+            &lt;option value=""&gt;Select city&lt;/option&gt;<br>
+            &lt;option value="hyd"&gt;Hyderabad&lt;/option&gt;<br>
+          &lt;/select&gt;<br>
+          &lt;p&gt;Selected: {city}&lt;/p&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="selectResult">🌆 Show Select Dropdown Demo</button>
+    <div id="selectResult" class="result-area">
+      <div class="form-demo">
+        <strong>🌆 Select Your City:</strong>
+        <select id="citySelect">
+          <option value="">Select a city</option>
+          <option value="hyderabad">Hyderabad</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="delhi">Delhi</option>
+          <option value="bangalore">Bangalore</option>
+        </select>
+        <p id="selectedCityDisplay">Selected: </p>
+      </div>
+      <div class="console-output">
+        ✅ Select value is controlled by state<br>
+        ✅ onChange captures the selected value<br>
+        ✅ Works same as input elements
+      </div>
+      <script>
+        const citySelect = document.getElementById("citySelect");
+        const cityDisplay = document.getElementById("selectedCityDisplay");
+        citySelect?.addEventListener("change", (e) => {
+          cityDisplay.textContent = `Selected: ${e.target.value || "None"}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Checkbox -->
+  <div class="section-title">6️⃣ Checkbox (Controlled)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function NewsletterSignup() {<br>
+        const [isSubscribed, setIsSubscribed] = useState(false);<br>
+        return (&lt;label&gt;<br>
+          &lt;input type="checkbox" checked={isSubscribed} onChange={(e) => setIsSubscribed(e.target.checked)}/&gt;<br>
+          Subscribe to newsletter<br>
+        &lt;/label&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="checkboxResult">✅ Show Checkbox Demo</button>
+    <div id="checkboxResult" class="result-area">
+      <div class="form-demo">
+        <label>
+          <input type="checkbox" id="subscribeCheckbox"> Subscribe to newsletter
+        </label>
+        <p id="checkboxStatus">Status: Not subscribed</p>
+      </div>
+      <div class="console-output">
+        ✅ Checkbox uses 'checked' prop (not 'value')<br>
+        ✅ onChange reads e.target.checked (boolean)<br>
+        ✅ Great for toggles, agreements, preferences
+      </div>
+      <script>
+        const checkbox = document.getElementById("subscribeCheckbox");
+        const statusSpan = document.getElementById("checkboxStatus");
+        checkbox?.addEventListener("change", (e) => {
+          statusSpan.textContent = `Status: ${e.target.checked ? "✅ Subscribed" : "❌ Not subscribed"}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Form Submission -->
+  <div class="section-title">7️⃣ Form Submission (preventDefault)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function LoginForm() {<br>
+        const [email, setEmail] = useState("");<br>
+        const handleSubmit = (e) => {<br>
+          e.preventDefault();  // CRITICAL: prevents page refresh<br>
+          alert(`Logging in with ${email}`);<br>
+        };<br>
+        return (&lt;form onSubmit={handleSubmit}&gt;...&lt;/form&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="submitResult">📤 Show Form Submission Demo</button>
+    <div id="submitResult" class="result-area">
+      <div class="form-demo">
+        <strong>🔐 Login Form (No Page Reload):</strong>
+        <form id="loginForm">
+          <input type="email" id="loginEmail" placeholder="Email" required>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <button type="submit" class="demo-btn">Login</button>
+        </form>
+        <p id="loginMessage" style="margin-top: 8px;"></p>
+      </div>
+      <div class="console-output">
+        ✅ e.preventDefault() is CRITICAL — prevents page refresh!<br>
+        ✅ Without it, React apps would reload and lose state<br>
+        ✅ Always use onSubmit on form, not onClick on button
+      </div>
+      <script>
+        document.getElementById("loginForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("loginEmail").value;
+          document.getElementById("loginMessage").innerHTML = `✅ Login attempted with: ${email} (no page refresh!)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Form Validation -->
+  <div class="section-title">8️⃣ Basic Form Validation</div>
+  <div class="example-card">
+    <div class="code-block">
+      function SignupForm() {<br>
+        const [email, setEmail] = useState("");<br>
+        const [error, setError] = useState("");<br>
+        const handleSubmit = (e) => {<br>
+          e.preventDefault();<br>
+          if (!email.includes("@")) setError("Valid email required");<br>
+          else setError("");<br>
+        };<br>
+        return (&lt;form onSubmit={handleSubmit}&gt;...&lt;/form&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="validationResult">✅ Show Form Validation Demo</button>
+    <div id="validationResult" class="result-area">
+      <div class="form-demo">
+        <strong>✅ Signup Form (with Validation):</strong>
+        <form id="signupForm">
+          <input type="email" id="signupEmail" placeholder="Email">
+          <div id="emailError" class="error-text"></div>
+          <button type="submit" class="demo-btn">Sign Up</button>
+        </form>
+        <p id="signupMessage"></p>
+      </div>
+      <div class="console-output">
+        ✅ Validation happens before submission<br>
+        ✅ Error messages shown conditionally (&& operator)<br>
+        ✅ User gets immediate feedback
+      </div>
+      <script>
+        document.getElementById("signupForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("signupEmail").value;
+          const errorDiv = document.getElementById("emailError");
+          const msgDiv = document.getElementById("signupMessage");
+          if (!email.includes("@") || !email.includes(".")) {
+            errorDiv.textContent = "❌ Please enter a valid email address (must contain @ and .)";
+            msgDiv.innerHTML = "";
+          } else {
+            errorDiv.textContent = "";
+            msgDiv.innerHTML = `✅ Success! Welcome ${email}`;
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 9: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Contact Form</strong> with name, email, message fields (controlled components)<br>
+    2. Add form validation: name not empty, valid email format<br>
+    3. Create a <strong>Feedback Form</strong> with rating (radio buttons) and comment (textarea)<br>
+    4. Display a preview of the entered data below the form (live preview)
+  </div>
+
+  <!-- Section 10: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesFormsResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesFormsResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">value={state}</span> on input → becomes uncontrolled (React loses control)</li>
+        <li>❌ Not using <span class="inline-code">e.preventDefault()</span> on form submit → page refreshes, state lost</li>
+        <li>❌ Mutating state directly: <span class="inline-code">form.name = value</span> ❌ → always use setter function</li>
+        <li>❌ Forgetting to spread existing state when updating object: <span class="inline-code">setForm({ [name]: value })</span> ❌ loses other fields</li>
+        <li>❌ Using <span class="inline-code">onClick</span> on submit button instead of <span class="inline-code">onSubmit</span> on form → Enter key won't work</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is a controlled component?</h3><p>Form element whose value is controlled by React state, with onChange handler updating state.</p></div>
+    <div class="card"><h3>❓ Why use controlled components?</h3><p>For validation, dynamic inputs, single source of truth, and conditional UI updates.</p></div>
+    <div class="card"><h3>❓ How to handle multiple inputs?</h3><p>Use one state object and a single handleChange with computed property names [e.target.name].</p></div>
+    <div class="card"><h3>❓ What does preventDefault() do?</h3><p>Prevents default browser behavior — essential for preventing page refresh on form submit.</p></div>
+  </div>
+
+  <!-- Section 12: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔍 Task 1</h3><p>Create a <strong>Search Bar</strong> that filters a list of items as the user types (live search).</p></div>
+    <div class="card"><h3>🏠 Task 2</h3><p>Create an <strong>Address Form</strong> with street, city, zip code (controlled components).</p></div>
+    <div class="card"><h3>📝 Task 3</h3><p>Create a <strong>Character Counter</strong> for a tweet input (max 280 characters, show remaining).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 33 - Forms in React)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Controlled components — form inputs controlled by React state</div>
+    <div class="card">✔️ Handling single and multiple inputs with one state object</div>
+    <div class="card">✔️ Textarea, select dropdown, checkbox, radio buttons</div>
+    <div class="card">✔️ Form submission with preventDefault() (no page refresh)</div>
+    <div class="card">✔️ Basic form validation with error messages</div>
+  </div>
+
+  <!-- Day 33 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 33 Ending Message</strong><br>
+    "Forms are the backbone of user interaction. Now you can build registration forms, login forms, and any data collection interface with full React control! Controlled components give you complete control over form behavior, validation, and user experience."
+  </div>
+
+  <!-- Next: Day 34 -->
+  <div class="section-title">🔜 Next — Day 34 : useState Hook (Deep Dive)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🪝 useState deep dive</span>
+    <span class="badge">📊 Functional updates</span>
+    <span class="badge">🎯 State with objects/arrays</span>
+    <span class="badge">⚡ Batching updates</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 33 Completed ✅<br>
+    Click "Show Result" on each example to see controlled components in action. Practice building forms — they're essential for every React application!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

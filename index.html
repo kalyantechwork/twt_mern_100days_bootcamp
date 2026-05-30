@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · MERN Stack in 100 Days | Complete Accordion Roadmap</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .course-banner{
+  width:100%;
+  margin:2rem 0;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.12);
+  transition:transform .3s ease;
+}
+
+.course-banner:hover{
+  transform:translateY(-4px);
+}
+
+.course-banner img{
+  width:100%;
+  display:block;
+  border-radius:24px;
+}
+
+@media(max-width:768px){
+  .course-banner{
+    margin:1.2rem 0;
+    border-radius:16px;
+  }
+
+  .course-banner img{
+    border-radius:16px;
+  }
+}
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .logo-text h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #0f172a, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #475569;
+    }
+    .cta-top {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #facc15;
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 1px solid #facc15;
+    }
+    .cta-top:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin: 2rem 0 3rem;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(145deg, #0f172a, #3b82f6);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #334155;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .badge-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .badge {
+      background: white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Accordion Styles - Full Width */
+    .accordion {
+      width: 100%;
+      margin: 2rem 0;
+    }
+    .accordion-item {
+      background: white;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+    }
+    .accordion-header {
+      background: white;
+      padding: 1.2rem 1.8rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    .accordion-header:hover {
+      background: #f8fafc;
+    }
+    .accordion-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .phase-number {
+      background: #0f172a;
+      color: #facc15;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+    .phase-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .phase-days {
+      background: #eef2ff;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e40af;
+    }
+    .accordion-icon {
+      font-size: 1.4rem;
+      color: #64748b;
+      transition: transform 0.3s;
+    }
+    .accordion-item.active .accordion-icon {
+      transform: rotate(180deg);
+      color: #facc15;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+    .accordion-item.active .accordion-content {
+      max-height: 800px;
+      transition: max-height 0.5s ease-in;
+    }
+    .content-inner {
+      padding: 1.5rem 1.8rem;
+    }
+    .topic-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.6rem;
+    }
+    .topic-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .topic-badge {
+      background: #eef2ff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      color: #1e40af;
+    }
+    .day-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .day-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    .project-highlight {
+      background: #fefce8;
+      margin-top: 1rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      border-left: 4px solid #facc15;
+    }
+
+    /* Study Section */
+    .study-section {
+      background: white;
+      border-radius: 28px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+      border: 1px solid #e2e8f0;
+    }
+    .study-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .study-step {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .study-step:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+
+    /* CTA */
+    .big-cta {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 32px;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+    .big-cta h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .big-cta .cta-button {
+      background: #facc15;
+      color: #0f172a;
+      padding: 0.8rem 2.2rem;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 1rem;
+      transition: transform 0.2s;
+    }
+    .big-cta .cta-button:hover {
+      transform: scale(1.02);
+    }
+
+    .footer {
+      text-align: center;
+      padding-top: 2rem;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .accordion-header {
+        padding: 1rem;
+      }
+      .phase-name {
+        font-size: 1rem;
+      }
+      .topic-list {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📘</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>MERN Stack in 100 Days · Full Stack Roadmap</p>
+      </div>
+    </div>
+    <a href="#start" class="cta-top">🎯 Start Your Journey</a>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Master MERN Stack in 100 Days 🚀</h1>
+    <p>Become a Full Stack Developer — Even If You're Starting From Zero.<br> No confusion, no random tutorials. Just a structured day-by-day roadmap.</p>
+    <div class="badge-container">
+      <span class="badge">✅ 100 Days Structured Path</span>
+      <span class="badge">✅ 10+ Real Projects</span>
+      <span class="badge">✅ Job-Ready Skills</span>
+      <span class="badge">✅ Deploy to Production</span>
+    </div>
+  </div>
+
+  <div class="course-banner">
+  <img
+    src="./assets/images/mern-course-offer-banner.png"
+    alt="Learn MERN Stack in 100 Days Offer Banner">
+</div>
+
+  <!-- Full Width Accordion -->
+  <div class="accordion" id="learningAccordion">
+    <!-- Phase 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 01</span>
+          <span class="phase-name">🌐 Web Development Foundations</span>
+          <span class="phase-days">📅 Day 1-10</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 1</span> <a href="./part0/1.html" target="_blank" class="day-link" data-day="1">Introduction to Web Development</a></li>
+            <li><span class="topic-badge">Day 2</span> <a href="#" class="day-link" data-day="2">Install Development Environment</a></li>
+            <li><span class="topic-badge">Day 3</span> <a href="#" class="day-link" data-day="3">HTML Basics</a></li>
+            <li><span class="topic-badge">Day 4</span> <a href="#" class="day-link" data-day="4">Advanced HTML</a></li>
+            <li><span class="topic-badge">Day 5</span> <a href="./phase0/5.html" target="_blank" class="day-link" data-day="5">CSS Basics</a></li>
+            <li><span class="topic-badge">Day 6</span> <a href="./phase0/6.html" target="_blank" class="day-link" data-day="6">CSS Layouts & Responsive Design</a></li>
+            <li><span class="topic-badge">Day 7</span> <a href="./phase0/7.html" target="_blank" class="day-link" data-day="7">JavaScript Basics</a></li>
+            <li><span class="topic-badge">Day 8</span> <a href="#" class="day-link" data-day="8">JavaScript Functions</a></li>
+            <li><span class="topic-badge">Day 9</span> <a href="#" class="day-link" data-day="9">DOM Manipulation</a></li>
+            <li><span class="topic-badge">Day 10</span> <a href="#" class="day-link" data-day="10">Mini JavaScript Projects</a></li>
+          </ul>
+          <div class="project-highlight">🎯 Projects: Portfolio, Calculator, To-Do App, Counter App</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 02</span>
+          <span class="phase-name">⚡ Modern JavaScript Mastery</span>
+          <span class="phase-days">📅 Day 11-20</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 11</span> <a href="#" class="day-link" data-day="11">Arrays & Array Methods</a></li>
+            <li><span class="topic-badge">Day 12</span> <a href="#" class="day-link" data-day="12">Objects & Destructuring</a></li>
+            <li><span class="topic-badge">Day 13</span> <a href="#" class="day-link" data-day="13">ES6+ Features</a></li>
+            <li><span class="topic-badge">Day 14</span> <a href="#" class="day-link" data-day="14">Async JavaScript (Callbacks, Promises)</a></li>
+            <li><span class="topic-badge">Day 15</span> <a href="#" class="day-link" data-day="15">Fetch API & JSON</a></li>
+            <li><span class="topic-badge">Day 16</span> <a href="#" class="day-link" data-day="16">Git Basics</a></li>
+            <li><span class="topic-badge">Day 17</span> <a href="#" class="day-link" data-day="17">Advanced JavaScript Concepts</a></li>
+            <li><span class="topic-badge">Day 18</span> <a href="#" class="day-link" data-day="18">Local Storage & Session Storage</a></li>
+            <li><span class="topic-badge">Day 19</span> <a href="#" class="day-link" data-day="19">Git & GitHub</a></li>
+            <li><span class="topic-badge">Day 20</span> <a href="#" class="day-link" data-day="20">JavaScript Mini Projects</a></li>
+          </ul>
+          <div class="project-highlight">🎯 Projects: Weather App, Notes App, API Integrations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 03</span>
+          <span class="phase-name">🐙 Git & GitHub</span>
+          <span class="phase-days">📅 Day 21-23</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 21</span> <a href="#" class="day-link" data-day="21">Git Basics (init, add, commit)</a></li>
+            <li><span class="topic-badge">Day 22</span> <a href="#" class="day-link" data-day="22">GitHub (push, pull, clone)</a></li>
+            <li><span class="topic-badge">Day 23</span> <a href="#" class="day-link" data-day="23">Branching & Pull Requests</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 04</span>
+          <span class="phase-name">⚛️ React Fundamentals</span>
+          <span class="phase-days">📅 Day 24-39</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 24</span> <a href="#" class="day-link" data-day="24">Introduction to React</a></li>
+            <li><span class="topic-badge">Day 25</span> <a href="#" class="day-link" data-day="25">Setup & Folder Structure</a></li>
+            <li><span class="topic-badge">Day 26</span> <a href="#" class="day-link" data-day="26">JSX</a></li>
+            <li><span class="topic-badge">Day 27</span> <a href="#" class="day-link" data-day="27">Components</a></li>
+            <li><span class="topic-badge">Day 28</span> <a href="#" class="day-link" data-day="28">Props</a></li>
+            <li><span class="topic-badge">Day 29</span> <a href="#" class="day-link" data-day="29">State (useState)</a></li>
+            <li><span class="topic-badge">Day 30</span> <a href="#" class="day-link" data-day="30">Event Handling</a></li>
+            <li><span class="topic-badge">Day 31</span> <a href="#" class="day-link" data-day="31">Conditional Rendering</a></li>
+            <li><span class="topic-badge">Day 32</span> <a href="#" class="day-link" data-day="32">Lists & Keys</a></li>
+            <li><span class="topic-badge">Day 33</span> <a href="#" class="day-link" data-day="33">Forms in React</a></li>
+            <li><span class="topic-badge">Day 34</span> <a href="#" class="day-link" data-day="34">useState Deep Dive</a></li>
+            <li><span class="topic-badge">Day 35</span> <a href="#" class="day-link" data-day="35">useEffect</a></li>
+            <li><span class="topic-badge">Day 36</span> <a href="#" class="day-link" data-day="36">API Calls in React</a></li>
+            <li><span class="topic-badge">Day 37</span> <a href="#" class="day-link" data-day="37">React Router</a></li>
+            <li><span class="topic-badge">Day 38</span> <a href="#" class="day-link" data-day="38">Context API</a></li>
+            <li><span class="topic-badge">Day 39</span> <a href="#" class="day-link" data-day="39">Custom Hooks</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 05</span>
+          <span class="phase-name">🎨 Advanced React + Tailwind CSS</span>
+          <span class="phase-days">📅 Day 40-50</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 40</span> <a href="#" class="day-link" data-day="40">React Performance (memo, useCallback, useMemo)</a></li>
+            <li><span class="topic-badge">Day 41</span> <a href="#" class="day-link" data-day="41">Project Structure & Best Practices</a></li>
+            <li><span class="topic-badge">Day 42</span> <a href="#" class="day-link" data-day="42">Testing in React</a></li>
+            <li><span class="topic-badge">Day 43</span> <a href="#" class="day-link" data-day="43">Advanced React Router (Nested Routes)</a></li>
+            <li><span class="topic-badge">Day 44</span> <a href="#" class="day-link" data-day="44">Redux Toolkit</a></li>
+            <li><span class="topic-badge">Day 45</span> <a href="#" class="day-link" data-day="45">React Mini Project (E-commerce Frontend)</a></li>
+            <li><span class="topic-badge">Day 46</span> <a href="#" class="day-link" data-day="46">Tailwind CSS Setup</a></li>
+            <li><span class="topic-badge">Day 47</span> <a href="#" class="day-link" data-day="47">Responsive UI with Tailwind</a></li>
+            <li><span class="topic-badge">Day 48</span> <a href="#" class="day-link" data-day="48">Tailwind Components</a></li>
+            <li><span class="topic-badge">Day 49</span> <a href="#" class="day-link" data-day="49">Dark Mode</a></li>
+            <li><span class="topic-badge">Day 50</span> <a href="#" class="day-link" data-day="50">Full Responsive Landing Page</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 06</span>
+          <span class="phase-name">🟢 Node.js Backend Development</span>
+          <span class="phase-days">📅 Day 51-60</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 51</span> <a href="#" class="day-link" data-day="51">Introduction to Node.js</a></li>
+            <li><span class="topic-badge">Day 52</span> <a href="#" class="day-link" data-day="52">NPM & Modules</a></li>
+            <li><span class="topic-badge">Day 53</span> <a href="#" class="day-link" data-day="53">File System (fs) Module</a></li>
+            <li><span class="topic-badge">Day 54</span> <a href="#" class="day-link" data-day="54">Path Module</a></li>
+            <li><span class="topic-badge">Day 55</span> <a href="#" class="day-link" data-day="55">HTTP Module</a></li>
+            <li><span class="topic-badge">Day 56</span> <a href="#" class="day-link" data-day="56">Events Module</a></li>
+            <li><span class="topic-badge">Day 57</span> <a href="#" class="day-link" data-day="57">Nodemon</a></li>
+            <li><span class="topic-badge">Day 58</span> <a href="#" class="day-link" data-day="58">Environment Variables (dotenv)</a></li>
+            <li><span class="topic-badge">Day 59</span> <a href="#" class="day-link" data-day="59">Build Simple HTTP Server</a></li>
+            <li><span class="topic-badge">Day 60</span> <a href="#" class="day-link" data-day="60">Node.js Project</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 07</span>
+          <span class="phase-name">⚡ Express.js API Development</span>
+          <span class="phase-days">📅 Day 61-70</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 61</span> <a href="#" class="day-link" data-day="61">Introduction to Express</a></li>
+            <li><span class="topic-badge">Day 62</span> <a href="#" class="day-link" data-day="62">Express Server Setup</a></li>
+            <li><span class="topic-badge">Day 63</span> <a href="#" class="day-link" data-day="63">Routing</a></li>
+            <li><span class="topic-badge">Day 64</span> <a href="#" class="day-link" data-day="64">Controllers</a></li>
+            <li><span class="topic-badge">Day 65</span> <a href="#" class="day-link" data-day="65">Middleware</a></li>
+            <li><span class="topic-badge">Day 66</span> <a href="#" class="day-link" data-day="66">REST API Development</a></li>
+            <li><span class="topic-badge">Day 67</span> <a href="#" class="day-link" data-day="67">Postman Testing</a></li>
+            <li><span class="topic-badge">Day 68</span> <a href="#" class="day-link" data-day="68">Error Handling Middleware</a></li>
+            <li><span class="topic-badge">Day 69</span> <a href="#" class="day-link" data-day="69">Express Project Structure</a></li>
+            <li><span class="topic-badge">Day 70</span> <a href="#" class="day-link" data-day="70">CRUD API Project</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 8 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 08</span>
+          <span class="phase-name">🍃 MongoDB & Mongoose</span>
+          <span class="phase-days">📅 Day 71-80</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 71</span> <a href="#" class="day-link" data-day="71">Introduction to MongoDB</a></li>
+            <li><span class="topic-badge">Day 72</span> <a href="#" class="day-link" data-day="72">Install MongoDB</a></li>
+            <li><span class="topic-badge">Day 73</span> <a href="#" class="day-link" data-day="73">MongoDB Compass</a></li>
+            <li><span class="topic-badge">Day 74</span> <a href="#" class="day-link" data-day="74">CRUD Operations</a></li>
+            <li><span class="topic-badge">Day 75</span> <a href="#" class="day-link" data-day="75">Mongoose Setup</a></li>
+            <li><span class="topic-badge">Day 76</span> <a href="#" class="day-link" data-day="76">Schemas & Models</a></li>
+            <li><span class="topic-badge">Day 77</span> <a href="#" class="day-link" data-day="77">Validation</a></li>
+            <li><span class="topic-badge">Day 78</span> <a href="#" class="day-link" data-day="78">Relationships (Population)</a></li>
+            <li><span class="topic-badge">Day 79</span> <a href="#" class="day-link" data-day="79">Pagination & Filtering</a></li>
+            <li><span class="topic-badge">Day 80</span> <a href="#" class="day-link" data-day="80">MongoDB Project</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 9 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 09</span>
+          <span class="phase-name">🚀 Full MERN Stack Integration</span>
+          <span class="phase-days">📅 Day 81-90</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 81</span> <a href="#" class="day-link" data-day="81">Connect React + Node</a></li>
+            <li><span class="topic-badge">Day 82</span> <a href="#" class="day-link" data-day="82">Axios HTTP Client</a></li>
+            <li><span class="topic-badge">Day 83</span> <a href="#" class="day-link" data-day="83">Full CRUD Operations</a></li>
+            <li><span class="topic-badge">Day 84</span> <a href="#" class="day-link" data-day="84">Authentication Basics</a></li>
+            <li><span class="topic-badge">Day 85</span> <a href="#" class="day-link" data-day="85">JWT Authentication Deep Dive</a></li>
+            <li><span class="topic-badge">Day 86</span> <a href="#" class="day-link" data-day="86">Password Hashing (bcrypt)</a></li>
+            <li><span class="topic-badge">Day 87</span> <a href="#" class="day-link" data-day="87">Protected Routes (React)</a></li>
+            <li><span class="topic-badge">Day 88</span> <a href="#" class="day-link" data-day="88">Role-Based Access Control</a></li>
+            <li><span class="topic-badge">Day 89</span> <a href="#" class="day-link" data-day="89">File Upload (Multer)</a></li>
+            <li><span class="topic-badge">Day 90</span> <a href="#" class="day-link" data-day="90">MERN Project Integration</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 10 -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <div class="accordion-title">
+          <span class="phase-number">Phase 10</span>
+          <span class="phase-name">🔐 Advanced MERN & Deployment</span>
+          <span class="phase-days">📅 Day 91-100</span>
+        </div>
+        <span class="accordion-icon">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="content-inner">
+          <ul class="topic-list">
+            <li><span class="topic-badge">Day 91</span> <a href="#" class="day-link" data-day="91">Redux Toolkit</a></li>
+            <li><span class="topic-badge">Day 92</span> <a href="#" class="day-link" data-day="92">Advanced React Patterns</a></li>
+            <li><span class="topic-badge">Day 93</span> <a href="#" class="day-link" data-day="93">Payment Gateway (Stripe/Razorpay)</a></li>
+            <li><span class="topic-badge">Day 94</span> <a href="#" class="day-link" data-day="94">Email Sending & OTP</a></li>
+            <li><span class="topic-badge">Day 95</span> <a href="#" class="day-link" data-day="95">Docker Basics</a></li>
+            <li><span class="topic-badge">Day 96</span> <a href="#" class="day-link" data-day="96">Deploy Backend (Render/Railway)</a></li>
+            <li><span class="topic-badge">Day 97</span> <a href="#" class="day-link" data-day="97">Deploy Frontend (Vercel/Netlify)</a></li>
+            <li><span class="topic-badge">Day 98</span> <a href="#" class="day-link" data-day="98">CI/CD Pipeline (GitHub Actions)</a></li>
+            <li><span class="topic-badge">Day 99</span> <a href="#" class="day-link" data-day="99">Production Optimization</a></li>
+            <li><span class="topic-badge">Day 100</span> <a href="#" class="day-link" data-day="100">Build Production MERN App</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How To Study -->
+  <div class="study-section">
+    <h2 style="margin-bottom: 0.5rem;">📖 How To Study This Course</h2>
+    <div class="study-grid">
+      <div class="study-step">1️⃣ Watch & Understand</div>
+      <div class="study-step">2️⃣ Type Every Line</div>
+      <div class="study-step">3️⃣ Modify & Experiment</div>
+      <div class="study-step">4️⃣ Take Notes</div>
+      <div class="study-step">5️⃣ Build Mini Projects</div>
+      <div class="study-step">6️⃣ Push to GitHub</div>
+    </div>
+  </div>
+
+  <!-- What Happens After -->
+  <div style="background: #eef2ff; border-radius: 28px; padding: 1.8rem; margin: 1.5rem 0;">
+    <h3 style="margin-bottom: 1rem;">🎯 After Completing This Roadmap</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 0.8rem;">
+      <div>✅ Build Complete MERN Apps</div>
+      <div>✅ Create REST APIs</div>
+      <div>✅ MongoDB Databases</div>
+      <div>✅ Authentication & Authorization</div>
+      <div>✅ Professional Git Workflow</div>
+      <div>✅ Deploy to Production</div>
+      <div>✅ Full Stack Job Ready</div>
+    </div>
+  </div>
+
+  <!-- Big CTA -->
+  <div class="big-cta">
+    <h2>100 Days of Consistent Learning = MERN Stack Mastery 🚀</h2>
+    <p>Start from Day 1 and follow the roadmap in order. No confusion, no random tutorials.</p>
+    <a href="#" class="cta-button">📘 Start Your MERN Journey Today</a>
+  </div>
+
+  <div class="footer">
+    Telugu WebTech — Learn MERN Stack in 100 Days<br>Complete Roadmap for Beginners, Developers & Job Seekers<br>📺 Subscribe on YouTube | 💼 Build Real Projects | 🚀 Become a Developer
+  </div>
+</div>
+
+<script>
+  // Accordion Functionality
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const accordionItem = header.parentElement;
+      accordionItem.classList.toggle('active');
+    });
+  });
+
+  // Day Link Handler
+  // document.querySelectorAll('.day-link').forEach(link => {
+  //   link.addEventListener('click', (e) => {
+  //     e.preventDefault();
+  //     const day = link.getAttribute('data-day');
+  //     alert(`🔗 Day ${day} Content\n\nThis lesson covers: ${link.innerText}\nIn the full course, this would open the detailed tutorial.`);
+  //   });
+  // });
+</script>
+</body>
+</html>

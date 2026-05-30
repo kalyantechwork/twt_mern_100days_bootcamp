@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 50: Full Responsive Landing Page Project | Tailwind Mastery + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .landing-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .preview-hero {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .preview-features {
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 40px 20px;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 50 · Full Responsive Landing Page Project (Show Results)</div>
+  </div>
+
+  <h1>🌐 Complete Responsive Landing Page<br><span style="font-size:1rem;">Build a Modern Landing Page with Tailwind · Hero · Features · Testimonials · Contact — Click "Show Result" for live previews</span></h1>
+
+  <!-- Section 1: Project Overview -->
+  <div class="section-title">1️⃣ Project Overview — Build a Complete Landing Page</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>Today we'll build a <strong>complete, production-ready responsive landing page</strong> using Tailwind CSS. This project combines everything from Phase 5: responsive design, reusable components, dark mode, and modern UI patterns. A landing page is the first impression users get of a product — it must be fast, beautiful, and convert visitors into customers.</p>
+    <p><strong>Where it's used:</strong> SaaS products, startups, e-commerce brands, agencies, portfolios — every business needs a landing page.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>📋 Page Sections</h3><p>✅ Navbar (responsive mobile menu)<br>✅ Hero Section with CTA<br>✅ Features Grid (3 columns)<br>✅ Testimonials Section<br>✅ Pricing Cards<br>✅ Contact Form<br>✅ Footer</p></div>
+    <div class="card"><h3>🛠️ Technologies</h3><p>React, Tailwind CSS, React Router, useState, Form handling, Dark Mode ready</p></div>
+  </div>
+
+  <!-- Section 2: Full Project Code Preview -->
+  <div class="section-title">2️⃣ Complete Landing Page Code (Responsive Navbar + Hero)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function App() {<br>
+        const [isMenuOpen, setIsMenuOpen] = useState(false);<br>
+        return (&lt;div className="min-h-screen bg-white dark:bg-gray-900"&gt;<br>
+          &lt;nav className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50"&gt;<br>
+            &lt;div className="container mx-auto px-4 py-4 flex justify-between items-center"&gt;<br>
+              &lt;div className="text-2xl font-bold text-blue-600"&gt;Brand&lt;/div&gt;<br>
+              &lt;div className="hidden md:flex space-x-8"&gt;...&lt;/div&gt;<br>
+              &lt;button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}&gt;{isMenuOpen ? '✕' : '☰'}&lt;/button&gt;<br>
+            &lt;/div&gt;<br>
+            {isMenuOpen && (&lt;div className="md:hidden bg-white dark:bg-gray-900 px-4 pb-4 flex flex-col space-y-3"&gt;...&lt;/div&gt;)}<br>
+          &lt;/nav&gt;<br>
+          {/* Hero Section */}<br>
+          &lt;section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20 md:py-32"&gt;<br>
+            &lt;div className="container mx-auto px-4 text-center"&gt;<br>
+              &lt;h1 className="text-4xl md:text-6xl font-bold mb-4"&gt;Build Amazing Websites&lt;/h1&gt;<br>
+              &lt;p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"&gt;Create stunning responsive websites with our platform.&lt;/p&gt;<br>
+              &lt;button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100"&gt;Get Started Free →&lt;/button&gt;<br>
+            &lt;/div&gt;<br>
+          &lt;/section&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="landingPreviewResult">🌐 Show Landing Page Preview</button>
+    <div id="landingPreviewResult" class="result-area">
+      <div class="landing-preview">
+        <div class="preview-hero">
+          <h1 class="text-3xl md:text-5xl font-bold mb-3">Build Amazing Websites</h1>
+          <p class="text-base md:text-lg mb-5">Create stunning, responsive websites with our powerful platform.</p>
+          <button class="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold" style="background: white; color:#2563eb;">Get Started →</button>
+        </div>
+        <div class="preview-features">
+          <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">Powerful Features</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-xl shadow text-center"><div class="text-4xl mb-3">🚀</div><h3 class="font-bold">Fast Performance</h3><p class="text-gray-600 text-sm">Lightning fast loading</p></div>
+            <div class="bg-white p-5 rounded-xl shadow text-center"><div class="text-4xl mb-3">📱</div><h3 class="font-bold">Responsive Design</h3><p class="text-gray-600 text-sm">Works on all devices</p></div>
+            <div class="bg-white p-5 rounded-xl shadow text-center"><div class="text-4xl mb-3">🔒</div><h3 class="font-bold">Secure</h3><p class="text-gray-600 text-sm">Enterprise-grade security</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="console-output">✅ Responsive navbar with hamburger menu on mobile, hero section with gradient background, features grid using Tailwind's grid system</div>
+    </div>
+  </div>
+
+  <!-- Section 3: Pricing Cards Component -->
+  <div class="section-title">3️⃣ Pricing Cards Component</div>
+  <div class="example-card">
+    <div class="code-block">
+      function PricingCard({ name, price, features, popular }) {<br>
+        return (&lt;div className={`rounded-xl shadow-lg p-6 ${popular ? 'border-2 border-blue-500' : 'bg-white'}`}&gt;<br>
+          &lt;h3 className="text-2xl font-bold mb-2"&gt;{name}&lt;/h3&gt;<br>
+          &lt;div className="mb-4"&gt;&lt;span className="text-4xl font-bold"&gt;${price}&lt;/span&gt;&lt;span&gt;/month&lt;/span&gt;&lt;/div&gt;<br>
+          &lt;ul className="space-y-3 mb-6"&gt;{features.map(f => &lt;li key={f}&gt;✓ {f}&lt;/li&gt;)}&lt;/ul&gt;<br>
+          &lt;button className={`w-full py-3 rounded-lg font-semibold ${popular ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}&gt;Get Started&lt;/button&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="pricingResult">💰 Show Pricing Cards Demo</button>
+    <div id="pricingResult" class="result-area">
+      <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+        <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 220px; text-align: center;">
+          <h3 style="font-size: 1.5rem; font-weight: bold;">Basic</h3>
+          <div style="margin: 12px 0;"><span style="font-size: 2rem; font-weight: bold;">$19</span><span>/month</span></div>
+          <ul style="list-style: none; margin-bottom: 20px;"><li>✓ 5 Projects</li><li>✓ Basic Support</li></ul>
+          <button style="background: #f3f4f6; padding: 8px 0; width: 100%; border-radius: 40px;">Get Started</button>
+        </div>
+        <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid #3b82f6; width: 220px; text-align: center;">
+          <h3 style="font-size: 1.5rem; font-weight: bold;">Pro</h3>
+          <div style="margin: 12px 0;"><span style="font-size: 2rem; font-weight: bold;">$49</span><span>/month</span></div>
+          <ul style="list-style: none; margin-bottom: 20px;"><li>✓ Unlimited Projects</li><li>✓ Priority Support</li></ul>
+          <button style="background: #3b82f6; color: white; padding: 8px 0; width: 100%; border-radius: 40px;">Get Started</button>
+        </div>
+      </div>
+      <div class="console-output">✅ Reusable pricing card component with popular/highlighted variant using conditional styling</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Contact Form -->
+  <div class="section-title">4️⃣ Contact Form with Validation</div>
+  <div class="example-card">
+    <div class="code-block">
+      function ContactForm() {<br>
+        const [formData, setFormData] = useState({ name: '', email: '', message: '' });<br>
+        const handleSubmit = (e) => { e.preventDefault(); alert('Thank you!'); };<br>
+        return (&lt;form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4"&gt;<br>
+          &lt;input type="text" placeholder="Name" className="w-full px-4 py-2 border rounded-lg" onChange={e => setFormData({...formData, name: e.target.value})} /&gt;<br>
+          &lt;input type="email" placeholder="Email" className="w-full px-4 py-2 border rounded-lg" onChange={e => setFormData({...formData, email: e.target.value})} /&gt;<br>
+          &lt;textarea rows="4" placeholder="Message" className="w-full px-4 py-2 border rounded-lg" onChange={e => setFormData({...formData, message: e.target.value})} /&gt;<br>
+          &lt;button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"&gt;Send Message&lt;/button&gt;<br>
+        &lt;/form&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="formResult">📝 Show Contact Form Demo</button>
+    <div id="formResult" class="result-area">
+      <div style="max-width: 400px; margin: 0 auto;">
+        <input type="text" placeholder="Name" style="width: 100%; padding: 10px; border-radius: 40px; border: 1px solid #ccc; margin-bottom: 12px;">
+        <input type="email" placeholder="Email" style="width: 100%; padding: 10px; border-radius: 40px; border: 1px solid #ccc; margin-bottom: 12px;">
+        <textarea rows="3" placeholder="Message" style="width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #ccc; margin-bottom: 12px;"></textarea>
+        <button class="demo-btn" style="width: 100%;">Send Message</button>
+      </div>
+      <div class="console-output">✅ Controlled form inputs with useState, preventDefault on submit, ready for API integration</div>
+    </div>
+  </div>
+
+  <!-- Section 5: Footer Component -->
+  <div class="section-title">5️⃣ Footer with Links and Social Icons</div>
+  <div class="example-card">
+    <div class="code-block">
+      function Footer() {<br>
+        return (&lt;footer className="bg-gray-900 text-white py-12"&gt;<br>
+          &lt;div className="container mx-auto px-4 grid md:grid-cols-4 gap-8"&gt;<br>
+            &lt;div&gt;&lt;h3 className="text-xl font-bold mb-4"&gt;Brand&lt;/h3&gt;&lt;p className="text-gray-400"&gt;Building amazing digital experiences.&lt;/p&gt;&lt;/div&gt;<br>
+            &lt;div&gt;&lt;h4 className="font-semibold mb-4"&gt;Product&lt;/h4&gt;&lt;ul className="space-y-2 text-gray-400"&gt;&lt;li&gt;Features&lt;/li&gt;&lt;li&gt;Pricing&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;<br>
+            &lt;div&gt;&lt;h4 className="font-semibold mb-4"&gt;Company&lt;/h4&gt;&lt;ul className="space-y-2 text-gray-400"&gt;&lt;li&gt;About&lt;/li&gt;&lt;li&gt;Blog&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;<br>
+            &lt;div&gt;&lt;h4 className="font-semibold mb-4"&gt;Legal&lt;/h4&gt;&lt;ul className="space-y-2 text-gray-400"&gt;&lt;li&gt;Privacy&lt;/li&gt;&lt;li&gt;Terms&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;<br>
+          &lt;/div&gt;<br>
+          &lt;div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"&gt;© 2024 Brand. All rights reserved.&lt;/div&gt;<br>
+        &lt;/footer&gt;);<br>
+      }
+    </div>
+    <div class="console-output">✅ Responsive footer grid (4 columns on desktop, stacked on mobile), dark background with proper contrast</div>
+  </div>
+
+  <!-- Section 6: How to Run -->
+  <div class="section-title">6️⃣ How to Run This Project</div>
+  <div class="code-block">
+    # Step 1: Create React project<br>
+    npm create vite@latest landing-page -- --template react<br>
+    cd landing-page<br><br>
+    # Step 2: Install Tailwind CSS<br>
+    npm install -D tailwindcss postcss autoprefixer<br>
+    npx tailwindcss init -p<br><br>
+    # Step 3: Copy the code into App.jsx<br>
+    # Step 4: Run the development server<br>
+    npm run dev
+  </div>
+
+  <!-- Section 7: Enhancement Ideas -->
+  <div class="section-title">7️⃣ Mini Assignment — Take It Further</div>
+  <div class="highlight-box">
+    <strong>🎯 Enhancement Tasks:</strong><br>
+    1. Add <strong>dark mode toggle</strong> to the navbar (use local storage with Tailwind dark: prefix)<br>
+    2. Add <strong>smooth scrolling</strong> when clicking navigation links (scroll-behavior: smooth)<br>
+    3. Add <strong>animations</strong> using Tailwind's animate classes or Framer Motion<br>
+    4. Make the <strong>testimonials section</strong> with a carousel/slider<br>
+    5. Deploy the landing page to <strong>Vercel</strong> or <strong>Netlify</strong> for free<br>
+    6. Add <strong>form submission</strong> to a backend API or email service (Web3Forms, Formspree)
+  </div>
+
+  <!-- Section 8: Concepts Used Summary -->
+  <div class="section-title">📚 Concepts Used in This Project</div>
+  <div class="card-grid">
+    <div class="card">✅ React Functional Components with useState</div>
+    <div class="card">✅ Tailwind CSS utilities for spacing, colors, shadows</div>
+    <div class="card">✅ Responsive design with breakpoints (md:, lg:)</div>
+    <div class="card">✅ Mobile-first hamburger menu with conditional rendering</div>
+    <div class="card">✅ Controlled form inputs with state</div>
+    <div class="card">✅ Grid and Flexbox layouts with Tailwind</div>
+    <div class="card">✅ Sticky navbar and hover effects</div>
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common Landing Page Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesLandingResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesLandingResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Not making the navbar sticky → users lose navigation when scrolling (use sticky top-0)</li>
+        <li>❌ Forgetting mobile menu on small screens → bad UX on phones (use md:hidden with hamburger)</li>
+        <li>❌ Poor color contrast between text and background → use Tailwind's accessibility-friendly colors</li>
+        <li>❌ No call-to-action (CTA) above the fold → visitors don't know what to do</li>
+        <li>❌ Images not optimized → slow loading → use CDN or optimize images</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 10: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How do you make a responsive navbar?</h3><p>Use flex with justify-between, hide desktop links on mobile with hidden md:flex, add hamburger menu button for mobile with useState toggle.</p></div>
+    <div class="card"><h3>❓ What is mobile-first design?</h3><p>Design for mobile screens first (default styles), then use breakpoint prefixes (sm:, md:, lg:) for larger screens.</p></div>
+    <div class="card"><h3>❓ How to handle forms in React?</h3><p>Controlled components with useState for each input, handleSubmit with e.preventDefault(), validation before submission.</p></div>
+  </div>
+
+  <!-- Phase 5 Completion -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32; margin-top: 2rem;">
+    <strong>🎉 Congratulations! Phase 5 (Tailwind CSS & UI) Complete!</strong><br><br>
+    You've learned:<br>
+    • Tailwind CSS setup and core utilities (colors, spacing, flex, grid)<br>
+    • Responsive design with breakpoints (mobile-first)<br>
+    • Building reusable components (Buttons, Cards, Forms, Pricing)<br>
+    • Dark mode implementation with dark: prefix and localStorage<br>
+    • Complete responsive landing page from scratch with navbar, hero, features, pricing, contact form, footer<br><br>
+    <strong>Next: Phase 6 — Node.js Basics (Days 51-60)</strong>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Day 50 Summary</div>
+  <div class="card-grid">
+    <div class="card">✔️ Built complete responsive landing page with Tailwind</div>
+    <div class="card">✔️ Responsive navbar with mobile hamburger menu (useState)</div>
+    <div class="card">✔️ Hero section with gradient background and CTA button</div>
+    <div class="card">✔️ Features grid (1 column mobile, 3 columns desktop)</div>
+    <div class="card">✔️ Pricing cards component with popular variant</div>
+    <div class="card">✔️ Contact form with controlled inputs</div>
+    <div class="card">✔️ Footer with responsive columns and links</div>
+  </div>
+
+  <!-- Day 50 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 50 Ending Message</strong><br>
+    "You've built a complete, production-ready landing page! This project demonstrates everything you've learned in Phase 5 — Tailwind CSS, responsive design, components, forms, and dark mode. Deploy it, share it, and add it to your portfolio. You're ready to build any website UI! 🚀"
+  </div>
+
+  <!-- Next: Phase 6 -->
+  <div class="section-title">🔜 Next — Phase 6 : Node.js Basics (Days 51-60)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🟢 What is Node.js</span>
+    <span class="badge">📦 NPM Packages</span>
+    <span class="badge">📁 File System (fs)</span>
+    <span class="badge">🌐 HTTP Module</span>
+    <span class="badge">📦 Express.js Introduction</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Phase 5 Completed ✅<br>
+    Your landing page is portfolio-ready. Deploy it and share with the world! Click "Show Result" to see each component in action.
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

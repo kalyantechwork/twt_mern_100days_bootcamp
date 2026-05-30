@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 98: CI/CD Pipeline | GitHub Actions · Auto-Deploy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .cicd-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .workflow-step {
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 12px;
+      margin: 8px 0;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔄</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 98 · CI/CD Pipeline (GitHub Actions)</div>
+  </div>
+
+  <h1>🔄 CI/CD Pipeline<br><span style="font-size:1rem;">Continuous Integration · Continuous Deployment · GitHub Actions · Auto-Deploy</span></h1>
+
+  <!-- Section 1: What is CI/CD -->
+  <div class="section-title">1️⃣ What is CI/CD? (Devops Essential)</div>
+  <p><strong>CI/CD</strong> stands for Continuous Integration and Continuous Deployment — automating the process from code commit to production deployment.</p>
+  <div class="diagram">
+    Code Commit → CI (Test & Build) → CD (Deploy) → Production
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> CI/CD is like an automated assembly line. Write code → push to GitHub → automatically tested → automatically deployed → users see updates instantly!
+  </div>
+
+  <!-- Section 2: CI vs CD Explained -->
+  <div class="card-grid">
+    <div class="card"><h3>🔄 Continuous Integration (CI)</h3><p>• Automatically test code on every push<br>• Run linters, unit tests, build checks<br>• Catch bugs early before merge<br>• Every developer pushes daily</p></div>
+    <div class="card"><h3>🚀 Continuous Deployment (CD)</h3><p>• Automatically deploy after successful tests<br>• Push to staging or production<br>• Eliminate manual deployment steps<br>• Rollback if issues detected</p></div>
+  </div>
+
+  <!-- Section 3: Why CI/CD for MERN Apps -->
+  <div class="section-title">3️⃣ Why CI/CD? (Benefits for Your MERN App)</div>
+  <ul style="margin-left:1.5rem; background:#eef2ff; padding:1rem; border-radius:24px;">
+    <li>✅ <strong>No more manual deployments</strong> — git push = auto-deploy</li>
+    <li>✅ <strong>Catch bugs early</strong> — automated tests run on every commit</li>
+    <li>✅ <strong>Team collaboration</strong> — all code is tested before merging</li>
+    <li>✅ <strong>Consistent process</strong> — same steps every time</li>
+    <li>✅ <strong>Quick rollback</strong> — revert to previous version instantly</li>
+  </ul>
+
+  <!-- Section 4: GitHub Actions Basics -->
+  <div class="section-title">4️⃣ GitHub Actions — Free CI/CD for GitHub Repos</div>
+  <div class="code-block">
+    # GitHub Actions workflow file location:<br>
+    .github/workflows/main.yml<br><br>
+    # Structure:<br>
+    name: CI/CD Pipeline<br>
+    on: [push, pull_request]<br>
+    jobs:<br>
+      build:<br>
+        runs-on: ubuntu-latest<br>
+        steps:<br>
+          - name: Checkout code<br>
+            uses: actions/checkout@v3<br>
+          - name: Install dependencies<br>
+            run: npm ci<br>
+          - name: Run tests<br>
+            run: npm test<br>
+          - name: Build<br>
+            run: npm run build
+  </div>
+  <div class="highlight-box">
+    🤖 <strong>Free for public repos!</strong> GitHub Actions gives you 2000 free minutes/month for private repos, unlimited for public.
+  </div>
+
+  <!-- Section 5: Backend CI/CD Workflow -->
+  <div class="section-title">5️⃣ Backend CI/CD — Test & Deploy to Render</div>
+  <div class="code-block">
+    # .github/workflows/backend.yml<br>
+    name: Backend CI/CD<br><br>
+    on:<br>
+      push:<br>
+        branches: [main]<br>
+        paths: ['backend/**']<br>
+      pull_request:<br>
+        branches: [main]<br><br>
+    jobs:<br>
+      test-and-deploy:<br>
+        runs-on: ubuntu-latest<br>
+        steps:<br>
+          - uses: actions/checkout@v3<br>
+          - name: Setup Node.js<br>
+            uses: actions/setup-node@v3<br>
+            with:<br>
+              node-version: '20'<br>
+          - name: Install dependencies<br>
+            run: cd backend && npm ci<br>
+          - name: Run tests<br>
+            run: cd backend && npm test<br>
+          - name: Deploy to Render<br>
+            if: github.ref == 'refs/heads/main'<br>
+            run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+  </div>
+
+  <!-- Section 6: Frontend CI/CD Workflow -->
+  <div class="section-title">6️⃣ Frontend CI/CD — Deploy to Vercel</div>
+  <div class="code-block">
+    # .github/workflows/frontend.yml<br>
+    name: Frontend CI/CD<br><br>
+    on:<br>
+      push:<br>
+        branches: [main]<br>
+        paths: ['frontend/**']<br>
+      pull_request:<br>
+        branches: [main]<br><br>
+    jobs:<br>
+      build-and-deploy:<br>
+        runs-on: ubuntu-latest<br>
+        steps:<br>
+          - uses: actions/checkout@v3<br>
+          - name: Setup Node.js<br>
+            uses: actions/setup-node@v3<br>
+            with:<br>
+              node-version: '20'<br>
+          - name: Install dependencies<br>
+            run: cd frontend && npm ci<br>
+          - name: Lint<br>
+            run: cd frontend && npm run lint<br>
+          - name: Build<br>
+            run: cd frontend && npm run build<br>
+          - name: Deploy to Vercel<br>
+            uses: amondnet/vercel-action@v20<br>
+            with:<br>
+              vercel-token: ${{ secrets.VERCEL_TOKEN }}<br>
+              vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}<br>
+              vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}<br>
+              vercel-args: '--prod'
+  </div>
+
+  <!-- Section 7: Environment Secrets -->
+  <div class="section-title">7️⃣ GitHub Secrets — Store Sensitive Data</div>
+  <div class="code-block">
+    # Go to GitHub Repository → Settings → Secrets and variables → Actions<br>
+    # Add these secrets:<br><br>
+    RENDER_DEPLOY_HOOK_URL = https://api.render.com/deploy/...<br>
+    VERCEL_TOKEN = your_vercel_api_token<br>
+    VERCEL_ORG_ID = team_xxxxxxxxxx<br>
+    VERCEL_PROJECT_ID = prj_xxxxxxxxxx<br>
+    MONGODB_URI = mongodb+srv://...<br>
+    JWT_SECRET = your_secret_key
+  </div>
+
+  <!-- Section 8: Testing in CI/CD -->
+  <div class="section-title">8️⃣ Automated Testing — Run Tests on Every Push</div>
+  <div class="code-block">
+    // backend/__tests__/api.test.js<br>
+    const request = require('supertest');<br>
+    const app = require('../server');<br><br>
+    describe('GET /api/health', () => {<br>
+      it('should return 200 OK', async () => {<br>
+        const response = await request(app).get('/api/health');<br>
+        expect(response.statusCode).toBe(200);<br>
+      });<br>
+    });<br><br>
+    // package.json<br>
+    "scripts": {<br>
+      "test": "jest --coverage"<br>
+    }
+  </div>
+
+  <!-- Section 9: Complete MERN CI/CD Pipeline -->
+  <div class="section-title">9️⃣ Complete MERN CI/CD Pipeline</div>
+  <div class="live-demo">
+    <div class="cicd-preview">
+      <strong>🔄 CI/CD Pipeline Simulation:</strong>
+      <div class="workflow-step">📝 Developer pushes code to GitHub (main branch)</div>
+      <div class="workflow-step">⚡ GitHub Actions triggers workflow</div>
+      <div class="workflow-step">📦 Checkout code + Install dependencies (20s)</div>
+      <div class="workflow-step">🧪 Run tests (5s) → ✅ All tests passed</div>
+      <div class="workflow-step">🔨 Build frontend (15s) → ✅ Build successful</div>
+      <div class="workflow-step">🚀 Deploy backend to Render (10s) → ✅ Live</div>
+      <div class="workflow-step">🌐 Deploy frontend to Vercel (15s) → ✅ Live</div>
+      <div class="workflow-step">✅ Pipeline complete! App updated in ~60 seconds</div>
+      <button class="demo-btn" id="runPipelineBtn">▶️ Simulate CI/CD Pipeline</button>
+    </div>
+    <script>
+      document.getElementById("runPipelineBtn")?.addEventListener("click", () => {
+        const steps = document.querySelectorAll(".workflow-step");
+        let delay = 0;
+        steps.forEach(step => {
+          setTimeout(() => {
+            step.style.background = "#22c55e";
+            step.style.color = "#0f172a";
+          }, delay);
+          delay += 800;
+        });
+        setTimeout(() => {
+          alert("✅ CI/CD Pipeline Complete! App deployed successfully.");
+        }, delay + 500);
+      });
+    </script>
+  </div>
+
+  <!-- Section 10: Continuous Integration Best Practices -->
+  <div class="section-title">🔟 CI/CD Best Practices</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔀 Small, Frequent Commits</h3><p>Push daily, not weekly — catch issues early</p></div>
+    <div class="card"><h3>✅ Always Pass Tests</h3><p>Never merge failing tests to main</p></div>
+    <div class="card"><h3>🔒 Secrets Management</h3><p>Never hardcode secrets — use GitHub Secrets</p></div>
+    <div class="card"><h3>🚦 Branch Protection</h3><p>Require CI to pass before merging PRs</p></div>
+  </div>
+
+  <!-- Section 11: Branch Protection Rules -->
+  <div class="section-title">1️⃣1️⃣ Branch Protection — Enforce Quality</div>
+  <div class="code-block">
+    # GitHub Repository → Settings → Branches → Add rule<br>
+    # Branch name pattern: main<br>
+    # Require status checks to pass before merging:<br>
+    #   • CI / build (GitHub Actions)<br>
+    #   • Vercel / Netlify preview deployment<br>
+    # Require pull request reviews (at least 1)<br>
+    # Dismiss stale reviews when new commits pushed
+  </div>
+
+  <!-- Section 12: Rollback Strategies -->
+  <div class="section-title">1️⃣2️⃣ Rollback — Revert to Previous Version</div>
+  <div class="code-block">
+    # Option 1: Revert the commit<br>
+    git revert COMMIT_HASH<br>
+    git push origin main<br><br>
+    # CI/CD will auto-deploy the reverted version<br><br>
+    # Option 2: Redeploy previous build (Vercel)<br>
+    # Dashboard → Deployments → Find previous version → "Promote to Production"
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a GitHub Actions workflow for your backend (run tests, deploy to Render)<br>
+    2. Create a GitHub Actions workflow for your frontend (build, deploy to Vercel)<br>
+    3. Add a simple test (API health check) that must pass before deployment<br>
+    4. Set up branch protection so PRs require CI to pass<br>
+    5. Push a change and watch the automatic deployment happen
+  </div>
+
+  <!-- Section 14: Common CI/CD Mistakes -->
+  <div class="section-title">⚠️ Common CI/CD Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Not using environment secrets → exposing API keys in code</li>
+    <li>❌ Running expensive tests on every push → use path filters</li>
+    <li>❌ No branch protection → broken code can be merged</li>
+    <li>❌ No rollback plan → can't fix failed deployments quickly</li>
+  </ul>
+
+  <!-- Section 15: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is CI/CD?</h3><p>Continuous Integration (automated testing) + Continuous Deployment (automated deployment).</p></div>
+    <div class="card"><h3>❓ What is GitHub Actions?</h3><p>CI/CD platform built into GitHub — runs workflows on push, PR, schedule.</p></div>
+    <div class="card"><h3>❓ Why branch protection?</h3><p>Prevents merging code that breaks tests or hasn't been reviewed.</p></div>
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Set up GitHub Actions to run ESLint on every PR.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add Jest tests for your API and run them in CI.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Configure a status badge for your GitHub README showing build status.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 98)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is CI/CD — automation of testing and deployment</div>
+    <div class="card">✔️ GitHub Actions — free CI/CD for your repos</div>
+    <div class="card">✔️ Backend workflow (test + deploy to Render)</div>
+    <div class="card">✔️ Frontend workflow (build + deploy to Vercel)</div>
+    <div class="card">✔️ GitHub Secrets for sensitive data</div>
+    <div class="card">✔️ Branch protection and rollback strategies</div>
+  </div>
+
+  <!-- Day 98 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 98 Ending Message</strong><br>
+    "CI/CD is what separates hobby projects from professional software. Now every git push automatically tests and deploys your app — no manual steps, no forgotten deployments. This is how real companies ship code!"
+  </div>
+
+  <!-- Next: Day 99 -->
+  <div class="section-title">🔜 Next — Day 99 : Production Optimization (Performance, Security, Monitoring)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚡ Performance Optimization</span>
+    <span class="badge">🔒 Security Headers</span>
+    <span class="badge">📊 Monitoring & Logging</span>
+    <span class="badge">🚀 CDN & Caching</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 98 Completed ✅<br>
+    Set up CI/CD for your MERN app — automate everything and deploy with confidence!
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 35: useEffect Hook | Side Effects in React + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .effect-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .timer-display {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 16px 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 35 · useEffect Hook (Side Effects) — Show Results</div>
+  </div>
+
+  <h1>⚡ useEffect Hook<br><span style="font-size:1rem;">Side Effects · API Calls · DOM Updates · Dependency Array · Cleanup — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is useEffect -->
+  <div class="section-title">1️⃣ What is useEffect? (Side Effects in React)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>useEffect</strong> is a React Hook that lets you perform <strong>side effects</strong> in functional components. Side effects include: API calls, DOM manipulation, timers, subscriptions, localStorage, and anything that interacts with the outside world. useEffect runs after React updates the DOM.</p>
+    <p><strong>Where it's used:</strong> Every React app — fetching data, updating page title, setting up event listeners, starting timers, saving to localStorage, and cleaning up resources.</p>
+  </div>
+  <div class="diagram">
+    Component Renders → useEffect Runs → Side Effect Happens → Component Re-renders (if state changes)
+  </div>
+
+  <!-- Section 2: Basic Syntax -->
+  <div class="section-title">2️⃣ Basic Syntax — Three Patterns</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Pattern 1: Run after EVERY render<br>
+      useEffect(() => { console.log("Runs every render"); });<br><br>
+      // Pattern 2: Run ONCE (on mount) — empty dependency array<br>
+      useEffect(() => { console.log("Runs once when component mounts"); }, []);<br><br>
+      // Pattern 3: Run when dependencies change<br>
+      useEffect(() => { console.log(`Count: ${count}`); }, [count]);
+    </div>
+    <button class="btn-show" data-target="useEffectPatterns">📋 Show useEffect Patterns</button>
+    <div id="useEffectPatterns" class="result-area">
+      <div class="console-output">
+        ✅ useEffect replaces lifecycle methods: componentDidMount, componentDidUpdate, componentWillUnmount<br>
+        ✅ No dependency array → runs after every render (rarely used)<br>
+        ✅ Empty array [] → runs once after initial mount (MOST COMMON for API calls)<br>
+        ✅ With dependencies → runs when any dependency changes (search, filters)
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Pattern 1 — Every Render -->
+  <div class="section-title">3️⃣ Pattern 1: Run After Every Render (No Dependency Array)</div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        console.log("Component rendered or state updated!");<br>
+        document.title = `Count: ${count}`;<br>
+      });
+    </div>
+    <button class="btn-show" data-target="everyRenderResult">🔄 Show Every Render Effect</button>
+    <div id="everyRenderResult" class="result-area">
+      <div class="effect-card">
+        <strong>🔄 Every Render Effect Demo</strong>
+        <div style="font-size:2rem; font-weight:800; margin:16px;" id="everyCountDisplay">0</div>
+        <button class="demo-btn" id="everyIncBtn">➕ Increment</button>
+        <button class="demo-btn" id="everyResetBtn">🔄 Reset</button>
+        <p id="everyEffectLog" style="margin-top:12px; font-size:0.8rem;">Click the button — effect runs after every render</p>
+      </div>
+      <div class="console-output">
+        ✅ Effect runs after EVERY render (including first render)<br>
+        ✅ Useful for syncing with external systems, but can cause performance issues<br>
+        💡 Most components use dependency arrays instead!
+      </div>
+      <script>
+        let everyCount = 0;
+        const everyDisplay = document.getElementById("everyCountDisplay");
+        const everyLog = document.getElementById("everyEffectLog");
+        const updateEveryDisplay = () => { everyDisplay.textContent = everyCount; everyLog.textContent = `✨ Effect ran! Count is now ${everyCount}`; };
+        document.getElementById("everyIncBtn")?.addEventListener("click", () => { everyCount++; updateEveryDisplay(); });
+        document.getElementById("everyResetBtn")?.addEventListener("click", () => { everyCount = 0; updateEveryDisplay(); });
+        updateEveryDisplay();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: Pattern 2 — Once on Mount -->
+  <div class="section-title">4️⃣ Pattern 2: Run Once (Empty Dependency Array — [])</div>
+  <div class="topic-explanation">
+    <h4>📌 Most Common Pattern — API Calls</h4>
+    <p>Empty dependency array means the effect runs only once, after the component mounts. This is perfect for fetching initial data from an API.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        console.log("Component mounted — fetching data...");<br>
+        fetchUsers();<br>
+      }, []); // Empty array = run once
+    </div>
+    <button class="btn-show" data-target="onceMountResult">🎯 Show Once on Mount Effect</button>
+    <div id="onceMountResult" class="result-area">
+      <div class="effect-card">
+        <strong>🎯 Once on Mount Demo</strong>
+        <div id="mountMessage">Effect hasn't run yet</div>
+        <button class="demo-btn" id="mountSimulateBtn">🔄 Simulate Component Mount</button>
+      </div>
+      <div class="console-output">
+        ✅ useEffect with [] runs ONLY ONCE when component first appears<br>
+        ✅ Perfect for: API calls, initial data fetch, subscriptions<br>
+        💡 This is the most common useEffect pattern in React apps!
+      </div>
+      <script>
+        let mounted = false;
+        const mountMsg = document.getElementById("mountMessage");
+        document.getElementById("mountSimulateBtn")?.addEventListener("click", () => {
+          if(!mounted) {
+            mountMsg.innerHTML = "✅ Component mounted! useEffect ran once. (Simulated API call would happen here)";
+            mounted = true;
+          } else {
+            mountMsg.innerHTML = "🔄 Already mounted — useEffect won't run again (empty dependency array)";
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Pattern 3 — Dependencies -->
+  <div class="section-title">5️⃣ Pattern 3: Run When Dependencies Change</div>
+  <div class="topic-explanation">
+    <h4>📌 Reactive Effects</h4>
+    <p>When you include dependencies, the effect re-runs whenever any of those values change. Perfect for search inputs, filters, or any reactive data.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        console.log(`Searching for: ${query}`);<br>
+        fetchResults(query);<br>
+      }, [query]); // Re-runs when 'query' changes
+    </div>
+    <button class="btn-show" data-target="dependencyResult">🔍 Show Dependency Array Effect</button>
+    <div id="dependencyResult" class="result-area">
+      <div class="effect-card">
+        <strong>🔍 Dependency Array Demo (Live Search)</strong>
+        <input type="text" id="searchDepInput" placeholder="Type to search..." style="width:100%; padding:10px; border-radius:40px; margin:10px 0; border:none;">
+        <p id="searchDepOutput">Search results will update as you type (dependency effect)</p>
+      </div>
+      <div class="console-output">
+        ✅ Effect re-runs when ANY dependency changes<br>
+        ✅ Dependencies can be state, props, or any variable<br>
+        💡 Perfect for search inputs, filters, pagination, and form validation
+      </div>
+      <script>
+        const depInput = document.getElementById("searchDepInput");
+        const depOutput = document.getElementById("searchDepOutput");
+        depInput?.addEventListener("input", (e) => {
+          depOutput.innerHTML = `🔍 Searching for "${e.target.value}" — useEffect would re-run with dependency [query]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Cleanup Function -->
+  <div class="section-title">6️⃣ Cleanup Function — Preventing Memory Leaks</div>
+  <div class="topic-explanation">
+    <h4>📌 What is Cleanup?</h4>
+    <p>The cleanup function runs when the component unmounts or before the next effect runs. It's essential for cleaning up intervals, event listeners, and subscriptions to prevent memory leaks.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        const interval = setInterval(() => {<br>
+          setSeconds(s => s + 1);<br>
+        }, 1000);<br>
+        return () => clearInterval(interval); // Cleanup!<br>
+      }, []);
+    </div>
+    <button class="btn-show" data-target="cleanupResult">🧹 Show Cleanup Demo (Timer)</button>
+    <div id="cleanupResult" class="result-area">
+      <div class="effect-card">
+        <strong>🧹 Timer with Cleanup Demo</strong>
+        <div class="timer-display" id="timerDisplay">0</div>
+        <button class="demo-btn" id="startTimerBtn">▶️ Start Timer</button>
+        <button class="demo-btn" id="stopTimerBtn">⏹️ Stop Timer</button>
+        <p id="timerMsg" style="margin-top:8px;">Timer stops when you leave — cleanup prevents memory leaks</p>
+      </div>
+      <div class="console-output">
+        ✅ Cleanup runs when component unmounts or before next effect<br>
+        ✅ Always clean up: intervals, event listeners, subscriptions, WebSockets<br>
+        💡 Without cleanup, intervals keep running and cause memory leaks!
+      </div>
+      <script>
+        let timerInterval = null;
+        let timerSeconds = 0;
+        const timerDisplay = document.getElementById("timerDisplay");
+        const timerMsg = document.getElementById("timerMsg");
+        const updateTimerDisplay = () => { timerDisplay.textContent = timerSeconds; };
+        document.getElementById("startTimerBtn")?.addEventListener("click", () => {
+          if(timerInterval) clearInterval(timerInterval);
+          timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+          timerMsg.innerHTML = "⏱️ Timer running — cleanup would clear this interval when component unmounts";
+        });
+        document.getElementById("stopTimerBtn")?.addEventListener("click", () => {
+          if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+          timerMsg.innerHTML = "⏹️ Timer stopped! Cleanup prevented memory leak.";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Fetch API Data -->
+  <div class="section-title">7️⃣ Real Example — Fetching API Data with useEffect</div>
+  <div class="example-card">
+    <div class="code-block">
+      useEffect(() => {<br>
+        const fetchUsers = async () => {<br>
+          const response = await fetch('https://jsonplaceholder.typicode.com/users');<br>
+          const data = await response.json();<br>
+          setUsers(data);<br>
+        };<br>
+        fetchUsers();<br>
+      }, []); // Runs once when component mounts
+    </div>
+    <button class="btn-show" data-target="apiFetchResult">🌐 Show API Fetch Demo</button>
+    <div id="apiFetchResult" class="result-area">
+      <div class="effect-card">
+        <strong>🌐 API Fetch Demo (Simulated)</strong>
+        <button class="demo-btn" id="fetchApiBtn">📡 Fetch Users (Simulated)</button>
+        <div id="apiUserList" style="margin-top:16px;"></div>
+      </div>
+      <div class="console-output">
+        ✅ useEffect with [] = run once, perfect for initial API calls<br>
+        ✅ Loading state + error handling are essential for good UX<br>
+        💡 This pattern is used in almost every React app that fetches data!
+      </div>
+      <script>
+        const simApiUsers = [{ id: 1, name: "Kalyan" }, { id: 2, name: "Priya" }, { id: 3, name: "Rahul" }];
+        document.getElementById("fetchApiBtn")?.addEventListener("click", () => {
+          const container = document.getElementById("apiUserList");
+          container.innerHTML = "⏳ Loading...";
+          setTimeout(() => {
+            container.innerHTML = `<ul style="margin-left:20px; text-align:left;">${simApiUsers.map(u => `<li>${u.name}</li>`).join('')}</ul><p class="inline-code">✅ useEffect with [] — fetched data on mount!</p>`;
+          }, 1000);
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Dependency Array Rules -->
+  <div class="section-title">8️⃣ Dependency Array Rules (Important!)</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Dependency Array</th><th>When Effect Runs</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>No array</span></td><td>After EVERY render</span></td><td>Debugging, sync with external systems (rare)</span></tr>
+        <tr><td>Empty array []</span></td><td>Once after initial mount</span></td>看作是API calls, subscriptions, initial data load</span></tr>
+        <tr><td>With dependencies</span></td><td>When any dependency changes</span></td><td>Search, filters, sync with props/state</span></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 9: Common Use Cases -->
+  <div class="section-title">9️⃣ Common useEffect Scenarios</div>
+  <div class="card-grid">
+    <div class="card"><h3>📊 Page Title Update</h3><div class="inline-code">useEffect(() => { document.title = title; }, [title]);</div></div>
+    <div class="card"><h3>💾 Save to localStorage</h3><div class="inline-code">useEffect(() => { localStorage.setItem("theme", theme); }, [theme]);</div></div>
+    <div class="card"><h3>🖱️ Event Listener</h3><div class="inline-code">useEffect(() => { window.addEventListener("scroll", handle); return () => window.removeEventListener(...); }, []);</div></div>
+    <div class="card"><h3>⏱️ Timer/Interval</h3><div class="inline-code">useEffect(() => { const id = setInterval(...); return () => clearInterval(id); }, []);</div></div>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Page Title Updater</strong> — input field changes the browser tab title using useEffect<br>
+    2. Create a <strong>Timer Component</strong> with Start/Pause/Reset buttons (use useEffect with cleanup)<br>
+    3. Create a <strong>LocalStorage Theme Saver</strong> — save/load theme preference using useEffect<br>
+    4. Create a <strong>Window Width Tracker</strong> — show window size and update on resize (useEffect + event listener cleanup)
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common useEffect Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesEffectResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesEffectResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Missing dependencies → causes stale closures (always include used state/props in dependency array)</li>
+        <li>❌ Forgetting cleanup for intervals/event listeners → memory leaks, use return () => cleanup</li>
+        <li>❌ Making async function directly in useEffect — wrap inside function: <span class="inline-code">useEffect(() => { async function fetch() {...}; fetch(); }, [])</span></li>
+        <li>❌ Updating state in useEffect without dependency array → infinite loop</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is useEffect?</h3><p>Hook for performing side effects in functional components (API calls, DOM, timers).</p></div>
+    <div class="card"><h3>❓ What does empty dependency array [] do?</h3><p>Effect runs only once after initial mount — perfect for API calls.</p></div>
+    <div class="card"><h3>❓ When to use cleanup function?</h3><p>For subscriptions, intervals, event listeners to prevent memory leaks.</p></div>
+    <div class="card"><h3>❓ Can useEffect be async?</h3><p>No directly, but you can define an async function inside and call it.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🖱️ Task 1</h3><p>Create a <strong>Mouse Position Tracker</strong> — show X/Y coordinates on mouse move (useEffect + cleanup).</p></div>
+    <div class="card"><h3>🔍 Task 2</h3><p>Create a <strong>Pokemon Search</strong> — fetch Pokemon data when input changes (dependency array).</p></div>
+    <div class="card"><h3>💾 Task 3</h3><p>Create an <strong>Auto-Save Draft</strong> — save form data to localStorage every time form changes.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 35 - useEffect)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is useEffect — handling side effects in React components</div>
+    <div class="card">✔️ Three patterns: every render, once ([]), dependency array</div>
+    <div class="card">✔️ Cleanup function for intervals, event listeners, subscriptions</div>
+    <div class="card">✔️ Fetching API data when component mounts (empty [])</div>
+    <div class="card">✔️ Dependency array rules and common mistakes to avoid</div>
+  </div>
+
+  <!-- Day 35 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 35 Ending Message</strong><br>
+    "useEffect is the gateway to the outside world — API calls, timers, localStorage, and DOM. With this hook, your React app becomes truly dynamic and interactive! Master the dependency array and cleanup patterns — they're essential for every React developer."
+  </div>
+
+  <!-- Next: Day 36 -->
+  <div class="section-title">🔜 Next — Day 36 : API Calls in React (Fetch Data from Backend)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🌐 Fetch API</span>
+    <span class="badge">📡 Axios library</span>
+    <span class="badge">⚡ Loading & Error states</span>
+    <span class="badge">🔄 API integration patterns</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 35 Completed ✅<br>
+    Click "Show Result" on each example to see useEffect in action. Practice building timers, API calls, and sync with localStorage!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

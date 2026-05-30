@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 65: Middleware – The Power of Express | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.5; scroll-behavior: smooth; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%); border-radius: 2rem; padding: 2rem; margin-bottom: 2.5rem; color: white; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
+    .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero h1 i { background: #facc15; color: #1e3a2f; padding: 8px 12px; border-radius: 60px; font-size: 1.6rem; }
+    .hero-badge { background: #facc15cc; display: inline-block; padding: 0.25rem 1rem; border-radius: 40px; font-size: 0.85rem; font-weight: 600; color: #0a2e25; margin-bottom: 1rem; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 85%; }
+    .channel-link { margin-top: 1.2rem; display: inline-flex; align-items: center; gap: 12px; background: #00000030; backdrop-filter: blur(4px); padding: 0.5rem 1.2rem; border-radius: 60px; font-weight: 500; }
+    .section-card { background: white; border-radius: 1.5rem; padding: 1.8rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .section-card:hover { border-color: #cbd5e1; box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1); }
+    .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; border-left: 6px solid #facc15; padding-left: 1rem; }
+    .section-title i { color: #2d6a4f; font-size: 1.6rem; }
+    .subheading { font-size: 1.25rem; font-weight: 600; margin: 1.2rem 0 0.8rem 0; color: #1e4620; }
+    .code-block { background: #0f172a; color: #e2e8f0; padding: 1rem 1.2rem; border-radius: 1rem; font-family: 'Courier New', 'Fira Code', monospace; font-size: 0.9rem; overflow-x: auto; margin: 1rem 0; white-space: pre-wrap; word-break: break-word; }
+    .inline-code { background: #eef2ff; color: #0c4a6e; font-family: monospace; padding: 0.2rem 0.4rem; border-radius: 8px; font-size: 0.9rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .info-box { background: #f1f5f9; border-radius: 1.2rem; padding: 1.2rem; border-left: 4px solid #facc15; }
+    .diagram { background: #fef9e3; border-radius: 1rem; padding: 1.2rem; text-align: center; margin: 1rem 0; font-weight: 500; border: 1px dashed #facc15; }
+    button.copy-btn, .show-result-btn { background: #334155; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; margin-right: 10px; transition: background 0.2s; font-weight: 500; }
+    button.copy-btn:hover, .show-result-btn:hover { background: #1e293b; }
+    .show-result-btn { background: #2d6a4f; }
+    .show-result-btn:hover { background: #1e4620; }
+    .result-output { background: #f1f8e9; border-left: 4px solid #facc15; padding: 1rem; border-radius: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; color: #0f172a; display: none; }
+    .result-output.show { display: block; }
+    .explanation-text { background: #fefce8; padding: 0.8rem 1rem; border-radius: 1rem; margin: 0.8rem 0; font-size: 0.95rem; border-left: 3px solid #eab308; }
+    .success-note { background: #e6f7ec; border-left: 4px solid #2e7d32; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    .warning-note { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    .flow-diagram { background: #1e293b; color: white; padding: 1rem; border-radius: 1rem; font-family: monospace; text-align: center; margin: 1rem 0; }
+    footer { text-align: center; margin-top: 3rem; padding: 2rem; border-top: 1px solid #e2e8f0; color: #475569; }
+    @media (max-width: 680px) { .hero p { max-width: 100%; } .section-title { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 65 · Phase 7</div>
+    <h1><i class="fas fa-filter"></i> Middleware – The Power of Express</h1>
+    <p>Middleware is what makes Express so powerful! Learn how to intercept, modify, and control the request-response cycle like a pro.</p>
+    <div class="channel-link"><i class="fab fa-youtube"></i> Telugu WebTech · Master Express Middleware</div>
+  </div>
+
+  <!-- Section 1: What is Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-question-circle"></i><span>1. What is Middleware?</span></div>
+    <div class="explanation-text"><i class="fas fa-cogs"></i> <strong>Purpose:</strong> Middleware functions have access to `req`, `res`, and `next`. They can modify request/response, end the cycle, or pass control to the next middleware. Think of them as "layers" that every request must pass through.</div>
+    <div class="flow-diagram">📨 Request → [Logger] → [Auth] → [Parser] → [Route Handler] → 📬 Response</div>
+    <div class="code-block">const myMiddleware = (req, res, next) => {
+  console.log('Do something');
+  next(); // pass control
+};
+app.use(myMiddleware);</div>
+    <button class="show-result-btn" onclick="showResult('whatIsMw')">Show real-world example</button>
+    <div id="whatIsMw" class="result-output">✅ Example: A logger middleware intercepts every request, logs method + URL, then calls next(). The route handler later sends the response. Without middleware, you'd have to add logging to every route manually.</div>
+  </div>
+
+  <!-- Section 2: Middleware Flow -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-stream"></i><span>2. Understanding the Middleware Flow</span></div>
+    <div class="explanation-text"><i class="fas fa-random"></i> <strong>How it works:</strong> Middleware functions execute sequentially. Each must call `next()` to proceed to the next one. If you don't call `next()`, the request gets stuck!</div>
+    <div class="code-block" id="middlewareFlow">app.use((req, res, next) => { console.log('1️⃣ First'); next(); });
+app.use((req, res, next) => { console.log('2️⃣ Second'); next(); });
+app.get('/api/data', (req, res) => { res.json({ msg: 'Done' }); });
+// Visiting /api/data prints: 1️⃣ → 2️⃣ → route handler runs</div>
+    <button class="copy-btn" onclick="copyCode('middlewareFlow')"><i class="far fa-copy"></i> Copy Flow</button>
+    <button class="show-result-btn" onclick="showResult('flowResult')">Show execution order</button>
+    <div id="flowResult" class="result-output">📌 When a request arrives: Middleware1 runs → next() → Middleware2 runs → next() → route handler sends response. If any middleware skips next(), the chain stops.</div>
+  </div>
+
+  <!-- Section 3: Five Types of Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-layer-group"></i><span>3. Five Types of Middleware</span></div>
+    <div class="explanation-text"><i class="fas fa-tags"></i> <strong>Why types?</strong> Each type serves different scope: app-level runs globally, router-level scoped to routes, error middleware catches exceptions, built-in provided by Express, third-party from npm.</div>
+    <div class="grid-2">
+      <div class="info-box"><i class="fas fa-globe"></i> <strong>1. Application-Level</strong><br>app.use(logger) → runs on all requests</div>
+      <div class="info-box"><i class="fas fa-road"></i> <strong>2. Router-Level</strong><br>router.use(auth) → only for this router</div>
+      <div class="info-box"><i class="fas fa-bug"></i> <strong>3. Error-Handling</strong><br>app.use((err,req,res,next) => {}) → 4 params</div>
+      <div class="info-box"><i class="fas fa-box"></i> <strong>4. Built-in</strong><br>express.json(), express.static()</div>
+      <div class="info-box"><i class="fas fa-download"></i> <strong>5. Third-Party</strong><br>morgan, cors, helmet, compression</div>
+    </div>
+    <button class="show-result-btn" onclick="showResult('typeExample')">See each type in action</button>
+    <div id="typeExample" class="result-output">🛠️ <strong>Example:</strong> app-level: logger for all requests. router-level: auth only for /admin routes. error: handles crashes gracefully. built-in: express.json() parses JSON. third-party: morgan logs HTTP requests beautifully.</div>
+  </div>
+
+  <!-- Section 4: Application-Level Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-globe"></i><span>4. Application-Level Middleware (app.use)</span></div>
+    <div class="explanation-text"><i class="fas fa-chart-line"></i> <strong>What it does:</strong> Runs for every incoming request regardless of URL. Perfect for logging, adding request IDs, global rate limiting, or setting common headers.</div>
+    <div class="code-block" id="appLevel">app.use((req, res, next) => {
+  console.log(`📅 ${new Date().toISOString()} ${req.method} ${req.url}`);
+  req.requestId = Math.random().toString(36).substring(7);
+  next();
+});
+app.get('/', (req, res) => res.json({ id: req.requestId }));</div>
+    <button class="copy-btn" onclick="copyCode('appLevel')"><i class="far fa-copy"></i> Copy App-level</button>
+    <button class="show-result-btn" onclick="showResult('appResult')">See output</button>
+    <div id="appResult" class="result-output">🖨️ Console: `📅 2025-01-15T10:30:00.000Z GET /` <br> Response: `{ "id": "k3j9f2" }` → every request gets a unique ID automatically.</div>
+  </div>
+
+  <!-- Section 5: Router-Level Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-road"></i><span>5. Router-Level Middleware</span></div>
+    <div class="explanation-text"><i class="fas fa-shield-alt"></i> <strong>Purpose:</strong> Attach middleware to specific router instances — only affects routes in that router. Great for route-specific validation, authorization, or parameter validation.</div>
+    <div class="code-block" id="routerLevel">const router = require('express').Router();
+router.use((req, res, next) => { console.log('User router only'); next(); });
+router.param('userId', (req, res, next, id) => {
+  if(isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
+  req.userId = parseInt(id);
+  next();
+});
+router.get('/users/:userId', (req, res) => res.json({ id: req.userId }));</div>
+    <button class="copy-btn" onclick="copyCode('routerLevel')"><i class="far fa-copy"></i> Copy Router-level</button>
+    <button class="show-result-btn" onclick="showResult('routerResult')">Show param validation</button>
+    <div id="routerResult" class="result-output">🎯 GET /users/abc → 400 error "Invalid ID". <br> GET /users/42 → { "id": 42 }. The middleware validates before route handler runs.</div>
+  </div>
+
+  <!-- Section 6: Built-in Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-cube"></i><span>6. Built-in Middleware (Express Defaults)</span></div>
+    <div class="explanation-text"><i class="fas fa-cog"></i> <strong>Why built-in?</strong> Express gives you these out-of-the-box: parse JSON, handle URL-encoded forms, serve static files, parse raw/text bodies. No extra installs needed!</div>
+    <div class="code-block" id="builtin">app.use(express.json());        // parse JSON bodies → req.body
+app.use(express.urlencoded({ extended: true })); // parse form data
+app.use(express.static('public')); // serve static files
+app.post('/api/data', (req, res) => res.json(req.body));</div>
+    <button class="copy-btn" onclick="copyCode('builtin')"><i class="far fa-copy"></i> Copy Built-in</button>
+    <button class="show-result-btn" onclick="showResult('builtinResult')">Show JSON parsing example</button>
+    <div id="builtinResult" class="result-output">📦 Client sends JSON `{"name":"Ramesh"}`. express.json() parses it, so req.body = { name: "Ramesh" }. Without it, req.body would be undefined.</div>
+  </div>
+
+  <!-- Section 7: Third-Party Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-download"></i><span>7. Third-Party Middleware (Popular Packages)</span></div>
+    <div class="explanation-text"><i class="fas fa-box-open"></i> <strong>Community power:</strong> Install from npm to add logging (morgan), security (helmet), CORS, compression, rate limiting — production-ready features in minutes.</div>
+    <div class="code-block" id="thirdParty">const morgan = require('morgan');  // HTTP logger
+const cors = require('cors');        // Enable CORS
+const helmet = require('helmet');    // Security headers
+const compression = require('compression'); // Gzip
+app.use(morgan('dev'));
+app.use(cors());
+app.use(helmet());
+app.use(compression());</div>
+    <button class="copy-btn" onclick="copyCode('thirdParty')"><i class="far fa-copy"></i> Copy Third-party</button>
+    <button class="show-result-btn" onclick="showResult('thirdResult')">What each does</button>
+    <div id="thirdResult" class="result-output">📊 morgan: logs `GET /api/users 200 5ms` in console. cors: allows your React frontend to call API. helmet: adds security headers (XSS protection). compression: reduces response size by ~70%.</div>
+  </div>
+
+  <!-- Section 8: Error Handling Middleware -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-exclamation-triangle"></i><span>8. Error Handling Middleware (Must be LAST!)</span></div>
+    <div class="explanation-text"><i class="fas fa-life-ring"></i> <strong>Critical:</strong> Error middleware has 4 parameters (err, req, res, next). Place it AFTER all routes. It catches errors from sync code or next(err).</div>
+    <div class="code-block" id="errorHandling">app.get('/error', (req, res, next) => {
+  next(new Error('Something broke!')); // pass to error handler
+});
+app.use('*', (req, res) => res.status(404).json({ error: 'Not found' }));
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: err.message });
+});</div>
+    <button class="copy-btn" onclick="copyCode('errorHandling')"><i class="far fa-copy"></i> Copy Error Handler</button>
+    <button class="show-result-btn" onclick="showResult('errorResult')">How it works</button>
+    <div id="errorResult" class="result-output">⚠️ When route calls `next(err)`, Express skips all normal middleware and jumps to the error handler. Client receives `{ "error": "Something broke!" }`. Without it, the app would crash.</div>
+  </div>
+
+  <!-- Section 9: Custom Middleware Examples -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-tools"></i><span>9. Creating Custom Middleware (Real Examples)</span></div>
+    <div class="explanation-text"><i class="fas fa-hammer"></i> <strong>Build your own:</strong> Authentication, validation, rate limiting, request logging — all reusable across routes.</div>
+    <div class="code-block" id="customMiddleware">// Auth middleware
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (!token) return res.status(401).json({ error: 'No token' });
+  // verify token logic...
+  req.user = { id: 1 };
+  next();
+};
+// Validation middleware
+const validateProduct = (req, res, next) => {
+  const { name, price } = req.body;
+  if (!name || price <= 0) return res.status(400).json({ error: 'Invalid data' });
+  next();
+};
+// Rate limiter middleware (simple)
+const rateLimiter = () => {
+  const hits = new Map();
+  return (req, res, next) => {
+    const ip = req.ip;
+    const count = (hits.get(ip) || 0) + 1;
+    if (count > 10) return res.status(429).json({ error: 'Too many requests' });
+    hits.set(ip, count);
+    next();
+  };
+};
+app.post('/api/products', validateProduct, (req, res) => res.json({ ok: true }));</div>
+    <button class="copy-btn" onclick="copyCode('customMiddleware')"><i class="far fa-copy"></i> Copy Custom Middleware</button>
+    <button class="show-result-btn" onclick="showResult('customResult')">Show validation in action</button>
+    <div id="customResult" class="result-output">🛡️ POST /api/products with body `{"price": -5}` → validateProduct returns 400 error. With proper data `{"name":"Laptop","price":1000}` → passes to route handler.</div>
+  </div>
+
+  <!-- Section 10: Execution Order (CRITICAL) -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-sort-amount-down"></i><span>10. Middleware Execution Order (CRITICAL!)</span></div>
+    <div class="explanation-text"><i class="fas fa-sort-numeric-down"></i> <strong>Order defines behavior:</strong> Middleware runs in the order you declare them. Put generic middleware first, then route-specific, then 404, and error handler LAST.</div>
+    <div class="code-block" id="order">// ✅ Correct order
+app.use(express.json());        // 1. Parse body
+app.use(logger);                // 2. Log request
+app.use('/api', authMiddleware); // 3. Auth for API routes
+app.get('/api/users', handler);  // 4. Route handler
+app.use('*', notFoundHandler);   // 5. 404 for unknown routes
+app.use(errorHandler);          // 6. Error handler (LAST!)</div>
+    <button class="copy-btn" onclick="copyCode('order')"><i class="far fa-copy"></i> Copy Order</button>
+    <button class="show-result-btn" onclick="showResult('orderResult')">Why order matters</button>
+    <div id="orderResult" class="result-output">🚨 If you put error handler before routes, it will never catch route errors. If you put 404 before route, all requests become 404. Always: built-in → custom → routes → 404 → error-handler.</div>
+  </div>
+
+  <!-- Section 11: Complete Working Example -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-code"></i><span>11. Complete Example – API with Full Middleware Stack</span></div>
+    <div class="explanation-text"><i class="fas fa-building"></i> <strong>Production-ready setup:</strong> Combines logging, security, parsing, rate limiting, auth, validation, and error handling.</div>
+    <div class="code-block" id="completeExample">const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+const app = express();
+
+// 1. Security & logging (global)
+app.use(helmet());
+app.use(cors());
+app.use(morgan('combined'));
+app.use(express.json());
+
+// 2. Rate limiting
+const limiter = rateLimit({ windowMs: 15*60*1000, max: 100 });
+app.use('/api', limiter);
+
+// 3. Custom auth middleware
+const auth = (req, res, next) => {
+  if (req.headers['x-token'] !== 'secret123') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
+// 4. Validation middleware
+const validateUser = (req, res, next) => {
+  if (!req.body.name) return res.status(400).json({ error: 'Name required' });
+  next();
+};
+
+// 5. Routes
+app.get('/api/public', (req, res) => res.json({ message: 'Public' }));
+app.post('/api/users', auth, validateUser, (req, res) => {
+  res.json({ user: req.body });
+});
+
+// 6. 404 handler
+app.use('*', (req, res) => res.status(404).json({ error: 'Not found' }));
+
+// 7. Error handler (LAST)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Server error' });
+});
+
+app.listen(3000);</div>
+    <button class="copy-btn" onclick="copyCode('completeExample')"><i class="far fa-copy"></i> Copy Complete Example</button>
+    <button class="show-result-btn" onclick="showResult('completeResult')">Test endpoints</button>
+    <div id="completeResult" class="result-output">✅ GET /api/public → works for anyone. POST /api/users with header x-token: secret123 and body {name:"Ramesh"} → 200 OK. Without token → 401. Invalid body → 400. Unknown route → 404.</div>
+  </div>
+
+  <!-- Day 65 Challenge -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-tasks"></i><span>🚀 Daily Challenge – Build Middleware System</span></div>
+    <p><strong>Build these middleware functions for your API:</strong></p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li><strong>Request Timer:</strong> Logs "Request took X ms"</li>
+      <li><strong>API Key Checker:</strong> Validates x-api-key header</li>
+      <li><strong>Product Validator:</strong> name (min 3 chars), price (>0)</li>
+      <li><strong>Admin Guard:</strong> x-user-role === 'admin' only</li>
+      <li><strong>Response Formatter:</strong> Wraps all responses in { success, data, timestamp }</li>
+    </ul>
+    <div class="code-block" id="challenge">// Challenge starter
+const express = require('express');
+const app = express();
+
+// 1. Request Timer
+const requestTimer = (req, res, next) => {
+  req.start = Date.now();
+  res.on('finish', () => console.log(`⏱️ ${req.method} ${req.url} - ${Date.now()-req.start}ms`));
+  next();
+};
+
+// 2. API Key Middleware (valid key = "telugu-webtech-2024")
+const apiKeyCheck = (req, res, next) => {
+  // implement
+};
+
+// 3. Product Validator (name min length 3, price > 0)
+const validateProduct = (req, res, next) => {
+  // implement
+};
+
+// 4. Admin Only middleware
+const adminOnly = (req, res, next) => {
+  // implement
+};
+
+// 5. Response Formatter (override res.json)
+const responseFormatter = (req, res, next) => {
+  // implement wrapper
+};
+
+app.use(requestTimer);
+app.use(express.json());
+app.use(responseFormatter);
+app.post('/api/products', validateProduct, (req, res) => res.json({ created: true }));
+app.delete('/api/admin/products/:id', apiKeyCheck, adminOnly, (req, res) => res.json({ deleted: true }));
+app.listen(3000);</div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge</button>
+    <button class="show-result-btn" onclick="showResult('challengeHint')">Show solution hints</button>
+    <div id="challengeHint" class="result-output">💡 API Key: check `req.headers['x-api-key'] === 'telugu-webtech-2024'`. Product validator: if !name || name.length<3 or price<=0 → 400. Admin only: check `req.headers['x-user-role'] === 'admin'`. Response formatter: store original res.json, call it with { success:true, data, timestamp: new Date() }.</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-graduation-cap"></i><span>Day 65 Summary – Middleware Mastered</span></div>
+    <p>✅ <strong>What:</strong> Functions that intercept req/res cycle<br>✅ <strong>5 Types:</strong> Application, Router, Error, Built-in, Third-party<br>✅ <strong>Built-in:</strong> express.json(), express.static(), urlencoded<br>✅ <strong>Third-party:</strong> morgan, cors, helmet, compression, rate-limit<br>✅ <strong>Error handling:</strong> 4-param middleware, MUST be last<br>✅ <strong>Custom middleware:</strong> Auth, validation, logging, rate limiting<br>✅ <strong>Order matters:</strong> Parse → log → auth → routes → 404 → error handler</p>
+    <div class="diagram"><i class="fas fa-arrow-right"></i> <strong>Next Up: Day 66 – REST API Development (Build Complete API)</strong><br>Telugu WebTech MERN roadmap – You're building pro-level Express apps! 🚀</div>
+  </div>
+  <footer><p><i class="fab fa-express"></i> Day 65 · Middleware · <strong>Telugu WebTech</strong></p><p style="font-size:0.85rem;">💡 Practice: Create a middleware that logs response time and another that blocks requests from specific IPs.</p></footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const el = document.getElementById(elementId);
+    navigator.clipboard.writeText(el.innerText).then(() => alert('✅ Middleware code copied!')).catch(() => alert('Copy manually.'));
+  }
+  function showResult(id) {
+    const div = document.getElementById(id);
+    if (div.classList.contains('show')) div.classList.remove('show');
+    else div.classList.add('show');
+  }
+</script>
+</body>
+</html>

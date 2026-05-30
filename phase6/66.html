@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 66: REST API Development – Build Complete API | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .api-endpoint {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      margin: 0.5rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 66 · Phase 7</div>
+    <h1>
+      <i class="fas fa-cloud-upload-alt"></i> 
+      REST API Development – Build Complete API
+    </h1>
+    <p>Build a professional REST API from scratch! Learn REST principles, status codes, filtering, pagination, sorting, and complete CRUD operations.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Build Production-Ready REST APIs
+    </div>
+  </div>
+
+  <!-- What is REST API? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is a REST API?</span>
+    </div>
+    <p><strong>REST (Representational State Transfer)</strong> is an architectural style for building web APIs. REST APIs use HTTP methods to perform operations on resources.</p>
+    <div class="diagram">
+      <i class="fas fa-exchange-alt"></i> <strong>REST API Principles:</strong><br>
+      • Resources are identified by URLs (e.g., /users, /products/5)<br>
+      • HTTP methods specify action: GET (read), POST (create), PUT (update), DELETE (remove)<br>
+      • Stateless: Each request contains all necessary information<br>
+      • Responses use proper HTTP status codes
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>📋 HTTP Method → Action</strong>
+        <p>GET → Read data<br>POST → Create data<br>PUT → Update entire resource<br>PATCH → Partial update<br>DELETE → Remove data</p>
+      </div>
+      <div class="info-box">
+        <strong>📊 HTTP Status Codes</strong>
+        <p>200 OK → Success<br>201 Created → Resource created<br>400 Bad Request → Client error<br>401 Unauthorized → Auth required<br>404 Not Found → Resource missing<br>500 Server Error → Server problem</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Structure -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-folder-tree"></i>
+      <span>2. Complete REST API Project Structure</span>
+    </div>
+    <div class="code-block">
+rest-api-project/
+├── src/
+│   ├── controllers/
+│   │   ├── userController.js
+│   │   ├── productController.js
+│   │   └── orderController.js
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Product.js
+│   │   └── Order.js
+│   ├── routes/
+│   │   ├── userRoutes.js
+│   │   ├── productRoutes.js
+│   │   └── index.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── errorMiddleware.js
+│   │   └── validationMiddleware.js
+│   ├── utils/
+│   │   ├── asyncHandler.js
+│   │   └── constants.js
+│   └── config/
+│       └── database.js
+├── .env
+├── server.js
+└── package.json
+    </div>
+  </div>
+
+  <!-- Complete API Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>3. Complete Product REST API (Full Example)</span>
+    </div>
+    <div class="subheading">📁 .env Configuration</div>
+    <div class="code-block" id="env">
+PORT=5000
+NODE_ENV=development
+API_VERSION=v1
+    </div>
+    <button class="copy-btn" onclick="copyCode('env')"><i class="far fa-copy"></i> Copy .env</button>
+
+    <div class="subheading">📁 src/utils/asyncHandler.js</div>
+    <div class="code-block" id="asyncHandler">
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+module.exports = asyncHandler;
+    </div>
+    <button class="copy-btn" onclick="copyCode('asyncHandler')"><i class="far fa-copy"></i> Copy Async Handler</button>
+
+    <div class="subheading">📁 src/models/Product.js</div>
+    <div class="code-block" id="productModel">
+// In-memory database (will replace with MongoDB later)
+let products = [
+  { id: 1, name: 'Laptop', price: 49999, category: 'Electronics', inStock: true, createdAt: '2024-01-01' },
+  { id: 2, name: 'Mouse', price: 999, category: 'Electronics', inStock: true, createdAt: '2024-01-02' },
+  { id: 3, name: 'Notebook', price: 99, category: 'Stationery', inStock: false, createdAt: '2024-01-03' },
+  { id: 4, name: 'Pen', price: 49, category: 'Stationery', inStock: true, createdAt: '2024-01-04' },
+  { id: 5, name: 'Monitor', price: 15999, category: 'Electronics', inStock: true, createdAt: '2024-01-05' }
+];
+
+let nextId = 6;
+
+const Product = {
+  findAll: () => [...products],
+  findById: (id) => products.find(p => p.id === id),
+  create: (data) => {
+    const newProduct = { id: nextId++, ...data, createdAt: new Date().toISOString().split('T')[0] };
+    products.push(newProduct);
+    return newProduct;
+  },
+  update: (id, data) => {
+    const index = products.findIndex(p => p.id === id);
+    if (index === -1) return null;
+    products[index] = { ...products[index], ...data, id };
+    return products[index];
+  },
+  delete: (id) => {
+    const index = products.findIndex(p => p.id === id);
+    if (index === -1) return false;
+    products.splice(index, 1);
+    return true;
+  }
+};
+
+module.exports = { Product, products };
+    </div>
+    <button class="copy-btn" onclick="copyCode('productModel')"><i class="far fa-copy"></i> Copy Product Model</button>
+
+    <div class="subheading">📁 src/controllers/productController.js</div>
+    <div class="code-block" id="productController">
+const asyncHandler = require('../utils/asyncHandler');
+const { Product } = require('../models/Product');
+
+// @desc    Get all products with filtering, sorting, pagination
+// @route   GET /api/v1/products
+// @access  Public
+const getAllProducts = asyncHandler(async (req, res) => {
+  let products = Product.findAll();
+  
+  // ========== FILTERING ==========
+  // Support filtering by category, inStock, minPrice, maxPrice
+  const { category, inStock, minPrice, maxPrice, search } = req.query;
+  
+  if (category) {
+    products = products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
+  
+  if (inStock !== undefined) {
+    const isInStock = inStock === 'true';
+    products = products.filter(p => p.inStock === isInStock);
+  }
+  
+  if (minPrice) {
+    products = products.filter(p => p.price >= parseFloat(minPrice));
+  }
+  
+  if (maxPrice) {
+    products = products.filter(p => p.price <= parseFloat(maxPrice));
+  }
+  
+  if (search) {
+    products = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+  }
+  
+  // ========== SORTING ==========
+  const sortBy = req.query.sortBy || 'id';
+  const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+  
+  products.sort((a, b) => {
+    if (a[sortBy] < b[sortBy]) return -1 * sortOrder;
+    if (a[sortBy] > b[sortBy]) return 1 * sortOrder;
+    return 0;
+  });
+  
+  // ========== PAGINATION ==========
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedProducts = products.slice(startIndex, endIndex);
+  
+  // Pagination metadata
+  const pagination = {};
+  if (endIndex < products.length) {
+    pagination.next = { page: page + 1, limit };
+  }
+  if (startIndex > 0) {
+    pagination.prev = { page: page - 1, limit };
+  }
+  
+  res.status(200).json({
+    success: true,
+    count: products.length,
+    pagination,
+    data: paginatedProducts
+  });
+});
+
+// @desc    Get single product
+// @route   GET /api/v1/products/:id
+// @access  Public
+const getProductById = asyncHandler(async (req, res) => {
+  const id = parseInt(req.params.id);
+  const product = Product.findById(id);
+  
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: `Product with id ${id} not found`
+    });
+  }
+  
+  res.status(200).json({
+    success: true,
+    data: product
+  });
+});
+
+// @desc    Create new product
+// @route   POST /api/v1/products
+// @access  Public
+const createProduct = asyncHandler(async (req, res) => {
+  const { name, price, category, inStock } = req.body;
+  
+  // Validation
+  const errors = [];
+  if (!name || name.length < 2) {
+    errors.push('Product name must be at least 2 characters');
+  }
+  if (!price || price <= 0) {
+    errors.push('Product price must be a positive number');
+  }
+  if (!category) {
+    errors.push('Product category is required');
+  }
+  
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      errors
+    });
+  }
+  
+  const newProduct = Product.create({
+    name,
+    price: parseFloat(price),
+    category,
+    inStock: inStock !== undefined ? inStock : true
+  });
+  
+  res.status(201).json({
+    success: true,
+    data: newProduct
+  });
+});
+
+// @desc    Update product
+// @route   PUT /api/v1/products/:id
+// @access  Public
+const updateProduct = asyncHandler(async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, price, category, inStock } = req.body;
+  
+  const existingProduct = Product.findById(id);
+  if (!existingProduct) {
+    return res.status(404).json({
+      success: false,
+      message: `Product with id ${id} not found`
+    });
+  }
+  
+  const updatedProduct = Product.update(id, {
+    name: name || existingProduct.name,
+    price: price !== undefined ? parseFloat(price) : existingProduct.price,
+    category: category || existingProduct.category,
+    inStock: inStock !== undefined ? inStock : existingProduct.inStock
+  });
+  
+  res.status(200).json({
+    success: true,
+    data: updatedProduct
+  });
+});
+
+// @desc    Delete product
+// @route   DELETE /api/v1/products/:id
+// @access  Public
+const deleteProduct = asyncHandler(async (req, res) => {
+  const id = parseInt(req.params.id);
+  const product = Product.findById(id);
+  
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: `Product with id ${id} not found`
+    });
+  }
+  
+  Product.delete(id);
+  
+  res.status(200).json({
+    success: true,
+    message: `Product ${id} deleted successfully`,
+    data: product
+  });
+});
+
+// @desc    Get product statistics
+// @route   GET /api/v1/products/stats/summary
+// @access  Public
+const getProductStats = asyncHandler(async (req, res) => {
+  const products = Product.findAll();
+  
+  const stats = {
+    totalProducts: products.length,
+    totalValue: products.reduce((sum, p) => sum + p.price, 0),
+    averagePrice: products.reduce((sum, p) => sum + p.price, 0) / products.length,
+    categories: [...new Set(products.map(p => p.category))],
+    inStockCount: products.filter(p => p.inStock).length,
+    outOfStockCount: products.filter(p => !p.inStock).length
+  };
+  
+  res.status(200).json({
+    success: true,
+    data: stats
+  });
+});
+
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductStats
+};
+    </div>
+    <button class="copy-btn" onclick="copyCode('productController')"><i class="far fa-copy"></i> Copy Product Controller</button>
+
+    <div class="subheading">📁 src/routes/productRoutes.js</div>
+    <div class="code-block" id="productRoutes">
+const express = require('express');
+const router = express.Router();
+const {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductStats
+} = require('../controllers/productController');
+
+// Routes
+router.route('/')
+  .get(getAllProducts)    // GET /api/v1/products
+  .post(createProduct);   // POST /api/v1/products
+
+router.route('/:id')
+  .get(getProductById)    // GET /api/v1/products/:id
+  .put(updateProduct)     // PUT /api/v1/products/:id
+  .delete(deleteProduct); // DELETE /api/v1/products/:id
+
+// Additional routes
+router.get('/stats/summary', getProductStats); // GET /api/v1/products/stats/summary
+
+module.exports = router;
+    </div>
+    <button class="copy-btn" onclick="copyCode('productRoutes')"><i class="far fa-copy"></i> Copy Product Routes</button>
+
+    <div class="subheading">📁 server.js (Main File)</div>
+    <div class="code-block" id="server">
+require('dotenv').config();
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const helmet = require('helmet');
+
+const productRoutes = require('./src/routes/productRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// ========== MIDDLEWARE ==========
+app.use(helmet());                          // Security headers
+app.use(cors());                            // Enable CORS
+app.use(morgan('dev'));                     // Request logging
+app.use(express.json());                    // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse form data
+
+// ========== API ROUTES ==========
+app.get('/', (req, res) => {
+  res.json({
+    message: 'REST API Server Running',
+    version: process.env.API_VERSION || 'v1',
+    endpoints: {
+      products: '/api/v1/products',
+      productStats: '/api/v1/products/stats/summary'
+    }
+  });
+});
+
+app.use('/api/v1/products', productRoutes);
+
+// ========== 404 HANDLER ==========
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found`
+  });
+});
+
+// ========== ERROR HANDLING MIDDLEWARE ==========
+app.use((err, req, res, next) => {
+  console.error('❌ Error:', err.message);
+  console.error('Stack:', err.stack);
+  
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// ========== START SERVER ==========
+app.listen(PORT, () => {
+  console.log('=' .repeat(60));
+  console.log(`✅ REST API Server Running!`);
+  console.log('=' .repeat(60));
+  console.log(`📍 URL: http://localhost:${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log('=' .repeat(60));
+  console.log(`📝 Available Endpoints:`);
+  console.log(`   GET    /api/v1/products`);
+  console.log(`   GET    /api/v1/products/:id`);
+  console.log(`   POST   /api/v1/products`);
+  console.log(`   PUT    /api/v1/products/:id`);
+  console.log(`   DELETE /api/v1/products/:id`);
+  console.log(`   GET    /api/v1/products/stats/summary`);
+  console.log('=' .repeat(60));
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('server')"><i class="far fa-copy"></i> Copy Server File</button>
+  </div>
+
+  <!-- Testing the API -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-vial"></i>
+      <span>4. Testing Your REST API (curl & Postman)</span>
+    </div>
+    <div class="subheading">📡 GET Requests (Read)</div>
+    <div class="code-block" id="testGet">
+# Get all products
+curl http://localhost:5000/api/v1/products
+
+# Get products with filters
+curl "http://localhost:5000/api/v1/products?category=Electronics&minPrice=1000&sortBy=price&sortOrder=desc"
+
+# Get products with pagination
+curl "http://localhost:5000/api/v1/products?page=1&limit=2"
+
+# Search products
+curl "http://localhost:5000/api/v1/products?search=laptop"
+
+# Get single product
+curl http://localhost:5000/api/v1/products/1
+
+# Get statistics
+curl http://localhost:5000/api/v1/products/stats/summary
+    </div>
+    <button class="copy-btn" onclick="copyCode('testGet')"><i class="far fa-copy"></i> Copy GET Tests</button>
+
+    <div class="subheading">📡 POST Request (Create)</div>
+    <div class="code-block" id="testPost">
+# Create new product
+curl -X POST http://localhost:5000/api/v1/products \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Keyboard","price":2499,"category":"Electronics","inStock":true}'
+    </div>
+    <button class="copy-btn" onclick="copyCode('testPost')"><i class="far fa-copy"></i> Copy POST Test</button>
+
+    <div class="subheading">📡 PUT Request (Update)</div>
+    <div class="code-block" id="testPut">
+# Update product with id 1
+curl -X PUT http://localhost:5000/api/v1/products/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Gaming Laptop","price":64999}'
+    </div>
+    <button class="copy-btn" onclick="copyCode('testPut')"><i class="far fa-copy"></i> Copy PUT Test</button>
+
+    <div class="subheading">📡 DELETE Request</div>
+    <div class="code-block" id="testDelete">
+# Delete product with id 5
+curl -X DELETE http://localhost:5000/api/v1/products/5
+    </div>
+    <button class="copy-btn" onclick="copyCode('testDelete')"><i class="far fa-copy"></i> Copy DELETE Test</button>
+  </div>
+
+  <!-- API Response Formats -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exchange-alt"></i>
+      <span>5. Standard API Response Formats</span>
+    </div>
+    <div class="code-block" id="responses">
+// ✅ SUCCESS RESPONSE (GET all)
+{
+  "success": true,
+  "count": 5,
+  "pagination": {
+    "next": { "page": 2, "limit": 10 }
+  },
+  "data": [...]
+}
+
+// ✅ SUCCESS RESPONSE (GET single)
+{
+  "success": true,
+  "data": { "id": 1, "name": "Laptop", "price": 49999 }
+}
+
+// ✅ SUCCESS RESPONSE (POST - Created)
+{
+  "success": true,
+  "data": { "id": 6, "name": "Keyboard", "price": 2499 }
+}
+
+// ✅ SUCCESS RESPONSE (DELETE)
+{
+  "success": true,
+  "message": "Product 5 deleted successfully"
+}
+
+// ❌ ERROR RESPONSE (404 Not Found)
+{
+  "success": false,
+  "message": "Product with id 999 not found"
+}
+
+// ❌ ERROR RESPONSE (400 Bad Request)
+{
+  "success": false,
+  "errors": ["Product name must be at least 2 characters", "Product price must be a positive number"]
+}
+
+// ❌ ERROR RESPONSE (500 Server Error)
+{
+  "success": false,
+  "message": "Internal Server Error",
+  "stack": "..." // Only in development
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('responses')"><i class="far fa-copy"></i> Copy Response Formats</button>
+  </div>
+
+  <!-- REST API Best Practices -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-clipboard-list"></i>
+      <span>6. REST API Best Practices Checklist</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Use Proper HTTP Methods</strong>
+        <p>GET (read), POST (create), PUT (update), DELETE (remove)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Use Correct Status Codes</strong>
+        <p>200 OK, 201 Created, 400 Bad Request, 404 Not Found, 500 Error</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Use Plural Nouns for Resources</strong>
+        <p>/users (not /user), /products (not /product)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Version Your API</strong>
+        <p>/api/v1/products, /api/v2/products</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Use Consistent Response Format</strong>
+        <p>{ success, data, message, errors }</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ Implement Filtering, Sorting, Pagination</strong>
+        <p>?category=electronics&sortBy=price&page=2&limit=10</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 66 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Build Order Management API</span>
+    </div>
+    <p><strong>Task:</strong> Build a complete Order Management REST API with:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li><strong>Order Model:</strong> id, customerName, items (array of {productId, quantity}), totalAmount, status (pending/shipped/delivered/cancelled), createdAt</li>
+      <li><strong>Endpoints:</strong> GET /orders, GET /orders/:id, POST /orders, PUT /orders/:id, DELETE /orders/:id</li>
+      <li><strong>Filters:</strong> ?status=pending&customerName=John</li>
+      <li><strong>Sorting:</strong> ?sortBy=totalAmount&sortOrder=desc</li>
+      <li><strong>Pagination:</strong> ?page=1&limit=5</li>
+      <li><strong>Statistics:</strong> GET /orders/stats/summary (total orders, total revenue, orders by status)</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Starter - Order API
+// Follow the same pattern as Product API
+
+// src/models/Order.js
+let orders = [];
+let nextOrderId = 1;
+
+const Order = {
+  findAll: () => [...orders],
+  findById: (id) => orders.find(o => o.id === id),
+  create: (data) => {
+    const newOrder = { id: nextOrderId++, ...data, createdAt: new Date().toISOString() };
+    orders.push(newOrder);
+    return newOrder;
+  },
+  update: (id, data) => {
+    const index = orders.findIndex(o => o.id === id);
+    if (index === -1) return null;
+    orders[index] = { ...orders[index], ...data, id };
+    return orders[index];
+  },
+  delete: (id) => {
+    const index = orders.findIndex(o => o.id === id);
+    if (index === -1) return false;
+    orders.splice(index, 1);
+    return true;
+  }
+};
+
+// Implement orderController.js, orderRoutes.js
+// Add to server.js: app.use('/api/v1/orders', orderRoutes)
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 66 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>REST API Principles:</strong> HTTP methods, status codes, resource URLs<br>
+    ✅ <strong>Complete CRUD Operations:</strong> Create, Read, Update, Delete<br>
+    ✅ <strong>Filtering:</strong> ?category=electronics&minPrice=100<br>
+    ✅ <strong>Sorting:</strong> ?sortBy=price&sortOrder=desc<br>
+    ✅ <strong>Pagination:</strong> ?page=1&limit=10 with metadata<br>
+    ✅ <strong>Search:</strong> ?search=laptop<br>
+    ✅ <strong>Statistics Endpoint:</strong> Aggregated data like counts, averages<br>
+    ✅ <strong>Error Handling:</strong> Proper status codes and error messages<br>
+    ✅ <strong>Testing:</strong> curl commands for all HTTP methods</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 67 – Postman Testing (Professional API Testing)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're building production-ready APIs! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-express"></i> Day 66 · REST API Development · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 REST APIs are the backbone of modern web apps. Practice building different resource APIs!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Run "npm install express dotenv morgan cors helmet" to start your REST API.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

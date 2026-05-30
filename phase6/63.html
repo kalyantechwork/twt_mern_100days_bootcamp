@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 63: Express Routes – Deep Dive | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300,400,600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn, .show-result-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-right: 10px;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+    button.copy-btn:hover, .show-result-btn:hover {
+      background: #1e293b;
+    }
+    .show-result-btn {
+      background: #2d6a4f;
+    }
+    .show-result-btn:hover {
+      background: #1e4620;
+    }
+    .result-output {
+      background: #f1f8e9;
+      border-left: 4px solid #facc15;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-top: 1rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #0f172a;
+      display: none;
+    }
+    .result-output.show {
+      display: block;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    .explanation-text {
+      background: #fefce8;
+      padding: 0.8rem 1rem;
+      border-radius: 1rem;
+      margin: 0.8rem 0;
+      font-size: 0.95rem;
+      border-left: 3px solid #eab308;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 63 · Phase 7</div>
+    <h1>
+      <i class="fas fa-road"></i> 
+      Express Routes – Deep Dive into Routing
+    </h1>
+    <p>Master Express routing – the heart of any web application! Learn route parameters, query strings, route handlers, chaining, and advanced routing techniques.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Become a Routing Expert
+    </div>
+  </div>
+
+  <!-- What is Routing? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is Routing?</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-lightbulb"></i> <strong>Purpose:</strong> Routing determines how your server responds to client requests at specific URLs and HTTP methods. Think of it as a "traffic controller" – based on the URL and HTTP verb (GET, POST...), Express executes the matching function. Without routes, your API has no endpoints!
+    </div>
+    <p><strong>Routing</strong> refers to how an application responds to client requests for specific endpoints (URLs) and HTTP methods (GET, POST, PUT, DELETE).</p>
+    <div class="diagram">
+      <i class="fas fa-globe"></i> <strong>Example:</strong><br>
+      📨 GET /users → "Show me all users"<br>
+      📨 POST /users → "Create a new user"<br>
+      📨 GET /users/5 → "Show user with ID 5"<br>
+      📨 DELETE /users/5 → "Delete user with ID 5"
+    </div>
+    <div class="code-block">
+// Basic route structure
+app.METHOD(PATH, HANDLER);
+
+// METHOD: HTTP method (get, post, put, delete)
+// PATH: URL path (/, /users, /about)
+// HANDLER: Function that runs when route is matched
+    </div>
+    <button class="show-result-btn" onclick="showResult('routingResult')"><i class="fas fa-eye"></i> Show Result / Explanation</button>
+    <div id="routingResult" class="result-output">
+      💡 <strong>What happens?</strong><br>
+      When a request arrives at <code>GET /users</code>, Express looks for a registered route. If found, it executes the handler and sends a response.<br>
+      ✅ Example output for GET /users → "List of users in JSON"<br>
+      ✅ Example output for POST /users → "New user created" status 201.
+    </div>
+  </div>
+
+  <!-- Route Methods -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plug"></i>
+      <span>2. Route Methods – HTTP Verbs</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-code"></i> <strong>Why different methods?</strong> They follow REST conventions: GET (read), POST (create), PUT/PATCH (update), DELETE (remove). This makes APIs predictable and clean.
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-download" style="color: #22c55e;"></i>
+        <strong>app.get()</strong>
+        <p>Fetch data without side effects.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('getResult')">Show GET result</button>
+        <div id="getResult" class="result-output">📥 GET /users → responds with: <code>{ "users": ["Alice", "Bob"] }</code></div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-upload" style="color: #3b82f6;"></i>
+        <strong>app.post()</strong>
+        <p>Create new resource.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('postResult')">Show POST result</button>
+        <div id="postResult" class="result-output">📝 POST /users with body { "name":"John" } → 201 Created, returns new user with ID.</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-sync-alt" style="color: #f59e0b;"></i>
+        <strong>app.put()</strong>
+        <p>Full update.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('putResult')">Show PUT result</button>
+        <div id="putResult" class="result-output">🔄 PUT /users/1 → replaces entire user data, returns updated user.</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-pencil-alt" style="color: #8b5cf6;"></i>
+        <strong>app.patch()</strong>
+        <p>Partial update.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('patchResult')">Show PATCH result</button>
+        <div id="patchResult" class="result-output">✏️ PATCH /users/1 → updates only specific fields (e.g., { "email": "new@mail.com" }).</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-trash" style="color: #ef4444;"></i>
+        <strong>app.delete()</strong>
+        <p>Remove resource.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('deleteResult')">Show DELETE result</button>
+        <div id="deleteResult" class="result-output">🗑️ DELETE /users/1 → removes user, responds with 200 and confirmation message.</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-ellipsis-h" style="color: #64748b;"></i>
+        <strong>app.all()</strong>
+        <p>Matches any HTTP method.</p>
+        <button class="show-result-btn" style="margin-top: 6px;" onclick="showResult('allResult')">Show ALL result</button>
+        <div id="allResult" class="result-output">🌐 GET, POST, PUT to /secret → same response: "This route works for any method!"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route Parameters -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code-branch"></i>
+      <span>3. Route Parameters (Dynamic URLs)</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-dynamic"></i> <strong>What & why:</strong> Route parameters let you capture values from the URL (like user ID). Instead of creating separate routes for each user, you write <code>/users/:userId</code> and extract <code>req.params.userId</code>. Very useful for profile pages, product details, etc.
+    </div>
+    <div class="code-block" id="routeParams">
+// Single parameter: GET /users/123 -> userId = 123
+app.get('/users/:userId', (req, res) => {
+  res.send(`User ID: ${req.params.userId}`);
+});
+    </div>
+    <button class="show-result-btn" onclick="showResult('paramResult')">Show Example Output</button>
+    <div id="paramResult" class="result-output">
+      📍 <strong>Request:</strong> GET /users/42<br>
+      📦 <strong>Server output:</strong> "User ID: 42"<br>
+      📍 <strong>Multiple params:</strong> GET /products/electronics/phone → params = { category: "electronics", productId: "phone" }.
+    </div>
+    <button class="copy-btn" onclick="copyCode('routeParams')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Query Parameters -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>4. Query Parameters (URL ?key=value)</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-filter"></i> <strong>Purpose:</strong> Query strings are used for filtering, sorting, pagination (e.g., <code>/products?category=books&page=2</code>). They are optional and do not change the route definition — you access via <code>req.query</code>.
+    </div>
+    <div class="code-block" id="queryParams">
+app.get('/search', (req, res) => {
+  const { q, page = 1 } = req.query;
+  res.json({ searchTerm: q, page });
+});
+    </div>
+    <button class="show-result-btn" onclick="showResult('queryResult')">Show Result Example</button>
+    <div id="queryResult" class="result-output">
+      🔍 <strong>Request:</strong> GET /search?q=express&page=3<br>
+      🧾 <strong>Response:</strong> { "searchTerm": "express", "page": "3" }<br>
+      🎯 Use case: <code>/api/products?minPrice=100&maxPrice=500&sort=price</code> → filters products.
+    </div>
+    <button class="copy-btn" onclick="copyCode('queryParams')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Multiple Callbacks -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-layer-group"></i>
+      <span>5. Route Handlers – Multiple Callbacks</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-step-forward"></i> <strong>Why multiple handlers?</strong> Separate concerns: authentication, validation, logging, then final response. Each callback calls <code>next()</code> to pass control.
+    </div>
+    <div class="code-block" id="multipleHandlers">
+app.get('/protected-data', 
+  (req, res, next) => { console.log('Auth'); next(); },
+  (req, res) => { res.json({ data: 'secret' }); }
+);
+    </div>
+    <button class="show-result-btn" onclick="showResult('multiResult')">Show Execution flow</button>
+    <div id="multiResult" class="result-output">
+      ▶️ When you request GET /protected-data with valid auth header:<br>
+      1️⃣ First handler logs "Auth" and calls next()<br>
+      2️⃣ Second handler sends JSON: { "data": "secret" }<br>
+      ❌ Without auth header → first handler returns 401 and stops.
+    </div>
+    <button class="copy-btn" onclick="copyCode('multipleHandlers')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Chaining Routes -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-link"></i>
+      <span>6. Chaining Routes with app.route()</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-grip-lines"></i> <strong>Benefit:</strong> Avoid repeating the path. Group all HTTP methods for the same endpoint in a clean chain.
+    </div>
+    <div class="code-block" id="chaining">
+app.route('/users')
+  .get((req, res) => res.send('Get users'))
+  .post((req, res) => res.send('Create user'));
+    </div>
+    <button class="show-result-btn" onclick="showResult('chainResult')">Show chaining output</button>
+    <div id="chainResult" class="result-output">
+      🔗 GET /users → "Get users"<br>
+      🔗 POST /users → "Create user"<br>
+      📌 Clean, readable, easier maintenance.
+    </div>
+    <button class="copy-btn" onclick="copyCode('chaining')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Modular Routes -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-cubes"></i>
+      <span>7. Modular Routes with express.Router()</span>
+    </div>
+    <div class="explanation-text">
+      <i class="fas fa-folder-open"></i> <strong>What & why:</strong> For large apps, keep routes in separate files. <code>express.Router()</code> creates mini-apps that you can mount at specific prefixes (e.g., <code>/api/users</code>). Perfect for team collaboration & clean architecture.
+    </div>
+    <div class="code-block" id="modularRoutes">
+// routes/users.js
+const router = require('express').Router();
+router.get('/', (req, res) => res.json({ users: [] }));
+module.exports = router;
+// server.js: app.use('/api/users', userRouter);
+    </div>
+    <button class="show-result-btn" onclick="showResult('modularResult')">Show Modular Explanation</button>
+    <div id="modularResult" class="result-output">
+      🧩 Request GET /api/users → calls userRouter's GET '/' handler. <br>
+      🧩 All routes inside userRouter are relative: <code>/api/users/profile</code> if you define <code>router.get('/profile')</code>. <br>
+      ✅ Keeps server.js clean; can be reused across projects.
+    </div>
+    <button class="copy-btn" onclick="copyCode('modularRoutes')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Advanced Patterns -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-star"></i>
+      <span>8. Advanced Route Patterns</span>
+    </div>
+    <div class="explanation-text">Regex, custom param validators, wildcards — gives you flexibility to match complex URLs.</div>
+    <div class="code-block" id="advanced">
+app.get(/.*fly$/, (req, res) => res.send('Fly ending URL'));
+app.param('id', (req,res,next,id) => { if(isNaN(id)) return res.status(400).send('Invalid'); next(); });
+    </div>
+    <button class="show-result-btn" onclick="showResult('advancedResult')">Show Advanced Output</button>
+    <div id="advancedResult" class="result-output">
+      🧪 <strong>Regex route:</strong> /butterfly, /dragonfly → all match "fly ending".<br>
+      🛡️ <strong>app.param:</strong> For route /users/:id, it validates id before main handler, so only numeric ids proceed. Good for reusable validation.
+    </div>
+    <button class="copy-btn" onclick="copyCode('advanced')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- Route Order Matters -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-sort-amount-down"></i>
+      <span>9. Route Order Matters!</span>
+    </div>
+    <div class="warning-note">
+      <i class="fas fa-exclamation-triangle"></i> Express matches routes in the order they are defined. Put specific routes BEFORE generic ones!
+    </div>
+    <button class="show-result-btn" onclick="showResult('orderResult')">Show Route Order Problem</button>
+    <div id="orderResult" class="result-output">
+      ⚠️ <strong>Wrong order:</strong> <br>
+      app.get('/users/:id', ...) <br>
+      app.get('/users/new', ...) → /users/new will be captured by :id and never reaches '/users/new' handler!<br>
+      ✅ <strong>Correct:</strong> Define '/users/new' before '/users/:id'. Also 404 handler should be last.
+    </div>
+  </div>
+
+  <!-- Complete Working Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>10. Complete Working Example – Blog API</span>
+    </div>
+    <div class="explanation-text">Full-featured API with CRUD, query filtering, pagination, and proper status codes. Run and test with Postman or browser.</div>
+    <button class="show-result-btn" onclick="showResult('blogApiResult')">Show Sample API Call Outputs</button>
+    <div id="blogApiResult" class="result-output">
+      📌 <strong>GET /api/posts</strong> → returns all posts<br>
+      📌 <strong>GET /api/posts?author=Ramesh</strong> → filtered posts by author<br>
+      📌 <strong>GET /api/posts/1</strong> → single post { id:1, title: 'Express Basics' }<br>
+      📌 <strong>POST /api/posts</strong> (body: {title, author}) → 201 with new post<br>
+      📌 <strong>PATCH /api/posts/1/view</strong> → increments views count<br>
+      📌 <strong>DELETE /api/posts/1</strong> → removes post<br>
+      ✅ All routes follow best practices with error handling.
+    </div>
+    <button class="copy-btn" onclick="copyCode('completeExample')"><i class="far fa-copy"></i> Copy Complete Blog API</button>
+  </div>
+
+  <!-- Day 63 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Build a Music Playlist API</span>
+    </div>
+    <p><strong>Task:</strong> Create a complete REST API for music playlists with the following routes:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>GET <span class="inline-code">/api/songs</span> → Get all songs (with query filters: genre, artist, limit, page)</li>
+      <li>GET <span class="inline-code">/api/songs/:id</span> → Get single song</li>
+      <li>POST <span class="inline-code">/api/songs</span> → Create new song (title, artist, genre, duration)</li>
+      <li>PUT <span class="inline-code">/api/songs/:id</span> → Update song</li>
+      <li>PATCH <span class="inline-code">/api/songs/:id/play</span> → Increment play count</li>
+      <li>DELETE <span class="inline-code">/api/songs/:id</span> → Delete song</li>
+      <li>GET <span class="inline-code">/api/artists/:artistName/songs</span> → Get all songs by an artist</li>
+      <li>GET <span class="inline-code">/api/stats/top</span> → Get top 5 most played songs</li>
+    </ul>
+    <button class="show-result-btn" onclick="showResult('challengeHint')">Show Sample Implementation Hint</button>
+    <div id="challengeHint" class="result-output">
+      🎵 <strong>Hint:</strong> Use in-memory array. For filters: <code>req.query.genre</code> to filter. Pagination: <code>.slice((page-1)*limit, page*limit)</code>. For top songs: sort by plays descending and slice(0,5). Example endpoint output for <code>GET /api/stats/top</code> → [ { title: "Blinding Lights", plays: 3000 } , ... ].
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 63 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Route Methods:</strong> GET, POST, PUT, PATCH, DELETE, ALL<br>
+    ✅ <strong>Route Parameters:</strong> Dynamic URLs with :param<br>
+    ✅ <strong>Query Parameters:</strong> Filters, pagination, sorting via ?key=value<br>
+    ✅ <strong>Multiple Handlers:</strong> Chaining callbacks with next()<br>
+    ✅ <strong>app.route():</strong> Chaining methods for the same path<br>
+    ✅ <strong>express.Router():</strong> Modular, mountable route handlers<br>
+    ✅ <strong>Advanced Patterns:</strong> Regex routes, custom param validation<br>
+    ✅ <strong>Route Order:</strong> Specific routes before generic ones<br>
+    ✅ <strong>Complete API:</strong> Built a full-featured Blog API</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 64 – Controllers (Moving Logic Out of Routes)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're becoming a routing expert! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-express"></i> Day 63 · Express Routes Deep Dive · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Practice building different route structures. The more you practice, the more natural routing becomes!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Run with Node.js to test the routes.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+
+  function showResult(resultId) {
+    const resultDiv = document.getElementById(resultId);
+    if (resultDiv.classList.contains('show')) {
+      resultDiv.classList.remove('show');
+    } else {
+      resultDiv.classList.add('show');
+      setTimeout(() => {
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+  }
+
+  // Preload complete example code block (hidden from display but used for copy)
+  const completeExampleCode = `const express = require('express');
+const app = express();
+app.use(express.json());
+
+let posts = [
+  { id: 1, title: 'Express Basics', author: 'Ramesh', views: 100 },
+  { id: 2, title: 'Node.js Modules', author: 'Priya', views: 250 }
+];
+
+app.get('/api/posts', (req, res) => {
+  let result = [...posts];
+  if (req.query.author) result = result.filter(p => p.author === req.query.author);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const start = (page - 1) * limit;
+  const paginated = result.slice(start, start + limit);
+  res.json({ total: result.length, page, limit, data: paginated });
+});
+
+app.get('/api/posts/:id', (req, res) => {
+  const post = posts.find(p => p.id === parseInt(req.params.id));
+  if (!post) return res.status(404).json({ error: 'Post not found' });
+  res.json(post);
+});
+
+app.post('/api/posts', (req, res) => {
+  const { title, author } = req.body;
+  if (!title || !author) return res.status(400).json({ error: 'Title and author required' });
+  const newPost = { id: posts.length + 1, title, author, views: 0 };
+  posts.push(newPost);
+  res.status(201).json(newPost);
+});
+
+app.put('/api/posts/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const post = posts.find(p => p.id === id);
+  if (!post) return res.status(404).json({ error: 'Not found' });
+  const { title, author } = req.body;
+  if (title) post.title = title;
+  if (author) post.author = author;
+  res.json(post);
+});
+
+app.patch('/api/posts/:id/view', (req, res) => {
+  const post = posts.find(p => p.id === parseInt(req.params.id));
+  if (!post) return res.status(404).json({ error: 'Not found' });
+  post.views += 1;
+  res.json({ views: post.views });
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = posts.findIndex(p => p.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Not found' });
+  posts.splice(index, 1);
+  res.json({ message: \`Post \${id} deleted\` });
+});
+
+app.use('*', (req, res) => res.status(404).json({ error: 'Route not found' }));
+
+app.listen(3000, () => console.log('Blog API running'));`;
+
+  const challengeCode = `const express = require('express');
+const app = express();
+app.use(express.json());
+
+let songs = [
+  { id: 1, title: 'Believer', artist: 'Imagine Dragons', genre: 'Rock', duration: 204, plays: 1000 },
+  { id: 2, title: 'Shape of You', artist: 'Ed Sheeran', genre: 'Pop', duration: 233, plays: 2500 },
+  { id: 3, title: 'Blinding Lights', artist: 'The Weeknd', genre: 'Pop', duration: 200, plays: 3000 }
+];
+
+// Implement all routes here...
+
+app.listen(3000, () => console.log('Music API running on port 3000'));`;
+
+  document.getElementById('completeExample').innerText = completeExampleCode;
+  document.getElementById('challenge').innerText = challengeCode;
+</script>
+</body>
+</html>

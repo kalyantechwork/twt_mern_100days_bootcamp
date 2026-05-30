@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 67: Postman Testing – Professional API Testing | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.5; scroll-behavior: smooth; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%); border-radius: 2rem; padding: 2rem; margin-bottom: 2.5rem; color: white; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
+    .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero h1 i { background: #facc15; color: #1e3a2f; padding: 8px 12px; border-radius: 60px; font-size: 1.6rem; }
+    .hero-badge { background: #facc15cc; display: inline-block; padding: 0.25rem 1rem; border-radius: 40px; font-size: 0.85rem; font-weight: 600; color: #0a2e25; margin-bottom: 1rem; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 85%; }
+    .channel-link { margin-top: 1.2rem; display: inline-flex; align-items: center; gap: 12px; background: #00000030; backdrop-filter: blur(4px); padding: 0.5rem 1.2rem; border-radius: 60px; font-weight: 500; }
+    .section-card { background: white; border-radius: 1.5rem; padding: 1.8rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .section-card:hover { border-color: #cbd5e1; box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1); }
+    .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; border-left: 6px solid #facc15; padding-left: 1rem; }
+    .section-title i { color: #2d6a4f; font-size: 1.6rem; }
+    .subheading { font-size: 1.25rem; font-weight: 600; margin: 1.2rem 0 0.8rem 0; color: #1e4620; }
+    .code-block { background: #0f172a; color: #e2e8f0; padding: 1rem 1.2rem; border-radius: 1rem; font-family: 'Courier New', 'Fira Code', monospace; font-size: 0.9rem; overflow-x: auto; margin: 1rem 0; white-space: pre-wrap; word-break: break-word; }
+    .inline-code { background: #eef2ff; color: #0c4a6e; font-family: monospace; padding: 0.2rem 0.4rem; border-radius: 8px; font-size: 0.9rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .info-box { background: #f1f5f9; border-radius: 1.2rem; padding: 1.2rem; border-left: 4px solid #facc15; }
+    .diagram { background: #fef9e3; border-radius: 1rem; padding: 1.2rem; text-align: center; margin: 1rem 0; font-weight: 500; border: 1px dashed #facc15; }
+    button.copy-btn, .show-result-btn { background: #334155; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; margin-right: 10px; transition: background 0.2s; font-weight: 500; }
+    button.copy-btn:hover, .show-result-btn:hover { background: #1e293b; }
+    .show-result-btn { background: #2d6a4f; }
+    .show-result-btn:hover { background: #1e4620; }
+    .result-output { background: #f1f8e9; border-left: 4px solid #facc15; padding: 1rem; border-radius: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; color: #0f172a; display: none; }
+    .result-output.show { display: block; }
+    .explanation-text { background: #fefce8; padding: 0.8rem 1rem; border-radius: 1rem; margin: 0.8rem 0; font-size: 0.95rem; border-left: 3px solid #eab308; }
+    .success-note { background: #e6f7ec; border-left: 4px solid #2e7d32; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    .warning-note { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+    .postman-step { display: flex; gap: 1rem; margin: 1rem 0; padding: 1rem; background: #f1f5f9; border-radius: 1rem; align-items: flex-start; }
+    .step-number { background: #facc15; color: #1e3a2f; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+    footer { text-align: center; margin-top: 3rem; padding: 2rem; border-top: 1px solid #e2e8f0; color: #475569; }
+    @media (max-width: 680px) { .hero p { max-width: 100%; } .section-title { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 67 · Phase 7</div>
+    <h1><i class="fas fa-flask"></i> Postman Testing – Professional API Testing</h1>
+    <p>Learn how to test your REST APIs like a professional! Postman is the industry standard tool for API development and testing.</p>
+    <div class="channel-link"><i class="fab fa-youtube"></i> Telugu WebTech · Master API Testing with Postman</div>
+  </div>
+
+  <!-- Section 1: What is Postman -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-question-circle"></i><span>1. What is Postman?</span></div>
+    <div class="explanation-text"><i class="fas fa-rocket"></i> <strong>Purpose:</strong> Postman is the most popular API testing tool. It lets you send HTTP requests, inspect responses, write automated tests, and share API documentation — all without writing a single line of code.</div>
+    <div class="diagram"><i class="fas fa-check-circle"></i> <strong>Why Postman?</strong><br>✅ Test APIs without coding<br>✅ Organize requests in collections<br>✅ Environment variables for dev/prod<br>✅ Write automated tests<br>✅ Generate API docs<br>✅ Share with team</div>
+    <button class="show-result-btn" onclick="showResult('postmanBenefit')">Show real-world scenario</button>
+    <div id="postmanBenefit" class="result-output">🏢 Real-world: Your team builds an API. Using Postman, you create a collection with all endpoints + tests. New developers can import it and test immediately. CI/CD runs Newman (Postman CLI) automatically on each deployment.</div>
+  </div>
+
+  <!-- Section 2: Interface Overview -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-desktop"></i><span>2. Postman Interface Overview</span></div>
+    <div class="grid-2">
+      <div class="info-box"><i class="fas fa-edit"></i> <strong>Request Builder</strong><br>HTTP method, URL, Params, Headers, Body, Send button</div>
+      <div class="info-box"><i class="fas fa-folder"></i> <strong>Collections</strong><br>Save and organize requests into folders</div>
+      <div class="info-box"><i class="fas fa-chart-line"></i> <strong>Response Viewer</strong><br>Status code, time, body (Pretty/Raw/Preview), headers</div>
+      <div class="info-box"><i class="fas fa-code-branch"></i> <strong>Environments</strong><br>Variables like {{baseUrl}} for different stages</div>
+    </div>
+  </div>
+
+  <!-- Section 3: Setup Environment -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-play-circle"></i><span>3. Setting Up Postman for Your Express API</span></div>
+    <div class="subheading">Step 1: Start Your Express Server</div>
+    <div class="code-block">node server.js   # Runs on http://localhost:5000</div>
+    <div class="subheading">Step 2: Create Collection & Environment</div>
+    <div class="code-block" id="environment"># Environment Variables (Development)
+baseUrl → http://localhost:5000
+apiVersion → v1
+productId → 1
+
+# Use in requests: {{baseUrl}}/api/{{apiVersion}}/products</div>
+    <button class="copy-btn" onclick="copyCode('environment')"><i class="far fa-copy"></i> Copy Env Setup</button>
+    <button class="show-result-btn" onclick="showResult('envUsage')">Why variables matter</button>
+    <div id="envUsage" class="result-output">🔁 With {{baseUrl}}, you can switch from localhost to production URL instantly. No need to edit every request. Also use {{productId}} to dynamically test different IDs.</div>
+  </div>
+
+  <!-- Section 4: Testing GET requests -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-download"></i><span>4. Testing GET Requests (Reading Data)</span></div>
+    <div class="postman-step"><div class="step-number">1</div><div>Method: <strong>GET</strong> | URL: <strong>{{baseUrl}}/api/v1/products</strong></div></div>
+    <div class="postman-step"><div class="step-number">2</div><div>Click <strong>Send</strong> → Status 200, JSON array</div></div>
+    <div class="subheading">📋 Filtering & Pagination</div>
+    <div class="code-block">{{baseUrl}}/api/v1/products?category=Electronics&minPrice=1000&sortBy=price&sortOrder=desc&page=1&limit=2</div>
+    <button class="show-result-btn" onclick="showResult('getSample')">Show sample response</button>
+    <div id="getSample" class="result-output">✅ Response: { "success": true, "count": 5, "pagination": { "next": { "page":2,"limit":2 } }, "data": [{"id":1,"name":"Laptop","price":49999}, ...] }</div>
+  </div>
+
+  <!-- Section 5: POST requests -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-upload"></i><span>5. Testing POST Requests (Creating Data)</span></div>
+    <div class="postman-step"><div class="step-number">1</div><div>Method: <strong>POST</strong> | URL: <strong>{{baseUrl}}/api/v1/products</strong></div></div>
+    <div class="postman-step"><div class="step-number">2</div><div>Body → raw → JSON</div></div>
+    <div class="code-block" id="postBody">{ "name": "Wireless Headphones", "price": 2999, "category": "Electronics", "inStock": true }</div>
+    <button class="copy-btn" onclick="copyCode('postBody')"><i class="far fa-copy"></i> Copy POST Body</button>
+    <button class="show-result-btn" onclick="showResult('postSample')">Show response</button>
+    <div id="postSample" class="result-output">📦 201 Created: { "success": true, "data": { "id": 6, "name": "Wireless Headphones", "price": 2999, "category": "Electronics", "inStock": true, "createdAt": "2025-01-15" } }</div>
+  </div>
+
+  <!-- Section 6: PUT & DELETE -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-sync-alt"></i><span>6. Testing PUT & DELETE</span></div>
+    <div class="subheading">🔄 PUT Update</div>
+    <div class="code-block" id="putBody">PUT {{baseUrl}}/api/v1/products/1\nBody: { "name": "Premium Gaming Laptop", "price": 79999 }</div>
+    <button class="copy-btn" onclick="copyCode('putBody')"><i class="far fa-copy"></i> Copy PUT</button>
+    <div class="subheading">🗑️ DELETE</div>
+    <div class="code-block">DELETE {{baseUrl}}/api/v1/products/5</div>
+    <button class="show-result-btn" onclick="showResult('deleteSample')">Show DELETE response</button>
+    <div id="deleteSample" class="result-output">✅ 200 OK: { "success": true, "message": "Product 5 deleted successfully", "data": { "id":5,"name":"Monitor"... } }<br>Subsequent GET /5 returns 404.</div>
+  </div>
+
+  <!-- Section 7: Error Responses -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-exclamation-triangle"></i><span>7. Testing Error Responses</span></div>
+    <div class="subheading">📋 404 Not Found</div>
+    <div class="code-block">GET {{baseUrl}}/api/v1/products/999 → 404 "Product not found"</div>
+    <div class="subheading">📋 400 Bad Request</div>
+    <div class="code-block">POST with { "name": "A" } → 400 validation errors</div>
+    <button class="show-result-btn" onclick="showResult('errorSample')">Show error response</button>
+    <div id="errorSample" class="result-output">❌ 400 Bad Request: { "success": false, "errors": ["Name min 2 chars", "Price must be >0", "Category required"] }</div>
+  </div>
+
+  <!-- Section 8: Automated Tests -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-check-double"></i><span>8. Writing Automated Tests in Postman</span></div>
+    <div class="explanation-text"><i class="fas fa-robot"></i> <strong>Why automate?</strong> Instead of manually checking responses, write tests once. Postman runs them every time you send a request — green means working, red means broken.</div>
+    <div class="subheading">📝 Test Script for GET /products</div>
+    <div class="code-block" id="testScript1">// Add to "Tests" tab
+pm.test("Status is 200", () => pm.response.to.have.status(200));
+pm.test("Response has success, count, data", () => {
+  const json = pm.response.json();
+  pm.expect(json).to.have.property('success');
+  pm.expect(json).to.have.property('count');
+  pm.expect(json).to.have.property('data');
+});
+pm.test("Success is true", () => pm.response.json().success.should.be.true);
+pm.test("Data is array", () => pm.expect(pm.response.json().data).to.be.an('array'));
+// Save first product ID
+const productId = pm.response.json().data[0]?.id;
+if(productId) pm.environment.set("productId", productId);</div>
+    <button class="copy-btn" onclick="copyCode('testScript1')"><i class="far fa-copy"></i> Copy GET Tests</button>
+    <button class="show-result-btn" onclick="showResult('testResult1')">What these tests do</button>
+    <div id="testResult1" class="result-output">✅ Each test appears in Postman's "Test Results" tab. If status is 200, first test passes. If response structure matches expected, all green. Failing tests highlight exactly what's broken — prevents regression bugs.</div>
+
+    <div class="subheading">📝 Test Script for POST /products</div>
+    <div class="code-block" id="testScript2">pm.test("Status 201", () => pm.response.to.have.status(201));
+pm.test("Returns created product with ID", () => {
+  const json = pm.response.json();
+  pm.expect(json.success).to.be.true;
+  pm.expect(json.data).to.have.property('id');
+});
+// Save new ID for later tests
+pm.environment.set("newProductId", pm.response.json().data.id);</div>
+    <button class="copy-btn" onclick="copyCode('testScript2')"><i class="far fa-copy"></i> Copy POST Tests</button>
+  </div>
+
+  <!-- Section 9: Collection Runner -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-play-circle"></i><span>9. Collection Runner (Run All Tests at Once)</span></div>
+    <div class="explanation-text"><i class="fas fa-tachometer-alt"></i> <strong>Powerful feature:</strong> Run entire collection in sequence, get pass/fail summary, and even run via CLI in CI/CD pipelines (Newman).</div>
+    <div class="postman-step"><div class="step-number">1</div><div>Click collection → <strong>"Run collection"</strong></div></div>
+    <div class="postman-step"><div class="step-number">2</div><div>Select requests, choose environment, set iterations</div></div>
+    <div class="postman-step"><div class="step-number">3</div><div>Click <strong>"Run"</strong> → View test results dashboard</div></div>
+    <button class="show-result-btn" onclick="showResult('runnerResult')">Show runner output example</button>
+    <div id="runnerResult" class="result-output">🏃 Collection Runner Summary:<br>✅ GET all products: 4/4 tests passed<br>✅ POST create product: 3/3 passed<br>✅ GET single product: 3/3 passed<br>✅ PUT update: 2/2 passed<br>✅ DELETE: 2/2 passed<br>✅ Error scenarios: 3/3 passed<br>Total: 17/17 tests passed 🎉</div>
+  </div>
+
+  <!-- Section 10: Complete Collection Export -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-file-export"></i><span>10. Postman Collection (Import Ready)</span></div>
+    <div class="explanation-text"><i class="fas fa-download"></i> <strong>Import this JSON</strong> into Postman (File → Import) to instantly get all requests + tests!</div>
+    <div class="code-block" id="collectionExport">{
+  "info": { "name": "Telugu WebTech Product API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    { "name": "GET All Products", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products" } },
+    { "name": "GET with Filters", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products?category=Electronics&minPrice=1000&sortBy=price&sortOrder=desc&page=1&limit=5" } },
+    { "name": "GET Statistics", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/stats/summary" } },
+    { "name": "GET Single Product", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/{{productId}}" } },
+    { "name": "POST Create Product", "request": { "method": "POST", "url": "{{baseUrl}}/api/v1/products", "body": { "mode": "raw", "raw": "{\"name\":\"Test\",\"price\":999,\"category\":\"Test\"}" } } },
+    { "name": "PUT Update Product", "request": { "method": "PUT", "url": "{{baseUrl}}/api/v1/products/{{productId}}", "body": { "mode": "raw", "raw": "{\"name\":\"Updated\"}" } } },
+    { "name": "DELETE Product", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/v1/products/{{productId}}" } }
+  ],
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:5000" }, { "key": "apiVersion", "value": "v1" }, { "key": "productId", "value": "1" }]
+}</div>
+    <button class="copy-btn" onclick="copyCode('collectionExport')"><i class="far fa-copy"></i> Copy Full Collection JSON</button>
+  </div>
+
+  <!-- Section 11: Challenge -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-tasks"></i><span>🚀 Daily Challenge – Order API Test Suite</span></div>
+    <p><strong>Build a complete Postman test suite for the Order API:</strong></p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create collection "Order Management API"</li>
+      <li>Environment: baseUrl, orderId</li>
+      <li>Requests: GET /orders (with filters ?status=pending&page=1), GET /orders/:id, POST /orders, PUT /orders/:id, DELETE /orders/:id, GET /orders/stats/summary</li>
+      <li>Write tests: status codes, response structure, save IDs</li>
+      <li>Run collection runner → all tests pass</li>
+    </ul>
+    <div class="code-block" id="challenge">// Sample Order POST body
+{
+  "customerName": "Ramesh Kumar",
+  "items": [{ "productId": 1, "quantity": 2 }],
+  "totalAmount": 1000,
+  "status": "pending"
+}
+// Expected response after creation: 201 with { success: true, data: { id: 1, ... } }</div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+    <button class="show-result-btn" onclick="showResult('challengeHint')">Show test script hint</button>
+    <div id="challengeHint" class="result-output">💡 <strong>Test script for POST /orders:</strong><br>
+pm.test("Status 201", () => pm.response.to.have.status(201));<br>
+pm.test("Has order ID", () => pm.response.json().data.should.have.property('id'));<br>
+const orderId = pm.response.json().data.id;<br>
+pm.environment.set("orderId", orderId);<br>
+// Add test for GET /orders/:id to verify the saved orderId works.</div>
+  </div>
+
+  <!-- Section 12: Summary -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-graduation-cap"></i><span>Day 67 Summary – Postman Mastered</span></div>
+    <p>✅ <strong>Postman basics:</strong> Interface, collections, environments, variables<br>
+    ✅ <strong>All HTTP methods:</strong> GET (with filters/pagination), POST, PUT, DELETE<br>
+    ✅ <strong>Error testing:</strong> 404, 400, validation failures<br>
+    ✅ <strong>Automated tests:</strong> JavaScript assertions that run automatically<br>
+    ✅ <strong>Environment variables:</strong> {{baseUrl}}, {{productId}} for reusable requests<br>
+    ✅ <strong>Collection Runner:</strong> Run entire test suite in one click<br>
+    ✅ <strong>Export/Import:</strong> Share collections with team or CI/CD<br>
+    ✅ <strong>Professional workflow:</strong> Test → Automate → Integrate with pipeline</p>
+    <div class="diagram"><i class="fas fa-arrow-right"></i> <strong>Next Up: Day 68 – Error Handling Middleware (Professional Error Management)</strong><br>Telugu WebTech MERN roadmap – Testing is a superpower! 🚀</div>
+  </div>
+  <footer><p><i class="fab fa-express"></i> Day 67 · Postman Testing · <strong>Telugu WebTech</strong></p><p style="font-size:0.85rem;">💡 Pro tip: Postman collections can be exported and run in CI/CD using Newman. Your API quality will skyrocket!</p></footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const el = document.getElementById(elementId);
+    navigator.clipboard.writeText(el.innerText).then(() => alert('✅ Copied! Paste into Postman to test your API.')).catch(() => alert('Copy manually.'));
+  }
+  function showResult(id) {
+    const div = document.getElementById(id);
+    if (div.classList.contains('show')) div.classList.remove('show');
+    else div.classList.add('show');
+  }
+</script>
+</body>
+</html>

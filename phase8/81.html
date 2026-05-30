@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 81: Connect React + Node | Full Stack Integration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .folder-structure {
+      background: #0f172a;
+      color: #facc15;
+      padding: 1rem;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔄</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 81 · Connect React + Node (Full Stack Integration)</div>
+  </div>
+
+  <h1>🔄 Connect React + Node.js<br><span style="font-size:1rem;">Full Stack Integration · Proxy Setup · Axios · CORS · Backend API Calling</span></h1>
+
+  <!-- Section 1: Full Stack Architecture -->
+  <div class="section-title">1️⃣ Full Stack Architecture — React + Node.js</div>
+  <p>Today we connect our <strong>React frontend</strong> with <strong>Node.js/Express backend</strong>. This is the core of MERN stack — frontend and backend working together!</p>
+  <div class="diagram">
+    React Frontend (Port 5173) → API Request (fetch/Axios) → Node.js Backend (Port 5000) → Response → Frontend Updates UI
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> React is the restaurant customer (requests food). Node.js/Express is the kitchen (prepares response). The API is the waiter delivering between them.
+  </div>
+
+  <!-- Section 2: Project Folder Structure -->
+  <div class="section-title">2️⃣ Full Stack Project Folder Structure</div>
+  <div class="folder-structure">
+    my-fullstack-app/<br>
+    ├── frontend/          # React app (Vite)<br>
+    │   ├── src/<br>
+    │   ├── package.json<br>
+    │   └── vite.config.js<br>
+    ├── backend/           # Node.js + Express<br>
+    │   ├── models/<br>
+    │   ├── routes/<br>
+    │   ├── controllers/<br>
+    │   ├── server.js<br>
+    │   └── package.json<br>
+    └── README.md
+  </div>
+
+  <!-- Section 3: Setting Up Backend API -->
+  <div class="section-title">3️⃣ Step 1 — Create Backend API (Express)</div>
+  <div class="code-block">
+    // backend/server.js<br>
+    const express = require('express');<br>
+    const cors = require('cors');<br>
+    <br>
+    const app = express();<br>
+    const PORT = 5000;<br>
+    <br>
+    // Middleware<br>
+    app.use(cors());           // Allow frontend to call backend<br>
+    app.use(express.json());   // Parse JSON request bodies<br>
+    <br>
+    // Sample data<br>
+    const users = [<br>
+      { id: 1, name: "Kalyan", email: "kalyan@example.com" },<br>
+      { id: 2, name: "Priya", email: "priya@example.com" }<br>
+    ];<br>
+    <br>
+    // API Routes<br>
+    app.get('/api/users', (req, res) => {<br>
+      res.json(users);<br>
+    });<br>
+    <br>
+    app.post('/api/users', (req, res) => {<br>
+      const newUser = { id: Date.now(), ...req.body };<br>
+      users.push(newUser);<br>
+      res.status(201).json(newUser);<br>
+    });<br>
+    <br>
+    app.listen(PORT, () => {<br>
+      console.log(`Server running on port ${PORT}`);<br>
+    });
+  </div>
+
+  <!-- Section 4: CORS Explained -->
+  <div class="section-title">4️⃣ CORS — Why It's Needed</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌐 CORS = Cross-Origin Resource Sharing</h3><p>Security feature that prevents websites from calling APIs on different domains without permission.</p></div>
+    <div class="card"><h3>🛠️ React (localhost:5173) → Backend (localhost:5000)</h3><p>Different ports = different origins. CORS must be enabled!</p></div>
+  </div>
+  <div class="code-block">
+    // Without CORS — Browser blocks request ❌<br>
+    // With CORS — Browser allows request ✅<br>
+    <br>
+    npm install cors<br>
+    app.use(cors()); // Allow all origins (for development)
+  </div>
+
+  <!-- Section 5: Frontend — Fetching Data (Axios) -->
+  <div class="section-title">5️⃣ Step 2 — Frontend API Call with Axios</div>
+  <div class="code-block">
+    // frontend/src/services/api.js<br>
+    import axios from 'axios';<br>
+    <br>
+    const API_URL = 'http://localhost:5000/api';<br>
+    <br>
+    export const fetchUsers = async () => {<br>
+      const response = await axios.get(`${API_URL}/users`);<br>
+      return response.data;<br>
+    };<br>
+    <br>
+    export const addUser = async (user) => {<br>
+      const response = await axios.post(`${API_URL}/users`, user);<br>
+      return response.data;<br>
+    };
+  </div>
+  <div class="highlight-box">
+    📦 <strong>Axios vs Fetch:</strong> Axios automatically transforms JSON, has better error handling, and shorter syntax. Install with `npm install axios`.
+  </div>
+
+  <!-- Section 6: React Component Calling API -->
+  <div class="section-title">6️⃣ React Component — Display Users</div>
+  <div class="code-block">
+    // frontend/src/components/UserList.jsx<br>
+    import { useState, useEffect } from 'react';<br>
+    import { fetchUsers, addUser } from '../services/api';<br>
+    <br>
+    function UserList() {<br>
+      const [users, setUsers] = useState([]);<br>
+      const [loading, setLoading] = useState(true);<br>
+      const [newName, setNewName] = useState('');<br>
+      <br>
+      useEffect(() => {<br>
+        loadUsers();<br>
+      }, []);<br>
+      <br>
+      const loadUsers = async () => {<br>
+        const data = await fetchUsers();<br>
+        setUsers(data);<br>
+        setLoading(false);<br>
+      };<br>
+      <br>
+      const handleAddUser = async () => {<br>
+        const newUser = await addUser({ name: newName, email: `${newName}@example.com` });<br>
+        setUsers([...users, newUser]);<br>
+        setNewName('');<br>
+      };<br>
+      <br>
+      if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;<br>
+      return (<br>
+        &lt;div&gt;<br>
+          &lt;h2&gt;Users ({users.length})&lt;/h2&gt;<br>
+          &lt;ul&gt;{users.map(user => &lt;li key={user.id}&gt;{user.name} - {user.email}&lt;/li&gt;)}&lt;/ul&gt;<br>
+          &lt;input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Name" /&gt;<br>
+          &lt;button onClick={handleAddUser}&gt;Add User&lt;/button&gt;<br>
+        &lt;/div&gt;<br>
+      );<br>
+    }
+  </div>
+
+  <!-- Section 7: Vite Proxy Configuration -->
+  <div class="section-title">7️⃣ Vite Proxy — Avoid CORS in Development</div>
+  <div class="code-block">
+    // frontend/vite.config.js<br>
+    import { defineConfig } from 'vite';<br>
+    import react from '@vitejs/plugin-react';<br>
+    <br>
+    export default defineConfig({<br>
+      plugins: [react()],<br>
+      server: {<br>
+        proxy: {<br>
+          '/api': {<br>
+            target: 'http://localhost:5000',<br>
+            changeOrigin: true,<br>
+          }<br>
+        }<br>
+      }<br>
+    });
+  </div>
+  <div class="highlight-box">
+    🚀 <strong>Proxy Benefit:</strong> Frontend calls `/api/users` instead of `http://localhost:5000/api/users` — no CORS issues!
+  </div>
+
+  <!-- Section 8: Complete Setup Commands -->
+  <div class="section-title">8️⃣ Complete Setup — Run Both Servers</div>
+  <div class="code-block">
+    # Terminal 1: Start Backend<br>
+    cd backend<br>
+    npm install express cors<br>
+    npm install nodemon --save-dev<br>
+    # Add "start": "nodemon server.js" to package.json scripts<br>
+    npm start<br><br>
+    # Terminal 2: Start Frontend<br>
+    cd frontend<br>
+    npm install axios<br>
+    npm run dev
+  </div>
+
+  <!-- Section 9: Live Demo Simulation -->
+  <div class="section-title">9️⃣ Live Demo — API Connection Simulation</div>
+  <div class="live-demo">
+    <div class="folder-structure" style="background:#1e293b; margin-bottom:16px;">
+      🌐 Backend API → http://localhost:5000/api/users<br>
+      🎨 Frontend → http://localhost:5173
+    </div>
+    <div id="apiSimulation">
+      <div style="background:#f1f5f9; padding:16px; border-radius:16px;">
+        <h3>📋 Users List</h3>
+        <ul id="simUserList" style="margin:12px 0;">
+          <li>Kalyan - kalyan@example.com</li>
+          <li>Priya - priya@example.com</li>
+        </ul>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="simUserName" placeholder="Enter name" style="flex:1; padding:8px; border-radius:40px; border:1px solid #ccc;">
+          <button class="demo-btn" id="simAddUserBtn">➕ Add User</button>
+        </div>
+        <p id="simStatus" class="inline-code" style="margin-top:12px;">✅ Connected to backend API!</p>
+      </div>
+    </div>
+    <script>
+      let simUsers = [
+        { id: 1, name: "Kalyan", email: "kalyan@example.com" },
+        { id: 2, name: "Priya", email: "priya@example.com" }
+      ];
+      function renderSimUsers() {
+        const list = document.getElementById("simUserList");
+        if(list) {
+          list.innerHTML = simUsers.map(u => `<li>${u.name} - ${u.email}</li>`).join('');
+        }
+      }
+      document.getElementById("simAddUserBtn")?.addEventListener("click", () => {
+        const nameInput = document.getElementById("simUserName");
+        const name = nameInput.value.trim();
+        if(name) {
+          const newUser = { id: Date.now(), name: name, email: `${name}@example.com` };
+          simUsers.push(newUser);
+          renderSimUsers();
+          nameInput.value = "";
+          document.getElementById("simStatus").innerHTML = "✅ POST request successful! User added to backend.";
+          setTimeout(() => {
+            document.getElementById("simStatus").innerHTML = "✅ Connected to backend API!";
+          }, 2000);
+        }
+      });
+      renderSimUsers();
+    </script>
+  </div>
+
+  <!-- Section 10: Environment Variables -->
+  <div class="section-title">🔟 Environment Variables (Backend & Frontend)</div>
+  <div class="code-block">
+    # backend/.env<br>
+    PORT=5000<br>
+    DB_URI=mongodb://localhost:27017/myapp<br>
+    JWT_SECRET=mysecretkey<br><br>
+    // backend/server.js<br>
+    require('dotenv').config();<br>
+    const PORT = process.env.PORT || 5000;<br><br>
+    # frontend/.env<br>
+    VITE_API_URL=http://localhost:5000/api
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a full stack project with separate frontend and backend folders<br>
+    2. Build a REST API with Express (GET, POST, PUT, DELETE endpoints)<br>
+    3. Connect React to your API using Axios<br>
+    4. Display data from backend in React components<br>
+    5. Implement a form that sends data to backend via POST<br>
+    6. Handle loading and error states in React
+  </div>
+
+  <!-- Section 12: Common Mistakes -->
+  <div class="section-title">⚠️ Common Integration Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Forgetting CORS → browser blocks requests (check console)</li>
+    <li>❌ Backend not running → frontend can't connect (check terminal)</li>
+    <li>❌ Wrong API URL → 404 errors</li>
+    <li>❌ Not handling async/await properly → missing await</li>
+  </ul>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How do you connect React to Node.js backend?</h3><p>Using fetch or Axios to call API endpoints. Use CORS or proxy in development.</p></div>
+    <div class="card"><h3>❓ What is CORS?</h3><p>Security feature that restricts cross-origin requests. Enable with `cors()` middleware.</p></div>
+    <div class="card"><h3>❓ What is the Vite proxy?</h3><p>Dev feature that forwards API requests to backend, avoiding CORS issues.</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a full stack Todo App with React frontend and Express backend.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add PUT (update) and DELETE endpoints to your API and connect them to React.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement error handling — show user-friendly messages when API fails.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 81)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Full stack architecture — React + Node.js communication</div>
+    <div class="card">✔️ CORS — enabling cross-origin requests</div>
+    <div class="card">✔️ Axios for API calls from React</div>
+    <div class="card">✔️ Vite proxy to avoid CORS in development</div>
+    <div class="card">✔️ Environment variables for configuration</div>
+  </div>
+
+  <!-- Day 81 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 81 Ending Message</strong><br>
+    "Your frontend and backend are now connected! This is the heart of the MERN stack. You can build complete applications where React talks to Node.js — full stack development unlocked!"
+  </div>
+
+  <!-- Next: Day 82 -->
+  <div class="section-title">🔜 Next — Day 82 : Axios (HTTP Client) — GET, POST, PUT, DELETE Requests</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📡 Axios GET</span>
+    <span class="badge">📨 Axios POST</span>
+    <span class="badge">🔄 Axios PUT</span>
+    <span class="badge">🗑️ Axios DELETE</span>
+    <span class="badge">⚡ Interceptors</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 81 Completed ✅<br>
+    Connect your React app to a Node.js backend — you're building full stack applications now!
+  </div>
+</div>
+</body>
+</html>

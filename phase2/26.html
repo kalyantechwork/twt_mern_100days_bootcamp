@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 26: JSX (JavaScript XML) | Writing HTML in React + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .jsx-demo {
+      background: #e6f7ff;
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">✨</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 26 · JSX (JavaScript XML) — Show Results</div>
+  </div>
+
+  <h1>✨ JSX — JavaScript XML<br><span style="font-size:1rem;">Writing HTML Inside JavaScript · Expressions · Fragments · Conditional Rendering — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is JSX -->
+  <div class="section-title">1️⃣ What is JSX? (JavaScript + XML)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>JSX (JavaScript XML)</strong> is a syntax extension that allows you to write HTML-like code directly inside JavaScript. It makes React code readable, intuitive, and easy to write. JSX gets compiled by Babel into <span class="inline-code">React.createElement()</span> calls.</p>
+    <p><strong>Where it's used:</strong> Every React component — JSX is the standard way to define UI in React. It's what makes React so developer-friendly.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      // Without JSX (plain JavaScript)<br>
+      const element = React.createElement('h1', null, 'Hello World');<br><br>
+      // With JSX (much cleaner!)<br>
+      const element = &lt;h1&gt;Hello World&lt;/h1&gt;;
+    </div>
+    <button class="btn-show" data-target="whatIsJsxResult">✨ Show JSX Explanation</button>
+    <div id="whatIsJsxResult" class="result-area">
+      <div class="diagram">
+        JavaScript + HTML-like syntax → JSX → Babel compiles to React.createElement → Browser understands
+      </div>
+      <div class="console-output">
+        ✅ JSX is NOT HTML — it's JavaScript with XML-like syntax!<br>
+        ✅ Babel transforms JSX into regular JavaScript that browsers can understand.<br>
+        ✅ JSX makes React code more readable and maintainable.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Why JSX -->
+  <div class="section-title">2️⃣ Why JSX? (Benefits)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📖 Readable</h3><p>Code looks like the final UI — easier to understand and debug</p></div>
+    <div class="card"><h3>⚡ Powerful</h3><p>Embed JavaScript expressions directly in markup using {}</p></div>
+    <div class="card"><h3>🔍 Helpful Errors</h3><p>Compile-time error messages (no silent failures)</p></div>
+    <div class="card"><h3>🚀 Performance</h3><p>JSX gets compiled to optimized JavaScript</p></div>
+  </div>
+
+  <!-- Section 3: JSX Basic Syntax -->
+  <div class="section-title">3️⃣ JSX Syntax Basics</div>
+  <div class="example-card">
+    <div class="code-block">
+      function MyComponent() {<br>
+        return (<br>
+          &lt;div className="container"&gt;<br>
+            &lt;h1&gt;Hello JSX!&lt;/h1&gt;<br>
+            &lt;p&gt;This is a paragraph&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="basicJsxResult">✨ Show Basic JSX Output</button>
+    <div id="basicJsxResult" class="result-area">
+      <div class="result-label">🎨 Rendered Output:</div>
+      <div class="jsx-demo">
+        <div style="background:white; padding:16px; border-radius:16px;">
+          <h3>Hello JSX!</h3>
+          <p>This is a paragraph</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: JSX Rules -->
+  <div class="section-title">4️⃣ Important JSX Rules</div>
+  <div class="example-card">
+    <table style="margin: 0;">
+      <thead><tr><th>Rule</th><th>Wrong ❌</th><th>Correct ✅</th></tr></thead>
+      <tbody>
+        <tr><td>Return single parent element</span></td><td>return &lt;h1&gt;Hi&lt;/h1&gt;&lt;p&gt;Bye&lt;/p&gt;</span></td><td>return &lt;&gt;&lt;h1&gt;Hi&lt;/h1&gt;&lt;p&gt;Bye&lt;/p&gt;&lt;/&gt;</span></td>
+        <tr><td>Use className not class</span></td><td>&lt;div class="box"&gt;</span></td><td>&lt;div className="box"&gt;</span></td>
+        <tr><td>Close all tags</span></td><td>&lt;img src="..."&gt;</span></td><td>&lt;img src="..." /&gt;</span></td>
+        <tr><td>JavaScript in curly braces</span></td><td>&lt;h1&gt;name&lt;/h1&gt;</span></td><td>&lt;h1&gt;{name}&lt;/h1&gt;</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 5: JavaScript Expressions -->
+  <div class="section-title">5️⃣ Embedding JavaScript Expressions ({ })</div>
+  <div class="example-card">
+    <div class="code-block">
+      function Greeting() {<br>
+        const userName = "Kalyan";<br>
+        const age = 25;<br>
+        const isLoggedIn = true;<br>
+        <br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;h1&gt;Hello, {userName}!&lt;/h1&gt;<br>
+            &lt;p&gt;Age: {age}&lt;/p&gt;<br>
+            &lt;p&gt;Status: {isLoggedIn ? "Logged In" : "Guest"}&lt;/p&gt;<br>
+            &lt;p&gt;Sum of 5 + 3 = {5 + 3}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="expressionsResult">📊 Show JSX Expressions</button>
+    <div id="expressionsResult" class="result-area">
+      <div class="result-label">📦 Live Example with Expressions:</div>
+      <div class="jsx-demo">
+        <div style="background:white; padding:12px; border-radius:12px;">
+          <h3>Hello, Kalyan!</h3>
+          <p>Age: 25</p>
+          <p>Status: Logged In ✅</p>
+          <p>Sum of 5 + 3 = 8</p>
+        </div>
+      </div>
+      <div class="console-output">✅ Anything inside { } is evaluated as JavaScript — variables, operators, ternary, function calls!</div>
+    </div>
+  </div>
+
+  <!-- Section 6: Fragments -->
+  <div class="section-title">6️⃣ Fragments (<> </>) — Returning Multiple Elements</div>
+  <div class="example-card">
+    <div class="code-block">
+      // ❌ Wrong: multiple adjacent elements without wrapper<br>
+      return (<br>
+        &lt;h1&gt;Title&lt;/h1&gt;<br>
+        &lt;p&gt;Paragraph&lt;/p&gt;<br>
+      );  // Error!<br><br>
+      // ✅ Correct using Fragment (short syntax)<br>
+      return (<br>
+        &lt;&gt;<br>
+          &lt;h1&gt;Title&lt;/h1&gt;<br>
+          &lt;p&gt;Paragraph&lt;/p&gt;<br>
+        &lt;/&gt;<br>
+      );
+    </div>
+    <button class="btn-show" data-target="fragmentsResult">📦 Show Fragments Explanation</button>
+    <div id="fragmentsResult" class="result-area">
+      <div class="console-output">
+        ✅ <strong>Fragments solve the "multiple elements" problem without adding extra DOM nodes!</strong><br>
+        • Short syntax: <span class="inline-code">&lt;&gt;...&lt;/&gt;</span><br>
+        • Long syntax: <span class="inline-code">&lt;React.Fragment&gt;...&lt;/React.Fragment&gt;</span><br>
+        • Use when you need to return multiple elements from a component
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Conditional Rendering -->
+  <div class="section-title">7️⃣ Conditional Rendering in JSX</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Using ternary operator<br>
+      {isLoggedIn ? (&lt;h1&gt;Welcome back!&lt;/h1&gt;) : (&lt;h1&gt;Please login&lt;/h1&gt;)}<br><br>
+      // Using && operator (render if true)<br>
+      {hasMessage && &lt;p&gt;You have a new message!&lt;/p&gt;}
+    </div>
+    <button class="btn-show" data-target="conditionalResult">🎯 Show Conditional Rendering Demo</button>
+    <div id="conditionalResult" class="result-area">
+      <div class="result-label">🎯 Conditional Rendering Examples:</div>
+      <div class="jsx-demo">
+        <div style="background:white; padding:12px; border-radius:12px;">
+          <p><strong>✅ Logged In User:</strong> Welcome back, Kalyan!</p>
+          <p><strong>🎉 Notification:</strong> You have a new message!</p>
+          <p><strong>❌ Guest User:</strong> Please login to continue</p>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Ternary: condition ? trueValue : falseValue<br>
+        ✅ &&: condition && element — renders element only if condition is true
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Styling in JSX -->
+  <div class="section-title">8️⃣ Styling in JSX</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Inline style (double curly braces — one for JS, one for object)<br>
+      &lt;div style={{color: 'red', fontSize: '20px'}}&gt;Text&lt;/div&gt;<br><br>
+      // CSS Classes (use className, not class)<br>
+      &lt;h1 className="title"&gt;Heading&lt;/h1&gt;<br><br>
+      // Import CSS file<br>
+      import './App.css'
+    </div>
+    <button class="btn-show" data-target="stylingResult">🎨 Show Styling Examples</button>
+    <div id="stylingResult" class="result-area">
+      <div class="result-label">🎨 Styling Results:</div>
+      <div class="jsx-demo">
+        <div style="background:white; padding:12px; border-radius:12px;">
+          <div style="color: #dc2626; font-size: 20px;">Red text with inline style (20px)</div>
+          <div class="card" style="background:#f1f5f9; padding:8px; border-radius:12px; margin-top:8px;">This uses className approach with CSS</div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Inline: style={{property: 'value'}} (camelCase)<br>
+        ✅ Classes: className="myClass"<br>
+        💡 External CSS is cleaner for complex styling!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: JSX vs HTML Differences -->
+  <div class="section-title">9️⃣ JSX vs HTML — Important Differences</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>HTML</th><th>JSX</th></tr></thead>
+      <tbody>
+        <tr><td>class="box"</span></td><td>className="box"</span></td>
+        <tr><td>for="name"</span></td><td>htmlFor="name"</span></td>
+        <tr><td>onclick="myFunction()"</span></td><td>onClick={myFunction}</span></td>
+        <tr><td>&lt;br&gt;</span></td><td>&lt;br /&gt;</span></td>
+        <tr><td>style="color: red"</span></td><td>style={{color: 'red'}}</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 10: Complete JSX Component -->
+  <div class="section-title">📁 Complete JSX Component Example</div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserCard() {<br>
+        const user = {<br>
+          name: "Kalyan",<br>
+          role: "Full Stack Developer",<br>
+          isActive: true<br>
+        };<br><br>
+        return (<br>
+          &lt;div className="card" style={{border: '1px solid #ccc', padding: '1rem', borderRadius: '12px'}}&gt;<br>
+            &lt;h2&gt;{user.name}&lt;/h2&gt;<br>
+            &lt;p&gt;Role: {user.role}&lt;/p&gt;<br>
+            &lt;p&gt;Status: {user.isActive ? "🟢 Active" : "🔴 Inactive"}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="completeComponentResult">📦 Show Complete Component</button>
+    <div id="completeComponentResult" class="result-area">
+      <div class="result-label">🎴 Rendered User Card:</div>
+      <div class="jsx-demo">
+        <div style="background:white; padding:16px; border-radius:12px; border:1px solid #ccc;">
+          <h3>Kalyan</h3>
+          <p>Role: Full Stack Developer</p>
+          <p>Status: 🟢 Active</p>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ This component uses:<br>
+        • Variables in JSX {user.name}<br>
+        • Ternary operator for conditional status<br>
+        • Inline styles for the card
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesJsxResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesJsxResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using <span class="inline-code">class</span> instead of <span class="inline-code">className</span> — class is a JavaScript keyword.</li>
+        <li>❌ Forgetting to close tags — <span class="inline-code">&lt;img /&gt;</span> and <span class="inline-code">&lt;input /&gt;</span> must be self-closing.</li>
+        <li>❌ Returning multiple elements without a fragment or wrapper div — use <span class="inline-code">&lt;&gt; &lt;/&gt;</span>.</li>
+        <li>❌ Writing comments inside JSX without braces — use <span class="inline-code">{/* comment */}</span>.</li>
+        <li>❌ Using <span class="inline-code">for</span> instead of <span class="inline-code">htmlFor</span> in labels.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a React component called <span class="inline-code">ProductCard</span><br>
+    2. Use JSX to display: product name, price, description, and an "Add to Cart" button<br>
+    3. Use inline style to make the card look nice (border, padding, border-radius, shadow)<br>
+    4. Use a ternary operator to show "In Stock" or "Out of Stock" based on a variable<br>
+    5. Render the component inside App.jsx and test it
+  </div>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is JSX?</h3><p>JavaScript XML — syntax extension that allows writing HTML-like code in JavaScript.</p></div>
+    <div class="card"><h3>❓ Why use className instead of class?</h3><p>"class" is a reserved keyword in JavaScript.</p></div>
+    <div class="card"><h3>❓ Can you use if/else directly in JSX?</h3><p>No — use ternary operators or && operator, or extract logic outside return.</p></div>
+    <div class="card"><h3>❓ What are React Fragments?</h3><p>Allow returning multiple elements without adding extra DOM nodes (&lt;&gt; &lt;/&gt;).</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Task 1</h3><p>Create a component that displays your name, age, and city using JSX expressions.</p></div>
+    <div class="card"><h3>⏰ Task 2</h3><p>Create a conditional message: "Good Morning" if hour is before 12, otherwise "Good Afternoon".</p></div>
+    <div class="card"><h3>📋 Task 3</h3><p>Create a todo item component showing task name and a delete button using JSX.</p></div>
+    <div class="card"><h3>🎨 Task 4</h3><p>Style a component using both inline styles and className (external CSS).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 26 - JSX)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is JSX (JavaScript XML) — HTML-like syntax in JS</div>
+    <div class="card">✔️ JSX rules: single parent, className, close all tags, { } expressions</div>
+    <div class="card">✔️ Fragments (&lt;&gt; &lt;/&gt;) for returning multiple elements</div>
+    <div class="card">✔️ Conditional rendering (ternary operator, && operator)</div>
+    <div class="card">✔️ JSX vs HTML differences (className vs class, htmlFor vs for, etc.)</div>
+    <div class="card">✔️ Styling in JSX: inline styles (camelCase) and className</div>
+  </div>
+
+  <!-- Day 26 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 26 Ending Message</strong><br>
+    "JSX makes React beautiful and intuitive. Now you can write HTML-like code inside JavaScript — this is the foundation of every React component! Practice writing JSX until it becomes second nature."
+  </div>
+
+  <!-- Next: Day 27 -->
+  <div class="section-title">🔜 Next — Day 27 : React Components (Functional Components, Reusable UI Blocks)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Components</span>
+    <span class="badge">🔄 Reusability</span>
+    <span class="badge">📁 Component folder structure</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 26 Completed ✅<br>
+    Click "Show Result" on each example to see JSX in action. Practice writing JSX — create small components and experiment with expressions!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

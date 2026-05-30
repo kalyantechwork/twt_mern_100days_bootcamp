@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 25: React Project Setup (Vite) & Folder Structure + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .folder-structure {
+      background: #1e293b;
+      color: #facc15;
+      padding: 1.2rem;
+      border-radius: 20px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚛️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 25 · React Setup (Vite) & Folder Structure (Show Results)</div>
+  </div>
+
+  <h1>⚛️ React Project Setup (Vite) & Folder Structure<br><span style="font-size:1rem;">Create React App · Vite · npm run dev · Understanding Every File — Click "Show Result" for command demos</span></h1>
+
+  <!-- Section 1: Why Vite -->
+  <div class="section-title">1️⃣ Why Vite? (Fast Modern Build Tool)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Vite</strong> is a next-generation frontend build tool created by Evan You (creator of Vue). It's faster than Create React App (CRA) and is now the official recommended way to start React projects. Vite provides instant server start, hot module replacement (HMR), and optimized production builds.</p>
+    <p><strong>Why Vite over CRA:</strong> Vite is 10-100x faster in development, has fewer dependencies, and supports modern ES modules natively.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>⚡ Faster than CRA</h3><p>Instant server start, hot module replacement (HMR)</p></div>
+    <div class="card"><h3>📦 Lightweight</h3><p>Fewer dependencies, smaller node_modules folder</p></div>
+    <div class="card"><h3>🔄 Modern</h3><p>Uses native ES modules, supports TypeScript out of box</p></div>
+    <div class="card"><h3>📚 Industry Standard</h3><p>Adopted by many companies and React tutorials</p></div>
+  </div>
+
+  <!-- Section 2: Prerequisites -->
+  <div class="section-title">2️⃣ Prerequisites (Already Installed)</div>
+  <div class="highlight-box">
+    ✅ <strong>Make sure you have:</strong><br>
+    • Node.js (v18 or higher) — check with <span class="inline-code">node -v</span><br>
+    • npm (v9 or higher) — check with <span class="inline-code">npm -v</span><br>
+    • VS Code (or any code editor)<br>
+    • Git (optional, for version control)
+  </div>
+
+  <!-- Section 3: Create Project -->
+  <div class="section-title">3️⃣ Step-by-Step: Create React Project with Vite</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Step 1: Open terminal in your projects folder<br>
+      cd Desktop<br><br>
+      # Step 2: Create new Vite project<br>
+      npm create vite@latest my-first-react-app<br><br>
+      # Step 3: Choose framework → React<br>
+      # Step 4: Choose variant → JavaScript<br><br>
+      # Step 5: Navigate into project<br>
+      cd my-first-react-app<br><br>
+      # Step 6: Install dependencies<br>
+      npm install<br><br>
+      # Step 7: Start development server<br>
+      npm run dev
+    </div>
+    <button class="btn-show" data-target="viteCommandsResult">🚀 Show Vite Creation Commands</button>
+    <div id="viteCommandsResult" class="result-area">
+      <div class="console-output">
+        $ npm create vite@latest my-first-react-app<br>
+        ✔ Select a framework: › React<br>
+        ✔ Select a variant: › JavaScript<br><br>
+        Scaffolding project in my-first-react-app...<br>
+        Done.<br><br>
+        $ cd my-first-react-app<br>
+        $ npm install<br>
+        added 250 packages in 5s<br><br>
+        $ npm run dev<br>
+        VITE v5.0.0 ready in 200ms<br>
+        ➜ Local: http://localhost:5173/<br><br>
+        ✅ Your React app is now running at http://localhost:5173!
+      </div>
+    </div>
+  </div>
+  <div class="diagram">
+    Terminal → npm create vite@latest → Select React → npm install → npm run dev → http://localhost:5173
+  </div>
+
+  <!-- Section 4: First Look -->
+  <div class="section-title">4️⃣ First Look — React App Running</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="firstLookResult">👁️ Show First Look Preview</button>
+    <div id="firstLookResult" class="result-area">
+      <div class="result-label">🌐 What you see at http://localhost:5173:</div>
+      <div style="background: #0f172a; color: white; padding: 20px; border-radius: 20px; text-align: center;">
+        <div style="font-size: 3rem;">⚛️</div>
+        <h2>Vite + React</h2>
+        <p>Click on the Vite and React logos to learn more</p>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 12px;">
+          <span style="background:#646cff; padding:4px 12px; border-radius:40px;">Vite ⚡</span>
+          <span style="background:#61dafb; color:#0f172a; padding:4px 12px; border-radius:40px;">React ⚛️</span>
+        </div>
+      </div>
+      <div class="console-output">📍 Open http://localhost:5173 — You'll see this default Vite + React starter page!</div>
+    </div>
+  </div>
+
+  <!-- Section 5: Folder Structure -->
+  <div class="section-title">5️⃣ Understanding the Folder Structure</div>
+  <div class="example-card">
+    <div class="folder-structure">
+      my-first-react-app/<br>
+      ├── node_modules/          (all dependencies — don't touch, added to .gitignore)<br>
+      ├── public/                (static assets like favicon, images)<br>
+      ├── src/                   (⭐ your main code goes here)<br>
+      │   ├── assets/            (images, fonts, etc.)<br>
+      │   ├── App.jsx            (main App component — heart of your app)<br>
+      │   ├── App.css            (styles for App component)<br>
+      │   ├── index.css          (global styles)<br>
+      │   └── main.jsx           (entry point — renders App to DOM)<br>
+      ├── .gitignore             (files Git should ignore)<br>
+      ├── index.html             (main HTML file)<br>
+      ├── package.json           (project metadata & dependencies)<br>
+      ├── package-lock.json      (exact dependency versions)<br>
+      └── vite.config.js         (Vite configuration)
+    </div>
+    <button class="btn-show" data-target="folderExplainResult">📁 Explain Each File</button>
+    <div id="folderExplainResult" class="result-area">
+      <div class="console-output">
+        📌 <strong>Key Files Explained:</strong><br>
+        • <strong>index.html</strong> — Single HTML file with &lt;div id="root"&gt; where React mounts<br>
+        • <strong>main.jsx</strong> — Entry point that renders App component into the root div<br>
+        • <strong>App.jsx</strong> — Main component, starting point of your UI<br>
+        • <strong>App.css</strong> — Component-specific styles for App<br>
+        • <strong>vite.config.js</strong> — Vite configuration (plugins, aliases, etc.)<br>
+        • <strong>package.json</strong> — Lists all dependencies and scripts
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: main.jsx Explained -->
+  <div class="section-title">6️⃣ main.jsx — The Entry Point</div>
+  <div class="example-card">
+    <div class="code-block">
+      import React from 'react'<br>
+      import ReactDOM from 'react-dom/client'<br>
+      import App from './App.jsx'<br>
+      import './index.css'<br><br>
+      ReactDOM.createRoot(document.getElementById('root')).render(<br>
+        &lt;React.StrictMode&gt;<br>
+          &lt;App /&gt;<br>
+        &lt;/React.StrictMode&gt;,<br>
+      )
+    </div>
+    <button class="btn-show" data-target="mainJsxResult">📄 Show main.jsx Explanation</button>
+    <div id="mainJsxResult" class="result-area">
+      <div class="console-output">
+        💡 <strong>main.jsx Breakdown:</strong><br>
+        • <span class="inline-code">ReactDOM.createRoot()</span> — creates React root<br>
+        • <span class="inline-code">document.getElementById('root')</span> — finds the div in index.html<br>
+        • <span class="inline-code">&lt;App /&gt;</span> — renders the App component<br>
+        • <span class="inline-code">React.StrictMode</span> — helps catch potential problems in development<br>
+        ✅ This file is the bridge between React and the actual HTML DOM.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: App.jsx Explained -->
+  <div class="section-title">7️⃣ App.jsx — Your First Component</div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useState } from 'react'<br>
+      import './App.css'<br><br>
+      function App() {<br>
+        const [count, setCount] = useState(0)<br><br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;h1&gt;Hello React!&lt;/h1&gt;<br>
+            &lt;button onClick={() => setCount(count + 1)}&gt;<br>
+              Count is {count}<br>
+            &lt;/button&gt;<br>
+          &lt;/div&gt;<br>
+        )<br>
+      }<br><br>
+      export default App
+    </div>
+    <button class="btn-show" data-target="appJsxResult">⚛️ Show App.jsx Explanation</button>
+    <div id="appJsxResult" class="result-area">
+      <div class="console-output">
+        💡 <strong>App.jsx Breakdown:</strong><br>
+        • <span class="inline-code">function App()</span> — this is a React functional component<br>
+        • <span class="inline-code">useState(0)</span> — Hook that manages state (we'll learn this soon)<br>
+        • The return statement contains JSX — HTML-like syntax in JavaScript<br>
+        • <span class="inline-code">export default App</span> — makes the component available to other files<br>
+        ✅ This component is what users see when they visit your app!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: npm Commands -->
+  <div class="section-title">8️⃣ Important npm Commands</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>npm run dev</span></td><td>Start development server (http://localhost:5173) with hot reload</span></td>
+        <tr><td>npm run build</span></td><td>Create production build (optimized files in /dist folder)</span></td>
+        <tr><td>npm run preview</span></td><td>Preview production build locally</span></td>
+        <tr><td>npm install [package]</span></td><td>Add new dependency to project</span></td>
+      </tbody>
+    </table>
+    <button class="btn-show" data-target="npmCommandsResult">📦 Show npm Command Details</button>
+    <div id="npmCommandsResult" class="result-area">
+      <div class="console-output">
+        ✅ <strong>npm run dev</strong> → Starts dev server with hot reload — your changes appear instantly!<br>
+        ✅ <strong>npm run build</strong> → Creates optimized production files in 'dist' folder — ready for deployment<br>
+        ✅ <strong>npm run preview</strong> → Tests the production build locally before deploying<br>
+        ✅ <strong>npm install axios</strong> → Example: adds axios package to project
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: Clean Up -->
+  <div class="section-title">9️⃣ Clean Up — Prepare for Your Own Code</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Simplified App.jsx (remove boilerplate)<br>
+      function App() {<br>
+        return (<br>
+          &lt;div&gt;<br>
+            &lt;h1&gt;My React App&lt;/h1&gt;<br>
+            &lt;p&gt;Welcome to React!&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        )<br>
+      }<br>
+      export default App
+    </div>
+    <button class="btn-show" data-target="cleanUpResult">🧹 Show Clean Up Steps</button>
+    <div id="cleanUpResult" class="result-area">
+      <div class="console-output">
+        🧹 <strong>Clean up steps for a fresh start:</strong><br>
+        1. Delete unused files: App.css, logo.svg, etc.<br>
+        2. Remove unused imports from App.jsx<br>
+        3. Keep index.css or replace with your own styles<br>
+        4. Start building your custom components!<br><br>
+        ✅ Your App.jsx should now be simple and ready for your own code.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 10: Common Issues -->
+  <div class="section-title">⚠️ Common Setup Issues & Solutions</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="issuesResult">🔧 Show Common Issues & Fixes</button>
+    <div id="issuesResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ <strong>"npm is not recognized"</strong> → Install Node.js from nodejs.org and restart terminal.</li>
+        <li>❌ <strong>Port 5173 already in use</strong> → Vite will automatically use next available port (5174).</li>
+        <li>❌ <strong>Blank white page</strong> → Open DevTools (F12) and check Console for errors. Ensure App is exported correctly.</li>
+        <li>❌ <strong>Slow installation</strong> → Try <span class="inline-code">npm install --legacy-peer-deps</span> or use <span class="inline-code">npm cache clean --force</span>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: VS Code Extensions -->
+  <div class="section-title">🔌 Recommended VS Code Extensions for React</div>
+  <div class="card-grid">
+    <div class="card"><h3>ES7+ React Snippets</h3><p>Shortcuts: <span class="inline-code">rafce</span> → creates functional component</p></div>
+    <div class="card"><h3>Prettier</h3><p>Auto-format code on save</p></div>
+    <div class="card"><h3>Tailwind CSS IntelliSense</h3><p>If using Tailwind for styling</p></div>
+  </div>
+
+  <!-- Section 12: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a new React project using Vite called "my-portfolio"<br>
+    2. Clean up the default code (remove unnecessary files)<br>
+    3. Modify App.jsx to display "Welcome to Telugu WebTech React Course"<br>
+    4. Add a simple button that shows an alert when clicked<br>
+    5. Run <span class="inline-code">npm run dev</span> and see your changes live
+  </div>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Vite?</h3><p>A fast build tool for modern web projects — recommended for React instead of Create React App.</p></div>
+    <div class="card"><h3>❓ What is the entry point in a React app?</h3><p>main.jsx (or index.js) — it renders the root App component into the DOM.</p></div>
+    <div class="card"><h3>❓ What does "npm run dev" do?</h3><p>Starts the development server with hot reload.</p></div>
+    <div class="card"><h3>❓ What is the purpose of index.html in React?</h3><p>Provides the root div where the React app mounts.</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>📁 Task 1</h3><p>Create a React project named "my-portfolio" using Vite.</p></div>
+    <div class="card"><h3>🔍 Task 2</h3><p>Explore the folder structure and identify each file's purpose.</p></div>
+    <div class="card"><h3>✏️ Task 3</h3><p>Modify the App component to show your name and a short bio.</p></div>
+    <div class="card"><h3>🔘 Task 4</h3><p>Add a button that console.logs "Hello from React" when clicked.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 25 - React Setup)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why Vite is better than Create React App</div>
+    <div class="card">✔️ Step-by-step React project creation with Vite</div>
+    <div class="card">✔️ Understanding folder structure (src/, public/, node_modules)</div>
+    <div class="card">✔️ main.jsx (entry point) and App.jsx (main component)</div>
+    <div class="card">✔️ npm run dev, build, preview commands</div>
+    <div class="card">✔️ Clean up starter code for your own projects</div>
+  </div>
+
+  <!-- Day 25 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 25 Ending Message</strong><br>
+    "Your first React project is running! This is a huge milestone. You now have a professional React development environment set up. Tomorrow we dive into JSX — the syntax that makes React special and powerful."
+  </div>
+
+  <!-- Next: Day 26 -->
+  <div class="section-title">🔜 Next — Day 26 : JSX (JavaScript XML) — Writing HTML in JavaScript</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">✨ JSX syntax</span>
+    <span class="badge">{} Expressions</span>
+    <span class="badge">📦 Fragments & Conditions</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 25 Completed ✅<br>
+    Click "Show Result" on each example to see commands and explanations. Your React environment is ready — practice creating new projects!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

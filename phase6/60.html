@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 60: Build a Simple Server – Project Day | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .project-checklist {
+      background: #f0fdf4;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+    }
+    .checklist-item {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 60 · PROJECT DAY 🎯</div>
+    <h1>
+      <i class="fas fa-server"></i> 
+      Build a Simple Server – Complete Project
+    </h1>
+    <p>Put together everything you learned! Create a fully functional web server with routing, file serving, JSON API, logging, and environment variables.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Build Your First Complete Backend Project
+    </div>
+  </div>
+
+  <!-- Project Overview -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bullseye"></i>
+      <span>Project Overview – What We're Building</span>
+    </div>
+    <p>Today we're building a <strong>Complete Personal Web Server</strong> that combines everything from Days 51-59:</p>
+    <div class="diagram">
+      <i class="fas fa-microchip"></i> <strong>Technologies Used:</strong><br>
+      • Node.js HTTP Module (Day 56)<br>
+      • File System (fs) Module (Day 54)<br>
+      • Path Module (Day 55)<br>
+      • Events Module (Day 57)<br>
+      • Nodemon (Day 58)<br>
+      • Environment Variables / dotenv (Day 59)<br>
+      • Modules & Exports (Day 53)
+    </div>
+    <div class="project-checklist">
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Serve HTML pages</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ REST API endpoints (JSON)</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Request logging with Events</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Environment variables for config</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Auto-restart with Nodemon</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ Modular code structure</div>
+      <div class="checklist-item"><i class="fas fa-check-circle" style="color: #2e7d32;"></i> ✅ 404 error handling</div>
+    </div>
+  </div>
+
+  <!-- Project Structure -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-folder-tree"></i>
+      <span>Project Structure – Organize Your Code</span>
+    </div>
+    <div class="code-block" id="projectStructure">
+my-personal-server/
+├── .env                    # Environment variables (NOT committed)
+├── .env.example            # Example env file for GitHub
+├── .gitignore              # Git ignore file
+├── package.json            # Dependencies and scripts
+├── nodemon.json            # Nodemon configuration
+├── server.js               # Main server file
+├── modules/                # Custom modules
+│   ├── logger.js           # Event-based logger
+│   ├── routes.js           # Route handlers
+│   └── utils.js            # Utility functions
+├── public/                 # Static files
+│   ├── index.html
+│   ├── about.html
+│   ├── contact.html
+│   └── style.css
+└── logs/                   # Log files (created automatically)
+    └── requests.log
+    </div>
+    <button class="copy-btn" onclick="copyCode('projectStructure')"><i class="far fa-copy"></i> Copy Structure</button>
+  </div>
+
+  <!-- Step 1: Setup and Dependencies -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-download"></i>
+      <span>Step 1: Initialize Project & Install Dependencies</span>
+    </div>
+    <div class="code-block" id="step1">
+# Create project folder
+mkdir my-personal-server
+cd my-personal-server
+
+# Initialize npm project
+npm init -y
+
+# Install nodemon as dev dependency
+npm install --save-dev nodemon
+
+# Install dotenv for environment variables
+npm install dotenv
+
+# Create necessary files
+touch server.js .env .env.example .gitignore nodemon.json
+mkdir modules public logs
+    </div>
+    <button class="copy-btn" onclick="copyCode('step1')"><i class="far fa-copy"></i> Copy Commands</button>
+  </div>
+
+  <!-- Step 2: Environment Variables -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-key"></i>
+      <span>Step 2: Configure Environment Variables</span>
+    </div>
+    <div class="code-block" id="step2env">
+# .env file (your actual secrets - NEVER commit)
+PORT=3000
+APP_NAME="Telugu WebTech Server"
+NODE_ENV=development
+LOG_LEVEL=info
+ADMIN_EMAIL=admin@teluguwebtech.com
+
+# .env.example (share this on GitHub)
+PORT=3000
+APP_NAME="My App"
+NODE_ENV=development
+LOG_LEVEL=info
+ADMIN_EMAIL=your@email.com
+    </div>
+    <button class="copy-btn" onclick="copyCode('step2env')"><i class="far fa-copy"></i> Copy .env files</button>
+
+    <div class="code-block" id="step2git">
+# .gitignore
+.env
+node_modules/
+logs/
+.DS_Store
+    </div>
+    <button class="copy-btn" onclick="copyCode('step2git')"><i class="far fa-copy"></i> Copy .gitignore</button>
+  </div>
+
+  <!-- Step 3: Create Custom Modules -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-puzzle-piece"></i>
+      <span>Step 3: Create Custom Modules (logger, utils, routes)</span>
+    </div>
+    
+    <div class="subheading">📝 modules/logger.js – Event-based Logger</div>
+    <div class="code-block" id="loggerModule">
+// modules/logger.js
+const EventEmitter = require('events');
+const fs = require('fs').promises;
+const path = require('path');
+
+class Logger extends EventEmitter {
+  constructor() {
+    super();
+    this.logFilePath = path.join(__dirname, '..', 'logs', 'requests.log');
+    this.setupLogFile();
+  }
+
+  async setupLogFile() {
+    const logDir = path.join(__dirname, '..', 'logs');
+    try {
+      await fs.mkdir(logDir, { recursive: true });
+    } catch (err) {
+      console.error('Error creating logs folder:', err.message);
+    }
+  }
+
+  async log(message, type = 'INFO') {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] [${type}] ${message}\n`;
+    
+    console.log(logEntry.trim());
+    
+    try {
+      await fs.appendFile(this.logFilePath, logEntry);
+    } catch (err) {
+      console.error('Failed to write log:', err.message);
+    }
+    
+    this.emit('logged', { message, type, timestamp });
+  }
+}
+
+module.exports = new Logger();
+    </div>
+    <button class="copy-btn" onclick="copyCode('loggerModule')"><i class="far fa-copy"></i> Copy Logger Module</button>
+
+    <div class="subheading">📝 modules/utils.js – Helper Functions</div>
+    <div class="code-block" id="utilsModule">
+// modules/utils.js
+const fs = require('fs').promises;
+const path = require('path');
+
+async function serveStaticFile(filePath, contentType) {
+  try {
+    const fullPath = path.join(__dirname, '..', 'public', filePath);
+    const data = await fs.readFile(fullPath);
+    return { success: true, data, contentType };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function getContentType(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  const types = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.txt': 'text/plain'
+  };
+  return types[ext] || 'text/plain';
+}
+
+module.exports = { serveStaticFile, getContentType };
+    </div>
+    <button class="copy-btn" onclick="copyCode('utilsModule')"><i class="far fa-copy"></i> Copy Utils Module</button>
+  </div>
+
+  <!-- Step 4: Create HTML Pages -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-file-code"></i>
+      <span>Step 4: Create Static HTML Pages</span>
+    </div>
+    <div class="code-block" id="htmlPages">
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+<head><title>Home | Telugu WebTech Server</title><link rel="stylesheet" href="/style.css"></head>
+<body><div class="container"><h1>🚀 Welcome to My Node.js Server</h1><p>Built from scratch using only Node.js modules!</p><nav><a href="/">Home</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/api/users">API Users</a></nav><p>Current time: <span id="time"></span></p></div><script>document.getElementById('time').innerText = new Date().toLocaleString();</script></body></html>
+
+<!-- public/about.html -->
+<!DOCTYPE html><html><head><title>About</title><link rel="stylesheet" href="/style.css"></head><body><div class="container"><h1>📖 About This Project</h1><p>Day 60 project - HTTP server, routing, file serving, JSON API, logging, env variables!</p><a href="/">← Back Home</a></div></body></html>
+
+/* public/style.css */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+.container { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; max-width: 600px; }
+h1 { color: #333; margin-bottom: 1rem; }
+nav a { margin: 0 10px; color: #667eea; text-decoration: none; }
+    </div>
+    <button class="copy-btn" onclick="copyCode('htmlPages')"><i class="far fa-copy"></i> Copy HTML/CSS</button>
+  </div>
+
+  <!-- Step 5: Main Server File -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>Step 5: Main Server File (server.js)</span>
+    </div>
+    <div class="code-block" id="mainServer">
+require('dotenv').config();
+const http = require('http');
+const url = require('url');
+const fs = require('fs').promises;
+const path = require('path');
+const logger = require('./modules/logger');
+const { serveStaticFile } = require('./modules/utils');
+
+const PORT = process.env.PORT || 3000;
+const APP_NAME = process.env.APP_NAME || 'My Node Server';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+
+let users = [
+  { id: 1, name: 'Ramesh', email: 'ramesh@example.com', role: 'student' },
+  { id: 2, name: 'Priya', email: 'priya@example.com', role: 'developer' }
+];
+let requestCount = 0;
+
+logger.log(`${APP_NAME} starting...`, 'INFO');
+
+const server = http.createServer(async (req, res) => {
+  requestCount++;
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
+  const method = req.method;
+  logger.log(`${method} ${pathname} - Request #${requestCount}`, 'REQUEST');
+
+  // Serve static HTML
+  if (pathname === '/') {
+    const result = await serveStaticFile('index.html', 'text/html');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(result.success ? result.data : '<h1>404</h1>');
+  }
+  else if (pathname === '/about') {
+    const result = await serveStaticFile('about.html', 'text/html');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(result.success ? result.data : '<h1>About page coming soon</h1>');
+  }
+  else if (pathname === '/style.css') {
+    const result = await serveStaticFile('style.css', 'text/css');
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+    res.end(result.data);
+  }
+  // API Routes
+  else if (pathname === '/api/users' && method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, count: users.length, users }));
+    logger.log(`Returned ${users.length} users`, 'API');
+  }
+  else if (pathname === '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'OK', uptime: process.uptime(), requestCount }));
+  }
+  else if (pathname === '/api/config') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ appName: APP_NAME, adminEmail: ADMIN_EMAIL, environment: process.env.NODE_ENV }));
+  }
+  else {
+    res.writeHead(404, { 'Content-Type': 'text/html' });
+    res.end('<h1>❌ 404 - Page Not Found</h1><a href="/">Go Home</a>');
+    logger.log(`404: ${pathname} not found`, 'WARN');
+  }
+});
+
+server.listen(PORT, () => {
+  console.log('='.repeat(50));
+  console.log(`🎉 ${APP_NAME} is running!`);
+  console.log(`📍 http://localhost:${PORT}`);
+  console.log(`📧 Admin: ${ADMIN_EMAIL}`);
+  console.log('='.repeat(50));
+  logger.log(`Server started on port ${PORT}`, 'INFO');
+});
+
+process.on('SIGINT', () => { server.close(() => process.exit(0)); });
+    </div>
+    <button class="copy-btn" onclick="copyCode('mainServer')"><i class="far fa-copy"></i> Copy Main Server Code</button>
+  </div>
+
+  <!-- Step 6: Package.json Scripts -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-terminal"></i>
+      <span>Step 6: Configure package.json Scripts</span>
+    </div>
+    <div class="code-block" id="packageJsonFinal">
+{
+  "name": "my-personal-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "dev": "nodemon server.js" },
+  "devDependencies": { "nodemon": "^3.0.0" },
+  "dependencies": { "dotenv": "^16.0.0" }
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('packageJsonFinal')"><i class="far fa-copy"></i> Copy package.json</button>
+    <div class="code-block" id="nodemonConfigFinal">
+{ "watch": ["server.js", "modules/", "public/"], "ext": "js,json,html,css", "ignore": ["logs/*.log", "node_modules"], "delay": 500 }
+    </div>
+    <button class="copy-btn" onclick="copyCode('nodemonConfigFinal')"><i class="far fa-copy"></i> Copy nodemon.json</button>
+  </div>
+
+  <!-- Running the Project -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-play-circle"></i>
+      <span>How to Run Your Server</span>
+    </div>
+    <div class="code-block" id="runCommands">
+npm install
+npm run dev   # Auto-restart on changes
+# Test APIs: curl http://localhost:3000/api/users
+    </div>
+    <button class="copy-btn" onclick="copyCode('runCommands')"><i class="far fa-copy"></i> Copy Run Commands</button>
+  </div>
+
+  <!-- Testing Checklist -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-vial"></i>
+      <span>Test Your Server – Checklist</span>
+    </div>
+    <div class="project-checklist">
+      <div class="checklist-item">✅ http://localhost:3000/ – Home page</div>
+      <div class="checklist-item">✅ http://localhost:3000/about – About page</div>
+      <div class="checklist-item">✅ http://localhost:3000/api/users – JSON users</div>
+      <div class="checklist-item">✅ http://localhost:3000/api/health – Health check</div>
+      <div class="checklist-item">✅ http://localhost:3000/api/config – Config</div>
+      <div class="checklist-item">✅ http://localhost:3000/anything – 404 page</div>
+    </div>
+  </div>
+
+  <!-- What You Learned -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-trophy"></i>
+      <span>🎉 Congratulations! You've Built a Production-Ready Server</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box"><i class="fab fa-node-js"></i> Day 51-52: Node.js & npm</div>
+      <div class="info-box"><i class="fas fa-puzzle-piece"></i> Day 53: Modules</div>
+      <div class="info-box"><i class="fas fa-folder-open"></i> Day 54-55: fs & Path</div>
+      <div class="info-box"><i class="fas fa-server"></i> Day 56: HTTP Module</div>
+      <div class="info-box"><i class="fas fa-broadcast-tower"></i> Day 57: Events</div>
+      <div class="info-box"><i class="fas fa-sync-alt"></i> Day 58: Nodemon</div>
+      <div class="info-box"><i class="fas fa-key"></i> Day 59: dotenv</div>
+      <div class="info-box"><i class="fas fa-check-circle"></i> Day 60: Integration</div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-forward"></i>
+      <span>Next Steps – Phase 7: Express.js (Days 61-70)</span>
+    </div>
+    <div class="diagram">
+      • Learn Express framework (easier than raw HTTP!)<br>
+      • Middleware, routing, error handling<br>
+      • Build REST APIs faster<br>
+      <strong>Telugu WebTech:</strong> Share your project output!
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-node-js"></i> Day 60 · Complete Server Project · <strong>Telugu WebTech</strong> — You're now a Node.js backend developer! 🚀</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Build your server and run npm run dev');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

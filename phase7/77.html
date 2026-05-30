@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 77: Validation – Deep Dive into Data Validation | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 77 · Phase 8</div>
+    <h1>
+      <i class="fas fa-check-double"></i> 
+      Validation – Deep Dive into Data Validation
+    </h1>
+    <p>Master Mongoose validation! Learn built-in validators, custom validation, error handling, and best practices to ensure clean, reliable data in your database.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Complete Validation Guide
+    </div>
+  </div>
+
+  <!-- Why Validation Matters -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. Why Data Validation Matters</span>
+    </div>
+    <div class="diagram">
+      <i class="fas fa-shield-alt"></i> <strong>Without validation → Bad data → Broken app → Angry users!</strong><br>
+      • Invalid emails in database<br>
+      • Negative prices in products<br>
+      • Wrong data types causing crashes<br>
+      • Security vulnerabilities (injection attacks)<br>
+      • No consistency across documents
+    </div>
+    <div class="success-note">
+      <i class="fas fa-check-circle"></i> <strong>With proper validation:</strong><br>
+      • Data integrity guaranteed<br>
+      • Better user experience (clear error messages)<br>
+      • Security against malicious input<br>
+      • Consistent data across collections<br>
+      • Easier debugging
+    </div>
+  </div>
+
+  <!-- Built-in Validators -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-cog"></i>
+      <span>2. Built-in Validators (Schema Type Validators)</span>
+    </div>
+    <div class="code-block" id="builtinValidators">
+const mongoose = require('mongoose');
+
+const productSchema = new mongoose.Schema({
+  // ========== STRING VALIDATORS ==========
+  name: {
+    type: String,
+    required: [true, 'Product name is required'],
+    trim: true,  // Removes whitespace from both ends
+    lowercase: true, // Converts to lowercase
+    uppercase: true, // Converts to uppercase
+    minlength: [3, 'Name must be at least 3 characters'],
+    maxlength: [100, 'Name cannot exceed 100 characters'],
+    match: [/^[a-zA-Z0-9\s]+$/, 'Name can only contain letters, numbers and spaces'],
+    enum: {
+      values: ['Laptop', 'Phone', 'Tablet', 'Accessory'],
+      message: '{VALUE} is not a valid product name'
+    }
+  },
+  
+  email: {
+    type: String,
+    required: true,
+    unique: true,  // Not a validator but ensures uniqueness
+    lowercase: true,
+    trim: true,
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
+  },
+  
+  // ========== NUMBER VALIDATORS ==========
+  price: {
+    type: Number,
+    required: [true, 'Price is required'],
+    min: [0, 'Price cannot be negative'],
+    max: [100000, 'Price cannot exceed ₹100,000']
+  },
+  
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  },
+  
+  quantity: {
+    type: Number,
+    min: 0,
+    validate: {
+      validator: Number.isInteger,
+      message: 'Quantity must be an integer'
+    }
+  },
+  
+  // ========== DATE VALIDATORS ==========
+  birthDate: {
+    type: Date,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value <= new Date();
+      },
+      message: 'Birth date cannot be in the future'
+    }
+  },
+  
+  expiryDate: {
+    type: Date,
+    validate: {
+      validator: function(value) {
+        return value > this.createdAt;
+      },
+      message: 'Expiry date must be after creation date'
+    }
+  },
+  
+  // ========== ARRAY VALIDATORS ==========
+  tags: {
+    type: [String],
+    validate: {
+      validator: function(v) {
+        return v && v.length > 0;
+      },
+      message: 'At least one tag is required'
+    }
+  },
+  
+  scores: {
+    type: [Number],
+    validate: {
+      validator: function(v) {
+        return v.every(score => score >= 0 && score <= 100);
+      },
+      message: 'All scores must be between 0 and 100'
+    }
+  },
+  
+  // ========== OBJECT VALIDATORS ==========
+  address: {
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    zipCode: {
+      type: String,
+      required: true,
+      match: [/^\d{6}$/, 'Zip code must be 6 digits']
+    }
+  },
+  
+  // ========== BOOLEAN VALIDATORS ==========
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  
+  // ========== ENUM VALIDATOR (for any type) ==========
+  status: {
+    type: String,
+    enum: {
+      values: ['pending', 'active', 'suspended', 'deleted'],
+      message: '{VALUE} is not a valid status'
+    },
+    default: 'pending'
+  },
+  
+  // ========== CUSTOM VALIDATOR with async ==========
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: async function(username) {
+        const existingUser = await this.constructor.findOne({ username });
+        return !existingUser || existingUser._id.equals(this._id);
+      },
+      message: 'Username already exists'
+    }
+  }
+}, { timestamps: true });
+    </div>
+    <button class="copy-btn" onclick="copyCode('builtinValidators')"><i class="far fa-copy"></i> Copy Built-in Validators</button>
+  </div>
+
+  <!-- Custom Validators -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>3. Custom Validators (Advanced)</span>
+    </div>
+    <div class="code-block" id="customValidators">
+const customSchema = new mongoose.Schema({
+  // ========== SIMPLE CUSTOM VALIDATOR ==========
+  discount: {
+    type: Number,
+    validate: {
+      validator: function(v) {
+        return v >= 0 && v <= 100;
+      },
+      message: props => `${props.value} is not a valid discount percentage (0-100)`
+    }
+  },
+  
+  // ========== CROSS-FIELD VALIDATION ==========
+  startDate: Date,
+  endDate: {
+    type: Date,
+    validate: {
+      validator: function(v) {
+        return v > this.startDate;
+      },
+      message: 'End date must be after start date'
+    }
+  },
+  
+  // ========== REGEX CUSTOM VALIDATOR ==========
+  phoneNumber: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return /^[0-9]{10}$/.test(v);
+      },
+      message: 'Phone number must be 10 digits'
+    }
+  },
+  
+  // ========== ARRAY CUSTOM VALIDATOR ==========
+  items: {
+    type: [{
+      name: String,
+      quantity: Number,
+      price: Number
+    }],
+    validate: {
+      validator: function(items) {
+        return items.length > 0;
+      },
+      message: 'At least one item is required'
+    }
+  },
+  
+  // ========== ASYNC CUSTOM VALIDATOR ==========
+  couponCode: {
+    type: String,
+    validate: {
+      validator: async function(code) {
+        const isValid = await checkCouponInExternalAPI(code);
+        return isValid;
+      },
+      message: 'Invalid or expired coupon code'
+    }
+  },
+  
+  // ========== CUSTOM VALIDATOR WITH OPTIONS ==========
+  password: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function(v) {
+        // At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return regex.test(v);
+      },
+      message: 'Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character'
+    }
+  },
+  
+  // ========== CONDITIONAL VALIDATION ==========
+  giftCardNumber: {
+    type: String,
+    required: function() {
+      return this.paymentMethod === 'gift_card';
+    },
+    validate: {
+      validator: function(v) {
+        return /^GIFT-[0-9]{8}$/.test(v);
+      },
+      message: 'Invalid gift card format'
+    }
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['credit_card', 'paypal', 'gift_card']
+  }
+});
+
+// Helper function for async validation example
+async function checkCouponInExternalAPI(code) {
+  // Simulate API call
+  const validCodes = ['SAVE10', 'WELCOME20', 'FLAT50'];
+  return validCodes.includes(code);
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('customValidators')"><i class="far fa-copy"></i> Copy Custom Validators</button>
+  </div>
+
+  <!-- Validation Error Handling -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>4. Handling Validation Errors</span>
+    </div>
+    <div class="code-block" id="errorHandling">
+// Try-catch for validation errors
+try {
+  const user = new User({
+    name: "Jo", // Too short (min 3 chars)
+    email: "invalid-email", // Invalid email format
+    age: -5 // Negative age
+  });
+  await user.save();
+} catch (error) {
+  if (error.name === 'ValidationError') {
+    // Get all validation errors
+    const errors = Object.values(error.errors).map(err => err.message);
+    console.log('Validation errors:', errors);
+    // Output: ["Name must be at least 3 characters", 
+    //          "Please enter a valid email", 
+    //          "Age cannot be negative"]
+  }
+}
+
+// Custom function to format validation errors
+const formatValidationError = (err) => {
+  if (err.name === 'ValidationError') {
+    const errors = {};
+    Object.keys(err.errors).forEach(key => {
+      errors[key] = err.errors[key].message;
+    });
+    return {
+      success: false,
+      message: 'Validation failed',
+      errors: errors
+    };
+  }
+  return {
+    success: false,
+    message: err.message
+  };
+};
+
+// Using in Express route
+app.post('/api/users', async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.status(201).json({ success: true, data: user });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json(formatValidationError(error));
+    }
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Alternative: Using .validate() method
+const user = new User(req.body);
+const validationError = user.validateSync();
+if (validationError) {
+  console.log('Sync validation error:', validationError);
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('errorHandling')"><i class="far fa-copy"></i> Copy Error Handling</button>
+  </div>
+
+  <!-- Validation Paths & Options -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-sliders-h"></i>
+      <span>5. Validation Options & Paths</span>
+    </div>
+    <div class="code-block" id="validationOptions">
+const schema = new mongoose.Schema({
+  name: String
+});
+
+// Different ways to run validation
+
+// 1. Save validation (runs on .save())
+await user.save(); // Full validation
+
+// 2. Create validation (runs on .create())
+await User.create({ name: "Test" }); // Full validation
+
+// 3. Update validation (by default doesn't run!)
+// Need to set runValidators: true
+await User.updateOne(
+  { name: "Old" },
+  { $set: { name: "New" } },
+  { runValidators: true }
+);
+
+// 4. FindByIdAndUpdate with validation
+await User.findByIdAndUpdate(
+  id,
+  { name: "Updated" },
+  { new: true, runValidators: true, context: 'query' }
+);
+
+// 5. Validate individual path
+const user = new User(req.body);
+const error = user.validateSync('email'); // Validate only email field
+
+// 6. Skip validation (not recommended!)
+await user.save({ validateBeforeSave: false });
+
+// 7. Required validator options
+const productSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'], // Custom error message
+    required: true, // Simple required
+    required: function() {  // Dynamic required
+      return this.category === 'premium';
+    }
+  }
+});
+
+// 8. Unique constraint handling (MongoDB error, not Mongoose)
+try {
+  await User.create({ email: "duplicate@example.com" });
+} catch (error) {
+  if (error.code === 11000) {
+    console.log('Duplicate key error:', error.keyValue);
+  }
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('validationOptions')"><i class="far fa-copy"></i> Copy Validation Options</button>
+  </div>
+
+  <!-- Complete User Registration Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-user-plus"></i>
+      <span>6. Complete Example – User Registration with Validation</span>
+    </div>
+    <div class="code-block" id="userRegistration">
+// models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, 'Username is required'],
+    unique: true,
+    trim: true,
+    minlength: [3, 'Username must be at least 3 characters'],
+    maxlength: [30, 'Username cannot exceed 30 characters'],
+    match: [/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores']
+  },
+  
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please enter a valid email address'
+    ]
+  },
+  
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters'],
+    select: false,
+    validate: {
+      validator: function(v) {
+        // At least: 1 uppercase, 1 lowercase, 1 number
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(v);
+      },
+      message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    }
+  },
+  
+  confirmPassword: {
+    type: String,
+    required: [true, 'Please confirm your password'],
+    validate: {
+      validator: function(v) {
+        return v === this.password;
+      },
+      message: 'Passwords do not match'
+    }
+  },
+  
+  age: {
+    type: Number,
+    min: [13, 'You must be at least 13 years old'],
+    max: [120, 'Invalid age']
+  },
+  
+  phoneNumber: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return /^[0-9]{10}$/.test(v);
+      },
+      message: 'Phone number must be 10 digits'
+    }
+  },
+  
+  role: {
+    type: String,
+    enum: {
+      values: ['user', 'admin', 'moderator'],
+      message: '{VALUE} is not a valid role'
+    },
+    default: 'user'
+  },
+  
+  termsAccepted: {
+    type: Boolean,
+    required: [true, 'You must accept the terms and conditions'],
+    validate: {
+      validator: function(v) {
+        return v === true;
+      },
+      message: 'You must accept the terms and conditions'
+    }
+  },
+  
+  referralCode: {
+    type: String,
+    validate: {
+      validator: async function(code) {
+        if (!code) return true;
+        const exists = await this.constructor.findOne({ referralCode: code });
+        return exists !== null;
+      },
+      message: 'Invalid referral code'
+    }
+  }
+}, { 
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  this.password = await bcrypt.hash(this.password, 12);
+  this.confirmPassword = undefined; // Remove confirmPassword field
+  next();
+});
+
+// Instance method to compare password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Virtual for age group
+userSchema.virtual('ageGroup').get(function() {
+  if (!this.age) return 'Not specified';
+  if (this.age < 18) return 'Minor';
+  if (this.age < 60) return 'Adult';
+  return 'Senior';
+});
+
+const User = mongoose.model('User', userSchema);
+
+// ========== Express Route ==========
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { username, email, password, confirmPassword, age, phoneNumber, termsAccepted } = req.body;
+    
+    const user = await User.create({
+      username,
+      email,
+      password,
+      confirmPassword,
+      age,
+      phoneNumber,
+      termsAccepted
+    });
+    
+    // Remove password from response
+    user.password = undefined;
+    
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: user
+    });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      const errors = {};
+      Object.keys(error.errors).forEach(key => {
+        errors[key] = error.errors[key].message;
+      });
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors
+      });
+    }
+    
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${field} already exists. Please use a different ${field}.`
+      });
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('userRegistration')"><i class="far fa-copy"></i> Copy User Registration Validation</button>
+  </div>
+
+  <!-- Third-Party Validation Libraries -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-box"></i>
+      <span>7. Using Third-Party Validation Libraries</span>
+    </div>
+    <div class="code-block" id="thirdParty">
+// ========== VALIDATOR.JS ==========
+// npm install validator
+const validator = require('validator');
+
+const schema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    validate: {
+      validator: validator.isEmail,
+      message: 'Please enter a valid email'
+    }
+  },
+  
+  url: {
+    type: String,
+    validate: {
+      validator: validator.isURL,
+      message: 'Please enter a valid URL'
+    }
+  },
+  
+  creditCard: {
+    type: String,
+    validate: {
+      validator: validator.isCreditCard,
+      message: 'Please enter a valid credit card number'
+    }
+  },
+  
+  ipAddress: {
+    type: String,
+    validate: {
+      validator: validator.isIP,
+      message: 'Please enter a valid IP address'
+    }
+  },
+  
+  isStrongPassword: {
+    type: String,
+    validate: {
+      validator: (v) => validator.isStrongPassword(v, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1
+      }),
+      message: 'Password is not strong enough'
+    }
+  }
+});
+
+// ========== JOI (for request validation) ==========
+// npm install joi
+const Joi = require('joi');
+
+const userValidationSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  email: Joi.string().email().required(),
+  age: Joi.number().min(0).max(120),
+  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required()
+});
+
+app.post('/api/users', (req, res, next) => {
+  const { error } = userValidationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.details[0].message
+    });
+  }
+  next();
+});
+
+// ========== EXPRESS-VALIDATOR (for request validation) ==========
+// npm install express-validator
+const { body, validationResult } = require('express-validator');
+
+app.post('/api/users',
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 8 }),
+  body('age').optional().isInt({ min: 0, max: 120 }),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    // Process request
+  }
+);
+    </div>
+    <button class="copy-btn" onclick="copyCode('thirdParty')"><i class="far fa-copy"></i> Copy Third-Party Validators</button>
+  </div>
+
+  <!-- Day 77 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Complete Product Validation</span>
+    </div>
+    <p><strong>Task:</strong> Create a complete Product model with comprehensive validation:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li><strong>name:</strong> required, min 3, max 100, unique, trim, alphanumeric with spaces</li>
+      <li><strong>description:</strong> required, min 20, max 1000</li>
+      <li><strong>price:</strong> required, min 0, custom validator for reasonable maximum (based on category)</li>
+      <li><strong>category:</strong> required, enum ['Electronics', 'Clothing', 'Books', 'Food']</li>
+      <li><strong>stock:</strong> required, min 0, must be integer</li>
+      <li><strong>sku:</strong> required, unique, custom format (e.g., "PROD-XXXXX")</li>
+      <li><strong>discount:</strong> optional, min 0, max 100, custom validator that discount can't exceed 50% for new products</li>
+      <li><strong>releaseDate:</strong> cannot be in future</li>
+      <li><strong>images:</strong> array, min 1, max 5, each URL must be valid</li>
+      <li><strong>tags:</strong> array of strings, min 1 tag</li>
+      <li><strong>ratings:</strong> average (0-5), count (min 0)</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge – Complete Product Validation Schema
+const mongoose = require('mongoose');
+const validator = require('validator');
+
+const productSchema = new mongoose.Schema({
+  // Implement all validations here
+  name: {
+    type: String,
+    required: [true, 'Product name is required'],
+    unique: true,
+    trim: true,
+    minlength: [3, 'Name must be at least 3 characters'],
+    maxlength: [100, 'Name cannot exceed 100 characters'],
+    validate: {
+      validator: function(v) {
+        return /^[a-zA-Z0-9\s]+$/.test(v);
+      },
+      message: 'Name can only contain letters, numbers and spaces'
+    }
+  },
+  
+  description: {
+    type: String,
+    required: true,
+    minlength: [20, 'Description must be at least 20 characters'],
+    maxlength: [1000, 'Description cannot exceed 1000 characters']
+  },
+  
+  price: {
+    type: Number,
+    required: true,
+    min: [0, 'Price cannot be negative'],
+    validate: {
+      validator: function(v) {
+        if (this.category === 'Electronics' && v > 100000) return false;
+        if (this.category === 'Clothing' && v > 50000) return false;
+        if (this.category === 'Books' && v > 10000) return false;
+        if (this.category === 'Food' && v > 5000) return false;
+        return true;
+      },
+      message: 'Price exceeds maximum allowed for this category'
+    }
+  },
+  
+  category: {
+    type: String,
+    required: true,
+    enum: ['Electronics', 'Clothing', 'Books', 'Food']
+  },
+  
+  stock: {
+    type: Number,
+    required: true,
+    min: [0, 'Stock cannot be negative'],
+    validate: {
+      validator: Number.isInteger,
+      message: 'Stock must be an integer'
+    }
+  },
+  
+  sku: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function(v) {
+        return /^PROD-[A-Z0-9]{5}$/.test(v);
+      },
+      message: 'SKU must follow format: PROD-XXXXX (5 uppercase letters/numbers)'
+    }
+  },
+  
+  discount: {
+    type: Number,
+    min: 0,
+    max: 100,
+    validate: {
+      validator: function(v) {
+        // New products (created within last 7 days) cannot have > 50% discount
+        const isNew = (Date.now() - this.createdAt) < 7 * 24 * 60 * 60 * 1000;
+        if (isNew && v > 50) return false;
+        return true;
+      },
+      message: 'New products cannot have discount greater than 50%'
+    }
+  },
+  
+  releaseDate: {
+    type: Date,
+    validate: {
+      validator: function(v) {
+        return v <= new Date();
+      },
+      message: 'Release date cannot be in the future'
+    }
+  },
+  
+  images: {
+    type: [String],
+    validate: {
+      validator: function(v) {
+        if (!v || v.length < 1) return false;
+        if (v.length > 5) return false;
+        return v.every(url => validator.isURL(url));
+      },
+      message: 'Must have between 1-5 valid image URLs'
+    }
+  },
+  
+  tags: {
+    type: [String],
+    validate: {
+      validator: function(v) {
+        return v && v.length > 0;
+      },
+      message: 'At least one tag is required'
+    }
+  },
+  
+  ratings: {
+    average: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0
+    },
+    count: {
+      type: Number,
+      min: 0,
+      default: 0
+    }
+  }
+}, { timestamps: true });
+
+module.exports = mongoose.model('Product', productSchema);
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Solution</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 77 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Why Validation Matters:</strong> Data integrity, security, user experience<br>
+    ✅ <strong>Built-in Validators:</strong> required, minlength, maxlength, enum, min, max, match, unique<br>
+    ✅ <strong>Custom Validators:</strong> Simple, async, cross-field, conditional, array validation<br>
+    ✅ <strong>Validation Error Handling:</strong> Try-catch, error formatting, user-friendly messages<br>
+    ✅ <strong>Validation Options:</strong> runValidators for updates, validateSync, skip validation<br>
+    ✅ <strong>Complete User Registration:</strong> Full example with password confirmation, bcrypt hashing<br>
+    ✅ <strong>Third-Party Libraries:</strong> Validator.js, Joi, Express Validator<br>
+    ✅ <strong>Product Validation Challenge:</strong> Comprehensive validation for e-commerce</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 78 – Relationships (Population & Referencing)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – Validation keeps your data clean! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-check-double"></i> Day 77 · Validation Deep Dive · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Always validate your data! It's the difference between a professional app and a buggy mess.</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Implement these validations in your projects.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

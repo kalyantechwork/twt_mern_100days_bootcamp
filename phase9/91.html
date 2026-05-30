@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 91: Redux Toolkit | Advanced State Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .redux-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .counter-number {
+      font-size: 4rem;
+      font-weight: 800;
+      text-align: center;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📦</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 91 · Redux Toolkit (Advanced State Management)</div>
+  </div>
+
+  <h1>📦 Redux Toolkit<br><span style="font-size:1rem;">Global State Management · Slices · useSelector · useDispatch · Async Thunks</span></h1>
+
+  <!-- Section 1: What is Redux Toolkit -->
+  <div class="section-title">1️⃣ What is Redux Toolkit? (Why Redux?)</div>
+  <p><strong>Redux Toolkit</strong> is the official, modern way to write Redux logic. It simplifies state management for large applications where Context API becomes complex.</p>
+  <div class="diagram">
+    Context API → Good for medium apps (theme, auth)
+    Redux Toolkit → Great for large apps (complex state, frequent updates, powerful devtools)
+  </div>
+  <div class="highlight-box">
+    💡 <strong>When to use Redux:</strong> Large scale apps with complex state that many components need (shopping cart, user permissions, global notifications).
+  </div>
+
+  <!-- Section 2: Installation -->
+  <div class="section-title">2️⃣ Installation</div>
+  <div class="code-block">
+    npm install @reduxjs/toolkit react-redux
+  </div>
+
+  <!-- Section 3: Redux Core Concepts -->
+  <div class="section-title">3️⃣ Redux Core Concepts</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎯 Store</h3><p>Single source of truth — contains entire application state</p></div>
+    <div class="card"><h3>📝 Slice</h3><p>Piece of state + reducers + actions (all in one)</p></div>
+    <div class="card"><h3>🔄 Reducer</h3><p>Function that updates state based on action type</p></div>
+    <div class="card"><h3>⚡ Action</h3><p>Plain object describing what happened (type + payload)</p></div>
+    <div class="card"><h3>📤 Dispatch</h3><p>Function that sends actions to the store</p></div>
+    <div class="card"><h3>👁️ Selector</h3><p>Function that extracts specific data from store</p></div>
+  </div>
+  <div class="diagram">
+    Component → dispatch(action) → Reducer → Updates Store → Components re-render
+  </div>
+
+  <!-- Section 4: Creating a Slice (Counter Example) -->
+  <div class="section-title">4️⃣ Creating a Slice — Counter Example</div>
+  <div class="code-block">
+    // features/counter/counterSlice.js<br>
+    import { createSlice } from '@reduxjs/toolkit';<br><br>
+    const initialState = { value: 0 };<br><br>
+    const counterSlice = createSlice({<br>
+      name: 'counter',<br>
+      initialState,<br>
+      reducers: {<br>
+        increment: (state) => { state.value += 1; },<br>
+        decrement: (state) => { state.value -= 1; },<br>
+        incrementByAmount: (state, action) => { state.value += action.payload; },<br>
+        reset: (state) => { state.value = 0; }<br>
+      }<br>
+    });<br><br>
+    export const { increment, decrement, incrementByAmount, reset } = counterSlice.actions;<br>
+    export default counterSlice.reducer;
+  </div>
+
+  <!-- Section 5: Configuring Store -->
+  <div class="section-title">5️⃣ Configuring the Store</div>
+  <div class="code-block">
+    // store.js<br>
+    import { configureStore } from '@reduxjs/toolkit';<br>
+    import counterReducer from './features/counter/counterSlice';<br>
+    import cartReducer from './features/cart/cartSlice';<br><br>
+    export const store = configureStore({<br>
+      reducer: {<br>
+        counter: counterReducer,<br>
+        cart: cartReducer<br>
+      }<br>
+    });
+  </div>
+
+  <!-- Section 6: Providing Store to React -->
+  <div class="section-title">6️⃣ Provide Store to React App</div>
+  <div class="code-block">
+    // main.jsx<br>
+    import React from 'react';<br>
+    import ReactDOM from 'react-dom/client';<br>
+    import { Provider } from 'react-redux';<br>
+    import { store } from './store';<br>
+    import App from './App';<br><br>
+    ReactDOM.createRoot(document.getElementById('root')).render(<br>
+      &lt;Provider store={store}&gt;<br>
+        &lt;App /&gt;<br>
+      &lt;/Provider&gt;<br>
+    );
+  </div>
+
+  <!-- Section 7: Using Redux in Components -->
+  <div class="section-title">7️⃣ Using Redux — useSelector & useDispatch</div>
+  <div class="live-demo">
+    <div class="redux-preview">
+      <strong>🎯 Redux Counter Demo (Live Simulation):</strong>
+      <div class="counter-number" id="reduxCountDemo">0</div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="demo-btn" id="reduxIncDemo">➕ Increment</button>
+        <button class="demo-btn" id="reduxDecDemo">➖ Decrement</button>
+        <button class="demo-btn" id="reduxResetDemo">🔄 Reset</button>
+        <button class="demo-btn" id="reduxAdd5Demo">➕ Add 5</button>
+      </div>
+      <p class="inline-code" style="margin-top: 12px;">✨ Redux state is global — any component can access/modify it!</p>
+    </div>
+    <script>
+      let demoCount = 0;
+      const countEl = document.getElementById("reduxCountDemo");
+      function updateDemoCount() { countEl.textContent = demoCount; }
+      document.getElementById("reduxIncDemo")?.addEventListener("click", () => { demoCount++; updateDemoCount(); });
+      document.getElementById("reduxDecDemo")?.addEventListener("click", () => { demoCount--; updateDemoCount(); });
+      document.getElementById("reduxResetDemo")?.addEventListener("click", () => { demoCount = 0; updateDemoCount(); });
+      document.getElementById("reduxAdd5Demo")?.addEventListener("click", () => { demoCount += 5; updateDemoCount(); });
+    </script>
+  </div>
+  <div class="code-block">
+    // Counter.jsx<br>
+    import { useSelector, useDispatch } from 'react-redux';<br>
+    import { increment, decrement, reset } from './counterSlice';<br><br>
+    function Counter() {<br>
+      const count = useSelector((state) => state.counter.value);<br>
+      const dispatch = useDispatch();<br><br>
+      return (<br>
+        &lt;div&gt;<br>
+          &lt;h2&gt;Count: {count}&lt;/h2&gt;<br>
+          &lt;button onClick={() => dispatch(increment())}&gt;+&lt;/button&gt;<br>
+          &lt;button onClick={() => dispatch(decrement())}&gt;-&lt;/button&gt;<br>
+          &lt;button onClick={() => dispatch(reset())}&gt;Reset&lt;/button&gt;<br>
+        &lt;/div&gt;<br>
+      );<br>
+    }
+  </div>
+
+  <!-- Section 8: Async Actions with createAsyncThunk -->
+  <div class="section-title">8️⃣ Async Actions — API Calls with createAsyncThunk</div>
+  <div class="code-block">
+    // features/products/productsSlice.js<br>
+    import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';<br>
+    import axios from 'axios';<br><br>
+    export const fetchProducts = createAsyncThunk(<br>
+      'products/fetchProducts',<br>
+      async () => {<br>
+        const response = await axios.get('https://fakestoreapi.com/products');<br>
+        return response.data;<br>
+      }<br>
+    );<br><br>
+    const productsSlice = createSlice({<br>
+      name: 'products',<br>
+      initialState: { items: [], loading: false, error: null },<br>
+      reducers: {},<br>
+      extraReducers: (builder) => {<br>
+        builder<br>
+          .addCase(fetchProducts.pending, (state) => { state.loading = true; })<br>
+          .addCase(fetchProducts.fulfilled, (state, action) => {<br>
+            state.items = action.payload;<br>
+            state.loading = false;<br>
+          })<br>
+          .addCase(fetchProducts.rejected, (state, action) => {<br>
+            state.error = action.error.message;<br>
+            state.loading = false;<br>
+          });<br>
+      }<br>
+    });<br><br>
+    export default productsSlice.reducer;
+  </div>
+
+  <!-- Section 9: Shopping Cart Slice -->
+  <div class="section-title">9️⃣ Complete Example — Shopping Cart Slice</div>
+  <div class="code-block">
+    // features/cart/cartSlice.js<br>
+    const cartSlice = createSlice({<br>
+      name: 'cart',<br>
+      initialState: { items: [], totalQuantity: 0, totalPrice: 0 },<br>
+      reducers: {<br>
+        addItem: (state, action) => {<br>
+          const existingItem = state.items.find(item => item.id === action.payload.id);<br>
+          if (existingItem) {<br>
+            existingItem.quantity++;<br>
+          } else {<br>
+            state.items.push({ ...action.payload, quantity: 1 });<br>
+          }<br>
+          state.totalQuantity++;<br>
+          state.totalPrice += action.payload.price;<br>
+        },<br>
+        removeItem: (state, action) => {<br>
+          const item = state.items.find(item => item.id === action.payload);<br>
+          if (item) {<br>
+            state.totalQuantity -= item.quantity;<br>
+            state.totalPrice -= item.price * item.quantity;<br>
+            state.items = state.items.filter(item => item.id !== action.payload);<br>
+          }<br>
+        }<br>
+      }<br>
+    });
+  </div>
+
+  <!-- Section 10: Redux DevTools -->
+  <div class="section-title">🔟 Redux DevTools — Debug Like a Pro</div>
+  <p>Install <strong>Redux DevTools Extension</strong> in Chrome/Firefox. You can see every action dispatched, state changes, and time-travel debugging.</p>
+  <div class="diagram">
+    Dispatch Action → DevTools shows action → See state before/after → Time travel to any state
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a Redux store with a <strong>counter slice</strong> (increment, decrement, reset)<br>
+    2. Create a <strong>todo slice</strong> (add todo, delete todo, toggle complete)<br>
+    3. Create a <strong>theme slice</strong> (dark/light mode) and use it across components<br>
+    4. Use Redux DevTools to inspect state changes<br>
+    5. (Bonus) Fetch data from API using createAsyncThunk
+  </div>
+
+  <!-- Section 12: Common Mistakes -->
+  <div class="section-title">⚠️ Common Redux Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Directly mutating state in reducers (Redux Toolkit's Immer allows "mutating", but not in plain Redux)</li>
+    <li>❌ Forgetting to add reducer to store configuration</li>
+    <li>❌ Not wrapping app with &lt;Provider&gt; → useSelector returns undefined</li>
+    <li>❌ Putting non-serializable values (functions, promises) in state</li>
+  </ul>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Redux Toolkit?</h3><p>Official, modern way to write Redux — less boilerplate, includes Immer and Thunk.</p></div>
+    <div class="card"><h3>❓ What is a slice?</h3><p>Collection of reducer logic and actions for a feature.</p></div>
+    <div class="card"><h3>❓ Redux vs Context?</h3><p>Redux has devtools, middleware, better for complex state; Context is simpler for medium apps.</p></div>
+    <div class="card"><h3>❓ What is createAsyncThunk?</h3><p>Helper function for handling async API calls in Redux.</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a <strong>Favorites App</strong> — add/remove items to favorites using Redux.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Create a <strong>Multi-step Form</strong> where each step's data is saved in Redux.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Build a <strong>Notification System</strong> using Redux (add notification, remove after timeout).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 91)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Redux Toolkit — modern Redux</div>
+    <div class="card">✔️ Store, Slice, Reducer, Action, Dispatch, Selector</div>
+    <div class="card">✔️ createSlice with reducers</div>
+    <div class="card">✔️ useSelector to read state</div>
+    <div class="card">✔️ useDispatch to send actions</div>
+    <div class="card">✔️ createAsyncThunk for async API calls</div>
+  </div>
+
+  <!-- Day 91 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 91 Ending Message</strong><br>
+    "Redux Toolkit makes global state management clean and predictable. Now you can build large-scale apps with confidence — your state is always under control!"
+  </div>
+
+  <!-- Next: Day 92 -->
+  <div class="section-title">🔜 Next — Day 92 : Advanced React Patterns (Compound Components, Render Props, HOCs)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🧩 Compound Components</span>
+    <span class="badge">🎨 Render Props</span>
+    <span class="badge">⚡ Higher-Order Components</span>
+    <span class="badge">🪝 Custom Hooks Deep Dive</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 91 Completed ✅<br>
+    Redux Toolkit is your power tool for complex state — master it and build enterprise apps!
+  </div>
+</div>
+</body>
+</html>

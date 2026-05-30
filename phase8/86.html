@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 86: Password Hashing with bcrypt | Secure Password Storage</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .bcrypt-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .hash-result {
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      word-break: break-all;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 86 · Password Hashing with bcrypt</div>
+  </div>
+
+  <h1>🔐 Password Hashing with bcrypt<br><span style="font-size:1rem;">Secure Password Storage · Salt Rounds · Hash Comparison · Security Best Practices</span></h1>
+
+  <!-- Section 1: Why Hash Passwords -->
+  <div class="section-title">1️⃣ Why Hash Passwords? (Never Store Plain Text!)</div>
+  <p><strong>NEVER store passwords in plain text!</strong> If your database is hacked, all user passwords are compromised. Hashing converts passwords into irreversible strings.</p>
+  <div class="diagram">
+    Plain Text Password → Hash Function → Irreversible Hash String → Store in Database
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> Hashing is like a meat grinder. You put in a password, you get hash. But you cannot turn hash back into password (one-way).
+  </div>
+
+  <!-- Section 2: Hashing vs Encryption -->
+  <div class="section-title">2️⃣ Hashing vs Encryption — What's the Difference?</div>
+  <table>
+    <thead><tr><th>Feature</th><th>Hashing</th><th>Encryption</th></tr></thead>
+    <tbody>
+      <tr><td>Reversible?</span></span><td>No (one-way)</span></span><td>Yes (two-way with key)</span></span></td></tr>
+      <tr><td>Purpose</span></span><td>Password storage, data integrity</span></span><td>Data confidentiality</span></td></tr>
+      <tr><td>Output length</span></span><td>Fixed length (e.g., 60 chars for bcrypt)</span></span><td>Varies based on input</span></td></tr>
+      <td><td class="inline-code">Example</span></span><td>bcrypt, SHA-256</span></span><td>AES, RSA</span></span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 3: What is bcrypt? -->
+  <div class="section-title">3️⃣ What is bcrypt?</div>
+  <p><strong>bcrypt</strong> is a password hashing function designed to be slow and computationally expensive, making brute-force attacks extremely difficult. It automatically includes a <strong>salt</strong> to prevent rainbow table attacks.</p>
+  <div class="card-grid">
+    <div class="card"><h3>🧂 Salt</h3><p>Random data added to password before hashing — ensures same password produces different hashes</p></div>
+    <div class="card"><h3>⚙️ Salt Rounds</h3><p>Number of hashing iterations (2^rounds). Higher = more secure but slower</p></div>
+    <div class="card"><h3>🛡️ Adaptive</h3><p>Can increase salt rounds over time as computers get faster</p></div>
+  </div>
+
+  <!-- Section 4: Installing bcrypt -->
+  <div class="section-title">4️⃣ Installing bcrypt</div>
+  <div class="code-block">
+    npm install bcryptjs   # Pure JavaScript implementation (easier, no native compilation)<br>
+    # OR<br>
+    npm install bcrypt      # Native C++ binding (faster, requires build tools)<br><br>
+    // For beginners, use bcryptjs (works everywhere)
+  </div>
+
+  <!-- Section 5: Hashing a Password (Registration) -->
+  <div class="section-title">5️⃣ Hashing a Password — Registration</div>
+  <div class="code-block">
+    const bcrypt = require('bcryptjs');<br>
+    const saltRounds = 10;  // 2^10 iterations = 1024 hashing rounds<br><br>
+    // Hash password during registration<br>
+    const hashPassword = async (plainPassword) => {<br>
+      const salt = await bcrypt.genSalt(saltRounds);<br>
+      const hashedPassword = await bcrypt.hash(plainPassword, salt);<br>
+      // OR directly: const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);<br>
+      return hashedPassword;<br>
+    };<br><br>
+    // Example<br>
+    const password = "mySecretPassword123";<br>
+    const hashed = await bcrypt.hash(password, 10);<br>
+    // Store 'hashed' in database
+  </div>
+  <div class="live-demo">
+    <div class="bcrypt-preview">
+      <strong>🔐 Hash Password Demo:</strong>
+      <div style="display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap;">
+        <input type="text" id="plainPassword" placeholder="Enter password to hash" style="flex:1; padding:8px; border-radius:40px; border:none;">
+        <button class="demo-btn" id="hashBtn">🔒 Generate Hash</button>
+      </div>
+      <div id="hashResult" class="hash-result" style="display:none;">
+        <strong>bcrypt Hash:</strong><br>
+        <span id="hashValue"></span>
+      </div>
+      <p class="inline-code">✨ Same password always produces different hash because of random salt!</p>
+    </div>
+    <script>
+      document.getElementById("hashBtn")?.addEventListener("click", async () => {
+        const password = document.getElementById("plainPassword").value;
+        if(password) {
+          // Simulate bcrypt hash (in real app, use bcryptjs)
+          const fakeHash = `$2b$10$${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}${btoa(password).substring(0, 22)}`;
+          document.getElementById("hashValue").textContent = fakeHash;
+          document.getElementById("hashResult").style.display = "block";
+        } else {
+          alert("Please enter a password");
+        }
+      });
+    </script>
+  </div>
+
+  <!-- Section 6: Comparing Passwords (Login) -->
+  <div class="section-title">6️⃣ Comparing Passwords — Login Verification</div>
+  <div class="code-block">
+    const bcrypt = require('bcryptjs');<br><br>
+    const comparePassword = async (plainPassword, hashedPasswordFromDB) => {<br>
+      const isValid = await bcrypt.compare(plainPassword, hashedPasswordFromDB);<br>
+      return isValid; // true or false<br>
+    };<br><br>
+    // Login route example<br>
+    router.post('/login', async (req, res) => {<br>
+      const { email, password } = req.body;<br>
+      const user = await User.findOne({ email });<br>
+      if (!user) return res.status(401).json({ error: 'Invalid credentials' });<br>
+      <br>
+      const isMatch = await bcrypt.compare(password, user.password);<br>
+      if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });<br>
+      <br>
+      // Password correct — generate JWT and login<br>
+      const token = generateToken(user);<br>
+      res.json({ user, token });<br>
+    });
+  </div>
+  <div class="live-demo">
+    <div class="bcrypt-preview">
+      <strong>🔐 Compare Password Demo:</strong>
+      <div style="display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap;">
+        <input type="text" id="storedHashPlaceholder" placeholder="Stored hash (from above)" style="flex:1; padding:8px; border-radius:40px; border:none; font-size:0.7rem;">
+        <input type="text" id="passwordToCheck" placeholder="Password to verify" style="flex:1; padding:8px; border-radius:40px; border:none;">
+        <button class="demo-btn" id="compareBtn">🔍 Verify Password</button>
+      </div>
+      <div id="compareResult" style="margin-top: 12px;"></div>
+    </div>
+    <script>
+      document.getElementById("compareBtn")?.addEventListener("click", () => {
+        const storedHash = document.getElementById("storedHashPlaceholder").value;
+        const passwordCheck = document.getElementById("passwordToCheck").value;
+        const resultDiv = document.getElementById("compareResult");
+        if(storedHash && passwordCheck) {
+          resultDiv.innerHTML = `<div class="code-block" style="background:#22c55e;">✅ Password matched! Login successful (simulated).</div>`;
+        } else {
+          resultDiv.innerHTML = `<div class="code-block" style="background:#ef4444;">❌ Password does not match (or missing hash).</div>`;
+        }
+      });
+    </script>
+  </div>
+
+  <!-- Section 7: Salt Rounds — Security vs Performance -->
+  <div class="section-title">7️⃣ Salt Rounds — Balancing Security & Performance</div>
+  <table>
+    <thead><tr><th>Salt Rounds</th><th>Iterations (2^rounds)</th><th>Approximate Time (on modern hardware)</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td>8</span></span><td>256</span></span>._
+
+~50ms</span></span><td>Development/testing (faster)</span></span></td></tr>
+      <tr><td>10</span></span><td>1,024</span></span><td>~100ms</span></span><td>Production default (good balance)</span></span></td></tr>
+      <tr><td>12</span></span><td>4,096</span></span><td>~400ms</span></span><td>High security apps (banking)</span></span></td></tr>
+      <tr><td>14</span></span><td>16,384</span></span><td>~1.6s</span></span><td>Very sensitive (overkill for most)</span></span></td></tr>
+    </tbody>
+  </table>
+  <div class="highlight-box">
+    ⚡ <strong>Recommendation:</strong> Use 10-12 salt rounds for production. Higher rounds = more secure but slower login response.
+  </div>
+
+  <!-- Section 8: Complete User Model Example -->
+  <div class="section-title">8️⃣ Complete User Model (Mongoose + bcrypt)</div>
+  <div class="code-block">
+    // models/User.js<br>
+    const mongoose = require('mongoose');<br>
+    const bcrypt = require('bcryptjs');<br><br>
+    const userSchema = new mongoose.Schema({<br>
+      name: { type: String, required: true },<br>
+      email: { type: String, required: true, unique: true },<br>
+      password: { type: String, required: true }<br>
+    });<br><br>
+    // Hash password before saving<br>
+    userSchema.pre('save', async function(next) {<br>
+      if (!this.isModified('password')) return next();<br>
+      this.password = await bcrypt.hash(this.password, 10);<br>
+      next();<br>
+    });<br><br>
+    // Method to compare passwords<br>
+    userSchema.methods.comparePassword = async function(candidatePassword) {<br>
+      return await bcrypt.compare(candidatePassword, this.password);<br>
+    };<br><br>
+    const User = mongoose.model('User', userSchema);<br>
+    module.exports = User;
+  </div>
+
+  <!-- Section 9: Why bcrypt is Better Than SHA-256 -->
+  <div class="section-title">9️⃣ bcrypt vs SHA-256 — Why Not Just SHA?</div>
+  <div class="card-grid">
+    <div class="card"><h3>❌ SHA-256 is FAST</h3><p>Fast = bad for passwords. Attackers can try billions of passwords per second.</p></div>
+    <div class="card"><h3>✅ bcrypt is SLOW</h3><p>Designed to be slow. 1 million bcrypt hashes/second vs 100 billion SHA/second.</p></div>
+    <div class="card"><h3>🧂 bcrypt has built-in salt</h3><p>Same password = different hash every time. Prevents rainbow table attacks.</p></div>
+  </div>
+
+  <!-- Section 10: Security Best Practices -->
+  <div class="section-title">🔟 Password Security Best Practices</div>
+  <ul style="margin-left:1.5rem; background:#eef2ff; padding:1rem; border-radius:24px;">
+    <li>✅ Always use bcrypt (or argon2) for password hashing — never MD5 or SHA-1</li>
+    <li>✅ Use salt rounds = 10-12 for production</li>
+    <li>✅ Require strong passwords (min 8 chars, mix of cases, numbers, symbols)</li>
+    <li>✅ Implement rate limiting on login attempts (prevent brute force)</li>
+    <li>✅ Never log or expose hashed passwords</li>
+    <li>✅ Use HTTPS everywhere (prevent password interception)</li>
+  </ul>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Install bcryptjs in your Node.js project<br>
+    2. Create a User model that hashes password before saving (using pre-save middleware)<br>
+    3. Implement registration route that saves hashed password to database<br>
+    4. Implement login route that compares password using bcrypt.compare<br>
+    5. Add password strength validation (min length, complexity)<br>
+    6. Test with different salt rounds to understand performance impact
+  </div>
+
+  <!-- Section 12: Common Mistakes -->
+  <div class="section-title">⚠️ Common bcrypt Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Storing plain text passwords — NEVER do this!</li>
+    <li>❌ Using low salt rounds (like 4) → too fast, easier to brute force</li>
+    <li>❌ Forgetting to await bcrypt functions (they're async!)</li>
+    <li>❌ Hashing password after saving to database (use pre-save middleware)</li>
+  </ul>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ Why hash passwords?</h3><p>To protect user passwords if database is compromised — hashes are irreversible.</p></div>
+    <div class="card"><h3>❓ Why bcrypt over SHA?</h3><p>bcrypt is intentionally slow and includes salt, making brute-force attacks expensive.</p></div>
+    <div class="card"><h3>❓ What are salt rounds?</h3><p>Number of hashing iterations (2^rounds). Higher = more secure but slower.</p></div>
+    <div class="card"><h3>❓ Can two same passwords have different hashes?</h3><p>Yes! bcrypt adds a random salt, so same password produces different hashes.</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Implement password reset flow with temporary token and re-hashing.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add password history to prevent password reuse.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Benchmark different salt rounds and measure login response time.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 86)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why hash passwords — security against data breaches</div>
+    <div class="card">✔️ bcrypt installation and usage</div>
+    <div class="card">✔️ Hashing passwords with bcrypt.hash()</div>
+    <div class="card">✔️ Comparing passwords with bcrypt.compare()</div>
+    <div class="card">✔️ Salt rounds and performance trade-offs</div>
+    <div class="card">✔️ Security best practices</div>
+  </div>
+
+  <!-- Day 86 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 86 Ending Message</strong><br>
+    "Password hashing is non-negotiable in production apps. bcrypt is the industry standard — now you can securely store user passwords and protect your users from data breaches!"
+  </div>
+
+  <!-- Next: Day 87 -->
+  <div class="section-title">🔜 Next — Day 87 : Protected Routes in React (Frontend Authorization)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🛡️ Protected Routes</span>
+    <span class="badge">🔐 Auth Context</span>
+    <span class="badge">🚪 Redirect to Login</span>
+    <span class="badge">👑 Role-Based Access</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 86 Completed ✅<br>
+    Secure your users' passwords with bcrypt — it's the first line of defense for any application!
+  </div>
+</div>
+</body>
+</html>

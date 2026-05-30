@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 92: Advanced React Patterns | Compound Components, Render Props, HOCs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .pattern-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .tabs-container {
+      background: #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .tab-header {
+      display: flex;
+      gap: 4px;
+      background: #334155;
+      padding: 8px;
+    }
+    .tab-btn {
+      background: transparent;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .tab-content {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🧩</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 92 · Advanced React Patterns</div>
+  </div>
+
+  <h1>🧩 Advanced React Patterns<br><span style="font-size:1rem;">Compound Components · Render Props · Higher-Order Components (HOCs)</span></h1>
+
+  <!-- Section 1: Why Advanced Patterns -->
+  <div class="section-title">1️⃣ Why Advanced React Patterns?</div>
+  <p>As your React apps grow, you need patterns that make components more <strong>flexible, reusable, and maintainable</strong>. These patterns are used in popular libraries like React Router, Formik, and Material UI.</p>
+  <div class="diagram">
+    Basic Components → Reusable Components → Advanced Patterns (Compound, Render Props, HOCs) → Enterprise Scale
+  </div>
+
+  <!-- Section 2: Compound Components -->
+  <div class="section-title">2️⃣ Pattern 1: Compound Components (Flexible APIs)</div>
+  <p><strong>Compound Components</strong> allow multiple components to work together implicitly, sharing state via Context. Perfect for Tabs, Accordions, Select menus.</p>
+  <div class="code-block">
+    // Tabs Component using Compound Pattern<br>
+    import { createContext, useContext, useState } from 'react';<br><br>
+    const TabsContext = createContext();<br><br>
+    function Tabs({ children, defaultIndex = 0 }) {<br>
+      const [activeIndex, setActiveIndex] = useState(defaultIndex);<br>
+      return (<br>
+        &lt;TabsContext.Provider value={{ activeIndex, setActiveIndex }}&gt;<br>
+          &lt;div className="tabs"&gt;{children}&lt;/div&gt;<br>
+        &lt;/TabsContext.Provider&gt;<br>
+      );<br>
+    }<br><br>
+    function TabList({ children }) {<br>
+      return &lt;div className="tab-list"&gt;{children}&lt;/div&gt;;<br>
+    }<br><br>
+    function Tab({ index, children }) {<br>
+      const { activeIndex, setActiveIndex } = useContext(TabsContext);<br>
+      return (<br>
+        &lt;button<br>
+          className={activeIndex === index ? 'active' : ''}<br>
+          onClick={() => setActiveIndex(index)}<br>
+        &gt;{children}&lt;/button&gt;<br>
+      );<br>
+    }<br><br>
+    function TabPanel({ index, children }) {<br>
+      const { activeIndex } = useContext(TabsContext);<br>
+      return activeIndex === index ? &lt;div className="tab-panel"&gt;{children}&lt;/div&gt; : null;<br>
+    }<br><br>
+    // Usage<br>
+    &lt;Tabs defaultIndex={0}&gt;<br>
+      &lt;TabList&gt;<br>
+        &lt;Tab index={0}&gt;Tab 1&lt;/Tab&gt;<br>
+        &lt;Tab index={1}&gt;Tab 2&lt;/Tab&gt;<br>
+      &lt;/TabList&gt;<br>
+      &lt;TabPanel index={0}&gt;Content 1&lt;/TabPanel&gt;<br>
+      &lt;TabPanel index={1}&gt;Content 2&lt;/TabPanel&gt;<br>
+    &lt;/Tabs&gt;
+  </div>
+  <div class="live-demo">
+    <div class="pattern-preview">
+      <strong>📑 Compound Component Demo — Tabs:</strong>
+      <div style="margin-top: 12px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button class="demo-btn" style="background:#facc15; color:#0f172a;" id="tab1Btn">Tab 1</button>
+          <button class="demo-btn" id="tab2Btn">Tab 2</button>
+          <button class="demo-btn" id="tab3Btn">Tab 3</button>
+        </div>
+        <div id="tabContent" style="background:#1e293b; padding: 16px; border-radius: 12px;">
+          📄 Content for Tab 1
+        </div>
+      </div>
+    </div>
+    <script>
+      const tabContent = {
+        1: "📄 Content for Tab 1 — Compound components share state via Context!",
+        2: "⭐ Content for Tab 2 — The Tabs component manages active state internally.",
+        3: "🚀 Content for Tab 3 — Children communicate with parent via Context."
+      };
+      let activeTab = 1;
+      const tab1 = document.getElementById("tab1Btn");
+      const tab2 = document.getElementById("tab2Btn");
+      const tab3 = document.getElementById("tab3Btn");
+      const contentDiv = document.getElementById("tabContent");
+      function updateTabs() {
+        contentDiv.innerHTML = tabContent[activeTab];
+        [tab1, tab2, tab3].forEach((btn, idx) => {
+          if(btn) btn.style.background = (activeTab === idx + 1) ? "#facc15" : "#334155";
+          if(btn) btn.style.color = (activeTab === idx + 1) ? "#0f172a" : "white";
+        });
+      }
+      tab1?.addEventListener("click", () => { activeTab = 1; updateTabs(); });
+      tab2?.addEventListener("click", () => { activeTab = 2; updateTabs(); });
+      tab3?.addEventListener("click", () => { activeTab = 3; updateTabs(); });
+      updateTabs();
+    </script>
+  </div>
+
+  <!-- Section 3: Render Props Pattern -->
+  <div class="section-title">3️⃣ Pattern 2: Render Props (Share Code via Function Prop)</div>
+  <p><strong>Render Props</strong> is a technique where a component receives a function as a prop that returns JSX. Great for sharing logic (mouse position, window size, data fetching).</p>
+  <div class="code-block">
+    // MouseTracker using Render Props<br>
+    function MouseTracker({ render }) {<br>
+      const [position, setPosition] = useState({ x: 0, y: 0 });<br>
+      useEffect(() => {<br>
+        const handleMove = (e) => setPosition({ x: e.clientX, y: e.clientY });<br>
+        window.addEventListener('mousemove', handleMove);<br>
+        return () => window.removeEventListener('mousemove', handleMove);<br>
+      }, []);<br>
+      return render(position);<br>
+    }<br><br>
+    // Usage<br>
+    &lt;MouseTracker render={({ x, y }) => (<br>
+      &lt;div&gt;Mouse position: {x}, {y}&lt;/div&gt;<br>
+    )} /&gt;
+  </div>
+  <div class="live-demo">
+    <div class="pattern-preview">
+      <strong>🖱️ Render Props Demo — Mouse Tracker:</strong>
+      <div id="mousePosition" style="background:#1e293b; padding: 20px; border-radius: 12px; text-align: center; margin-top: 12px;">
+        Move your mouse over this area
+      </div>
+    </div>
+    <script>
+      const mouseDiv = document.getElementById("mousePosition");
+      mouseDiv?.addEventListener("mousemove", (e) => {
+        const rect = mouseDiv.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        mouseDiv.innerHTML = `🖱️ Mouse position: X: ${Math.round(x)}, Y: ${Math.round(y)}<br><span class="inline-code">Render Props pattern: component receives a function that returns UI</span>`;
+      });
+    </script>
+  </div>
+
+  <!-- Section 4: Higher-Order Components (HOC) -->
+  <div class="section-title">4️⃣ Pattern 3: Higher-Order Components (HOC)</div>
+  <p><strong>HOC</strong> is a function that takes a component and returns an enhanced component. Used for authentication, logging, styling, and data fetching.</p>
+  <div class="code-block">
+    // withAuth HOC — protects routes<br>
+    function withAuth(WrappedComponent) {<br>
+      return function AuthenticatedComponent(props) {<br>
+        const { user } = useAuth();<br>
+        if (!user) return &lt;Navigate to="/login" /&gt;;<br>
+        return &lt;WrappedComponent {...props} /&gt;;<br>
+      };<br>
+    }<br><br>
+    // withLogging HOC — logs component renders<br>
+    function withLogging(WrappedComponent) {<br>
+      return function LoggedComponent(props) {<br>
+        console.log(`Rendering ${WrappedComponent.name}`);<br>
+        return &lt;WrappedComponent {...props} /&gt;;<br>
+      };<br>
+    }<br><br>
+    // Usage<br>
+    const Dashboard = withAuth(withLogging(DashboardComponent));<br>
+    // Or with compose: compose(withAuth, withLogging)(DashboardComponent)
+  </div>
+
+  <!-- Section 5: HOC Example — Loading State -->
+  <div class="section-title">5️⃣ HOC Example — withLoading (Data Fetching)</div>
+  <div class="code-block">
+    function withLoading(WrappedComponent) {<br>
+      return function WithLoadingComponent({ isLoading, ...props }) {<br>
+        if (isLoading) return &lt;div&gt;Loading...&lt;/div&gt;;<br>
+        return &lt;WrappedComponent {...props} /&gt;;<br>
+      };<br>
+    }<br><br>
+    // Usage<br>
+    const UserList = withLoading(({ users }) => (<br>
+      &lt;ul&gt;{users.map(u => &lt;li key={u.id}&gt;{u.name}&lt;/li&gt;)}&lt;/ul&gt;<br>
+    ));<br><br>
+    &lt;UserList isLoading={loading} users={users} /&gt;
+  </div>
+
+  <!-- Section 6: Comparison of Patterns -->
+  <div class="section-title">6️⃣ When to Use Which Pattern?</div>
+  <table>
+    <thead><tr><th>Pattern</th><th>Best For</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Compound Components</span></span><td>Flexible UI components with internal state</span></span><td>Tabs, Accordion, Select, Menu</span></td></tr>
+      <tr><td>Render Props</span></span><td>Sharing logic across components</span></span><td>Mouse position, Window size, Data fetching</span></td></tr>
+      <tr><td>Higher-Order Components</span></span>.\]
+
+Reusing cross-cutting concerns (auth, logging, styling)</span></span><td>withAuth, withLogging, withTheme</span></td></tr>
+      <tr><td>Custom Hooks</span></span>}.\]
+
+Modern alternative to HOCs and Render Props</span><td>useAuth, useWindowSize, useFetch</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 7: Modern Alternative — Custom Hooks -->
+  <div class="section-title">7️⃣ Modern Alternative — Custom Hooks (Recommended)</div>
+  <p><strong>Custom Hooks</strong> have largely replaced Render Props and HOCs in modern React. They are cleaner and more intuitive.</p>
+  <div class="code-block">
+    // Custom Hook (modern approach)<br>
+    function useWindowSize() {<br>
+      const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });<br>
+      useEffect(() => {<br>
+        const handler = () => setSize({ width: window.innerWidth, height: window.innerHeight });<br>
+        window.addEventListener('resize', handler);<br>
+        return () => window.removeEventListener('resize', handler);<br>
+      }, []);<br>
+      return size;<br>
+    }<br><br>
+    // Usage — much cleaner!<br>
+    function MyComponent() {<br>
+      const { width, height } = useWindowSize();<br>
+      return &lt;div&gt;Window: {width} x {height}&lt;/div&gt;;<br>
+    }
+  </div>
+
+  <!-- Section 8: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Build a <strong>Tabs component</strong> using the Compound Components pattern<br>
+    2. Create a <strong>withAuth HOC</strong> that protects routes (redirect to login if not authenticated)<br>
+    3. Build a <strong>withTheme HOC</strong> that adds theme props to components<br>
+    4. Convert the MouseTracker example from Render Props to a Custom Hook (useMousePosition)<br>
+    5. Compare the three patterns — build the same feature using each pattern
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common Pattern Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ HOC naming confusion (always start with 'with')</li>
+    <li>❌ Render props causing unnecessary re-renders (use React.memo)</li>
+    <li>❌ Over-engineering — not every component needs advanced patterns</li>
+    <li>❌ HOC prop collisions (pass through unrelated props)</li>
+  </ul>
+
+  <!-- Section 10: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What are Compound Components?</h3><p>Components that share implicit state via Context — used in Tabs, Accordion, Select.</p></div>
+    <div class="card"><h3>❓ What is Render Props?</h3><p>Technique where a component receives a function prop that returns JSX — shares logic.</p></div>
+    <div class="card"><h3>❓ What is HOC?</h3><p>Function that takes a component and returns an enhanced component — adds cross-cutting concerns.</p></div>
+    <div class="card"><h3>❓ What replaced HOCs and Render Props?</h3><p>Custom Hooks — cleaner, more intuitive, and avoid wrapper hell.</p></div>
+  </div>
+
+  <!-- Section 11: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build an <strong>Accordion</strong> component using Compound Components pattern.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Create a <strong>withDataFetching HOC</strong> that handles loading and error states.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Convert a Render Props component to a Custom Hook.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 92)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Compound Components — shared Context state</div>
+    <div class="card">✔️ Render Props — function as child/prop</div>
+    <div class="card">✔️ Higher-Order Components (HOCs) — component enhancers</div>
+    <div class="card">✔️ Custom Hooks — modern alternative</div>
+    <div class="card">✔️ Pattern comparison and use cases</div>
+  </div>
+
+  <!-- Day 92 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 92 Ending Message</strong><br>
+    "Advanced React patterns make your components more powerful and reusable. While Custom Hooks are now preferred, understanding HOCs and Render Props helps you read legacy code and write more flexible components!"
+  </div>
+
+  <!-- Next: Day 93 -->
+  <div class="section-title">🔜 Next — Day 93 : Payment Gateway Integration (Stripe/Razorpay)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">💳 Stripe Integration</span>
+    <span class="badge">💰 Razorpay Setup</span>
+    <span class="badge">🛒 Checkout Flow</span>
+    <span class="badge">🔐 Payment Webhooks</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 92 Completed ✅<br>
+    Master these patterns — they separate junior from senior React developers!
+  </div>
+</div>
+</body>
+</html>

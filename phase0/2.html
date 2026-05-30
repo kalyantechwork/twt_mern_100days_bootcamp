@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head:
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 2: Install Dev Environment | MERN Stack 100 Days</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Brand header */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    /* typography */
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem 0;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .subsection-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.8rem 0;
+      color: #1e293b;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.2s;
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 0.9rem 1.2rem;
+      border-radius: 18px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .step-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+    .step-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #e2e8f0;
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+    }
+    .step-num {
+      font-weight: 700;
+      background: #f1f5f9;
+      width: 28px;
+      height: 28px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Header: Telugu WebTech branding -->
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚙️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 2 · Dev Environment Setup</div>
+  </div>
+
+  <h1>🛠️ Install Development Environment<br><span style="font-size: 1rem; color:#2c3e66;">VS Code, Node.js, Git, npm & MERN Setup for Absolute Beginners</span></h1>
+
+  <!-- Section 1: What is a Development Environment? -->
+  <div class="section-title">1️⃣ What is a Development Environment?</div>
+  <p>A <strong>development environment</strong> means all the tools required to build applications. Just like a mechanic needs tools to repair vehicles, developers also need tools to create websites and applications.</p>
+  <div class="card-grid">
+    <div class="card"><h3>🔧 Essential Tools</h3><p>VS Code (editor), Node.js (run JS), npm (package manager), Git (version control), GitHub (cloud storage), Chrome browser (testing).</p></div>
+    <div class="card"><h3>🖥️ Why Setup Matters</h3><p>Proper environment saves time, prevents errors, and helps you build professional projects easily.</p></div>
+  </div>
+  <div class="diagram">
+    Developer<br>      ↓<br>VS Code (code editor)<br>      ↓<br>Node.js + npm (runtime + packages)<br>      ↓<br>Git + GitHub (version control & backup)<br>      ↓<br>Browser Testing (Chrome DevTools)
+  </div>
+
+  <!-- Section 2: Install Visual Studio Code -->
+  <div class="section-title">2️⃣ Install Visual Studio Code (VS Code)</div>
+  <p><strong>VS Code</strong> is the most popular code editor used by millions. It supports JavaScript, React, Node.js, HTML, CSS, Python, Java and many more languages.</p>
+  <div class="card-grid">
+    <div class="card"><h3>⭐ Why VS Code?</h3><ul style="margin-left:1rem;"><li>✅ Free & open source</li><li>🚀 Fast & lightweight</li><li>🧩 Huge extensions support</li><li>👶 Beginner-friendly</li></ul></div>
+    <div class="card"><h3>📥 Installation Steps</h3><p>1. Open <span class="inline-code">code.visualstudio.com</span><br>2. Download for Windows/Mac/Linux<br>3. Install with default settings<br>4. ✅ Enable "Add to PATH", "Open with Code" during installation.</p></div>
+  </div>
+  <div class="diagram">
+    Download VS Code → Install → Open Editor → Start Coding
+  </div>
+
+  <!-- Section 3: Install Node.js -->
+  <div class="section-title">3️⃣ Install Node.js (JavaScript Runtime)</div>
+  <p><strong>Node.js</strong> allows JavaScript to run outside the browser. Without Node.js, JavaScript works only inside browsers. With Node.js, you can create servers, build APIs, connect databases, and create backends.</p>
+  <div class="highlight-box">
+    <strong>💡 Real Example:</strong> Frontend JavaScript (browser) vs Backend JavaScript (Node.js). MERN stack uses JavaScript everywhere → Frontend (React) + Backend (Node + Express) = easier development.
+  </div>
+  <div class="step-list">
+    <li><span class="step-num">1</span> Open <span class="inline-code">nodejs.org</span></li>
+    <li><span class="step-num">2</span> Download <strong>LTS Version</strong> (recommended for beginners)</li>
+    <li><span class="step-num">3</span> Run installer, keep default settings, click Next → Finish</li>
+    <li><span class="step-num">4</span> ✅ Verify installation: Open terminal (Command Prompt / PowerShell / Git Bash)</li>
+  </div>
+  <div class="code-block">
+    node -v<br>
+    # Expected output: v22.x.x or any LTS version<br><br>
+    npm -v<br>
+    # Expected output: 10.x.x (npm comes with Node.js)
+  </div>
+  <div class="card"><h3>📦 What is npm?</h3><p>npm = Node Package Manager. It installs libraries like React, Express, Axios, Nodemon. Just like Play Store for JavaScript packages.</p></div>
+  <div class="diagram">
+    npm → Install Packages → Use in Projects
+  </div>
+
+  <!-- Section 4: Understanding Packages -->
+  <div class="section-title">4️⃣ Understanding Packages & npm</div>
+  <p>A <strong>package</strong> is prewritten code created by developers. Instead of building everything from scratch, we install packages via npm.</p>
+  <div class="code-block">
+    # Example: install React<br>
+    npm install react<br><br>
+    # install Express (backend framework)<br>
+    npm install express
+  </div>
+
+  <!-- Section 5: Install Git -->
+  <div class="section-title">5️⃣ Install Git (Version Control)</div>
+  <p><strong>Git</strong> is a version control system that tracks changes in your code. It helps to save history, restore previous versions, work in teams, and upload to GitHub.</p>
+  <div class="highlight-box">
+    📀 Real-Life Analogy: Git is like "Save Game Progress" for coding projects. Every change is recorded.
+  </div>
+  <div class="step-list">
+    <li><span class="step-num">1</span> Go to <span class="inline-code">git-scm.com/downloads</span></li>
+    <li><span class="step-num">2</span> Download for your OS (Windows / Mac / Linux)</li>
+    <li><span class="step-num">3</span> Install with default settings, keep "Git from the command line" option</li>
+  </div>
+  <div class="code-block">
+    git --version<br>
+    # Output: git version 2.x.x
+  </div>
+
+  <!-- Section 6: What is GitHub? -->
+  <div class="section-title">6️⃣ GitHub — Cloud Storage for Code</div>
+  <p><a href="#" style="color:#0f172a; text-decoration: none; font-weight:600;">GitHub.com</a> is a platform to store code online. Benefits: backup projects, share, build portfolio, collaborate, apply for jobs.</p>
+  <div class="diagram">
+    Local Computer (Git) → GitHub Cloud → Access from anywhere
+  </div>
+
+  <!-- Section 7: Install Useful VS Code Extensions -->
+  <div class="section-title">7️⃣ VS Code Extensions (Beginner must-have)</div>
+  <table>
+    <thead><tr><th>Extension</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Prettier</td><td>Auto-format code</td></tr>
+      <tr><td>ES7 React Snippets</td><td>React shortcuts (rafce, etc.)</td></tr>
+      <tr><td>Live Server</td><td>Run HTML projects with live reload</td></tr>
+      <tr><td>Material Icon Theme</td><td>Better folder/file icons</td></tr>
+      <tr><td>Thunder Client</td><td>API testing inside VS Code</td></tr>
+      <tr><td>Tailwind CSS IntelliSense</td><td>Tailwind autocomplete</td></tr>
+    </tbody>
+  </table>
+  <div class="diagram">
+    VS Code → Extensions (Ctrl+Shift+X) → Search → Install → Reload
+  </div>
+
+  <!-- Section 8: Understanding Folder Structure -->
+  <div class="section-title">8️⃣ Basic MERN Folder Structure (Professional)</div>
+  <div class="code-block">
+    project/<br>
+    ├── frontend/      # React app<br>
+    ├── backend/       # Node.js + Express server<br>
+    ├── package.json   # dependencies and scripts<br>
+    └── README.md      # project documentation
+  </div>
+  <table>
+    <tr><th>Folder</th><th>Purpose</th></tr>
+    <tr><td>frontend</td><td>React components, styles, UI logic</td></tr>
+    <tr><td>backend</td><td>API routes, database models, business logic</td></tr>
+    <tr><td>package.json</td><td>List of installed packages & scripts</td></tr>
+  </table>
+
+  <!-- Section 9: Terminal Basics -->
+  <div class="section-title">9️⃣ Terminal / Command Line Basics</div>
+  <p>Terminal allows you to run commands: install packages, create folders, run apps.</p>
+  <table>
+    <tr><th>Command</th><th>Action</th></tr>
+    <tr><td><span class="inline-code">pwd</span> (or <span class="inline-code">cd</span> on Windows)</td><td>Print current directory</td></tr>
+    <tr><td><span class="inline-code">ls</span> / <span class="inline-code">dir</span></td><td>List files/folders</td></tr>
+    <tr><td><span class="inline-code">mkdir folder-name</span></td><td>Create new folder</td></tr>
+    <tr><td><span class="inline-code">cd folder-name</span></td><td>Change directory</td></tr>
+    <tr><td><span class="inline-code">code .</span></td><td>Open current folder in VS Code</td></tr>
+  </table>
+  <div class="diagram">
+    Developer → Terminal Commands → System executes
+  </div>
+
+  <!-- Section 10: Create Your First Project Folder -->
+  <div class="section-title">📁 Create Your First MERN Project Folder</div>
+  <div class="code-block">
+    mkdir mern-learning<br>
+    cd mern-learning<br>
+    code .<br>
+    # VS Code opens with your workspace
+  </div>
+  <p>✅ Your first development workspace is ready!</p>
+
+  <!-- Section 11: Browser Developer Tools -->
+  <div class="section-title">🌐 Browser Developer Tools (Essential)</div>
+  <p>DevTools help to inspect HTML, debug CSS, test JavaScript, check API requests. Shortcut: <span class="inline-code">F12</span> or Right Click → Inspect.</p>
+  <table>
+    <tr><th>Tab</th><th>Use</th></tr>
+    <tr><td>Elements</td><td>View/edit HTML/CSS live</td></tr>
+    <tr><td>Console</td><td>See JavaScript logs & errors</td></tr>
+    <tr><td>Network</td><td>Monitor API calls and requests</td></tr>
+    <tr><td>Application</td><td>Local storage, cookies, sessions</td></tr>
+  </table>
+  <div class="diagram">
+    Browser → F12 / Inspect → Debug & optimize
+  </div>
+
+  <!-- Section 12: Important Beginner Concepts -->
+  <div class="section-title">📚 Important Beginner Concepts (Paths & Extensions)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📂 Absolute vs Relative Path</h3><p>Absolute: <span class="inline-code">C:\Users\ADMIN\Desktop</span><br>Relative: <span class="inline-code">./src/components</span></p></div>
+    <div class="card"><h3>📄 Common File Extensions</h3><p>.html (HTML) , .css (styles) , .js (JavaScript) , .jsx (React components) , .json (config data)</p></div>
+  </div>
+
+  <!-- Section 13: Common Beginner Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes (Avoid These)</div>
+  <ul style="margin-left: 1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Installing wrong Node.js version → always <strong>LTS version</strong></li>
+    <li>❌ Not restarting terminal after installation → close and reopen terminal</li>
+    <li>❌ Not adding Node.js to PATH → during installation, select "Add to PATH"</li>
+    <li>❌ Opening wrong folder in VS Code → always open project root folder</li>
+    <li>❌ Forgetting to verify installations with <span class="inline-code">node -v</span> / <span class="inline-code">git --version</span></li>
+  </ul>
+
+  <!-- Section 14: Mini Practical Demo (live steps) -->
+  <div class="section-title">🖥️ Mini Practical Demo — Show These Steps</div>
+  <div class="highlight-box">
+    <strong>✅ In terminal / command prompt:</strong><br>
+    <span class="inline-code">node -v</span> → shows version<br>
+    <span class="inline-code">npm -v</span> → shows npm version<br>
+    <span class="inline-code">git --version</span> → shows git version<br>
+    <strong>Create folder & init package.json</strong><br>
+    <span class="inline-code">mkdir demo-project</span><br>
+    <span class="inline-code">cd demo-project</span><br>
+    <span class="inline-code">npm init -y</span> → creates package.json<br>
+  </div>
+  <div class="code-block">
+    // package.json (example after npm init -y)<br>
+    {<br>
+      "name": "demo-project",<br>
+      "version": "1.0.0",<br>
+      "description": "",<br>
+      "main": "index.js"<br>
+    }
+  </div>
+
+  <!-- Section 15: Homework for Students -->
+  <div class="section-title">📌 Homework for Students (Practice Today)</div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Task 1</h3><p>Install VS Code, Node.js, Git on your computer.</p></div>
+    <div class="card"><h3>✅ Task 2</h3><p>Open terminal and verify: <span class="inline-code">node -v</span>, <span class="inline-code">npm -v</span>, <span class="inline-code">git --version</span>. Take a screenshot.</p></div>
+    <div class="card"><h3>✅ Task 3</h3><p>Create a folder named <span class="inline-code">mern-learning</span>, open it in VS Code using <span class="inline-code">code .</span></p></div>
+    <div class="card"><h3>✅ Bonus Task</h3><p>Install at least 3 VS Code extensions: Prettier, Live Server, Material Icon Theme.</p></div>
+  </div>
+
+  <!-- Section 16: Beginner Summary -->
+  <div class="section-title">📖 Day 2 — Summary for Absolute Beginners</div>
+  <div class="card-grid">
+    <div class="card">✔️ What tools developers use (VS Code, Node, Git)</div>
+    <div class="card">✔️ Installed VS Code, Node.js, npm, Git successfully</div>
+    <div class="card">✔️ Learned npm as package manager</div>
+    <div class="card">✔️ Understood Git + GitHub difference</div>
+    <div class="card">✔️ Basic folder structure and terminal commands</div>
+    <div class="card">✔️ Created first project folder and package.json</div>
+  </div>
+
+  <!-- Day 2 Ending Message (exact wording) -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 2 Ending Message</strong><br>
+    “Now our development environment is completely ready. From Day 3, we will start actual coding using HTML.”
+  </div>
+
+  <!-- Next Video: Day 3 preview -->
+  <div class="section-title">🔜 Next — Day 3 : HTML Basics</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📄 Headings & paragraphs</span>
+    <span class="badge">🔗 Links & images</span>
+    <span class="badge">📋 Lists & tables</span>
+    <span class="badge">📝 Forms & input tags</span>
+    <span class="badge">🏷️ Semantic HTML</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 2 Completed ✅<br>
+    Environment fully ready · Start coding from Day 3 · Keep practicing terminal commands.
+  </div>
+</div>
+</body>
+</html>

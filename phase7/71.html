@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 71: MongoDB Introduction – NoSQL Database | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .comparison-table {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .comparison-card {
+      flex: 1;
+      min-width: 250px;
+      background: #f1f5f9;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 71 · Phase 8 Starts!</div>
+    <h1>
+      <i class="fas fa-database"></i> 
+      MongoDB Introduction – NoSQL Database
+    </h1>
+    <p>Welcome to MongoDB! The most popular NoSQL database for modern web applications. Learn why MongoDB is perfect for MERN stack development.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master MongoDB for MERN Stack
+    </div>
+  </div>
+
+  <!-- What is MongoDB? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is MongoDB?</span>
+    </div>
+    <p><strong>MongoDB</strong> is a NoSQL, document-oriented database that stores data in flexible, JSON-like documents (BSON). Unlike traditional SQL databases, MongoDB doesn't use tables and rows – it uses collections and documents.</p>
+    <div class="diagram">
+      <i class="fas fa-database"></i> <strong>MongoDB vs SQL Terminology:</strong><br>
+      SQL: Database → Table → Row → Column<br>
+      MongoDB: Database → Collection → Document → Field
+    </div>
+    <div class="comparison-table">
+      <div class="comparison-card">
+        <i class="fas fa-table" style="font-size: 2rem; color: #3b82f6;"></i>
+        <h3>SQL Database</h3>
+        <p>• Fixed schema (structure required)<br>• Tables with rows and columns<br>• Uses JOINs for related data<br>• Scales vertically<br>• Examples: MySQL, PostgreSQL</p>
+      </div>
+      <div class="comparison-card">
+        <i class="fas fa-file-alt" style="font-size: 2rem; color: #22c55e;"></i>
+        <h3>MongoDB (NoSQL)</h3>
+        <p>• Flexible schema (dynamic)<br>• Collections with documents<br>• Embedded documents for relationships<br>• Scales horizontally<br>• Example: MongoDB</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why MongoDB for MERN? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-star"></i>
+      <span>2. Why MongoDB for MERN Stack?</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-code"></i>
+        <strong>📝 JSON-like Documents</strong>
+        <p>MongoDB uses BSON (Binary JSON) – works perfectly with JavaScript/Node.js. No conversion needed!</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-bolt"></i>
+        <strong>⚡ Fast & Scalable</strong>
+        <p>Handles large amounts of data and high traffic efficiently. Perfect for modern web apps.</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-folder-open"></i>
+        <strong>📁 Flexible Schema</strong>
+        <p>No need to define column structure upfront. Add fields anytime without migrations.</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-users"></i>
+        <strong>👥 Developer Friendly</strong>
+        <p>Easy to learn, great documentation, huge community support.</p>
+      </div>
+    </div>
+    <div class="success-note">
+      <i class="fas fa-check-circle"></i> <strong>MERN = MongoDB + Express + React + Node.js</strong> – They work together seamlessly because all use JavaScript/JSON!
+    </div>
+  </div>
+
+  <!-- MongoDB Data Model -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>3. Understanding MongoDB Data Model</span>
+    </div>
+    <div class="subheading">📄 Document (Like a JSON Object)</div>
+    <div class="code-block" id="documentExample">
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "Ramesh",
+  "email": "ramesh@example.com",
+  "age": 25,
+  "hobbies": ["coding", "reading", "traveling"],
+  "address": {
+    "street": "MG Road",
+    "city": "Hyderabad",
+    "pincode": 500001
+  },
+  "createdAt": ISODate("2024-01-15T10:30:00Z"),
+  "isActive": true
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('documentExample')"><i class="far fa-copy"></i> Copy Document Example</button>
+
+    <div class="subheading">📁 Collection (Like a Table)</div>
+    <div class="code-block">
+// Users Collection - stores multiple user documents
+users = [
+  { _id: 1, name: "Ramesh", email: "ramesh@example.com" },
+  { _id: 2, name: "Priya", email: "priya@example.com" },
+  { _id: 3, name: "Suresh", email: "suresh@example.com" }
+]
+
+// Different documents can have different fields (flexible schema!)
+users = [
+  { _id: 1, name: "Ramesh", email: "ramesh@example.com", age: 25 },
+  { _id: 2, name: "Priya", email: "priya@example.com", phone: "9876543210" },
+  { _id: 3, name: "Suresh", email: "suresh@example.com", address: "Delhi" }
+]
+    </div>
+    <div class="warning-note">
+      <i class="fas fa-info-circle"></i> <strong>Important:</strong> Each document has a unique <span class="inline-code">_id</span> field (ObjectId) automatically created by MongoDB.
+    </div>
+  </div>
+
+  <!-- Key MongoDB Features -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-gem"></i>
+      <span>4. Key MongoDB Features</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-code-branch"></i>
+        <strong>Indexing</strong>
+        <p>Fast query performance with indexes on any field</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-random"></i>
+        <strong>Aggregation Pipeline</strong>
+        <p>Powerful data processing and analytics</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Replication</strong>
+        <p>High availability with replica sets</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-chart-line"></i>
+        <strong>Sharding</strong>
+        <p>Horizontal scaling across multiple servers</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-lock"></i>
+        <strong>Security</strong>
+        <p>Authentication, authorization, encryption</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-download"></i>
+        <strong>Rich Query Language</strong>
+        <p>Complex queries, filtering, sorting, aggregation</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relationships in MongoDB -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-link"></i>
+      <span>5. Handling Relationships in MongoDB</span>
+    </div>
+    <p>Unlike SQL, MongoDB has two ways to handle relationships between data:</p>
+    
+    <div class="subheading">📦 1. Embedded Documents (Denormalization)</div>
+    <div class="code-block">
+// Store related data inside the same document
+{
+  "_id": 1,
+  "title": "My Blog Post",
+  "content": "Post content here...",
+  "author": {
+    "name": "Ramesh",
+    "email": "ramesh@example.com"
+  },
+  "comments": [
+    { "user": "Priya", "text": "Great post!", "date": "2024-01-15" },
+    { "user": "Suresh", "text": "Very helpful", "date": "2024-01-16" }
+  ]
+}
+// ✅ Good for: One-to-One, One-to-Few relationships
+// ✅ Benefit: Single query gets all data
+    </div>
+
+    <div class="subheading">🔗 2. Referenced Documents (Normalization)</div>
+    <div class="code-block">
+// Store references (IDs) to related documents
+// users collection
+{ "_id": 1, "name": "Ramesh", "email": "ramesh@example.com" }
+
+// posts collection
+{ "_id": 100, "title": "My Post", "authorId": 1, "content": "..." }
+
+// comments collection
+{ "_id": 200, "postId": 100, "userId": 2, "text": "Nice post!" }
+// ✅ Good for: One-to-Many, Many-to-Many relationships
+// ✅ Benefit: No data duplication, easier updates
+    </div>
+    <div class="diagram">
+      <i class="fas fa-lightbulb"></i> <strong>Best Practice:</strong> Embed when data is always accessed together. Reference when data grows independently or needs frequent updates.
+    </div>
+  </div>
+
+  <!-- Basic MongoDB Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-terminal"></i>
+      <span>6. Basic MongoDB Operations (CRUD)</span>
+    </div>
+    <div class="subheading">📝 Create (Insert)</div>
+    <div class="code-block">
+// Insert one document
+db.users.insertOne({
+  name: "Ramesh",
+  email: "ramesh@example.com",
+  age: 25
+})
+
+// Insert multiple documents
+db.users.insertMany([
+  { name: "Priya", email: "priya@example.com" },
+  { name: "Suresh", email: "suresh@example.com" }
+])
+    </div>
+
+    <div class="subheading">📖 Read (Query)</div>
+    <div class="code-block">
+// Find all users
+db.users.find()
+
+// Find with filter
+db.users.find({ age: { $gt: 18 } })  // age > 18
+
+// Find one document
+db.users.findOne({ email: "ramesh@example.com" })
+
+// Find with projection (select fields)
+db.users.find({}, { name: 1, email: 1, _id: 0 })
+    </div>
+
+    <div class="subheading">✏️ Update</div>
+    <div class="code-block">
+// Update one document
+db.users.updateOne(
+  { name: "Ramesh" },
+  { $set: { age: 26 } }
+)
+
+// Update multiple documents
+db.users.updateMany(
+  { age: { $exists: false } },
+  { $set: { age: 18 } }
+)
+
+// Replace entire document
+db.users.replaceOne(
+  { name: "Ramesh" },
+  { name: "Ramesh Kumar", email: "ramesh.k@example.com", age: 27 }
+)
+    </div>
+
+    <div class="subheading">🗑️ Delete</div>
+    <div class="code-block">
+// Delete one document
+db.users.deleteOne({ name: "Suresh" })
+
+// Delete multiple documents
+db.users.deleteMany({ age: { $lt: 18 } })
+
+// Delete all documents
+db.users.deleteMany({})
+    </div>
+  </div>
+
+  <!-- MongoDB Query Operators -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-search"></i>
+      <span>7. MongoDB Query Operators</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>Comparison Operators</strong>
+        <p><span class="inline-code">$eq</span> = equal to<br>
+        <span class="inline-code">$gt</span> > greater than<br>
+        <span class="inline-code">$gte</span> >= greater than or equal<br>
+        <span class="inline-code">$lt</span> < less than<br>
+        <span class="inline-code">$lte</span> <= less than or equal<br>
+        <span class="inline-code">$ne</span> != not equal</p>
+      </div>
+      <div class="info-box">
+        <strong>Logical Operators</strong>
+        <p><span class="inline-code">$and</span> – all conditions true<br>
+        <span class="inline-code">$or</span> – at least one true<br>
+        <span class="inline-code">$nor</span> – none true<br>
+        <span class="inline-code">$not</span> – negates condition</p>
+      </div>
+      <div class="info-box">
+        <strong>Array Operators</strong>
+        <p><span class="inline-code">$in</span> – value in array<br>
+        <span class="inline-code">$nin</span> – value not in array<br>
+        <span class="inline-code">$all</span> – matches all values<br>
+        <span class="inline-code">$size</span> – array length</p>
+      </div>
+      <div class="info-box">
+        <strong>Element Operators</strong>
+        <p><span class="inline-code">$exists</span> – field exists<br>
+        <span class="inline-code">$type</span> – field type</p>
+      </div>
+    </div>
+    <div class="code-block">
+// Query examples
+db.users.find({ age: { $gte: 18, $lte: 60 } })  // Age between 18-60
+db.users.find({ $or: [{ age: 25 }, { name: "Ramesh" }] })
+db.users.find({ hobbies: { $in: ["coding", "reading"] } })
+db.users.find({ address: { $exists: true } })
+    </div>
+  </div>
+
+  <!-- MongoDB vs SQL Comparison -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-simple"></i>
+      <span>8. MongoDB vs SQL – When to Use Which?</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+        <strong>✅ Choose MongoDB when:</strong>
+        <p>• Schema is flexible or changes frequently<br>
+        • Data is JSON-like (documents)<br>
+        • Need horizontal scaling<br>
+        • Fast development and iteration<br>
+        • Building modern web/mobile apps<br>
+        • Working with MERN stack</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #3b82f6;"></i>
+        <strong>✅ Choose SQL when:</strong>
+        <p>• Data has strict, fixed schema<br>
+        • Need complex JOIN operations<br>
+        • ACID transactions are critical<br>
+        • Reporting and analytics are primary<br>
+        • Working with existing SQL infrastructure</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Getting Started -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-download"></i>
+      <span>9. Getting Started with MongoDB</span>
+    </div>
+    <div class="subheading">Option 1: MongoDB Atlas (Cloud – Recommended for Beginners)</div>
+    <div class="code-block">
+# 1. Go to mongodb.com/cloud/atlas
+# 2. Sign up for free account
+# 3. Create a free cluster (M0 sandbox – 500MB storage)
+# 4. Get connection string
+# 5. Connect to your cluster
+    </div>
+
+    <div class="subheading">Option 2: Local Installation</div>
+    <div class="code-block">
+# Download MongoDB Community Edition
+# https://www.mongodb.com/try/download/community
+
+# Start MongoDB service (Windows)
+mongod
+
+# Or (Mac with Homebrew)
+brew services start mongodb-community
+
+# Connect to MongoDB shell
+mongosh
+    </div>
+
+    <div class="subheading">💻 First MongoDB Commands</div>
+    <div class="code-block">
+# Show all databases
+show dbs
+
+# Create/switch to database
+use myFirstDB
+
+# Create a collection and insert data
+db.users.insertOne({ name: "Ramesh", email: "ramesh@example.com" })
+
+# Query the data
+db.users.find()
+
+# Show collections
+show collections
+
+# Drop database
+use myFirstDB
+db.dropDatabase()
+    </div>
+    <div class="success-note">
+      <i class="fas fa-star"></i> <strong>Pro Tip:</strong> Start with MongoDB Atlas (cloud) – it's free, easy to set up, and perfect for learning!
+    </div>
+  </div>
+
+  <!-- Day 71 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – MongoDB Practice</span>
+    </div>
+    <p><strong>Task:</strong> Set up MongoDB and practice basic operations:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create a MongoDB Atlas account and free cluster</li>
+      <li>Connect to your cluster using MongoDB Shell (mongosh)</li>
+      <li>Create a database called <span class="inline-code">blogDB</span></li>
+      <li>Create a collection called <span class="inline-code">authors</span></li>
+      <li>Insert 3 author documents (name, email, country)</li>
+      <li>Insert 5 blog post documents (title, content, authorId, tags, views)</li>
+      <li>Practice queries: find posts with > 100 views, find posts by specific author, find posts with specific tag</li>
+      <li>Update a post to increment views count</li>
+      <li>Delete a post by title</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Sample Queries
+use blogDB
+
+// Insert authors
+db.authors.insertMany([
+  { name: "Ramesh", email: "ramesh@example.com", country: "India" },
+  { name: "Priya", email: "priya@example.com", country: "USA" },
+  { name: "Suresh", email: "suresh@example.com", country: "India" }
+])
+
+// Insert posts
+db.posts.insertMany([
+  { title: "MongoDB Basics", content: "Learn MongoDB...", authorId: 1, tags: ["mongodb", "database"], views: 150 },
+  { title: "Express Tutorial", content: "Express framework...", authorId: 1, tags: ["express", "backend"], views: 200 },
+  { title: "React Hooks", content: "React hooks guide...", authorId: 2, tags: ["react", "frontend"], views: 300 }
+])
+
+// Queries to practice
+db.posts.find({ views: { $gt: 100 } })
+db.posts.find({ tags: "mongodb" })
+db.posts.updateOne({ title: "MongoDB Basics" }, { $inc: { views: 1 } })
+db.posts.deleteOne({ title: "React Hooks" })
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 71 Summary – You've Learned:</span>
+    </div>
+    <p>✅ <strong>What is MongoDB:</strong> NoSQL document database using JSON-like documents<br>
+    ✅ <strong>Why MongoDB:</strong> Flexible schema, scalable, perfect for MERN stack<br>
+    ✅ <strong>Data Model:</strong> Databases → Collections → Documents (with _id)<br>
+    ✅ <strong>Relationships:</strong> Embedded documents vs Referenced documents<br>
+    ✅ <strong>CRUD Operations:</strong> insertOne, find, updateOne, deleteOne<br>
+    ✅ <strong>Query Operators:</strong> $gt, $lt, $or, $in, $exists<br>
+    ✅ <strong>Setup Options:</strong> MongoDB Atlas (cloud) vs Local installation<br>
+    ✅ <strong>MongoDB Shell:</strong> mongosh for interacting with database</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 72 – Install MongoDB & MongoDB Compass GUI</strong><br>
+      Keep following Telugu WebTech MERN roadmap – Databases make your apps persistent! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-database"></i> Day 71 · MongoDB Introduction · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 MongoDB is the "M" in MERN. Master it, and you'll build full-stack apps like a pro!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Practice these MongoDB commands in your shell.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

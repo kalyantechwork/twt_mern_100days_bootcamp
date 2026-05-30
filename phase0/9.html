@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 9: DOM Manipulation | Interactive Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 6px 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .dark-mode-demo {
+      transition: 0.3s;
+      padding: 20px;
+      border-radius: 28px;
+      background: white;
+      border: 1px solid #e2e8f0;
+    }
+    .dark-mode-demo.dark-active {
+      background: #1e293b;
+      color: #f1f5f9;
+      border-color: #475569;
+    }
+    .counter-number {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .console-preview {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 10px;
+      border-radius: 16px;
+      font-family: monospace;
+      margin-top: 8px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🖱️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 9 · DOM Manipulation (Show Results)</div>
+  </div>
+
+  <h1>🖱️ DOM Manipulation<br><span style="font-size:1rem;">Select · Modify · Events · Create/Remove · classList — Click "Show Result" for live demos</span></h1>
+
+  <!-- 1. What is DOM -->
+  <div class="section-title">1️⃣ What is DOM?</div>
+  <div class="highlight-box">
+    🌳 DOM = Document Object Model. Browser converts HTML into a tree of objects. JavaScript manipulates this tree to create dynamic websites.
+  </div>
+
+  <!-- 2. Selecting Elements -->
+  <div class="section-title">2️⃣ Selecting Elements (querySelector)</div>
+  <div class="example-card">
+    <h3>🔍 querySelector Examples</h3>
+    <div class="code-block">
+      // Select by ID<br>
+      let title = document.querySelector("#mainTitle");<br>
+      // Select by class<br>
+      let box = document.querySelector(".demoBox");
+    </div>
+    <button class="btn-show" data-target="selectResult">🔍 Show Demo</button>
+    <div id="selectResult" class="result-area">
+      <div class="result-label">🎯 Live Selection Demo:</div>
+      <p id="targetPara" style="background:#f1f5f9; padding:12px; border-radius:16px;">This is a paragraph with id="targetPara"</p>
+      <button class="demo-button" id="selectDemoBtn">Select & Change Text</button>
+      <script>
+        document.getElementById("selectDemoBtn")?.addEventListener("click", function() {
+          const para = document.querySelector("#targetPara");
+          if(para) para.textContent = "✅ Selected using querySelector('#targetPara') and changed text!";
+        });
+      </script>
+      <p class="inline-code">✅ querySelector("#id") / querySelector(".class")</p>
+    </div>
+  </div>
+
+  <!-- 3. Changing Text & Style -->
+  <div class="section-title">3️⃣ Changing Content & Styles</div>
+  <div class="example-card">
+    <h3>🎨 textContent + style</h3>
+    <div class="code-block">
+      element.textContent = "New text";<br>
+      element.style.color = "red";<br>
+      element.style.fontSize = "24px";
+    </div>
+    <button class="btn-show" data-target="styleResult">🎨 Show Styling Demo</button>
+    <div id="styleResult" class="result-area">
+      <div class="result-label">✨ Interactive Styling:</div>
+      <h3 id="styleDemoText">I will change</h3>
+      <button class="demo-button" id="changeStyleBtn">Make Blue + Bigger</button>
+      <button class="demo-button" id="resetStyleBtn">Reset</button>
+      <script>
+        const styleTarget = document.getElementById("styleDemoText");
+        document.getElementById("changeStyleBtn")?.addEventListener("click", () => {
+          styleTarget.style.color = "#2563eb";
+          styleTarget.style.fontSize = "28px";
+          styleTarget.textContent = "✨ Style changed! (color + fontSize)";
+        });
+        document.getElementById("resetStyleBtn")?.addEventListener("click", () => {
+          styleTarget.style.color = "";
+          styleTarget.style.fontSize = "";
+          styleTarget.textContent = "I will change";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 4. Events & addEventListener -->
+  <div class="section-title">4️⃣ Events (addEventListener)</div>
+  <div class="example-card">
+    <h3>🖱️ Click, Mouseover Events</h3>
+    <div class="code-block">
+      button.addEventListener("click", () => { alert("Clicked!"); });
+    </div>
+    <button class="btn-show" data-target="eventResult">🎯 Show Event Demo</button>
+    <div id="eventResult" class="result-area">
+      <div class="result-label">⚡ Event Listeners in Action:</div>
+      <button class="demo-button" id="clickEventBtn">Click Me (Alert)</button>
+      <button class="demo-button" id="mouseEventBtn">Hover Over Me</button>
+      <p id="hoverMessage" style="margin-top:8px;"></p>
+      <script>
+        document.getElementById("clickEventBtn")?.addEventListener("click", () => alert("Button Click Event!"));
+        document.getElementById("mouseEventBtn")?.addEventListener("mouseover", () => {
+          document.getElementById("hoverMessage").textContent = "✅ Mouse over event triggered!";
+        });
+        document.getElementById("mouseEventBtn")?.addEventListener("mouseout", () => {
+          document.getElementById("hoverMessage").textContent = "";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 5. Input Value Handling -->
+  <div class="section-title">5️⃣ Getting Input Values</div>
+  <div class="example-card">
+    <h3>📝 Form Input Value</h3>
+    <div class="code-block">
+      let value = document.querySelector("#myInput").value;
+    </div>
+    <button class="btn-show" data-target="inputResult">📥 Show Input Demo</button>
+    <div id="inputResult" class="result-area">
+      <div class="result-label">📌 Live Input Handler:</div>
+      <input type="text" id="liveInput" placeholder="Type something..." style="padding:8px; border-radius:40px; border:1px solid #ccc; width:70%;">
+      <button class="demo-button" id="showInputValue">Show Value</button>
+      <p id="inputDisplay" style="margin-top:10px;"></p>
+      <script>
+        document.getElementById("showInputValue")?.addEventListener("click", () => {
+          let val = document.querySelector("#liveInput").value;
+          document.getElementById("inputDisplay").innerHTML = val ? `You typed: "${val}"` : "Input is empty";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 6. Form preventDefault -->
+  <div class="section-title">6️⃣ Form Handling (preventDefault)</div>
+  <div class="example-card">
+    <h3>🚫 Stop Page Reload</h3>
+    <div class="code-block">
+      form.addEventListener("submit", (e) => { e.preventDefault(); });
+    </div>
+    <button class="btn-show" data-target="formResult">📋 Show Form Demo</button>
+    <div id="formResult" class="result-area">
+      <div class="result-label">📄 Form without reload:</div>
+      <form id="testForm">
+        <input type="text" placeholder="Enter message" style="padding:8px; border-radius:40px;">
+        <button type="submit" class="demo-button">Submit (No reload)</button>
+      </form>
+      <p id="formMessage" style="margin-top:8px;"></p>
+      <script>
+        document.getElementById("testForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          document.getElementById("formMessage").innerHTML = "✅ Form submitted! Page did NOT reload (preventDefault).";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 7. innerHTML -->
+  <div class="section-title">7️⃣ innerHTML (Dynamic HTML)</div>
+  <div class="example-card">
+    <h3>📦 Insert HTML</h3>
+    <div class="code-block">
+      element.innerHTML = "&lt;strong&gt;HTML&lt;/strong&gt;";
+    </div>
+    <button class="btn-show" data-target="innerHtmlResult">🔧 Show innerHTML Demo</button>
+    <div id="innerHtmlResult" class="result-area">
+      <div class="result-label">✨ Inject HTML:</div>
+      <div id="innerTarget" style="background:#f1f5f9; padding:12px; border-radius:16px;">Original content</div>
+      <button class="demo-button" id="injectHtmlBtn">Inject Bold HTML</button>
+      <script>
+        document.getElementById("injectHtmlBtn")?.addEventListener("click", () => {
+          document.getElementById("innerTarget").innerHTML = "<strong>🔥 New HTML injected via innerHTML!</strong> <span style='color:#dc2626'>Dynamic</span>";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 8. createElement & appendChild -->
+  <div class="section-title">8️⃣ Create & Remove Elements</div>
+  <div class="example-card">
+    <h3>➕ Dynamically Add Elements</h3>
+    <div class="code-block">
+      let newDiv = document.createElement("div");<br>
+      newDiv.textContent = "Hello";<br>
+      parent.appendChild(newDiv);
+    </div>
+    <button class="btn-show" data-target="createResult">📦 Show Dynamic Creation</button>
+    <div id="createResult" class="result-area">
+      <div class="result-label">🆕 Dynamic List Creator:</div>
+      <div id="dynamicListContainer" style="margin-bottom:8px;"></div>
+      <button class="demo-button" id="addItemBtn">➕ Add New Item</button>
+      <button class="demo-button" id="removeItemBtn">❌ Remove Last Item</button>
+      <script>
+        const dynContainer = document.getElementById("dynamicListContainer");
+        document.getElementById("addItemBtn")?.addEventListener("click", () => {
+          let newItem = document.createElement("div");
+          newItem.textContent = `✨ New element created at ${new Date().toLocaleTimeString()}`;
+          newItem.style.background = "#e2e8f0";
+          newItem.style.padding = "8px";
+          newItem.style.borderRadius = "12px";
+          newItem.style.marginTop = "6px";
+          dynContainer.appendChild(newItem);
+        });
+        document.getElementById("removeItemBtn")?.addEventListener("click", () => {
+          if(dynContainer.lastChild) dynContainer.removeChild(dynContainer.lastChild);
+          else alert("No more items");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 9. classList Toggle -->
+  <div class="section-title">9️⃣ classList (Add/Remove/Toggle)</div>
+  <div class="example-card">
+    <h3>🎭 Toggle CSS Class</h3>
+    <div class="code-block">
+      element.classList.toggle("dark-mode");
+    </div>
+    <button class="btn-show" data-target="classListResult">🌈 Show classList Demo</button>
+    <div id="classListResult" class="result-area">
+      <div class="result-label">🔄 Toggle Theme on Card:</div>
+      <div class="dark-mode-demo" id="toggleCard">
+        <p>This card can change appearance using classList.toggle()</p>
+      </div>
+      <button class="demo-button" id="toggleClassBtn">🌗 Toggle Dark Mode (class)</button>
+      <style>
+        .dark-card {
+          background: #0f172a !important;
+          color: #facc15 !important;
+          border: 1px solid #334155 !important;
+        }
+      </style>
+      <script>
+        document.getElementById("toggleClassBtn")?.addEventListener("click", () => {
+          document.getElementById("toggleCard").classList.toggle("dark-card");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- 10. Mini Project - Counter -->
+  <div class="section-title">🔟 Mini Project: Counter App (DOM)</div>
+  <div class="example-card">
+    <h3>🔢 Interactive Counter</h3>
+    <div class="code-block">
+      let count = 0;<br>
+      counterSpan.textContent = count;<br>
+      incrementBtn.addEventListener("click", () => count++);
+    </div>
+    <button class="btn-show" data-target="counterProject">📊 Show Counter Demo</button>
+    <div id="counterProject" class="result-area">
+      <div class="result-label">➕➖ Live Counter:</div>
+      <div class="counter-number" id="counterValue">0</div>
+      <button class="demo-button" id="incCounter">+1 Increase</button>
+      <button class="demo-button" id="decCounter">-1 Decrease</button>
+      <button class="demo-button" id="resetCounter">Reset</button>
+      <script>
+        let count = 0;
+        const counterSpan = document.getElementById("counterValue");
+        document.getElementById("incCounter")?.addEventListener("click", () => { count++; counterSpan.textContent = count; });
+        document.getElementById("decCounter")?.addEventListener("click", () => { count--; counterSpan.textContent = count; });
+        document.getElementById("resetCounter")?.addEventListener("click", () => { count = 0; counterSpan.textContent = count; });
+      </script>
+    </div>
+  </div>
+
+  <!-- 11. Dark Mode Full Page Project -->
+  <div class="section-title">🌙 Full Page Dark Mode Project</div>
+  <div class="example-card">
+    <h3>🎨 Toggle Global Theme</h3>
+    <div class="code-block">
+      document.body.classList.toggle("dark-body");
+    </div>
+    <button class="btn-show" data-target="darkModeFull">🌓 Show Dark Mode Toggle</button>
+    <div id="darkModeFull" class="result-area">
+      <div class="result-label">🌙 Toggle dark theme for this page section:</div>
+      <button class="demo-button" id="fullDarkBtn">🌓 Toggle Dark Mode (body background)</button>
+      <p id="darkModeMsg">Click button to change background of this demo container</p>
+      <style>
+        .demo-dark-bg {
+          background-color: #0f172a !important;
+          color: #e2e8f0 !important;
+        }
+        .demo-dark-bg .demo-button {
+          background: #334155;
+        }
+      </style>
+      <script>
+        const demoContainer = document.getElementById("darkModeFull");
+        document.getElementById("fullDarkBtn")?.addEventListener("click", () => {
+          demoContainer.classList.toggle("demo-dark-bg");
+          if(demoContainer.classList.contains("demo-dark-bg")) {
+            document.getElementById("darkModeMsg").innerHTML = "✅ Dark mode active on this demo area!";
+          } else {
+            document.getElementById("darkModeMsg").innerHTML = "Light mode restored.";
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common DOM Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="domMistakes">📖 Show Mistakes & Fixes</button>
+    <div id="domMistakes" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Script runs before DOM loads → use <span class="inline-code">DOMContentLoaded</span> or place script at bottom.</li>
+        <li>❌ Wrong selector syntax: <span class="inline-code">querySelector('.myclass')</span> correct, missing dot for class.</li>
+        <li>❌ Forgetting <span class="inline-code">event.preventDefault()</span> → form reloads page.</li>
+        <li>❌ Using innerHTML with user input → security risk (XSS).</li>
+        <li>❌ Not checking if element exists before manipulating → use if(element).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-world applications -->
+  <div class="section-title">🌍 Real-World DOM Applications</div>
+  <div class="card-grid">
+    <div class="card">✅ Form validation (real-time feedback)</div>
+    <div class="card">✅ Dark/Light mode toggle</div>
+    <div class="card">✅ Shopping cart add/remove items</div>
+    <div class="card">✅ To-do list (create/delete tasks)</div>
+    <div class="card">✅ Accordions, tabs, modals</div>
+    <div class="card">✅ Dynamic dashboards & charts</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎯 Task 1</h3><p>Create button that changes text of a paragraph using textContent.</p></div>
+    <div class="card"><h3>🌙 Task 2</h3><p>Build dark mode toggle for a card (using classList.toggle).</p></div>
+    <div class="card"><h3>📊 Task 3</h3><p>Build Counter App (increase, decrease, reset) using DOM events.</p></div>
+    <div class="card"><h3>📝 Task 4</h3><p>Create simple form that logs input value on submit without page reload.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 9 - DOM Manipulation)</div>
+  <div class="card-grid">
+    <div class="card">✔️ querySelector & textContent/style</div>
+    <div class="card">✔️ addEventListener (click, mouseover)</div>
+    <div class="card">✔️ Form input .value & preventDefault</div>
+    <div class="card">✔️ innerHTML for dynamic HTML</div>
+    <div class="card">✔️ createElement, appendChild, removeChild</div>
+    <div class="card">✔️ classList.add/remove/toggle</div>
+  </div>
+
+  <!-- Day 9 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 9 Ending Message</strong><br>
+    “Now you can build fully interactive webpages using JavaScript and DOM. From tomorrow, we will build mini JavaScript projects.”
+  </div>
+
+  <div class="section-title">🔜 Next — Day 10 : Mini JavaScript Projects</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🧮 Calculator App</span>
+    <span class="badge">✅ To-do List App</span>
+    <span class="badge">🔢 Counter App (advanced)</span>
+    <span class="badge">🎨 Random Color Generator</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 9 Completed ✅<br>
+    Click "Show Result" on each example to see DOM manipulation live. Practice daily!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 59: Environment Variables – dotenv & Secrets | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .danger-note {
+      background: #fee2e2;
+      border-left: 4px solid #dc2626;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 59</div>
+    <h1>
+      <i class="fas fa-key"></i> 
+      Environment Variables – dotenv & Keeping Secrets Safe
+    </h1>
+    <p>Learn how to protect passwords, API keys, and sensitive data using environment variables. Essential for real-world MERN applications!</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Security Best Practices
+    </div>
+  </div>
+
+  <!-- 1. What are Environment Variables? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What are Environment Variables?</span>
+    </div>
+    <p><strong>Environment variables</strong> are special variables that live outside your code. They store configuration data like passwords, API keys, database URLs, and secret tokens.</p>
+    <div class="diagram">
+      <i class="fas fa-shield-alt"></i> <strong>Why use environment variables?</strong><br>
+      ❌ Hardcoding secrets: <span class="inline-code">const password = "mySecret123"</span> → Anyone can see!<br>
+      ✅ Environment variables: <span class="inline-code">process.env.DB_PASSWORD</span> → Safe and hidden!<br>
+      <br>
+      <strong>📁 Different environments have different variables:</strong><br>
+      Development (localhost) → Testing → Production (live website)
+    </div>
+    <div class="success-note">
+      <i class="fas fa-star"></i> <strong>Never commit secrets to GitHub!</strong> Always use <span class="inline-code">.gitignore</span> to exclude <span class="inline-code">.env</span> files.
+    </div>
+  </div>
+
+  <!-- 2. Accessing Environment Variables in Node.js -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>2. Accessing Environment Variables with process.env</span>
+    </div>
+    <p>Node.js gives you access to environment variables through the global object <span class="inline-code">process.env</span>.</p>
+    <div class="code-block" id="processEnv">
+// Access environment variables
+console.log(process.env.USER);  // Your computer username
+console.log(process.env.PATH);  // System paths
+console.log(process.env.NODE_ENV);  // Usually 'development' or 'production'
+
+// Run with: USERNAME=Ramesh node app.js
+// You can set variables before running your script
+    </div>
+    <button class="copy-btn" onclick="copyCode('processEnv')"><i class="far fa-copy"></i> Copy</button>
+    
+    <div class="subheading">📝 Setting variables temporarily (command line):</div>
+    <div class="code-block">
+# Windows (Command Prompt)
+set PORT=5000 && node server.js
+
+# Windows (PowerShell)
+$env:PORT=5000; node server.js
+
+# Mac / Linux
+PORT=5000 node server.js
+    </div>
+    <div class="warning-note">
+      <i class="fas fa-info-circle"></i> This method is temporary! Next terminal session, variables are gone. For permanent solutions, use <strong>dotenv package</strong>.
+    </div>
+  </div>
+
+  <!-- 3. The .env File (dotenv package) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-file-alt"></i>
+      <span>3. The .env File – Store All Secrets in One Place</span>
+    </div>
+    <p>The <strong>dotenv</strong> package loads variables from a <span class="inline-code">.env</span> file into <span class="inline-code">process.env</span>. This is the standard way to manage configuration.</p>
+    
+    <div class="subheading">📦 Step 1: Install dotenv</div>
+    <div class="code-block">
+npm install dotenv
+    </div>
+
+    <div class="subheading">📁 Step 2: Create a .env file in your project root</div>
+    <div class="code-block" id="envFile">
+# .env file (DO NOT commit to GitHub!)
+PORT=3000
+DB_NAME=mern_tutorial
+DB_USER=admin
+DB_PASSWORD=SuperSecret123
+JWT_SECRET=my_super_secret_key_change_this
+API_KEY=abc123xyz789
+NODE_ENV=development
+    </div>
+    <button class="copy-btn" onclick="copyCode('envFile')"><i class="far fa-copy"></i> Copy .env example</button>
+
+    <div class="subheading">⚙️ Step 3: Load and use variables</div>
+    <div class="code-block" id="dotenvExample">
+// Load environment variables from .env file
+require('dotenv').config();
+
+// Now you can access them anywhere!
+const port = process.env.PORT || 3000;
+const dbName = process.env.DB_NAME;
+const jwtSecret = process.env.JWT_SECRET;
+
+console.log(`Server will run on port: ${port}`);
+console.log(`Database: ${dbName}`);
+console.log(`JWT Secret is set: ${jwtSecret ? '✅ Yes' : '❌ No'}`);
+
+// Use in your server
+const http = require('http');
+const server = http.createServer((req, res) => {
+  res.end(`Environment: ${process.env.NODE_ENV}`);
+});
+server.listen(port, () => {
+  console.log(`🚀 Server running on http://localhost:${port}`);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('dotenvExample')"><i class="far fa-copy"></i> Copy Code</button>
+  </div>
+
+  <!-- 4. .gitignore – Protect Your Secrets -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fab fa-git-alt"></i>
+      <span>4. .gitignore – Never Leak Secrets to GitHub</span>
+    </div>
+    <div class="danger-note">
+      <i class="fas fa-skull-crosswalk"></i> <strong>DANGER:</strong> If you commit <span class="inline-code">.env</span> to GitHub, anyone can see your passwords! Hackers scan GitHub for exposed .env files.
+    </div>
+    <div class="subheading">📝 Create a .gitignore file:</div>
+    <div class="code-block" id="gitignore">
+# .gitignore
+.env
+.env.local
+.env.production
+node_modules/
+.DS_Store
+    </div>
+    <button class="copy-btn" onclick="copyCode('gitignore')"><i class="far fa-copy"></i> Copy .gitignore</button>
+    
+    <div class="subheading">📋 Create a .env.example file (share structure, not secrets):</div>
+    <div class="code-block" id="envExample">
+# .env.example – Share this on GitHub
+PORT=
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+JWT_SECRET=
+API_KEY=
+NODE_ENV=development
+    </div>
+    <button class="copy-btn" onclick="copyCode('envExample')"><i class="far fa-copy"></i> Copy .env.example</button>
+    <div class="success-note">
+      <i class="fas fa-check-circle"></i> <strong>Best Practice:</strong> Commit <span class="inline-code">.env.example</span> to GitHub so other developers know what variables they need. Never commit the real <span class="inline-code">.env</span>!
+    </div>
+  </div>
+
+  <!-- 5. Real MERN Project Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-project-diagram"></i>
+      <span>5. Real MERN Project – Database Connection with .env</span>
+    </div>
+    <p>Here's how a real MERN backend uses environment variables for MongoDB connection:</p>
+    <div class="code-block" id="mernEnvExample">
+// .env file
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/mern_ecommerce
+JWT_SECRET=your_jwt_secret_key_here
+JWT_EXPIRES_IN=7d
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=app_specific_password
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=123456789
+CLOUDINARY_API_SECRET=abcdefg
+
+// server.js
+require('dotenv').config();
+const mongoose = require('mongoose');
+const express = require('express');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('MongoDB Error:', err));
+
+// JWT secret (used for authentication)
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+  console.error('❌ JWT_SECRET is not defined!');
+  process.exit(1);
+}
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('mernEnvExample')"><i class="far fa-copy"></i> Copy MERN Example</button>
+  </div>
+
+  <!-- 6. Different Environments (dev, test, prod) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code-branch"></i>
+      <span>6. Different Environments – Development vs Production</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-laptop-code"></i>
+        <strong>Development (.env.development)</strong>
+        <ul style="margin-top: 8px; margin-left: 1rem;">
+          <li>Local database</li>
+          <li>Debug logging ON</li>
+          <li>Mock APIs</li>
+          <li>Error details shown</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <strong>Production (.env.production)</strong>
+        <ul style="margin-top: 8px; margin-left: 1rem;">
+          <li>Cloud database (MongoDB Atlas)</li>
+          <li>Debug logging OFF</li>
+          <li>Real API keys</li>
+          <li>Error details hidden</li>
+        </ul>
+      </div>
+    </div>
+    <div class="code-block" id="envSwitch">
+// Load different .env files based on NODE_ENV
+const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
+require('dotenv').config({ path: envFile });
+
+console.log(`Loading config from: ${envFile}`);
+console.log(`Database: ${process.env.DB_NAME}`);
+
+// Run with:
+// NODE_ENV=production node server.js
+// NODE_ENV=development node server.js
+    </div>
+    <button class="copy-btn" onclick="copyCode('envSwitch')"><i class="far fa-copy"></i> Copy Environment Switching</button>
+  </div>
+
+  <!-- 7. Validation – Ensure Required Variables Exist -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-check-double"></i>
+      <span>7. Validating Environment Variables (Don't Let Your App Crash!)</span>
+    </div>
+    <p>Always check that required environment variables exist before starting your app:</p>
+    <div class="code-block" id="validation">
+require('dotenv').config();
+
+const requiredEnvVars = [
+  'PORT',
+  'MONGODB_URI',
+  'JWT_SECRET',
+  'API_KEY'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(varName => console.error(`   - ${varName}`));
+  console.error('\nPlease create a .env file with these variables');
+  process.exit(1); // Stop the app
+}
+
+console.log('✅ All environment variables are present!');
+
+// Or use a package like 'envalid' for advanced validation:
+// npm install envalid
+    </div>
+    <button class="copy-btn" onclick="copyCode('validation')"><i class="far fa-copy"></i> Copy Validation Code</button>
+  </div>
+
+  <!-- 8. Environment Variables in React (Frontend) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fab fa-react"></i>
+      <span>8. Environment Variables in React (Create React App / Vite)</span>
+    </div>
+    <p>React also uses environment variables, but with <strong>REACT_APP_</strong> prefix (CRA) or <strong>VITE_</strong> prefix (Vite).</p>
+    
+    <div class="subheading">📁 Create React App (.env file in root)</div>
+    <div class="code-block">
+# .env (Create React App)
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_GOOGLE_MAPS_KEY=abc123
+    </div>
+    <div class="code-block">
+// In your React component
+const apiUrl = process.env.REACT_APP_API_URL;
+console.log(apiUrl); // http://localhost:5000/api
+    </div>
+
+    <div class="subheading">⚡ Vite (.env file)</div>
+    <div class="code-block">
+# .env (Vite)
+VITE_API_URL=http://localhost:5000/api
+VITE_STRIPE_KEY=pk_test_123
+    </div>
+    <div class="code-block">
+// In your React component (Vite)
+const apiUrl = import.meta.env.VITE_API_URL;
+console.log(apiUrl);
+    </div>
+    <div class="warning-note">
+      <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Environment variables in React are embedded in the browser! Never put secrets (passwords, API keys) in frontend .env files – use your backend for that.
+    </div>
+  </div>
+
+  <!-- 9. Common Mistakes & Solutions -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bug"></i>
+      <span>9. Common Beginner Mistakes</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>❌ Not restarting server after .env changes</strong>
+        <p>dotenv loads variables only once at startup.</p>
+        <strong>✅ Fix:</strong> Restart Node.js after changing .env file.
+      </div>
+      <div class="info-box">
+        <strong>❌ Forgetting to require('dotenv').config()</strong>
+        <p><span class="inline-code">process.env.VAR</span> returns undefined.</p>
+        <strong>✅ Fix:</strong> Add dotenv config at the VERY TOP of your file.
+      </div>
+      <div class="info-box">
+        <strong>❌ Committing .env to GitHub</strong>
+        <p>Your secrets are now public! Hackers will find them.</p>
+        <strong>✅ Fix:</strong> Add .env to .gitignore immediately.
+      </div>
+      <div class="info-box">
+        <strong>❌ Spaces around = in .env file</strong>
+        <p><span class="inline-code">API_KEY = abc</span> (with spaces) – not correct!</p>
+        <strong>✅ Fix:</strong> <span class="inline-code">API_KEY=abc</span> (no spaces)
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Day 59 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>10. 🚀 Daily Challenge – Secure Configuration Manager</span>
+    </div>
+    <p><strong>Task:</strong> Create a secure configuration system for a MERN app:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create a <span class="inline-code">.env</span> file with 5+ configuration variables (PORT, DB_NAME, ADMIN_EMAIL, APP_NAME, FEATURE_FLAG)</li>
+      <li>Create a <span class="inline-code">.env.example</span> file (for GitHub)</li>
+      <li>Write a Node.js script that loads all variables and displays them (mask passwords partially)</li>
+      <li>Add validation – if any required variable is missing, show error and exit</li>
+      <li>Create a simple HTTP server that uses PORT from .env and responds with APP_NAME</li>
+    </ul>
+    <div class="code-block" id="challengeCode">
+// config.js – Complete challenge solution starter
+require('dotenv').config();
+
+const requiredVars = ['PORT', 'APP_NAME', 'ADMIN_EMAIL'];
+const missing = requiredVars.filter(v => !process.env[v]);
+
+if (missing.length > 0) {
+  console.error('❌ Missing variables:', missing.join(', '));
+  console.error('Create .env file with these variables');
+  process.exit(1);
+}
+
+console.log('=' .repeat(50));
+console.log('✅ Configuration loaded successfully');
+console.log('=' .repeat(50));
+console.log(`📱 App Name: ${process.env.APP_NAME}`);
+console.log(`🌐 Port: ${process.env.PORT}`);
+console.log(`📧 Admin Email: ${process.env.ADMIN_EMAIL}`);
+console.log(`🗄️ Database: ${process.env.DB_NAME || 'default_db'}`);
+console.log(`🚩 Feature Flag: ${process.env.FEATURE_FLAG || 'disabled'}`);
+console.log('=' .repeat(50));
+
+// HTTP Server
+const http = require('http');
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`
+    <h1>${process.env.APP_NAME}</h1>
+    <p>Environment: ${process.env.NODE_ENV || 'development'}</p>
+    <p>Server running on port ${process.env.PORT}</p>
+    <p>Admin: ${process.env.ADMIN_EMAIL}</p>
+  `);
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${process.env.PORT}`);
+});
+
+// Your .env file should look like:
+/*
+PORT=4000
+APP_NAME=TeluguWebTech Secure App
+ADMIN_EMAIL=admin@teluguwebtech.com
+DB_NAME=challenge_db
+FEATURE_FLAG=enabled
+NODE_ENV=development
+*/
+    </div>
+    <button class="copy-btn" onclick="copyCode('challengeCode')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+    <p class="icon-text"><i class="fab fa-youtube"></i> <strong>Telugu WebTech:</strong> Complete this challenge to master environment variables!</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 59 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>What are Environment Variables:</strong> Storing configuration outside your code<br>
+    ✅ <strong>process.env:</strong> Accessing variables in Node.js<br>
+    ✅ <strong>dotenv package:</strong> Loading variables from .env file<br>
+    ✅ <strong>.gitignore & .env.example:</strong> Protecting secrets on GitHub<br>
+    ✅ <strong>Validation:</strong> Ensuring required variables exist<br>
+    ✅ <strong>React Environment Variables:</strong> REACT_APP_ and VITE_ prefixes<br>
+    ✅ <strong>Different Environments:</strong> Development vs Production configuration</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 60 – Build a Simple Server (Project Day!)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – Security is crucial for real developers! 🔐
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-node-js"></i> Day 59 · Environment Variables & dotenv · <strong>Telugu WebTech</strong> — Build secure, production-ready Node.js apps</p>
+    <p style="font-size: 0.85rem;">💡 Never hardcode secrets! Always use .env files and .gitignore. Practice makes perfect!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Remember to create .env file and never commit it to GitHub.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

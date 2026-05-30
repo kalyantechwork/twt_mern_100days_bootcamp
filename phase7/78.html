@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 78: Relationships – Population & Referencing | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 78 · Phase 8</div>
+    <h1>
+      <i class="fas fa-link"></i> 
+      Relationships – Population & Referencing
+    </h1>
+    <p>Master MongoDB relationships! Learn how to connect collections using references, populate data like SQL JOINs, and design efficient data models for your MERN applications.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master MongoDB Relationships
+    </div>
+  </div>
+
+  <!-- Types of Relationships -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. Types of Relationships in MongoDB</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-user"></i>
+        <strong>1. One-to-One (1:1)</strong>
+        <p>A user has one profile. A product has one SKU.</p>
+        <div class="code-block" style="font-size:0.7rem;">// Embedded (preferred)
+{
+  user: { name: "Ramesh", profile: { bio: "...", avatar: "..." } }
+}</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-users"></i>
+        <strong>2. One-to-Many (1:N)</strong>
+        <p>A user has many posts. A category has many products.</p>
+        <div class="code-block" style="font-size:0.7rem;">// Reference (preferred for many)
+{
+  posts: [{ type: ObjectId, ref: 'Post' }]
+}</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-layer-group"></i>
+        <strong>3. Many-to-Many (N:N)</strong>
+        <p>Users belong to many groups. Products have many tags.</p>
+        <div class="code-block" style="font-size:0.7rem;">// Two-way references
+{
+  users: [{ type: ObjectId, ref: 'User' }],
+  groups: [{ type: ObjectId, ref: 'Group' }]
+}</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-code-branch"></i>
+        <strong>4. One-to-Few (1:N with small N)</strong>
+        <p>A blog post has few comments (under 100).</p>
+        <div class="code-block" style="font-size:0.7rem;">// Embedded array (preferred)
+{
+  comments: [{ text: "...", author: "..." }]
+}</div>
+      </div>
+    </div>
+    <div class="diagram">
+      <i class="fas fa-lightbulb"></i> <strong>Design Rule of Thumb:</strong><br>
+      • <strong>Embed</strong> when data is always accessed together and has few items<br>
+      • <strong>Reference</strong> when data grows independently or is accessed separately
+    </div>
+  </div>
+
+  <!-- Setting Up Reference Schemas -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>2. Setting Up Reference Schemas (ObjectId)</span>
+    </div>
+    <div class="code-block" id="referenceSchemas">
+// models/User.js
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  bio: String,
+  avatar: String,
+  createdAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+// models/Post.js
+const postSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  // Reference to User model
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  createdAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+// models/Comment.js
+const commentSchema = new mongoose.Schema({
+  text: { type: String, required: true },
+  // Reference to User
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  // Reference to Post
+  post: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    required: true
+  },
+  // Self-reference for nested comments
+  parentComment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
+const Post = mongoose.model('Post', postSchema);
+const Comment = mongoose.model('Comment', commentSchema);
+
+module.exports = { User, Post, Comment };
+    </div>
+    <button class="copy-btn" onclick="copyCode('referenceSchemas')"><i class="far fa-copy"></i> Copy Reference Schemas</button>
+  </div>
+
+  <!-- Creating Related Documents -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plus-circle"></i>
+      <span>3. Creating Related Documents</span>
+    </div>
+    <div class="code-block" id="createRelated">
+const { User, Post, Comment } = require('./models');
+
+// Step 1: Create a user
+const user = await User.create({
+  name: "Ramesh Kumar",
+  email: "ramesh@example.com",
+  bio: "Full Stack Developer",
+  avatar: "https://example.com/avatar.jpg"
+});
+console.log('User created:', user._id);
+
+// Step 2: Create a post referencing the user
+const post = await Post.create({
+  title: "My First Blog Post",
+  content: "This is the content of my blog post...",
+  author: user._id,  // Reference to User document
+  likes: []          // Empty array initially
+});
+console.log('Post created:', post._id);
+
+// Step 3: Create comments referencing both user and post
+const comment1 = await Comment.create({
+  text: "Great post! Very informative.",
+  author: user._id,
+  post: post._id
+});
+
+const comment2 = await Comment.create({
+  text: "Thanks for sharing this!",
+  author: user._id,
+  post: post._id
+});
+
+// Step 4: Add comments to post (optional – can also query comments by postId)
+await Post.findByIdAndUpdate(post._id, {
+  $push: { comments: comment1._id, comment2._id }
+});
+
+// Step 5: Add likes to post
+await Post.findByIdAndUpdate(post._id, {
+  $addToSet: { likes: user._id }
+});
+
+console.log('All related documents created successfully!');
+    </div>
+    <button class="copy-btn" onclick="copyCode('createRelated')"><i class="far fa-copy"></i> Copy Create Related Documents</button>
+  </div>
+
+  <!-- Basic Population -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>4. Basic Population (Replacing IDs with Documents)</span>
+    </div>
+    <div class="code-block" id="basicPopulation">
+// Without population – you only get IDs
+const postWithoutPopulate = await Post.findById(postId);
+console.log(postWithoutPopulate.author); // ObjectId("507f1f77bcf86cd799439011")
+
+// WITH population – replaces ID with actual document
+const postWithPopulate = await Post.findById(postId).populate('author');
+console.log(postWithPopulate.author);
+/* Output:
+{
+  _id: ObjectId("..."),
+  name: "Ramesh Kumar",
+  email: "ramesh@example.com",
+  bio: "Full Stack Developer",
+  avatar: "https://example.com/avatar.jpg"
+}
+*/
+
+// Populate multiple fields
+const postWithMultiple = await Post.findById(postId)
+  .populate('author')
+  .populate('likes');
+
+// Populate with specific fields (only include needed data)
+const postWithSelect = await Post.findById(postId)
+  .populate('author', 'name email avatar')  // Only these fields
+  .populate('likes', 'name');               // Only name field
+
+// Populate nested references (comments then comment authors)
+const postWithComments = await Post.findById(postId)
+  .populate('author')
+  .populate({
+    path: 'comments',
+    populate: {
+      path: 'author',
+      select: 'name avatar'
+    }
+  });
+    </div>
+    <button class="copy-btn" onclick="copyCode('basicPopulation')"><i class="far fa-copy"></i> Copy Basic Population</button>
+  </div>
+
+  <!-- Advanced Population -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-line"></i>
+      <span>5. Advanced Population Techniques</span>
+    </div>
+    <div class="code-block" id="advancedPopulation">
+// ========== POPULATE WITH FILTERS ==========
+// Get posts with only approved comments
+const posts = await Post.find()
+  .populate({
+    path: 'comments',
+    match: { isApproved: true },
+    options: { limit: 10, sort: { createdAt: -1 } }
+  });
+
+// ========== POPULATE WITH SORTING ==========
+const user = await User.findById(userId)
+  .populate({
+    path: 'posts',
+    options: { sort: { createdAt: -1 }, limit: 5 }
+  });
+
+// ========== POPULATE WITH CUSTOM SELECT ==========
+const postWithCustom = await Post.findById(postId)
+  .populate({
+    path: 'author',
+    select: 'name email',
+    options: { lean: true }  // Returns plain JS object
+  });
+
+// ========== DYNAMIC POPULATION (Conditional) ==========
+const query = Post.findById(postId);
+if (includeAuthor) {
+  query.populate('author');
+}
+if (includeComments) {
+  query.populate('comments');
+}
+const result = await query;
+
+// ========== POPULATE MULTIPLE LEVELS (Deep Population) ==========
+// Populate posts → author → author's followers
+const postsWithDeep = await Post.find()
+  .populate({
+    path: 'author',
+    populate: {
+      path: 'followers',
+      select: 'name'
+    }
+  });
+
+// ========== POPULATE AFTER QUERY (Manual) ==========
+const posts = await Post.find({ author: userId });
+await Post.populate(posts, { path: 'author', select: 'name' });
+
+// ========== POPULATE WITH VIRTUAL POPULATE ==========
+// In User schema:
+userSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'author',
+  justOne: false,
+  options: { sort: { createdAt: -1 } }
+});
+
+// Enable virtuals in schema options
+const user = await User.findById(userId).populate('posts');
+console.log(user.posts); // All posts by this user
+
+// ========== POPULATE WITH COUNT (Not actual population) ==========
+const userWithCount = await User.findById(userId);
+const postCount = await Post.countDocuments({ author: userId });
+    </div>
+    <button class="copy-btn" onclick="copyCode('advancedPopulation')"><i class="far fa-copy"></i> Copy Advanced Population</button>
+  </div>
+
+  <!-- Complete Blog Platform Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-blog"></i>
+      <span>6. Complete Example – Blog Platform with Full Population</span>
+    </div>
+    <div class="code-block" id="blogExample">
+// ========== MODELS ==========
+// models/User.js
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  avatar: String,
+  bio: String,
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, { timestamps: true });
+
+// Virtual for posts
+userSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'author'
+});
+
+// models/Post.js
+const postSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
+  content: { type: String, required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  tags: [String],
+  views: { type: Number, default: 0 },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, { timestamps: true });
+
+// Virtual for comments
+postSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'post'
+});
+
+// models/Comment.js
+const commentSchema = new mongoose.Schema({
+  content: { type: String, required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  parentComment: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, { timestamps: true });
+
+// ========== API ROUTES ==========
+
+// GET /api/posts – Get all posts with author and comment count
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate('author', 'name avatar')
+      .populate({
+        path: 'comments',
+        select: 'content author createdAt',
+        options: { limit: 3, sort: { createdAt: -1 } },
+        populate: {
+          path: 'author',
+          select: 'name avatar'
+        }
+      })
+      .sort({ createdAt: -1 })
+      .limit(20);
+    
+    // Add comment count to each post
+    const postsWithCount = await Promise.all(posts.map(async (post) => {
+      const commentCount = await Comment.countDocuments({ post: post._id });
+      return {
+        ...post.toObject(),
+        commentCount
+      };
+    }));
+    
+    res.json({ success: true, count: posts.length, data: postsWithCount });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/posts/:id – Get single post with full details
+app.get('/api/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } },  // Increment view count
+      { new: true }
+    )
+    .populate('author', 'name email avatar bio followers')
+    .populate('likes', 'name avatar')
+    .populate({
+      path: 'comments',
+      populate: [
+        { path: 'author', select: 'name avatar' },
+        { path: 'replies', populate: { path: 'author', select: 'name avatar' } }
+      ],
+      options: { sort: { createdAt: 1 } }
+    });
+    
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+    
+    res.json({ success: true, data: post });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET /api/users/:id – Get user profile with their posts
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('followers', 'name avatar')
+      .populate('following', 'name avatar')
+      .populate({
+        path: 'posts',
+        select: 'title slug views likes createdAt',
+        options: { sort: { createdAt: -1 }, limit: 10 }
+      });
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Count total posts
+    const totalPosts = await Post.countDocuments({ author: user._id });
+    
+    res.json({
+      success: true,
+      data: {
+        ...user.toObject(),
+        totalPosts
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/posts/:id/like – Like/unlike a post
+app.post('/api/posts/:id/like', async (req, res) => {
+  try {
+    const userId = req.user.id; // From auth middleware
+    const post = await Post.findById(req.params.id);
+    
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+    
+    const hasLiked = post.likes.includes(userId);
+    
+    if (hasLiked) {
+      await Post.findByIdAndUpdate(req.params.id, { $pull: { likes: userId } });
+      res.json({ success: true, message: 'Post unliked' });
+    } else {
+      await Post.findByIdAndUpdate(req.params.id, { $addToSet: { likes: userId } });
+      res.json({ success: true, message: 'Post liked' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('blogExample')"><i class="far fa-copy"></i> Copy Blog Example</button>
+  </div>
+
+  <!-- Embedded vs Referenced Comparison -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-simple"></i>
+      <span>7. Embedded vs Referenced – When to Use What?</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-box"></i>
+        <strong>📦 EMBEDDED (Store inside parent)</strong>
+        <p><strong>Use when:</strong><br>
+        • Data is always accessed together<br>
+        • One-to-one or one-to-few relationships<br>
+        • Data doesn't change frequently<br>
+        • Need atomic updates<br>
+        • Data size is small (under 16MB)</p>
+        <div class="code-block" style="font-size:0.7rem;">{
+  user: {
+    name: "Ramesh",
+    address: { city: "HYD", zip: "500001" }
+  }
+}</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-link"></i>
+        <strong>🔗 REFERENCED (Store ObjectId)</strong>
+        <p><strong>Use when:</strong><br>
+        • Data grows independently<br>
+        • One-to-many or many-to-many relationships<br>
+        • Need to query related data separately<br>
+        • Data is updated frequently<br>
+        • Documents are large or unlimited</p>
+        <div class="code-block" style="font-size:0.7rem;">{
+  post: { title: "My Post", authorId: ObjectId("...") }
+}</div>
+      </div>
+    </div>
+
+    <div class="subheading">🔄 Hybrid Approach (Best of Both Worlds)</div>
+    <div class="code-block">
+// Store recent comments embedded, older comments referenced
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  recentComments: [{
+    text: String,
+    author: String,
+    createdAt: Date
+  }], // Embedded (for quick access)
+  commentCount: Number,  // Denormalized count
+  commentsRef: [{ type: ObjectId, ref: 'Comment' }] // Referenced (for all comments)
+});
+
+// Update commentCount automatically
+postSchema.pre('save', function(next) {
+  this.commentCount = this.recentComments.length;
+  next();
+});
+    </div>
+  </div>
+
+  <!-- Performance Tips -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bolt"></i>
+      <span>8. Performance Tips for Population</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+        <strong>✅ DO's</strong>
+        <p>• Add indexes on foreign keys (author, post references)<br>
+        • Use <span class="inline-code">select</span> to only populate needed fields<br>
+        • Use <span class="inline-code">lean()</span> when you don't need Mongoose documents<br>
+        • Limit population depth (avoid circular populations)<br>
+        • Use pagination with populate (limit + skip)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-times-circle" style="color: #dc2626;"></i>
+        <strong>❌ DON'Ts</strong>
+        <p>• Don't populate everything in a list view<br>
+        • Don't create deep nested populations (> 3 levels)<br>
+        • Don't populate in loops (use <span class="inline-code">Model.populate()</span> instead)<br>
+        • Don't store large arrays of references (use pagination)</p>
+      </div>
+    </div>
+    <div class="code-block">
+// BAD: Populating in loop (N+1 query problem)
+const users = await User.find();
+for (const user of users) {
+  await user.populate('posts'); // One query per user!
+}
+
+// GOOD: Populate all at once
+const users = await User.find().populate('posts');
+
+// BAD: Populating everything
+const posts = await Post.find().populate('author').populate('comments');
+
+// GOOD: Selective population for list view
+const posts = await Post.find()
+  .populate('author', 'name')  // Only name needed
+  .select('title createdAt');   // Only post title and date
+
+// Using lean() for read-only operations (2-3x faster)
+const posts = await Post.find().populate('author').lean();
+    </div>
+  </div>
+
+  <!-- Day 78 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – E-commerce Relationships</span>
+    </div>
+    <p><strong>Task:</strong> Build an e-commerce database with proper relationships:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create <strong>User</strong> model (name, email, address, cart, wishlist)</li>
+      <li>Create <strong>Product</strong> model (name, price, category, stock, reviews reference)</li>
+      <li>Create <strong>Order</strong> model (user reference, items array with product reference, total, status)</li>
+      <li>Create <strong>Review</strong> model (user reference, product reference, rating, comment)</li>
+      <li>Implement API endpoint: GET /users/:id/orders (populate order items with product details)</li>
+      <li>Implement API endpoint: GET /products/:id (populate all reviews with user names)</li>
+      <li>Implement API endpoint: GET /users/:id/wishlist (populate full product details)</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Starter – E-commerce Models
+const mongoose = require('mongoose');
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String
+  },
+  cart: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    quantity: { type: Number, default: 1 }
+  }],
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+});
+
+// Product Schema
+const productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  category: String,
+  stock: { type: Number, default: 0 }
+});
+
+// Order Schema
+const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  items: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    quantity: Number,
+    price: Number // Price at time of purchase
+  }],
+  total: Number,
+  status: { type: String, enum: ['pending', 'paid', 'shipped', 'delivered'], default: 'pending' }
+}, { timestamps: true });
+
+// Review Schema
+const reviewSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+  rating: { type: Number, min: 1, max: 5 },
+  comment: String
+}, { timestamps: true });
+
+// Implement the API endpoints below
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 78 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Types of Relationships:</strong> One-to-One, One-to-Many, Many-to-Many, One-to-Few<br>
+    ✅ <strong>Reference Schemas:</strong> Using ObjectId and ref to create relationships<br>
+    ✅ <strong>Creating Related Documents:</strong> Linking documents using IDs<br>
+    ✅ <strong>Basic Population:</strong> .populate() to replace IDs with documents<br>
+    ✅ <strong>Advanced Population:</strong> Filters, sorting, nested population, virtual populate<br>
+    ✅ <strong>Complete Blog Platform:</strong> Users, Posts, Comments with full population<br>
+    ✅ <strong>Embedded vs Referenced:</strong> Decision framework for schema design<br>
+    ✅ <strong>Performance Tips:</strong> Indexes, lean(), selective population, avoid N+1 queries<br>
+    ✅ <strong>E-commerce Challenge:</strong> Build relationships for real-world application</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 79 – Pagination & Filtering (Advanced Query Techniques)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're now a Mongoose relations expert! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-link"></i> Day 78 · Relationships & Population · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Mastering relationships is key to building complex applications. Practice population daily!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Use these patterns to build relational MongoDB applications.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

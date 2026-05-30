@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 43: React Router Advanced | Nested Routes, Protected Routes + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .router-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .nav-tab {
+      background: #334155;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .nav-tab:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .content-panel {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 12px;
+    }
+    .login-status {
+      background: #334155;
+      padding: 12px;
+      border-radius: 40px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🧭</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 43 · React Router Advanced (Nested & Protected Routes) — Show Results</div>
+  </div>
+
+  <h1>🧭 React Router Advanced<br><span style="font-size:1rem;">Nested Routes · Outlet · Protected Routes · Route Guards · Layout Routes — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: Nested Routes Overview -->
+  <div class="section-title">1️⃣ What are Nested Routes?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Nested Routes</strong> allow you to have a layout component that contains child routes. This is perfect for dashboards, admin panels, and any UI where the outer structure (header, sidebar, footer) stays constant while the inner content changes.</p>
+    <p><strong>Where it's used:</strong> Dashboards, e-commerce checkouts, settings pages, any app with shared UI elements across multiple pages.</p>
+  </div>
+  <div class="diagram">
+    /dashboard → Layout (Header + Sidebar + Outlet)
+       ├── /dashboard/profile → Profile Page
+       ├── /dashboard/settings → Settings Page
+       └── /dashboard/analytics → Analytics Page
+  </div>
+
+  <!-- Section 2: Nested Routes Syntax -->
+  <div class="section-title">2️⃣ Nested Routes Syntax (Outlet Component)</div>
+  <div class="example-card">
+    <div class="code-block">
+      // DashboardLayout.jsx (parent layout)<br>
+      import { Outlet } from 'react-router-dom';<br>
+      function DashboardLayout() {<br>
+        return (&lt;div&gt;&lt;h1&gt;Dashboard&lt;/h1&gt;&lt;nav&gt;&lt;Link to="/dashboard/profile"&gt;Profile&lt;/Link&gt;&lt;/nav&gt;&lt;Outlet /&gt;&lt;/div&gt;);<br>
+      }<br><br>
+      // App.jsx — route configuration<br>
+      &lt;Route path="/dashboard" element={&lt;DashboardLayout /&gt;}&gt;<br>
+        &lt;Route index element={&lt;DashboardHome /&gt;} /&gt;<br>
+        &lt;Route path="profile" element={&lt;Profile /&gt;} /&gt;<br>
+        &lt;Route path="settings" element={&lt;Settings /&gt;} /&gt;<br>
+      &lt;/Route&gt;
+    </div>
+    <button class="btn-show" data-target="nestedRoutesResult">📂 Show Nested Routes Demo</button>
+    <div id="nestedRoutesResult" class="result-area">
+      <div class="router-card">
+        <strong>📂 Nested Routes Demo (Dashboard Layout)</strong>
+        <div class="nav-tabs">
+          <div class="nav-tab" data-nested="home">🏠 Home</div>
+          <div class="nav-tab" data-nested="profile">👤 Profile</div>
+          <div class="nav-tab" data-nested="settings">⚙️ Settings</div>
+        </div>
+        <div id="nestedContentDemo" class="content-panel">Welcome to Dashboard Home!</div>
+      </div>
+      <div class="console-output">
+        ✅ Outlet component is where child routes render<br>
+        ✅ Layout (tabs) stays the same — only content changes<br>
+        💡 This pattern is used by every dashboard in production!
+      </div>
+      <script>
+        const nestedPanels = {
+          home: "🏠 Dashboard Home — Overview of your statistics and recent activity.",
+          profile: "👤 User Profile — Edit your personal information and preferences.",
+          settings: "⚙️ Settings — Configure app notifications and security options."
+        };
+        const nestedTabs = document.querySelectorAll("[data-nested]");
+        const nestedContainer = document.getElementById("nestedContentDemo");
+        nestedTabs.forEach(tab => {
+          tab.addEventListener("click", () => {
+            const page = tab.getAttribute("data-nested");
+            if(nestedPanels[page]) nestedContainer.innerHTML = nestedPanels[page];
+          });
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Index Routes -->
+  <div class="section-title">3️⃣ Index Routes (Default Child Route)</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;Route path="/dashboard" element={&lt;DashboardLayout /&gt;}&gt;<br>
+        &lt;Route index element={&lt;DashboardHome /&gt;} /&gt;  {/* Shows at /dashboard */}<br>
+        &lt;Route path="profile" element={&lt;Profile /&gt;} /&gt;  {/* Shows at /dashboard/profile */}<br>
+      &lt;/Route&gt;
+    </div>
+    <button class="btn-show" data-target="indexRouteResult">🏠 Show Index Route Explanation</button>
+    <div id="indexRouteResult" class="result-area">
+      <div class="console-output">
+        ✅ index route renders when parent path matches exactly<br>
+        ✅ No need to specify path attribute for index routes<br>
+        💡 Example: /dashboard renders DashboardHome, /dashboard/profile renders Profile
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Protected Routes -->
+  <div class="section-title">4️⃣ Protected Routes (Authentication Required)</div>
+  <div class="topic-explanation">
+    <h4>📌 What are Protected Routes?</h4>
+    <p><strong>Protected Routes</strong> restrict access to certain pages unless the user is authenticated. This is essential for dashboards, admin panels, user settings, and any page that requires login.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      // ProtectedRoute.jsx<br>
+      function ProtectedRoute({ children }) {<br>
+        const { user } = useAuth();<br>
+        if (!user) return &lt;Navigate to="/login" replace /&gt;;<br>
+        return children;<br>
+      }<br><br>
+      // Usage in App.jsx<br>
+      &lt;Route path="/dashboard" element={<br>
+        &lt;ProtectedRoute&gt;&lt;DashboardLayout /&gt;&lt;/ProtectedRoute&gt;<br>
+      }&gt;...&lt;/Route&gt;
+    </div>
+    <button class="btn-show" data-target="protectedRoutesResult">🔒 Show Protected Routes Demo</button>
+    <div id="protectedRoutesResult" class="result-area">
+      <div class="router-card">
+        <strong>🔒 Protected Route Demo</strong>
+        <div class="login-status" id="authStatusDemo">
+          🔐 Status: <span id="loginStatusTextDemo">Logged Out</span>
+          <button class="demo-btn" id="toggleAuthDemo" style="margin-left:12px;">Toggle Login</button>
+        </div>
+        <div class="nav-tabs">
+          <div class="nav-tab" data-protected-page="home">🏠 Home (Public)</div>
+          <div class="nav-tab" data-protected-page="dashboard">📊 Dashboard (Protected)</div>
+          <div class="nav-tab" data-protected-page="settings">⚙️ Settings (Protected)</div>
+        </div>
+        <div id="protectedContentDemo" class="content-panel">👋 Welcome! This is the public Home page.</div>
+      </div>
+      <div class="console-output">
+        ✅ Protected routes check authentication before rendering<br>
+        ✅ Unauthenticated users are redirected to /login<br>
+        💡 This pattern is used in EVERY production app with authentication!
+      </div>
+      <script>
+        let isLoggedInDemo = false;
+        const statusSpanDemo = document.getElementById("loginStatusTextDemo");
+        const protectedContentDemo = document.getElementById("protectedContentDemo");
+        const publicContent = {
+          home: "👋 Welcome! This is the public Home page. Anyone can see this content.",
+          dashboard: "📊 DASHBOARD — PROTECTED content. You are logged in! ✅ Here are your analytics and stats.",
+          settings: "⚙️ SETTINGS — PROTECTED content. You are logged in! ✅ Configure your preferences."
+        };
+        const protectedMessages = {
+          dashboard: "🔒 You need to login to view the Dashboard! Please click 'Toggle Login'.",
+          settings: "🔒 You need to login to view Settings! Please click 'Toggle Login'."
+        };
+        document.getElementById("toggleAuthDemo")?.addEventListener("click", () => {
+          isLoggedInDemo = !isLoggedInDemo;
+          statusSpanDemo.textContent = isLoggedInDemo ? "Logged In ✅" : "Logged Out ❌";
+        });
+        const protectedTabsDemo = document.querySelectorAll("[data-protected-page]");
+        protectedTabsDemo.forEach(tab => {
+          tab.addEventListener("click", () => {
+            const page = tab.getAttribute("data-protected-page");
+            if(page === "home") {
+              protectedContentDemo.innerHTML = publicContent.home;
+            } else {
+              if(isLoggedInDemo) {
+                protectedContentDemo.innerHTML = publicContent[page];
+              } else {
+                protectedContentDemo.innerHTML = protectedMessages[page];
+              }
+            }
+          });
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Navigate Component -->
+  <div class="section-title">5️⃣ Navigate Component (Programmatic Redirect)</div>
+  <div class="example-card">
+    <div class="code-block">
+      import { Navigate } from 'react-router-dom';<br>
+      function LoginPage() {<br>
+        const [shouldRedirect, setShouldRedirect] = useState(false);<br>
+        if (shouldRedirect) return &lt;Navigate to="/dashboard" /&gt;;<br>
+        return &lt;button onClick={() => setShouldRedirect(true)}&gt;Login&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="navigateResult">🎯 Show Navigate Component</button>
+    <div id="navigateResult" class="result-area">
+      <div class="console-output">
+        ✅ Navigate component immediately redirects when rendered<br>
+        ✅ Use 'replace' prop to replace history entry: &lt;Navigate to="/" replace /&gt;<br>
+        ✅ Great for conditional redirects based on state
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: useNavigate Hook -->
+  <div class="section-title">6️⃣ useNavigate Hook (Programmatic Navigation)</div>
+  <div class="example-card">
+    <div class="code-block">
+      import { useNavigate } from 'react-router-dom';<br>
+      function LoginPage() {<br>
+        const navigate = useNavigate();<br>
+        return &lt;button onClick={() => navigate('/dashboard')}&gt;Login&lt;/button&gt;;<br>
+      }
+    </div>
+    <div class="console-output">
+      ✅ useNavigate() returns a function for programmatic navigation<br>
+      ✅ navigate('/path') — go to route<br>
+      ✅ navigate(-1) — go back, navigate(1) — go forward<br>
+      💡 Preferred over Navigate component for event handlers
+    </div>
+  </div>
+
+  <!-- Section 7: Layout Routes -->
+  <div class="section-title">7️⃣ Layout Routes — Shared UI Components</div>
+  <div class="example-card">
+    <div class="code-block">
+      // RootLayout.jsx (shared header/footer for all pages)<br>
+      function RootLayout() {<br>
+        return (&lt;&gt;&lt;Header /&gt;&lt;Outlet /&gt;&lt;Footer /&gt;&lt;/&gt;);<br>
+      }<br><br>
+      // App.jsx — wrap multiple routes with shared layout<br>
+      &lt;Route element={&lt;RootLayout /&gt;}&gt;<br>
+        &lt;Route path="/" element={&lt;Home /&gt;} /&gt;<br>
+        &lt;Route path="/about" element={&lt;About /&gt;} /&gt;<br>
+      &lt;/Route&gt;
+    </div>
+    <div class="console-output">
+      ✅ Layout routes eliminate duplicate code across pages<br>
+      ✅ Header and Footer appear on every route inside the layout<br>
+      💡 This is the standard pattern for multi-page apps!
+    </div>
+  </div>
+
+  <!-- Section 8: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Dashboard Layout</strong> with sidebar navigation using nested routes<br>
+    2. Implement <strong>Protected Routes</strong> for dashboard pages (require login)<br>
+    3. Create a <strong>Login Page</strong> that redirects to dashboard after authentication using useNavigate<br>
+    4. Add a <strong>404 Not Found</strong> page for undefined routes<br>
+    5. Use <span class="inline-code">Outlet</span> to render nested content in the layout
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common Router Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesRouterAdvResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesRouterAdvResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">&lt;Outlet /&gt;</span> in parent route → child routes never render</li>
+        <li>❌ Not handling redirect after login → user stays on login page</li>
+        <li>❌ Using <span class="inline-code">Navigate</span> inside conditional that re-renders → infinite redirect loops</li>
+        <li>❌ Not using absolute paths for nested routes (missing leading slash)</li>
+        <li>❌ Forgetting to protect routes that should be private → security risk</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 10: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What are nested routes?</h3><p>Routes that render inside parent layout using Outlet component — perfect for dashboards.</p></div>
+    <div class="card"><h3>❓ How to protect routes?</h3><p>Create a ProtectedRoute component that checks auth and redirects to login using Navigate.</p></div>
+    <div class="card"><h3>❓ What is Outlet?</h3><p>Component where child routes render in a parent route — the "slot" for nested content.</p></div>
+    <div class="card"><h3>❓ How to redirect programmatically?</h3><p>useNavigate() hook (for event handlers) or &lt;Navigate /&gt; component (for conditional rendering).</p></div>
+  </div>
+
+  <!-- Section 11: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📊 Task 1</h3><p>Build an <strong>Admin Dashboard</strong> with nested routes (users, products, orders).</p></div>
+    <div class="card"><h3>🔐 Task 2</h3><p>Add role-based access (admin/user) to protected routes — different views for different roles.</p></div>
+    <div class="card"><h3>📦 Task 3</h3><p>Create a <strong>Checkout Flow</strong> with nested routes (cart → shipping → payment → confirmation).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 43 - React Router Advanced)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Nested Routes — layouts with &lt;Outlet /&gt; component</div>
+    <div class="card">✔️ Index Routes — default child routes that show at parent path</div>
+    <div class="card">✔️ Protected Routes — authentication guards using Navigate</div>
+    <div class="card">✔️ Navigate component & useNavigate hook for redirects</div>
+    <div class="card">✔️ Layout Routes — shared UI (header/footer) across multiple pages</div>
+  </div>
+
+  <!-- Day 43 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 43 Ending Message</strong><br>
+    "Nested and protected routes make your React apps feel professional, secure, and scalable. Now you can build dashboards, admin panels, and authentication flows like a pro! These patterns are used in every production React application."
+  </div>
+
+  <!-- Next: Day 44 -->
+  <div class="section-title">🔜 Next — Day 44 : State Management with Redux Toolkit</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Redux Toolkit</span>
+    <span class="badge">🎯 Slices</span>
+    <span class="badge">🔄 useSelector</span>
+    <span class="badge">📝 useDispatch</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 43 Completed ✅<br>
+    Click "Show Result" on each example to see advanced router concepts. Practice nested and protected routes — build a complete authentication system today!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

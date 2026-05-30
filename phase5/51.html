@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 51: Introduction to Node.js | Run JavaScript on Server + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .node-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🟢</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 51 · Introduction to Node.js (Show Results)</div>
+  </div>
+
+  <h1>🟢 Introduction to Node.js<br><span style="font-size:1rem;">Run JavaScript on the Server · Event-Driven · Non-Blocking I/O — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is Node.js -->
+  <div class="section-title">1️⃣ What is Node.js?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Node.js</strong> is a JavaScript runtime built on Chrome's V8 engine that allows you to run JavaScript outside the browser — on the server, command line, or any computer. It enables full-stack JavaScript development, meaning you can use the same language for both frontend and backend.</p>
+    <p><strong>Where it's used:</strong> Backend APIs, real-time applications (chat, gaming), CLI tools, web scraping, automation scripts, build tools (Webpack, Vite). Used by Netflix, LinkedIn, Uber, PayPal, NASA.</p>
+  </div>
+  <div class="diagram">
+    Before Node.js → JavaScript only in browsers ❌<br>
+    After Node.js → JavaScript anywhere (servers, desktop apps, IoT) ✅
+  </div>
+
+  <!-- Section 2: Why Node.js -->
+  <div class="section-title">2️⃣ Why Node.js? (Benefits)</div>
+  <div class="card-grid">
+    <div class="card"><h3>⚡ Same Language</h3><p>Use JavaScript everywhere — frontend AND backend. No need to learn Python, PHP, or Java for backend.</p></div>
+    <div class="card"><h3>🚀 Non-Blocking I/O</h3><p>Handles thousands of concurrent connections efficiently — perfect for real-time apps.</p></div>
+    <div class="card"><h3>📦 NPM Ecosystem</h3><p>Largest package registry with over 2 million packages. Install anything with npm install.</p></div>
+    <div class="card"><h3>🏢 Used by Giants</h3><p>Netflix, LinkedIn, Uber, PayPal, NASA use Node.js in production.</p></div>
+  </div>
+
+  <!-- Section 3: Install and Verify -->
+  <div class="section-title">3️⃣ Install Node.js (Already Did in Day 2)</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Download from https://nodejs.org (LTS version)<br>
+      # Install with default settings<br><br>
+      # Verify installation<br>
+      node --version<br>
+      npm --version
+    </div>
+    <button class="btn-show" data-target="installResult">🔧 Show Node.js Installation Check</button>
+    <div id="installResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#facc15;">
+          $ node --version<br>
+          v20.11.0<br><br>
+          $ npm --version<br>
+          10.2.4
+        </div>
+      </div>
+      <div class="console-output">✅ Node.js and npm are installed! You're ready for backend development.</div>
+    </div>
+  </div>
+
+  <!-- Section 4: First Node.js Program -->
+  <div class="section-title">4️⃣ First Node.js Program — Hello World</div>
+  <div class="example-card">
+    <div class="code-block">
+      // app.js<br>
+      console.log("Hello from Node.js!");<br><br>
+      // Run in terminal<br>
+      node app.js
+    </div>
+    <button class="btn-show" data-target="firstProgramResult">▶️ Show First Node.js Program</button>
+    <div id="firstProgramResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#22c55e;">
+          $ node app.js<br>
+          Hello from Node.js!<br>
+          $
+        </div>
+      </div>
+      <div class="console-output">✅ console.log() works in Node.js just like in the browser, but outputs to terminal instead of browser console.</div>
+    </div>
+  </div>
+
+  <!-- Section 5: Node.js REPL -->
+  <div class="section-title">5️⃣ Node.js REPL (Read-Eval-Print Loop)</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Open REPL in terminal<br>
+      node<br><br>
+      > 2 + 2<br>
+      4<br>
+      > let name = "Kalyan"<br>
+      undefined<br>
+      > console.log("Hello " + name)<br>
+      Hello Kalyan<br>
+      > .exit
+    </div>
+    <button class="btn-show" data-target="replResult">🖥️ Show REPL Demo</button>
+    <div id="replResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#a5f3c3;">
+          $ node<br>
+          > 2 + 2<br>
+          4<br>
+          > const greeting = "Hello Node.js"<br>
+          undefined<br>
+          > greeting<br>
+          'Hello Node.js'<br>
+          > .exit<br>
+          $
+        </div>
+      </div>
+      <div class="console-output">✅ REPL allows you to test JavaScript code instantly without creating files — great for learning!</div>
+    </div>
+  </div>
+
+  <!-- Section 6: Node.js vs Browser -->
+  <div class="section-title">6️⃣ Node.js vs Browser JavaScript — Key Differences</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Feature</th><th>Browser JavaScript</th><th>Node.js</th></tr></thead>
+      <tbody>
+        <tr><td>DOM</span></td><td>document, window (for UI)</span></td><td>No DOM (no UI, runs on server)</span></td>
+        <tr><td>Global Object</span></td><td>window</span></td><td>global</span></td>
+        <tr><td>Modules</span></td><td>ES6 modules (import/export)</span></td><td>CommonJS (require/module.exports) + ES6</span></td>
+        <tr><td>File Access</span></td><td>❌ No (security)</span></td><td>✅ Yes (fs module)</span></td>
+        <tr><td>Network</span></td><td>fetch, WebSocket</span></td><td>http, https, net modules</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 7: Global Object -->
+  <div class="section-title">7️⃣ Node.js Global Object</div>
+  <div class="example-card">
+    <div class="code-block">
+      console.log(global);           // Global object (like window)<br>
+      console.log(__dirname);        // Current folder path<br>
+      console.log(__filename);       // Current file path<br>
+      setTimeout(() => console.log("After 1s"), 1000);
+    </div>
+    <button class="btn-show" data-target="globalResult">🌍 Show Node.js Globals</button>
+    <div id="globalResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#a5f3c3;">
+          console.log(__dirname);<br>
+          /Users/kalyan/projects/node-demo<br><br>
+          console.log(__filename);<br>
+          /Users/kalyan/projects/node-demo/app.js
+        </div>
+      </div>
+      <div class="console-output">✅ __dirname = directory path, __filename = file path — very useful for file operations!</div>
+    </div>
+  </div>
+
+  <!-- Section 8: Process Object -->
+  <div class="section-title">8️⃣ Process Object — Environment & Arguments</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Command line arguments<br>
+      console.log(process.argv);<br>
+      // Run: node app.js hello world<br>
+      // Output: ['node', 'app.js', 'hello', 'world']<br><br>
+      // Environment variables<br>
+      console.log(process.env.USER);
+    </div>
+    <button class="btn-show" data-target="processResult">⚙️ Show Process Object Demo</button>
+    <div id="processResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#a5f3c3;">
+          $ node app.js --name Kalyan --age 25<br>
+          process.argv: ['node', 'app.js', '--name', 'Kalyan', '--age', '25']<br>
+          process.env.USER: kalyan
+        </div>
+      </div>
+      <div class="console-output">✅ process.argv gives command line arguments, process.env gives environment variables — essential for CLI tools!</div>
+    </div>
+  </div>
+
+  <!-- Section 9: Create and Run Script -->
+  <div class="section-title">9️⃣ Creating and Running Node.js Scripts</div>
+  <div class="example-card">
+    <div class="code-block">
+      // index.js<br>
+      const name = "Kalyan";<br>
+      console.log(`Hello from Node.js, ${name}!`);<br>
+      console.log("Current directory:", __dirname);
+    </div>
+    <button class="btn-show" data-target="scriptResult">📁 Show Script Execution Demo</button>
+    <div id="scriptResult" class="result-area">
+      <div class="node-preview">
+        <div class="code-block" style="background:#1e293b; color:#22c55e;">
+          $ node index.js<br>
+          Hello from Node.js, Kalyan!<br>
+          Current directory: /Users/kalyan/node-basics<br>
+          $
+        </div>
+      </div>
+      <div class="console-output">✅ Creating and running Node.js scripts is this simple! You can now build CLI tools and backend services.</div>
+    </div>
+  </div>
+
+  <!-- Section 10: Node.js Architecture -->
+  <div class="section-title">🔟 Node.js Architecture — V8 Engine & Libuv</div>
+  <div class="diagram">
+    JavaScript Code → V8 Engine (compiles JS) → Libuv (handles async I/O) → Operating System
+  </div>
+  <div class="highlight-box">
+    🏗️ Built on: Chrome's V8 JavaScript engine + libuv (C++ library for async I/O). This combination makes Node.js fast and efficient for I/O-heavy operations.
+  </div>
+
+  <!-- Section 11: Common Use Cases -->
+  <div class="section-title">1️⃣1️⃣ What Can You Build with Node.js?</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌐 REST APIs</h3><p>Backend services for web and mobile apps</p></div>
+    <div class="card"><h3>💬 Real-time Apps</h3><p>Chat apps, gaming servers, live dashboards</p></div>
+    <div class="card"><h3>📁 CLI Tools</h3><p>Command-line applications</p></div>
+    <div class="card"><h3>🕷️ Web Scraping</h3><p>Extract data from websites</p></div>
+  </div>
+
+  <!-- Section 12: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Verify Node.js is installed (<span class="inline-code">node --version</span>)<br>
+    2. Open Node.js REPL and perform math operations, create variables<br>
+    3. Create a file called <span class="inline-code">hello.js</span> that prints "Hello, my name is [your name]"<br>
+    4. Run the script using <span class="inline-code">node hello.js</span><br>
+    5. Use <span class="inline-code">console.log(__dirname)</span> and <span class="inline-code">console.log(__filename)</span> in your script
+  </div>
+
+  <!-- Section 13: Common Mistakes -->
+  <div class="section-title">⚠️ Common Node.js Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesNodeResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesNodeResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Trying to use DOM APIs (document, window) in Node.js → doesn't exist! Node.js has no browser environment.</li>
+        <li>❌ Forgetting to install Node.js before trying to run scripts → download from nodejs.org.</li>
+        <li>❌ Using <span class="inline-code">alert()</span> in Node.js → use console.log() instead.</li>
+        <li>❌ Not understanding that Node.js is single-threaded but handles concurrency via event loop.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 14: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Node.js?</h3><p>JavaScript runtime built on Chrome's V8 engine that runs JavaScript outside the browser.</p></div>
+    <div class="card"><h3>❓ Is Node.js single-threaded?</h3><p>Yes, but it uses an event loop and libuv to handle concurrent operations efficiently.</p></div>
+    <div class="card"><h3>❓ What is NPM?</h3><p>Node Package Manager — default package manager for Node.js with millions of packages.</p></div>
+    <div class="card"><h3>❓ Difference between Node.js and browser JS?</h3><p>Node.js has no DOM, has file system access, uses CommonJS modules, and runs on servers.</p></div>
+  </div>
+
+  <!-- Section 15: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔢 Task 1</h3><p>Write a script that prints numbers 1 to 10 using a for loop.</p></div>
+    <div class="card"><h3>📝 Task 2</h3><p>Write a script that accepts command-line arguments and prints them using process.argv.</p></div>
+    <div class="card"><h3>➕ Task 3</h3><p>Create a script that calculates the sum of two numbers passed as command line arguments.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 51 - Introduction to Node.js)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Node.js — JavaScript runtime for servers, CLI tools, and automation</div>
+    <div class="card">✔️ Why Node.js — same language as frontend, non-blocking I/O, huge npm ecosystem</div>
+    <div class="card">✔️ Install and verify Node.js with node --version and npm --version</div>
+    <div class="card">✔️ First Node.js program: console.log(), run with node filename.js</div>
+    <div class="card">✔️ Node.js REPL for testing code interactively</div>
+    <div class="card">✔️ Node.js vs Browser JavaScript — no DOM, file access, different globals</div>
+    <div class="card">✔️ Global objects: global, __dirname, __filename, process</div>
+  </div>
+
+  <!-- Day 51 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 51 Ending Message</strong><br>
+    "Node.js expands JavaScript beyond the browser! Now you can build servers, APIs, and CLI tools with the language you already know. Welcome to backend development — this is the foundation of the MERN stack!"
+  </div>
+
+  <!-- Next: Day 52 -->
+  <div class="section-title">🔜 Next — Day 52 : NPM (Node Package Manager) & Modules</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 npm install</span>
+    <span class="badge">📋 package.json</span>
+    <span class="badge">🔧 dependencies vs devDependencies</span>
+    <span class="badge">📁 Modules (require/export)</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 51 Completed ✅<br>
+    Click "Show Result" on each example to see Node.js concepts in action. Install Node.js and run your first script today — backend development awaits!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

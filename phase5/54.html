@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 54: Node.js File System (fs) Module | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts + simple styling -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f7f9fc;
+      color: #0a1c2f;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero section */
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    /* cards */
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 54</div>
+    <h1>
+      <i class="fas fa-folder-open"></i> 
+      File System (fs) Module – Read, Write & Manage Files
+    </h1>
+    <p>Learn how to interact with your computer's file system using Node.js. Create files, read data, update content, delete files — all with simple JavaScript!</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master Backend with fs module
+    </div>
+  </div>
+
+  <!-- 1. What is fs module? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>1. What is the File System (fs) Module?</span>
+    </div>
+    <p>The <span class="inline-code">fs</span> module is a <strong>built-in core module</strong> in Node.js that allows you to work with the file system on your computer. You can read, write, update, delete files and folders. It's like having a superpower to manage files using JavaScript code!</p>
+    <div class="diagram">
+      <i class="fas fa-hdd fa-2x"></i>
+      <p><strong>Your Node.js app ↔ fs module ↔ Hard Drive / SSD</strong><br>
+      You write code → fs reads/writes actual files → perfect for logs, user data, configuration files.</p>
+    </div>
+    <div class="code-block">
+// Import the fs module (no npm install needed!)
+const fs = require('fs');
+    </div>
+  </div>
+
+  <!-- 2. Sync vs Async - Critical Concept -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-clock"></i>
+      <span>2. Synchronous vs Asynchronous methods</span>
+    </div>
+    <p>fs gives you <strong>two styles</strong> of doing file operations. For beginners, understand the difference:</p>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-ban" style="color:#b91c1c;"></i>
+        <h3>🛑 Synchronous (blocking)</h3>
+        <p>Code waits until file operation finishes. Simple to understand, but can freeze your app for large files.</p>
+        <div class="code-block" style="background:#1e293b;">const data = fs.readFileSync('./file.txt', 'utf8');<br>console.log(data); // waits until done</div>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle" style="color:#15803d;"></i>
+        <h3>✅ Asynchronous (non-blocking) 👍 BEST</h3>
+        <p>Doesn't block the program. Uses callbacks or promises. Recommended for real apps.</p>
+        <div class="code-block" style="background:#1e293b;">fs.readFile('./file.txt', 'utf8', (err, data) => {<br>  if(err) throw err;<br>  console.log(data);<br>});<br>console.log('This runs first!');</div>
+      </div>
+    </div>
+    <div class="warning-note">
+      <i class="fas fa-lightbulb"></i> <strong>Beginner Tip:</strong> Start with async + callbacks, then learn <span class="inline-code">fs.promises</span> (modern async/await) on Day 55. For learning, both are fine!
+    </div>
+  </div>
+
+  <!-- 3. Reading Files: readFile & readFileSync -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-book-open"></i>
+      <span>3. Reading Files (readFile / readFileSync)</span>
+    </div>
+    <div class="subheading">📖 Asynchronous read (callback style)</div>
+    <div class="code-block" id="readAsyncCode">
+const fs = require('fs');
+
+fs.readFile('./welcome.txt', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading file:', err);
+    return;
+  }
+  console.log('File content:', data);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('readAsyncCode')"><i class="far fa-copy"></i> Copy async code</button>
+    
+    <div class="subheading">📖 Synchronous read (blocking but simple)</div>
+    <div class="code-block" id="readSyncCode">
+try {
+  const content = fs.readFileSync('./data.txt', 'utf8');
+  console.log(content);
+} catch (err) {
+  console.error('Something went wrong:', err);
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('readSyncCode')"><i class="far fa-copy"></i> Copy sync code</button>
+    <p class="icon-text"><i class="fas fa-question-circle"></i> <strong>What is 'utf8'?</strong> It tells Node to give you text instead of raw binary data. Without it you get buffer data.</p>
+  </div>
+
+  <!-- 4. Writing Files: writeFile & appendFile -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-pen-fancy"></i>
+      <span>4. Writing & Appending to Files</span>
+    </div>
+    <div class="subheading">✍️ Write (overwrites file or creates new)</div>
+    <div class="code-block" id="writeCode">
+const fs = require('fs');
+
+fs.writeFile('myLog.txt', 'Hello Telugu WebTech!', 'utf8', (err) => {
+  if (err) console.error(err);
+  else console.log('File written successfully ✅');
+});
+
+// Synchronous version:
+fs.writeFileSync('syncLog.txt', 'Important data');
+    </div>
+    <button class="copy-btn" onclick="copyCode('writeCode')"><i class="far fa-copy"></i> Copy write example</button>
+    
+    <div class="subheading">➕ Append (add content to end of file)</div>
+    <div class="code-block" id="appendCode">
+// Keeps old content and adds new text at the end
+fs.appendFile('myLog.txt', '\nNew line added!', 'utf8', (err) => {
+  if (err) throw err;
+  console.log('Content appended');
+});
+
+// Also exists: appendFileSync
+    </div>
+    <button class="copy-btn" onclick="copyCode('appendCode')"><i class="far fa-copy"></i> Copy append example</button>
+  </div>
+
+  <!-- 5. Deleting & Renaming files -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-trash-alt"></i>
+      <span>5. Delete & Rename Files</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="subheading">🗑️ Delete file: <span class="inline-code">fs.unlink</span></div>
+        <div class="code-block">
+fs.unlink('./tempFile.txt', (err) => {
+  if (err) console.error('Delete failed', err);
+  else console.log('File deleted!');
+});
+        </div>
+      </div>
+      <div>
+        <div class="subheading">✏️ Rename file: <span class="inline-code">fs.rename</span></div>
+        <div class="code-block">
+fs.rename('oldName.txt', 'newName.txt', (err) => {
+  if (err) throw err;
+  console.log('File renamed successfully');
+});
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Working with folders (directories) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-folder-tree"></i>
+      <span>6. Working with Directories (mkdir, readdir, rmdir)</span>
+    </div>
+    <div class="subheading">📁 Create folder: <span class="inline-code">fs.mkdir</span></div>
+    <div class="code-block">
+fs.mkdir('./myNewFolder', { recursive: true }, (err) => {
+  if (err) console.log(err);
+  else console.log('Folder created!');
+});
+    </div>
+    <div class="subheading">📋 Read folder contents: <span class="inline-code">fs.readdir</span></div>
+    <div class="code-block">
+fs.readdir('./', (err, files) => {
+  if (err) throw err;
+  console.log('Files in current directory:', files);
+});
+    </div>
+    <div class="subheading">🗑️ Remove empty folder: <span class="inline-code">fs.rmdir</span></div>
+    <div class="code-block">
+fs.rmdir('./emptyFolder', (err) => {
+  if (err) console.error(err);
+  else console.log('Folder removed');
+});
+    </div>
+  </div>
+
+  <!-- 7. Checking if file exists (stat and existsSync) -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-search"></i>
+      <span>7. Check if File Exists (fs.stat / fs.existsSync)</span>
+    </div>
+    <p>Before reading or deleting, you might want to know if a file exists:</p>
+    <div class="code-block" id="existsCode">
+const fs = require('fs');
+
+// Simple synchronous check (recommended for beginners)
+if (fs.existsSync('./config.json')) {
+  console.log('Config file exists!');
+} else {
+  console.log('Config file not found');
+}
+
+// Advanced: fs.stat gives more info (size, modified time)
+fs.stat('./data.txt', (err, stats) => {
+  if (err) console.log('File does not exist');
+  else {
+    console.log(`File size: ${stats.size} bytes`);
+    console.log(`Last modified: ${stats.mtime}`);
+  }
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('existsCode')"><i class="far fa-copy"></i> Copy exists example</button>
+  </div>
+
+  <!-- 8. Real Life Example: Simple Logger Module -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-clipboard-list"></i>
+      <span>8. Real Project Example – Logger with fs</span>
+    </div>
+    <p>Imagine building a server that logs every request to a file. This is how real MERN backends work!</p>
+    <div class="code-block" id="loggerExample">
+// logger.js - custom logger module
+const fs = require('fs');
+
+function logMessage(message) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+  
+  // Append to 'app.log' file
+  fs.appendFile('app.log', logEntry, (err) => {
+    if (err) console.error('Logging failed', err);
+  });
+}
+
+module.exports = { logMessage };
+
+// In your main app.js:
+// const logger = require('./logger');
+// logger.logMessage('Server started on port 5000');
+// logger.logMessage('User John logged in');
+    </div>
+    <button class="copy-btn" onclick="copyCode('loggerExample')"><i class="far fa-copy"></i> Copy Logger Module</button>
+    <div class="diagram">
+      <i class="fas fa-chart-line"></i> Every time someone visits your website → log entry saved in <strong>app.log</strong> file → you can debug later.
+    </div>
+  </div>
+
+  <!-- 9. Synchronous vs Async visual comparison -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-simple"></i>
+      <span>9. Visual: Async vs Sync Performance</span>
+    </div>
+    <div class="diagram" style="background: #e0f2fe;">
+      <p><strong>🔵 Asynchronous (non-blocking):</strong> <br>
+      Task 1: Read file (starts) → while waiting, Task 2 runs → file ready → callback executes → faster for multiple operations.</p>
+      <p><strong>🔴 Synchronous (blocking):</strong> <br>
+      Task 1: Read file (waits until fully read) → then Task 2 runs → slower for many I/O operations.</p>
+      <p><strong>✅ Best practice:</strong> Use async methods (callbacks or promises) in real web servers.</p>
+    </div>
+  </div>
+
+  <!-- 10. Common Errors & How to Fix -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bug"></i>
+      <span>10. Common fs Errors Beginners Face</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Error: ENOENT: no such file or directory</strong>
+        <p>👉 You tried to read a file that doesn’t exist. Solution: Check file path or use <span class="inline-code">fs.existsSync()</span> first.</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Error: EACCES: permission denied</strong>
+        <p>👉 Node doesn't have rights to write. Run terminal as admin or change folder permissions.</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Callback Hell / Pyramid of Doom</strong>
+        <p>👉 Nested callbacks become messy. Learn <span class="inline-code">fs.promises</span> + async/await (Day 55).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. Hands-on Challenge for Day 54 -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>11. 🚀 Daily Challenge – Build a Note Taker CLI</span>
+    </div>
+    <p><strong>Task:</strong> Create a simple command-line notes app using fs module that can:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>📝 Write a new note (overwrite notes.txt)</li>
+      <li>➕ Append a new line to notes.txt</li>
+      <li>📖 Read and display the note content</li>
+    </ul>
+    <div class="code-block" id="challengeCode">
+const fs = require('fs');
+const command = process.argv[2];
+const newNote = process.argv[3];
+
+if (command === 'write') {
+  fs.writeFile('notes.txt', newNote + '\n', err => {
+    if (err) throw err;
+    console.log('Note saved!');
+  });
+} else if (command === 'append') {
+  fs.appendFile('notes.txt', newNote + '\n', err => {
+    if (err) throw err;
+    console.log('Note appended!');
+  });
+} else if (command === 'read') {
+  fs.readFile('notes.txt', 'utf8', (err, data) => {
+    if (err) console.log('No notes yet');
+    else console.log('Your notes:\n', data);
+  });
+} else {
+  console.log('Usage: node app.js write "My note" OR node app.js read');
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('challengeCode')"><i class="far fa-copy"></i> Copy Challenge Code</button>
+    <p class="icon-text"><i class="fab fa-youtube"></i> <strong>Telugu WebTech:</strong> Watch the video walkthrough for this challenge!</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 54 Summary – You Learned:</span>
+    </div>
+    <p>✅ What is the built-in <span class="inline-code">fs</span> module and why it's essential.<br>
+    ✅ Difference between synchronous (blocking) & asynchronous (non-blocking) methods.<br>
+    ✅ Reading files (<span class="inline-code">readFile</span>), Writing (<span class="inline-code">writeFile</span>), Appending (<span class="inline-code">appendFile</span>).<br>
+    ✅ Deleting, renaming, creating folders, checking file existence.<br>
+    ✅ Real-world logger example & note-taking challenge.</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 55 – Path Module & Working with File Paths (plus fs.promises for modern async/await)</strong> <br>
+      Keep following Telugu WebTech MERN roadmap!
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fab fa-node-js"></i> Day 54 · Node.js File System (fs) · <strong>Telugu WebTech</strong> — Learn by doing, build real backend skills</p>
+    <p style="font-size: 0.85rem;">💡 Practice writing, reading and appending files today. Don't forget to handle errors gracefully!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Paste in your Node.js file and run it.');
+    }).catch(() => {
+      alert('⚠️ Manual copy needed.');
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 30: Event Handling in React | onClick, onChange, onSubmit + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    .input-demo {
+      padding: 10px 16px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      width: 250px;
+      margin: 8px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🖱️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 30 · Event Handling in React (Show Results)</div>
+  </div>
+
+  <h1>🖱️ Event Handling in React<br><span style="font-size:1rem;">onClick · onChange · onSubmit · Event Object · Synthetic Events — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What are Events -->
+  <div class="section-title">1️⃣ What are Events in React?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Events</strong> are user actions like clicks, typing, form submission, mouse movements. React events are similar to HTML events but use camelCase syntax (onClick instead of onclick) and are passed as functions (not strings). Events are the bridge between user interaction and React state changes.</p>
+    <p><strong>Where it's used:</strong> Every interactive React application — buttons, forms, search inputs, modals, dropdowns, drag-and-drop, and more.</p>
+  </div>
+  <div class="diagram">
+    User Action → React Event Handler → State Update → UI Re-renders
+  </div>
+
+  <!-- Section 2: onClick Event -->
+  <div class="section-title">2️⃣ onClick Event — Handling Button Clicks</div>
+  <div class="example-card">
+    <div class="code-block">
+      function ClickDemo() {<br>
+        const handleClick = () => {<br>
+          alert("Button was clicked!");<br>
+        };<br>
+        return (&lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="onClickResult">🔘 Show onClick Demo</button>
+    <div id="onClickResult" class="result-area">
+      <button class="demo-btn" id="clickDemoBtn">Click Me (onClick Demo)</button>
+      <div class="console-output" style="margin-top: 12px;">
+        ✅ React uses onClick (camelCase) — not onclick (HTML)<br>
+        ✅ Pass the function reference, NOT function call: onClick={handleClick}<br>
+        ❌ Wrong: onClick={handleClick()} — this would run on render!
+      </div>
+      <script>
+        document.getElementById("clickDemoBtn")?.addEventListener("click", () => {
+          alert("Button clicked! onClick event handler works.");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 3: Passing Arguments -->
+  <div class="section-title">3️⃣ Passing Arguments to Event Handlers</div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserList() {<br>
+        const handleDelete = (userId) => {<br>
+          console.log(`Deleting user: ${userId}`);<br>
+        };<br>
+        return &lt;button onClick={() => handleDelete(1)}&gt;Delete User 1&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="argsResult">📦 Show Passing Arguments Demo</button>
+    <div id="argsResult" class="result-area">
+      <button class="demo-btn" id="argDemoBtn">Delete User 1</button>
+      <div class="console-output" style="margin-top: 12px;">
+        ✅ Use arrow function to pass arguments: onClick={() => handleClick(id)}<br>
+        ✅ This creates a new function that calls your handler with the argument<br>
+        💡 This pattern is very common for lists and dynamic data
+      </div>
+      <script>
+        document.getElementById("argDemoBtn")?.addEventListener("click", () => {
+          alert("Deleting user: 1 (argument passed via arrow function)");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 4: onChange Event -->
+  <div class="section-title">4️⃣ onChange Event — Handling Input Changes</div>
+  <div class="example-card">
+    <div class="code-block">
+      function InputDemo() {<br>
+        const [text, setText] = useState("");<br>
+        const handleChange = (event) => {<br>
+          setText(event.target.value);<br>
+        };<br>
+        return (<br>
+          &lt;&gt;<br>
+            &lt;input value={text} onChange={handleChange} /&gt;<br>
+            &lt;p&gt;You typed: {text}&lt;/p&gt;<br>
+          &lt;/&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="onChangeResult">📝 Show onChange Demo</button>
+    <div id="onChangeResult" class="result-area">
+      <input type="text" id="onChangeInput" class="input-demo" placeholder="Type something...">
+      <p id="onChangeOutput" style="margin-top: 8px;">You typed: </p>
+      <div class="console-output" style="margin-top: 8px;">
+        ✅ onChange triggers on every keystroke (or input change)<br>
+        ✅ event.target.value gives the current input value<br>
+        ✅ This pattern is called "controlled component" — React controls the input value
+      </div>
+      <script>
+        const inputField = document.getElementById("onChangeInput");
+        const outputPara = document.getElementById("onChangeOutput");
+        inputField?.addEventListener("input", (e) => {
+          outputPara.textContent = `You typed: ${e.target.value}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: onSubmit Event -->
+  <div class="section-title">5️⃣ onSubmit Event — Handling Form Submission</div>
+  <div class="example-card">
+    <div class="code-block">
+      function FormDemo() {<br>
+        const handleSubmit = (event) => {<br>
+          event.preventDefault();  // PREVENTS PAGE REFRESH<br>
+          alert("Form submitted!");<br>
+        };<br>
+        return (<br>
+          &lt;form onSubmit={handleSubmit}&gt;<br>
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;<br>
+          &lt;/form&gt;<br>
+        );<br>
+      }
+    </div>
+    <button class="btn-show" data-target="onSubmitResult">📋 Show onSubmit Demo</button>
+    <div id="onSubmitResult" class="result-area">
+      <form id="demoForm">
+        <input type="text" placeholder="Enter something" class="input-demo">
+        <button type="submit" class="demo-btn">Submit</button>
+      </form>
+      <p id="formMessage" style="margin-top: 8px;"></p>
+      <div class="console-output" style="margin-top: 8px;">
+        ✅ event.preventDefault() is CRITICAL — prevents page refresh!<br>
+        ✅ Without preventDefault(), React apps would reload on every form submit<br>
+        ✅ Forms without page refresh = SPA (Single Page Application)
+      </div>
+      <script>
+        document.getElementById("demoForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          document.getElementById("formMessage").innerHTML = "✅ Form submitted! Page did NOT refresh — preventDefault() worked!";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Common React Events Table -->
+  <div class="section-title">6️⃣ Common React Events Reference</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Event</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>onClick</span></td><td>Element clicked</span></td><td>&lt;button onClick={handler}&gt;</span></td>
+        <tr><td>onChange</span></td><td>Input value changes</span></td><td>&lt;input onChange={handler}&gt;</span></td>
+        <tr><td>onSubmit</span></td><td>Form submitted</span></td><td>&lt;form onSubmit={handler}&gt;</span></td>
+        <tr><td>onMouseEnter</span></td><td>Mouse enters element</span></td><td>&lt;div onMouseEnter={handler}&gt;</span></td>
+        <tr><td>onMouseLeave</span></td><td>Mouse leaves element</span></td><td>&lt;div onMouseLeave={handler}&gt;</span></td>
+        <tr><td>onKeyDown</span></td><td>Key pressed</span></td><td>&lt;input onKeyDown={handler}&gt;</span></td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 7: The Event Object -->
+  <div class="section-title">7️⃣ The Event Object (e) — Getting Information</div>
+  <div class="example-card">
+    <div class="code-block">
+      function EventDemo() {<br>
+        const handleClick = (event) => {<br>
+          console.log("Event type:", event.type);<br>
+          console.log("Target:", event.target);<br>
+          console.log("Button text:", event.target.innerText);<br>
+        };<br>
+        return &lt;button onClick={handleClick}&gt;Click&lt;/button&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="eventObjectResult">🎯 Show Event Object Demo</button>
+    <div id="eventObjectResult" class="result-area">
+      <button class="demo-btn" id="eventObjectBtn">Click to see event info</button>
+      <div class="console-output" id="eventOutput" style="margin-top: 8px;">Click the button to see event object properties</div>
+      <script>
+        document.getElementById("eventObjectBtn")?.addEventListener("click", (e) => {
+          document.getElementById("eventOutput").innerHTML = `📋 Event type: ${e.type}<br>📋 Target tag: ${e.target.tagName}<br>📋 Button text: ${e.target.innerText}<br>✅ React's SyntheticEvent wraps native browser event`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Complete Example - Registration Form -->
+  <div class="section-title">📁 Complete Example: Registration Form with Events</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="registrationFormResult">📝 Show Registration Form Demo</button>
+    <div id="registrationFormResult" class="result-area">
+      <div style="background: white; border-radius: 20px; padding: 20px;">
+        <h3>📝 Registration Form</h3>
+        <form id="regForm">
+          <div><input type="text" id="regName" class="input-demo" placeholder="Name" style="width: 80%;"></div>
+          <div><input type="email" id="regEmail" class="input-demo" placeholder="Email" style="width: 80%;"></div>
+          <div><input type="password" id="regPassword" class="input-demo" placeholder="Password" style="width: 80%;"></div>
+          <button type="submit" class="demo-btn">Register</button>
+        </form>
+        <p id="regResult" style="margin-top: 8px;"></p>
+      </div>
+      <div class="console-output">
+        ✅ This demonstrates: onSubmit, onChange, preventDefault, and form state management<br>
+        💡 In real React, we'd use useState for each form field
+      </div>
+      <script>
+        document.getElementById("regForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("regName").value;
+          const email = document.getElementById("regEmail").value;
+          document.getElementById("regResult").innerHTML = `✅ Registered: ${name} (${email}) — Form submitted without page refresh!`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 9: Event Handler Best Practices -->
+  <div class="section-title">8️⃣ Best Practices for Event Handlers</div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Define outside JSX</h3><p>Define handlers outside return statement for cleaner, more readable code</p></div>
+    <div class="card"><h3>✅ Use arrow functions for arguments</h3><p>onClick={() => handleDelete(id)} — avoids immediate execution</p></div>
+    <div class="card"><h3>✅ Always preventDefault on forms</h3><p>Prevents page refresh which would break SPA behavior</p></div>
+    <div class="card"><h3>✅ Use descriptive function names</h3><p>handleClick, handleSubmit, handleChange — clear intent</p></div>
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Button Counter</strong> with three buttons: Increment, Decrement, Reset (use onClick)<br>
+    2. Create a <strong>Live Character Counter</strong> for a textarea (use onChange, show remaining characters)<br>
+    3. Create a <strong>Login Form</strong> with email/password and onSubmit (show alert with entered data)<br>
+    4. Create a <strong>Hover Card</strong> that changes color when mouse enters/leaves (onMouseEnter/onMouseLeave)
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesEventsResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesEventsResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">preventDefault()</span> on form submission → page refreshes, state lost. Always use <span class="inline-code">e.preventDefault()</span>.</li>
+        <li>❌ Calling function instead of passing reference: <span class="inline-code">onClick={handleClick()}</span> ❌ → <span class="inline-code">onClick={handleClick}</span> ✅</li>
+        <li>❌ Using lowercase event names: <span class="inline-code">onclick</span> ❌ → <span class="inline-code">onClick</span> ✅ (camelCase is required)</li>
+        <li>❌ Not using event.target.value correctly in onChange — remember: <span class="inline-code">event.target.value</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How are React events different from HTML events?</h3><p>React uses camelCase (onClick) and Synthetic Events (cross-browser wrapper).</p></div>
+    <div class="card"><h3>❓ Why use preventDefault() in forms?</h3><p>Prevents default browser behavior (page refresh) so React can handle submission without reload.</p></div>
+    <div class="card"><h3>❓ How to pass arguments to event handlers?</h3><p>Use arrow function: <span class="inline-code">onClick={() => handleClick(id)}</span></p></div>
+    <div class="card"><h3>❓ What is the event object in React?</h3><p>SyntheticEvent — React's cross-browser wrapper around native browser event.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎨 Task 1</h3><p>Create a <strong>Color Changer</strong> with buttons that change background color on click.</p></div>
+    <div class="card"><h3>⌨️ Task 2</h3><p>Create a <strong>Todo Input</strong> where pressing Enter adds a todo (onKeyDown with Enter key).</p></div>
+    <div class="card"><h3>⭐ Task 3</h3><p>Create a <strong>Feedback Form</strong> with rating buttons (1-5) using onClick.</p></div>
+    <div class="card"><h3>📝 Task 4</h3><p>Create a controlled form with multiple inputs using onChange and object state.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 30 - Event Handling)</div>
+  <div class="card-grid">
+    <div class="card">✔️ onClick — handling button clicks and user interactions</div>
+    <div class="card">✔️ onChange — handling input changes (controlled components)</div>
+    <div class="card">✔️ onSubmit — handling form submission with preventDefault()</div>
+    <div class="card">✔️ Event object (e) — accessing event.target.value and other properties</div>
+    <div class="card">✔️ preventDefault() — stopping page refresh in forms</div>
+    <div class="card">✔️ Passing arguments to event handlers using arrow functions</div>
+  </div>
+
+  <!-- Day 30 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 30 Ending Message</strong><br>
+    "Events connect user actions to your React code. Now you can build fully interactive forms, buttons, and inputs. Congratulations on completing 30 days! You're now a React developer — able to build interactive, stateful, event-driven applications."
+  </div>
+
+  <!-- Next: Day 31 -->
+  <div class="section-title">🔜 Next — Day 31 : Conditional Rendering in React (if, ternary, && operator)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚡ if/else in JSX</span>
+    <span class="badge">❓ Ternary Operator</span>
+    <span class="badge">&& Operator</span>
+    <span class="badge">🎯 Conditional Components</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 30 Completed ✅<br>
+    Click "Show Result" on each example to see event handling in action. Practice building forms and handling events — this is what makes apps interactive!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

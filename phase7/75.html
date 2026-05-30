@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 75: Mongoose Setup & Connection – ODM for Node.js | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .comparison-table {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .comparison-card {
+      flex: 1;
+      min-width: 250px;
+      background: #f1f5f9;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 75 · Phase 8</div>
+    <h1>
+      <i class="fas fa-leaf"></i> 
+      Mongoose Setup & Connection – ODM for Node.js
+    </h1>
+    <p>Welcome to Mongoose! The elegant MongoDB object modeling tool for Node.js. Learn to connect, define schemas, and interact with MongoDB using JavaScript objects.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Master Mongoose ODM
+    </div>
+  </div>
+
+  <!-- What is Mongoose? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is Mongoose?</span>
+    </div>
+    <p><strong>Mongoose</strong> is an Object Data Modeling (ODM) library for MongoDB and Node.js. It provides a schema-based solution to model your application data with built-in validation, query building, and middleware.</p>
+    <div class="comparison-table">
+      <div class="comparison-card">
+        <i class="fas fa-code" style="font-size: 2rem; color: #dc2626;"></i>
+        <h3>Without Mongoose</h3>
+        <p>• Raw MongoDB driver<br>• Manual validation<br>• No schema enforcement<br>• Manual type conversion<br>• More boilerplate code</p>
+        <div class="code-block" style="font-size:0.7rem;">db.collection('users').insertOne({
+  name: "Ramesh",
+  age: "25" // string, not number!
+})</div>
+      </div>
+      <div class="comparison-card">
+        <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e;"></i>
+        <h3>With Mongoose</h3>
+        <p>• Schema validation<br>• Built-in data types<br>• Automatic type casting<br>• Middleware (pre/post hooks)<br>• Query helpers</p>
+        <div class="code-block" style="font-size:0.7rem;">const User = mongoose.model('User', userSchema);
+await User.create({ name: "Ramesh", age: "25" });
+// age automatically becomes 25 (number)</div>
+      </div>
+    </div>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Mongoose sits between your Node.js app and MongoDB:</strong><br>
+      Node.js App → Mongoose (ODM) → MongoDB Driver → MongoDB Database
+    </div>
+  </div>
+
+  <!-- Why Mongoose? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-star"></i>
+      <span>2. Why Use Mongoose in MERN Stack?</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-shield-alt"></i>
+        <strong>📐 Schema Definition</strong>
+        <p>Define the structure of your documents with data types, validation, and defaults</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-check-circle"></i>
+        <strong>✅ Built-in Validation</strong>
+        <p>Required fields, min/max length, email format, custom validators</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-link"></i>
+        <strong>🔗 Relationship Management</strong>
+        <p>Easily define references between collections (populate)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-hooks"></i>
+        <strong>🪝 Middleware (Hooks)</strong>
+        <p>pre and post hooks for operations (e.g., hash password before save)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-code"></i>
+        <strong>📝 Query Builder</strong>
+        <p>Chainable queries with promises (find, where, limit, populate)</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-chart-line"></i>
+        <strong>⚡ Performance</strong>
+        <p>Built-in connection pooling, indexing support</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Installation -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-download"></i>
+      <span>3. Installing Mongoose</span>
+    </div>
+    <div class="code-block" id="install">
+# Create a new project
+mkdir mongoose-demo
+cd mongoose-demo
+npm init -y
+
+# Install mongoose
+npm install mongoose
+
+# Install dotenv for environment variables (optional)
+npm install dotenv
+
+# Install nodemon for development
+npm install --save-dev nodemon
+    </div>
+    <button class="copy-btn" onclick="copyCode('install')"><i class="far fa-copy"></i> Copy Installation Commands</button>
+  </div>
+
+  <!-- Connecting to MongoDB -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plug"></i>
+      <span>4. Connecting to MongoDB with Mongoose</span>
+    </div>
+    
+    <div class="subheading">📁 Connection String Formats</div>
+    <div class="code-block" id="connectionStrings">
+// Local MongoDB
+mongodb://localhost:27017/database_name
+
+// MongoDB Atlas (Cloud)
+mongodb+srv://username:password@cluster.mongodb.net/database_name
+
+// With options
+mongodb://localhost:27017/myapp?retryWrites=true&w=majority
+    </div>
+    <button class="copy-btn" onclick="copyCode('connectionStrings')"><i class="far fa-copy"></i> Copy Connection Strings</button>
+
+    <div class="subheading">📁 .env file (Environment Variables)</div>
+    <div class="code-block" id="envFile">
+# .env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/mongooseDemo
+    </div>
+    <button class="copy-btn" onclick="copyCode('envFile')"><i class="far fa-copy"></i> Copy .env</button>
+
+    <div class="subheading">📁 config/db.js – Database Connection Setup</div>
+    <div class="code-block" id="dbConnection">
+// config/db.js
+const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      // These options are no longer needed in mongoose 6+, but kept for reference
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`❌ Error: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;
+    </div>
+    <button class="copy-btn" onclick="copyCode('dbConnection')"><i class="far fa-copy"></i> Copy Database Connection</button>
+
+    <div class="subheading">📁 server.js – Main File</div>
+    <div class="code-block" id="serverConnection">
+// server.js
+require('dotenv').config();
+const mongoose = require('mongoose');
+const connectDB = require('./config/db');
+
+// Connect to database
+connectDB();
+
+// Listen for mongoose events
+mongoose.connection.on('connected', () => {
+  console.log('🔌 Mongoose connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.log(`❌ Mongoose connection error: ${err}`);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('📴 Mongoose disconnected');
+});
+
+// Handle application termination
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('Mongoose connection closed due to app termination');
+  process.exit(0);
+});
+
+const PORT = process.env.PORT || 5000;
+const app = require('./app'); // Your Express app
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('serverConnection')"><i class="far fa-copy"></i> Copy Server Setup</button>
+
+    <div class="success-note">
+      <i class="fas fa-check-circle"></i> <strong>Connection Success!</strong> You should see: "✅ MongoDB Connected: localhost" or Atlas hostname
+    </div>
+  </div>
+
+  <!-- Schema & Model Definition -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-table"></i>
+      <span>5. Defining a Schema and Model</span>
+    </div>
+    <div class="code-block" id="userModel">
+// models/User.js
+const mongoose = require('mongoose');
+
+// Define the schema (structure of document)
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+    minlength: [2, 'Name must be at least 2 characters'],
+    maxlength: [50, 'Name cannot exceed 50 characters']
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
+  },
+  age: {
+    type: Number,
+    min: [0, 'Age cannot be negative'],
+    max: [120, 'Age cannot exceed 120']
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters'],
+    select: false // Don't return password by default
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'moderator'],
+    default: 'user'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  hobbies: {
+    type: [String],
+    default: []
+  },
+  address: {
+    street: String,
+    city: String,
+    zipCode: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    immutable: true // Cannot be changed after creation
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+}, {
+  timestamps: true, // Automatically adds createdAt and updatedAt
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtual field (not stored in DB)
+userSchema.virtual('fullInfo').get(function() {
+  return `${this.name} (${this.email})`;
+});
+
+// Middleware: Runs before saving
+userSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  console.log(`🔄 Saving user: ${this.name}`);
+  next();
+});
+
+// Middleware: Runs after saving
+userSchema.post('save', function(doc, next) {
+  console.log(`✅ User saved: ${doc.name}`);
+  next();
+});
+
+// Instance method
+userSchema.methods.greet = function() {
+  return `Hello, my name is ${this.name}`;
+};
+
+// Static method
+userSchema.statics.findByEmail = function(email) {
+  return this.findOne({ email });
+};
+
+// Create the model (singular name, mongoose creates plural collection)
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+    </div>
+    <button class="copy-btn" onclick="copyCode('userModel')"><i class="far fa-copy"></i> Copy User Model</button>
+  </div>
+
+  <!-- CRUD with Mongoose -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-edit"></i>
+      <span>6. CRUD Operations with Mongoose</span>
+    </div>
+    
+    <div class="subheading">📝 CREATE – Saving Documents</div>
+    <div class="code-block" id="mongooseCreate">
+// Method 1: Create and save
+const newUser = new User({
+  name: "Ramesh",
+  email: "ramesh@example.com",
+  age: 25,
+  password: "password123",
+  hobbies: ["coding", "reading"]
+});
+const savedUser = await newUser.save();
+
+// Method 2: Create directly
+const user = await User.create({
+  name: "Priya",
+  email: "priya@example.com",
+  age: 22,
+  password: "password456",
+  hobbies: ["dancing", "music"]
+});
+
+// Method 3: Insert many
+const users = await User.insertMany([
+  { name: "Suresh", email: "suresh@example.com", password: "pass789" },
+  { name: "Anjali", email: "anjali@example.com", password: "pass101" }
+]);
+    </div>
+    <button class="copy-btn" onclick="copyCode('mongooseCreate')"><i class="far fa-copy"></i> Copy Create Operations</button>
+
+    <div class="subheading">📖 READ – Finding Documents</div>
+    <div class="code-block" id="mongooseRead">
+// Find all users
+const allUsers = await User.find();
+
+// Find with filter
+const activeUsers = await User.find({ isActive: true });
+
+// Find one by ID
+const user = await User.findById("507f1f77bcf86cd799439011");
+
+// Find one by filter
+const userByEmail = await User.findOne({ email: "ramesh@example.com" });
+
+// Count documents
+const count = await User.countDocuments({ isActive: true });
+
+// Query with multiple conditions
+const users = await User.find({
+  age: { $gte: 18, $lte: 60 },
+  isActive: true
+}).select('name email age').sort({ age: -1 }).limit(5);
+
+// Select specific fields (excluding password)
+const usersWithoutPassword = await User.find().select('-password');
+
+// Populate (for references – we'll cover later)
+// const posts = await Post.find().populate('author');
+    </div>
+    <button class="copy-btn" onclick="copyCode('mongooseRead')"><i class="far fa-copy"></i> Copy Read Operations</button>
+
+    <div class="subheading">✏️ UPDATE – Modifying Documents</div>
+    <div class="code-block" id="mongooseUpdate">
+// Update one
+const updated = await User.updateOne(
+  { email: "ramesh@example.com" },
+  { $set: { age: 26 }, $inc: { version: 1 } }
+);
+
+// Update many
+await User.updateMany(
+  { isActive: true },
+  { $set: { membership: "premium" } }
+);
+
+// Find by ID and update
+const user = await User.findByIdAndUpdate(
+  "507f1f77bcf86cd799439011",
+  { age: 27 },
+  { new: true, runValidators: true } // Return updated doc, run validation
+);
+
+// Find one and update
+const updatedUser = await User.findOneAndUpdate(
+  { email: "priya@example.com" },
+  { $push: { hobbies: "singing" } },
+  { new: true }
+);
+    </div>
+    <button class="copy-btn" onclick="copyCode('mongooseUpdate')"><i class="far fa-copy"></i> Copy Update Operations</button>
+
+    <div class="subheading">🗑️ DELETE – Removing Documents</div>
+    <div class="code-block" id="mongooseDelete">
+// Delete one
+await User.deleteOne({ email: "suresh@example.com" });
+
+// Delete many
+await User.deleteMany({ isActive: false });
+
+// Find by ID and delete
+const deletedUser = await User.findByIdAndDelete("507f1f77bcf86cd799439011");
+
+// Find one and delete
+const deleted = await User.findOneAndDelete({ email: "anjali@example.com" });
+    </div>
+    <button class="copy-btn" onclick="copyCode('mongooseDelete')"><i class="far fa-copy"></i> Copy Delete Operations</button>
+  </div>
+
+  <!-- Complete Example -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-code"></i>
+      <span>7. Complete Working Example</span>
+    </div>
+    <div class="code-block" id="completeExample">
+// app.js – Complete Express + Mongoose Example
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('Connection error:', err));
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  age: { type: Number, min: 0, max: 120 }
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
+
+// ========== API ROUTES ==========
+
+// CREATE – POST /api/users
+app.post('/api/users', async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.status(201).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// READ ALL – GET /api/users
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// READ ONE – GET /api/users/:id
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// UPDATE – PUT /api/users/:id
+app.put('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// DELETE – DELETE /api/users/:id
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+    </div>
+    <button class="copy-btn" onclick="copyCode('completeExample')"><i class="far fa-copy"></i> Copy Complete Example</button>
+  </div>
+
+  <!-- Day 75 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Build Product Model with Mongoose</span>
+    </div>
+    <p><strong>Task:</strong> Create a complete Product model with Mongoose and Express routes:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create a Product schema with: name (required, min 3 chars), price (required, min 0), category, stock (default 0), rating (min 0, max 5), tags (array), createdAt</li>
+      <li>Add timestamps option</li>
+      <li>Add a virtual field "inStock" that returns stock > 0</li>
+      <li>Add a pre-save middleware that logs "Saving product..."</li>
+      <li>Create Express routes: GET /products, GET /products/:id, POST /products, PUT /products/:id, DELETE /products/:id</li>
+      <li>Add validation for all required fields</li>
+      <li>Test all routes with Postman</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Starter – models/Product.js
+const mongoose = require('mongoose');
+
+const productSchema = new mongoose.Schema({
+  // Define your schema here
+  name: { type: String, required: [true, 'Name is required'], minlength: [3, 'Name must be at least 3 characters'] },
+  price: { type: Number, required: true, min: [0, 'Price cannot be negative'] },
+  category: { type: String, required: true },
+  stock: { type: Number, default: 0, min: 0 },
+  rating: { type: Number, min: 0, max: 5, default: 0 },
+  tags: [String]
+}, { timestamps: true });
+
+// Virtual field
+productSchema.virtual('inStock').get(function() {
+  return this.stock > 0;
+});
+
+// Pre-save middleware
+productSchema.pre('save', function(next) {
+  console.log(`💾 Saving product: ${this.name}`);
+  next();
+});
+
+module.exports = mongoose.model('Product', productSchema);
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 75 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>What is Mongoose:</strong> ODM for MongoDB with schema validation<br>
+    ✅ <strong>Installation:</strong> npm install mongoose, dotenv, nodemon<br>
+    ✅ <strong>Connection:</strong> mongoose.connect() with local/Atlas URI<br>
+    ✅ <strong>Schema Definition:</strong> Data types, validation, defaults, enums<br>
+    ✅ <strong>Model Creation:</strong> mongoose.model() for database operations<br>
+    ✅ <strong>CRUD Operations:</strong> create, find, update, delete with Mongoose<br>
+    ✅ <strong>Middleware:</strong> pre and post hooks for operations<br>
+    ✅ <strong>Virtual Fields:</strong> Computed properties not stored in DB<br>
+    ✅ <strong>Instance & Static Methods:</strong> Custom functionality<br>
+    ✅ <strong>Express Integration:</strong> Complete API with Mongoose models</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 76 – Schemas & Models (Deep Dive into Schema Design)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're now a Mongoose expert! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-leaf"></i> Day 75 · Mongoose Setup & Connection · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Mongoose is the bridge between Express and MongoDB. Master it to build powerful backends!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Run "npm install mongoose express dotenv" to get started.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

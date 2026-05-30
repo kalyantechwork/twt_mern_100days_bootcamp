@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 46: Tailwind CSS Setup & Basics | Utility-First CSS + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .tailwind-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">💨</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 46 · Tailwind CSS Setup & Basics (Show Results)</div>
+  </div>
+
+  <h1>💨 Tailwind CSS<br><span style="font-size:1rem;">Utility-First CSS Framework · Setup in React · Common Utilities · Responsive Design — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is Tailwind CSS -->
+  <div class="section-title">1️⃣ What is Tailwind CSS?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Tailwind CSS</strong> is a utility-first CSS framework. Instead of writing custom CSS, you use pre-built classes like <span class="inline-code">bg-blue-500</span>, <span class="inline-code">text-center</span>, <span class="inline-code">p-4</span> directly in your HTML/JSX. This allows you to build custom designs without ever leaving your HTML.</p>
+    <p><strong>Where it's used:</strong> Thousands of companies including GitHub, Netflix, Shopify, and Stripe. It's the fastest-growing CSS framework in modern web development.</p>
+  </div>
+  <div class="diagram">
+    Traditional CSS → Write custom styles in .css file → (slower development, naming conflicts)<br>
+    Tailwind CSS → Use utility classes directly in JSX → (faster, consistent, no context switching)
+  </div>
+
+  <!-- Section 2: Why Tailwind -->
+  <div class="section-title">2️⃣ Why Tailwind CSS? (Benefits)</div>
+  <div class="card-grid">
+    <div class="card"><h3>⚡ Faster Development</h3><p>No context switching between HTML and CSS files. Style directly in JSX.</p></div>
+    <div class="card"><h3>📦 No Naming Fatigue</h3><p>Never waste time thinking of class names (.card-container-wrapper).</p></div>
+    <div class="card"><h3>🎨 Consistent Design</h3><p>Built-in design system with consistent spacing, colors, typography.</p></div>
+    <div class="card"><h3>📱 Responsive Built-in</h3><p>Prefix like md:, lg: for responsive design without media queries.</p></div>
+    <div class="card"><h3>🌙 Dark Mode Ready</h3><p>Built-in dark mode with dark: prefix.</p></div>
+    <div class="card"><h3>📦 Small Production Size</h3><p>PurgeCSS removes unused styles → very small CSS file.</p></div>
+  </div>
+
+  <!-- Section 3: Traditional vs Tailwind -->
+  <div class="section-title">3️⃣ Traditional CSS vs Tailwind CSS</div>
+  <div class="example-card">
+    <div class="code-block">
+      /* Traditional CSS - separate file */<br>
+      .btn-primary {<br>
+        background-color: #3b82f6;<br>
+        color: white;<br>
+        padding: 8px 16px;<br>
+        border-radius: 8px;<br>
+      }<br>
+      .btn-primary:hover { background-color: #2563eb; }<br><br>
+      // Tailwind CSS - inline classes<br>
+      &lt;button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"&gt;
+    </div>
+    <button class="btn-show" data-target="comparisonResult">🎨 Show Visual Comparison</button>
+    <div id="comparisonResult" class="result-area">
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px;">
+        <div style="background:#3b82f6; color:white; padding:8px 16px; border-radius:8px;">Traditional CSS Button</div>
+        <div style="background:#3b82f6; color:white; padding:8px 16px; border-radius:8px;">Tailwind Button</div>
+      </div>
+      <div class="console-output" style="margin-top: 12px;">
+        ✅ Same result, but Tailwind classes are more readable and don't require switching files!<br>
+        ✅ No naming conflicts — classes are guaranteed unique
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Installation -->
+  <div class="section-title">4️⃣ Installation in React (Vite)</div>
+  <div class="example-card">
+    <div class="code-block">
+      # Step 1: Create React project<br>
+      npm create vite@latest my-app -- --template react<br>
+      cd my-app<br><br>
+      # Step 2: Install Tailwind CSS<br>
+      npm install -D tailwindcss postcss autoprefixer<br>
+      npx tailwindcss init -p<br><br>
+      # Step 3: Configure tailwind.config.js<br>
+      export default { content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"], ... }<br><br>
+      # Step 4: Add to index.css<br>
+      @tailwind base; @tailwind components; @tailwind utilities;<br><br>
+      # Step 5: Run dev server<br>
+      npm run dev
+    </div>
+    <button class="btn-show" data-target="installResult">🛠️ Show Installation Steps</button>
+    <div id="installResult" class="result-area">
+      <div class="console-output">
+        ✅ After installation, you can use Tailwind classes like: className="text-red-500 text-2xl font-bold"<br>
+        ✅ Run npm run dev to see your styled components!<br>
+        💡 Tailwind works with any React setup — Vite, Create React App, Next.js
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Colors -->
+  <div class="section-title">5️⃣ Core Concepts — Colors</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;div className="text-red-500"&gt;Red text&lt;/div&gt;<br>
+      &lt;div className="bg-blue-500"&gt;Blue background&lt;/div&gt;<br>
+      // Color shades: 50 (lightest) to 900 (darkest)
+    </div>
+    <button class="btn-show" data-target="colorsResult">🎨 Show Tailwind Colors</button>
+    <div id="colorsResult" class="result-area">
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="background:#ef4444; color:white; padding:8px 16px; border-radius:8px;">bg-red-500</div>
+        <div style="background:#3b82f6; color:white; padding:8px 16px; border-radius:8px;">bg-blue-500</div>
+        <div style="background:#22c55e; color:white; padding:8px 16px; border-radius:8px;">bg-green-500</div>
+        <div style="background:#eab308; color:#0f172a; padding:8px 16px; border-radius:8px;">bg-yellow-500</div>
+        <div style="background:#a855f7; color:white; padding:8px 16px; border-radius:8px;">bg-purple-500</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Spacing -->
+  <div class="section-title">6️⃣ Core Concepts — Spacing (Margin & Padding)</div>
+  <div class="example-card">
+    <div class="code-block">
+      p-0, p-1, p-2, p-4, p-8 (padding)<br>
+      m-0, m-1, m-2, m-4, m-8 (margin)<br>
+      mx-auto (center horizontally)<br>
+      px-4 (horizontal padding), py-2 (vertical padding)
+    </div>
+    <button class="btn-show" data-target="spacingResult">📐 Show Spacing Demo</button>
+    <div id="spacingResult" class="result-area">
+      <div style="background:#e2e8f0; padding:16px; border-radius:12px;">p-4 (16px padding)</div>
+      <div style="background:#cbd5e1; padding:8px 32px; border-radius:12px; margin-top:8px;">px-8 (32px horizontal padding)</div>
+      <div style="background:#94a3b8; padding:16px; border-radius:12px; margin-top:8px;">mx-auto: center with auto margins</div>
+    </div>
+  </div>
+
+  <!-- Section 7: Typography -->
+  <div class="section-title">7️⃣ Core Concepts — Typography</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;h1 className="text-3xl font-bold text-center"&gt;Heading&lt;/h1&gt;<br>
+      &lt;p className="text-gray-600 leading-relaxed"&gt;Paragraph&lt;/p&gt;<br>
+      &lt;span className="text-sm uppercase tracking-wide"&gt;Small text&lt;/span&gt;
+    </div>
+    <button class="btn-show" data-target="typographyResult">✍️ Show Typography Demo</button>
+    <div id="typographyResult" class="result-area">
+      <h1 class="text-2xl font-bold text-center" style="margin:0 0 8px 0;">text-2xl font-bold</h1>
+      <p class="text-gray-600" style="margin:0 0 8px 0;">text-gray-600 paragraph text with normal styling</p>
+      <span class="text-sm uppercase tracking-wide bg-gray-200 px-2 py-1 rounded" style="display:inline-block;">uppercase + tracking-wide</span>
+    </div>
+  </div>
+
+  <!-- Section 8: Flexbox -->
+  <div class="section-title">8️⃣ Core Concepts — Flexbox Utilities</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;div className="flex justify-between items-center gap-4"&gt;
+    </div>
+    <button class="btn-show" data-target="flexResult">🔄 Show Flexbox Demo</button>
+    <div id="flexResult" class="result-area">
+      <div class="flex justify-between items-center gap-4 bg-gray-100 p-4 rounded-lg">
+        <div class="bg-blue-500 text-white px-4 py-2 rounded">Item 1</div>
+        <div class="bg-blue-500 text-white px-4 py-2 rounded">Item 2</div>
+        <div class="bg-blue-500 text-white px-4 py-2 rounded">Item 3</div>
+      </div>
+      <div class="console-output">✅ flex justify-between = space between items; items-center = vertically centered; gap-4 = 16px gap</div>
+    </div>
+  </div>
+
+  <!-- Section 9: Grid -->
+  <div class="section-title">9️⃣ Core Concepts — Grid Utilities</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;div className="grid grid-cols-3 gap-4"&gt;
+    </div>
+    <button class="btn-show" data-target="gridResult">📊 Show Grid Demo</button>
+    <div id="gridResult" class="result-area">
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-gray-200 p-4 text-center rounded-lg">1</div>
+        <div class="bg-gray-200 p-4 text-center rounded-lg">2</div>
+        <div class="bg-gray-200 p-4 text-center rounded-lg">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 10: Responsive Design -->
+  <div class="section-title">🔟 Responsive Design — Breakpoints</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Mobile: stack vertically, Desktop: row<br>
+      &lt;div className="flex flex-col md:flex-row gap-4"&gt;
+    </div>
+    <button class="btn-show" data-target="responsiveResult">📱 Show Responsive Demo</button>
+    <div id="responsiveResult" class="result-area">
+      <div class="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 rounded-lg">
+        <div class="w-full md:w-1/2 bg-blue-500 text-white p-4 rounded-lg text-center">Column 1 (full width on mobile, 1/2 on desktop)</div>
+        <div class="w-full md:w-1/2 bg-green-500 text-white p-4 rounded-lg text-center">Column 2 (full width on mobile, 1/2 on desktop)</div>
+      </div>
+      <div class="console-output">✅ Resize your browser to see the responsive behavior!<br>💡 md: prefix applies styles from 768px and up</div>
+    </div>
+  </div>
+
+  <!-- Section 11: Hover States -->
+  <div class="section-title">1️⃣1️⃣ Interactive States — Hover, Focus, Active</div>
+  <div class="example-card">
+    <div class="code-block">
+      &lt;button className="bg-blue-500 hover:bg-blue-700 transition duration-200"&gt;Click Me&lt;/button&gt;
+    </div>
+    <button class="btn-show" data-target="hoverResult">🖱️ Show Hover Effect Demo</button>
+    <div id="hoverResult" class="result-area">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition duration-200" style="cursor:pointer;">Hover me → color changes!</button>
+    </div>
+  </div>
+
+  <!-- Section 12: Complete Example - Product Card -->
+  <div class="section-title">📁 Complete Example: Product Card with Tailwind</div>
+  <div class="example-card">
+    <div class="code-block">
+      function ProductCard({ name, price }) {<br>
+        return (&lt;div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white hover:shadow-xl transition-shadow"&gt;<br>
+          &lt;div className="bg-gray-300 h-48 w-full"&gt;&lt;/div&gt;<br>
+          &lt;div className="px-6 py-4"&gt;<br>
+            &lt;h3 className="font-bold text-xl mb-2"&gt;{name}&lt;/h3&gt;<br>
+            &lt;p className="text-gray-700"&gt;${price}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+          &lt;div className="px-6 pt-4 pb-6"&gt;<br>
+            &lt;button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"&gt;Add to Cart&lt;/button&gt;<br>
+          &lt;/div&gt;<br>
+        &lt;/div&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="productCardResult">🛍️ Show Product Card Demo</button>
+    <div id="productCardResult" class="result-area">
+      <div class="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white" style="margin:0 auto;">
+        <div class="bg-gray-300 h-48 w-full"></div>
+        <div class="px-6 py-4">
+          <h3 class="font-bold text-xl mb-2">Wireless Headphones</h3>
+          <p class="text-gray-700">$79.99</p>
+        </div>
+        <div class="px-6 pt-4 pb-6">
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Install Tailwind CSS in your React project (or create a new one)<br>
+    2. Create a <strong>responsive navbar</strong> (flex on desktop, column on mobile using md: prefix)<br>
+    3. Build a <strong>card component</strong> with shadow, rounded corners, and hover effect<br>
+    4. Create a <strong>button component</strong> with different variants (primary, secondary, danger)<br>
+    5. Build a simple <strong>hero section</strong> with centered text and a background color
+  </div>
+
+  <!-- Section 14: Common Mistakes -->
+  <div class="section-title">⚠️ Common Tailwind Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesTailwindResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesTailwindResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to configure <span class="inline-code">content</span> in tailwind.config.js → classes don't work</li>
+        <li>❌ Not adding <span class="inline-code">@tailwind utilities</span> to CSS file</li>
+        <li>❌ Using arbitrary values incorrectly (e.g., w-[373px] instead of standard spacing)</li>
+        <li>❌ Overusing custom CSS instead of Tailwind utilities — defeats the purpose!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 15: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Tailwind CSS?</h3><p>Utility-first CSS framework for rapidly building custom designs without writing custom CSS.</p></div>
+    <div class="card"><h3>❓ Benefits over traditional CSS?</h3><p>Faster development, no naming conflicts, consistent design system, smaller production CSS.</p></div>
+    <div class="card"><h3>❓ How to make responsive designs?</h3><p>Use breakpoint prefixes: sm:, md:, lg:, xl:</p></div>
+    <div class="card"><h3>❓ How does Tailwind purging work?</h3><p>Removes unused CSS in production based on content configuration — keeps CSS tiny!</p></div>
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>💳 Task 1</h3><p>Create a <strong>responsive pricing card</strong> with Tailwind (3 cards side by side on desktop, stacked on mobile).</p></div>
+    <div class="card"><h3>📝 Task 2</h3><p>Build a <strong>form with input fields</strong> styled with Tailwind (border, focus ring, padding).</p></div>
+    <div class="card"><h3>🛒 Task 3</h3><p>Recreate the e-commerce product grid from Day 45 using Tailwind classes instead of custom CSS.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 46 - Tailwind CSS)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Tailwind CSS — utility-first framework for rapid UI development</div>
+    <div class="card">✔️ Installation in React (Vite) — 5 simple steps to get started</div>
+    <div class="card">✔️ Core utilities: Colors (bg-blue-500), Spacing (p-4, mx-auto)</div>
+    <div class="card">✔️ Typography: text-3xl, font-bold, text-center, uppercase</div>
+    <div class="card">✔️ Layout: flex, justify-between, items-center, grid, grid-cols-3</div>
+    <div class="card">✔️ Responsive design with breakpoints: sm:, md:, lg:, xl:</div>
+    <div class="card">✔️ Interactive states: hover:, focus:, active:</div>
+  </div>
+
+  <!-- Day 46 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 46 Ending Message</strong><br>
+    "Tailwind CSS will change how you style websites. No more switching between files or thinking of class names — just pure productivity. Install it and start building beautiful UIs faster than ever! This is the skill that separates junior from mid-level developers."
+  </div>
+
+  <!-- Next: Day 47 -->
+  <div class="section-title">🔜 Next — Day 47 : Responsive UI with Tailwind (Mobile-First Design)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📱 Mobile-First</span>
+    <span class="badge">💻 Desktop Layouts</span>
+    <span class="badge">🔄 Flex/Grid Responsive</span>
+    <span class="badge">📐 Container & Spacing</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 46 Completed ✅<br>
+    Click "Show Result" on each example to see Tailwind in action. Install Tailwind and build your first component — you'll never go back to plain CSS!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

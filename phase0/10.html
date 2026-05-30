@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 10: Mini JavaScript Projects | Concepts + Code Explained</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .concept-box {
+      background: #f0f9ff;
+      border-radius: 24px;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .concept-box h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #1e3a8a;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .project-preview {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1rem 0;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 6px 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .counter-num {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .todo-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 10px 16px;
+      margin: 8px 0;
+      border-radius: 60px;
+      border: 1px solid #e2e8f0;
+    }
+    .delete-task {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .delete-task:hover {
+      background: #b91c1c;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .explanation-text {
+      background: #f1f5f9;
+      padding: 12px;
+      border-radius: 16px;
+      margin: 10px 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📁</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 10 · Mini JavaScript Projects (Concepts + Code)</div>
+  </div>
+
+  <h1>📁 Mini JavaScript Projects<br><span style="font-size:1rem;">Concepts Explained: Variables · Events · DOM · Arrays · Functions · Dynamic Creation</span></h1>
+
+  <!-- Why Mini Projects -->
+  <div class="section-title">1️⃣ Why Mini Projects Matter</div>
+  <div class="highlight-box">
+    🚀 Projects help you apply concepts practically, improve logic building, and build your portfolio. Today we build 3 complete projects and learn the core JavaScript concepts behind each.
+  </div>
+  <div class="diagram">
+    HTML Structure → CSS Design → JavaScript Logic → Interactive Project
+  </div>
+
+  <!-- ========== PROJECT 1: COUNTER APP with Explanation ========== -->
+  <div class="section-title">📊 Project 1: Counter App (Increase / Decrease / Reset)</div>
+  
+  <!-- Concept Explanation for Counter -->
+  <div class="concept-box">
+    <h4>📚 Concepts Used in Counter App</h4>
+    <ul style="margin-left: 1.2rem;">
+      <li><strong>Variables (let):</strong> <span class="inline-code">let count = 0;</span> stores the current number.</li>
+      <li><strong>DOM Selection:</strong> <span class="inline-code">document.getElementById()</span> or <span class="inline-code">querySelector()</span> to access HTML elements.</li>
+      <li><strong>addEventListener:</strong> Listens for "click" events on buttons and triggers functions.</li>
+      <li><strong>textContent:</strong> Updates the displayed number dynamically.</li>
+      <li><strong>State Management:</strong> Keeping track of count value and updating UI when it changes.</li>
+    </ul>
+  </div>
+
+  <div class="example-card">
+    <h3>🔢 Counter with Explanation</h3>
+    <div class="code-block">
+      // Step 1: Create a variable to store count<br>
+      let count = 0;<br><br>
+      // Step 2: Select the display element and buttons<br>
+      const display = document.getElementById("counterDisplay");<br>
+      const incBtn = document.getElementById("incCounter");<br><br>
+      // Step 3: Add event listener to increase button<br>
+      incBtn.addEventListener("click", () => {<br>
+        count++;        // increment count<br>
+        display.textContent = count;  // update UI<br>
+      });
+    </div>
+    <button class="btn-show" data-target="counterResult">🔢 Show Counter App</button>
+    <div id="counterResult" class="result-area">
+      <div class="result-label">➕➖ Live Counter (Try it):</div>
+      <div class="project-preview" style="margin-top: 0;">
+        <div class="counter-num" id="counterDisplayDemo">0</div>
+        <button class="demo-button" id="incCounterDemo">➕ Increase</button>
+        <button class="demo-button" id="decCounterDemo">➖ Decrease</button>
+        <button class="demo-button" id="resetCounterDemo">🔄 Reset</button>
+      </div>
+      <div class="explanation-text">
+        ✅ <strong>How it works:</strong> Every time you click "+", the count increases by 1 and the display updates. Clicking "-" decreases. Reset sets count back to 0.
+      </div>
+      <script>
+        (function() {
+          let countVal = 0;
+          const display = document.getElementById("counterDisplayDemo");
+          const inc = document.getElementById("incCounterDemo");
+          const dec = document.getElementById("decCounterDemo");
+          const reset = document.getElementById("resetCounterDemo");
+          function update() { if(display) display.textContent = countVal; }
+          if(inc) inc.addEventListener("click", () => { countVal++; update(); });
+          if(dec) dec.addEventListener("click", () => { countVal--; update(); });
+          if(reset) reset.addEventListener("click", () => { countVal = 0; update(); });
+        })();
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== PROJECT 2: CALCULATOR with Explanation ========== -->
+  <div class="section-title">🧮 Project 2: Calculator (Add, Subtract, Multiply, Divide)</div>
+  
+  <div class="concept-box">
+    <h4>📚 Concepts Used in Calculator</h4>
+    <ul style="margin-left: 1.2rem;">
+      <li><strong>Input Values & Type Conversion:</strong> <span class="inline-code">.value</span> returns a string, so we use <span class="inline-code">Number()</span> to convert to number.</li>
+      <li><strong>Arithmetic Operators:</strong> +, -, *, / for calculations.</li>
+      <li><strong>Conditional Logic:</strong> Check division by zero to avoid errors.</li>
+      <li><strong>Multiple Event Listeners:</strong> Different buttons perform different operations on the same input values.</li>
+      <li><strong>toFixed():</strong> Format decimal results to 2 decimal places for cleaner display.</li>
+    </ul>
+  </div>
+
+  <div class="example-card">
+    <h3>📟 Calculator with Explanation</h3>
+    <div class="code-block">
+      // Step 1: Get input values and convert to numbers<br>
+      let a = Number(num1.value);<br>
+      let b = Number(num2.value);<br><br>
+      // Step 2: Perform calculation based on button clicked<br>
+      function add() { return a + b; }<br>
+      function subtract() { return a - b; }<br><br>
+      // Step 3: Display result on the page<br>
+      resultDisplay.textContent = "Result: " + result;
+    </div>
+    <button class="btn-show" data-target="calculatorResult">🧮 Show Calculator App</button>
+    <div id="calculatorResult" class="result-area">
+      <div class="result-label">🧮 Interactive Calculator:</div>
+      <div class="project-preview" style="margin-top: 0; text-align:center">
+        <input type="number" id="calcNum1Demo" placeholder="First number" style="padding:8px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
+        <input type="number" id="calcNum2Demo" placeholder="Second number" style="padding:8px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
+        <br>
+        <button class="demo-button" id="addCalcDemo">➕ Add</button>
+        <button class="demo-button" id="subCalcDemo">➖ Subtract</button>
+        <button class="demo-button" id="mulCalcDemo">✖️ Multiply</button>
+        <button class="demo-button" id="divCalcDemo">➗ Divide</button>
+        <h3 id="calcResultDemo" style="margin-top:20px;">Result: —</h3>
+      </div>
+      <div class="explanation-text">
+        ✅ <strong>Why Number() is important:</strong> Without <span class="inline-code">Number()</span>, "10" + "5" becomes "105" (string concatenation). With Number(), it becomes 15 (numeric addition).
+      </div>
+      <script>
+        (function() {
+          const num1 = document.getElementById("calcNum1Demo");
+          const num2 = document.getElementById("calcNum2Demo");
+          const resultSpan = document.getElementById("calcResultDemo");
+          function compute(op) {
+            let a = Number(num1.value);
+            let b = Number(num2.value);
+            let res;
+            if(op === "add") res = a + b;
+            else if(op === "sub") res = a - b;
+            else if(op === "mul") res = a * b;
+            else if(op === "div") res = b !== 0 ? a / b : "Error (÷0)";
+            if(typeof res === "number") res = res.toFixed(2);
+            resultSpan.textContent = `Result: ${res}`;
+          }
+          document.getElementById("addCalcDemo")?.addEventListener("click", () => compute("add"));
+          document.getElementById("subCalcDemo")?.addEventListener("click", () => compute("sub"));
+          document.getElementById("mulCalcDemo")?.addEventListener("click", () => compute("mul"));
+          document.getElementById("divCalcDemo")?.addEventListener("click", () => compute("div"));
+        })();
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== PROJECT 3: TO-DO LIST with Explanation ========== -->
+  <div class="section-title">✅ Project 3: To-Do App (Add & Delete Tasks)</div>
+  
+  <div class="concept-box">
+    <h4>📚 Concepts Used in To-Do App</h4>
+    <ul style="margin-left: 1.2rem;">
+      <li><strong>createElement():</strong> Dynamically creates new HTML elements (li, button, span).</li>
+      <li><strong>appendChild():</strong> Adds created elements to the DOM tree.</li>
+      <li><strong>remove():</strong> Deletes an element from the DOM when delete button is clicked.</li>
+      <li><strong>Event Delegation / Individual Listeners:</strong> Each delete button gets its own click listener.</li>
+      <li><strong>Keyboard Events:</strong> <span class="inline-code">keypress</span> and <span class="inline-code">Enter</span> key to add tasks without clicking button.</li>
+      <li><strong>Input Validation:</strong> Check if task is empty before adding.</li>
+    </ul>
+  </div>
+
+  <div class="example-card">
+    <h3>📝 To-Do List with Explanation</h3>
+    <div class="code-block">
+      // Step 1: Create new elements dynamically<br>
+      const li = document.createElement("li");<br>
+      const span = document.createElement("span");<br>
+      const deleteBtn = document.createElement("button");<br><br>
+      // Step 2: Add content and styling<br>
+      span.textContent = taskText;<br>
+      deleteBtn.textContent = "Delete";<br><br>
+      // Step 3: Add delete functionality<br>
+      deleteBtn.addEventListener("click", () => li.remove());<br><br>
+      // Step 4: Append to parent<br>
+      li.appendChild(span);<br>
+      li.appendChild(deleteBtn);<br>
+      todoList.appendChild(li);
+    </div>
+    <button class="btn-show" data-target="todoResult">✅ Show To-Do App</button>
+    <div id="todoResult" class="result-area">
+      <div class="result-label">📝 Task Manager (Add + Delete):</div>
+      <div class="project-preview" style="margin-top: 0;">
+        <input type="text" id="todoInputDemo" placeholder="Write a task..." style="padding:10px; width:70%; border-radius:60px; border:1px solid #ccc;">
+        <button class="demo-button" id="addTodoBtnDemo">➕ Add Task</button>
+        <ul id="todoListDemo" style="list-style:none; margin-top:20px;"></ul>
+      </div>
+      <div class="explanation-text">
+        ✅ <strong>Dynamic Creation:</strong> Each task is a new <span class="inline-code">&lt;li&gt;</span> element created with JavaScript. Delete button removes that specific task using <span class="inline-code">li.remove()</span>.
+      </div>
+      <script>
+        (function() {
+          const todoInput = document.getElementById("todoInputDemo");
+          const addBtn = document.getElementById("addTodoBtnDemo");
+          const todoList = document.getElementById("todoListDemo");
+          
+          function createTodoItem(taskText) {
+            if(!taskText || !taskText.trim()) return null;
+            const li = document.createElement("li");
+            li.className = "todo-list-item";
+            const span = document.createElement("span");
+            span.textContent = taskText;
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "Delete";
+            delBtn.className = "delete-task";
+            delBtn.addEventListener("click", () => li.remove());
+            li.appendChild(span);
+            li.appendChild(delBtn);
+            return li;
+          }
+          
+          if(addBtn) {
+            addBtn.addEventListener("click", () => {
+              const task = todoInput.value;
+              const newItem = createTodoItem(task);
+              if(newItem) {
+                todoList.appendChild(newItem);
+                todoInput.value = "";
+              } else {
+                alert("Please enter a task");
+              }
+            });
+          }
+          if(todoInput) {
+            todoInput.addEventListener("keypress", (e) => {
+              if(e.key === "Enter" && addBtn) addBtn.click();
+            });
+          }
+        })();
+      </script>
+    </div>
+  </div>
+
+  <!-- BONUS: Random Color Generator with Explanation -->
+  <div class="section-title">🎨 Bonus Project: Random Color Generator</div>
+  
+  <div class="concept-box">
+    <h4>📚 Concepts Used in Color Generator</h4>
+    <ul style="margin-left: 1.2rem;">
+      <li><strong>Math.random():</strong> Generates a random decimal between 0 and 1.</li>
+      <li><strong>Math.floor():</strong> Rounds down to get an integer.</li>
+      <li><strong>toString(16):</strong> Converts number to hexadecimal (base 16) for hex color codes.</li>
+      <li><strong>padStart():</strong> Ensures 6 digits for hex color (e.g., #0f0f0f).</li>
+      <li><strong>Dynamic Style Change:</strong> <span class="inline-code">element.style.backgroundColor</span> to change color.</li>
+    </ul>
+  </div>
+
+  <div class="example-card">
+    <h3>🌈 Random Hex Color Generator</h3>
+    <div class="code-block">
+      // Generate random hex color: # + 6 random hex digits<br>
+      const randomColor = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`;<br>
+      element.style.backgroundColor = randomColor;
+    </div>
+    <button class="btn-show" data-target="colorResult">🎨 Show Color Generator</button>
+    <div id="colorResult" class="result-area">
+      <div class="result-label">🎲 Click to generate random color:</div>
+      <div class="project-preview" style="text-align:center;" id="colorBoxDemo">
+        <p style="margin-bottom:10px;">Click button to change this box color</p>
+        <button class="demo-button" id="randomColorBtnDemo">🎨 Random Color</button>
+        <p id="colorCodeDisplayDemo" style="margin-top:10px; font-family:monospace;">#ffffff</p>
+      </div>
+      <div class="explanation-text">
+        ✅ <strong>How hex colors work:</strong> #RRGGBB where RR=red, GG=green, BB=blue (00 to ff in hex). <span class="inline-code">16777215</span> is the decimal equivalent of <span class="inline-code">ffffff</span> (max hex value).
+      </div>
+      <script>
+        (function() {
+          const colorBox = document.getElementById("colorBoxDemo");
+          const colorCode = document.getElementById("colorCodeDisplayDemo");
+          const randomBtn = document.getElementById("randomColorBtnDemo");
+          if(randomBtn) {
+            randomBtn.addEventListener("click", () => {
+              const randomColor = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`;
+              colorBox.style.backgroundColor = randomColor;
+              colorCode.textContent = randomColor;
+            });
+          }
+        })();
+      </script>
+    </div>
+  </div>
+
+  <!-- Folder Structure -->
+  <div class="section-title">📁 Project Folder Structure (Best Practice)</div>
+  <div class="code-block">
+    project-folder/<br>
+    ├── index.html      (HTML structure)<br>
+    ├── style.css       (CSS styling)<br>
+    └── script.js       (JavaScript logic)
+  </div>
+  <div class="diagram">
+    ✅ Separation of concerns: HTML for content, CSS for presentation, JS for behavior
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes & Fixes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesResult">📖 Show Mistakes & Solutions</button>
+    <div id="mistakesResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ <strong>Wrong selector IDs:</strong> always match HTML id exactly → use <span class="inline-code">getElementById</span> or correct <span class="inline-code">querySelector</span> syntax.</li>
+        <li>❌ <strong>Forgetting Number() conversion:</strong> "10" + "5" = "105" → fix with <span class="inline-code">Number()</span> or <span class="inline-code">parseFloat()</span>.</li>
+        <li>❌ <strong>Not clearing input after adding task:</strong> bad UX → set <span class="inline-code">input.value = ""</span> after adding.</li>
+        <li>❌ <strong>Script running before DOM loads:</strong> place script before closing &lt;/body&gt; or use <span class="inline-code">DOMContentLoaded</span>.</li>
+        <li>❌ <strong>Creating duplicate IDs:</strong> IDs must be unique on a page.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Concepts Summary -->
+  <div class="section-title">📖 Concepts Learned Today (Applied in Projects)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Variables (let, const) for state management</div>
+    <div class="card">✔️ DOM Selection (getElementById, querySelector)</div>
+    <div class="card">✔️ addEventListener for click, keypress events</div>
+    <div class="card">✔️ Type conversion: Number() for input values</div>
+    <div class="card">✔️ createElement, appendChild, remove()</div>
+    <div class="card">✔️ textContent and style manipulation</div>
+    <div class="card">✔️ Math.random() for random generation</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students (Improve Projects)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔁 Task 1</h3><p>Enhance Counter: limit count to not go below 0 and show alert.</p></div>
+    <div class="card"><h3>🧮 Task 2</h3><p>Calculator: add percentage (%) and power (xʸ) buttons.</p></div>
+    <div class="card"><h3>✅ Task 3</h3><p>To-Do App: add "mark as completed" (strikethrough) with checkbox.</p></div>
+    <div class="card"><h3>🎨 Task 4</h3><p>Color Generator: add button to copy hex code to clipboard.</p></div>
+  </div>
+
+  <!-- Day 10 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 10 Ending Message</strong><br>
+    “Congratulations! You have completed your first 10 days of MERN stack journey. You now understand HTML, CSS, JavaScript, DOM, and have built 4 projects with clear explanations of every concept.”
+  </div>
+
+  <!-- Next: Day 11 -->
+  <div class="section-title">🔜 Next — Day 11 : Advanced JavaScript (Array Methods)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 map()</span>
+    <span class="badge">🔍 filter()</span>
+    <span class="badge">🔄 forEach()</span>
+    <span class="badge">📉 reduce()</span>
+    <span class="badge">🎯 Array methods with examples</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 10 Completed ✅<br>
+    Click "Show Result" on each project to see live demos. Build these projects yourself to master the concepts!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

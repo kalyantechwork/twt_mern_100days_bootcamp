@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 15: Fetch API & JSON | Real APIs, GET, POST, Async/Await</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+    }
+    .user-list {
+      list-style: none;
+      padding: 0;
+    }
+    .user-list li {
+      background: #f1f5f9;
+      margin: 8px 0;
+      padding: 10px 16px;
+      border-radius: 60px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 15 · Fetch API & JSON (Show Results)</div>
+  </div>
+
+  <h1>🌐 Fetch API & JSON<br><span style="font-size:1rem;">GET / POST Requests · Async/Await · Display API Data · Error Handling — Click "Show Result" for live API calls</span></h1>
+
+  <!-- Introduction -->
+  <div class="section-title">1️⃣ What is an API?</div>
+  <div class="highlight-box">
+    📚 API (Application Programming Interface) allows applications to communicate. Like a waiter in a restaurant: Customer (Frontend) → Waiter (API) → Kitchen (Backend). APIs power everything from weather apps to payment systems.
+  </div>
+  <div class="diagram">
+    Frontend → API Request → Backend Server → Database → API Response → Frontend
+  </div>
+
+  <!-- ========== JSON Explanation ========== -->
+  <div class="section-title">2️⃣ JSON (JavaScript Object Notation) – Data Transfer Format</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>JSON</strong> is the standard format for sending data between client and server. It looks like JavaScript objects but with double-quoted keys. <strong>JSON.stringify()</strong> converts JS objects to JSON strings. <strong>JSON.parse()</strong> converts JSON strings back to JS objects.</p>
+    <p><strong>Where it's used:</strong> Every API request/response, configuration files, local storage data, real-time communication.</p>
+  </div>
+  <div class="example-card">
+    <h3>📦 JSON Stringify & Parse</h3>
+    <div class="code-block">
+      let user = { name: "Kalyan", age: 25 };<br>
+      let jsonStr = JSON.stringify(user);  // '{"name":"Kalyan","age":25}'<br>
+      let parsed = JSON.parse(jsonStr);    // { name: "Kalyan", age: 25 }
+    </div>
+    <button class="btn-show" data-target="jsonResult">📦 Show JSON Conversion</button>
+    <div id="jsonResult" class="result-area">
+      <div class="result-label">📋 JSON in Action:</div>
+      <div class="console-output" id="jsonOutput"></div>
+      <script>
+        document.getElementById("jsonResult").addEventListener("showresult", function() {
+          let user = { name: "Kalyan", age: 25, city: "Hyderabad" };
+          let jsonString = JSON.stringify(user);
+          let parsedBack = JSON.parse(jsonString);
+          document.getElementById("jsonOutput").innerHTML = `Original object: ${JSON.stringify(user)}<br>JSON.stringify() → "${jsonString}"<br>JSON.parse() back → ${JSON.stringify(parsedBack)}<br>✅ JSON is the universal data format for APIs.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Fetch API Basic ========== -->
+  <div class="section-title">3️⃣ Fetch API – Make HTTP Requests</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Fetch API</strong> is modern JavaScript's built-in way to make HTTP requests. It returns a Promise, allowing async/await or .then() syntax. Used to GET data from servers, POST new data, PUT updates, and DELETE records.</p>
+    <p><strong>Where it's used:</strong> Loading user data, submitting forms, fetching products, real-time updates, integrating third-party services (payment, maps, weather).</p>
+  </div>
+  <div class="example-card">
+    <h3>🌐 Basic Fetch GET Request</h3>
+    <div class="code-block">
+      fetch("https://jsonplaceholder.typicode.com/users")<br>
+        .then(response => response.json())<br>
+        .then(data => console.log(data))<br>
+        .catch(error => console.log(error));
+    </div>
+    <button class="btn-show" data-target="fetchBasicResult">📡 Show Basic Fetch Demo</button>
+    <div id="fetchBasicResult" class="result-area">
+      <div class="result-label">🌐 Fetching Users from API:</div>
+      <div class="console-output" id="fetchBasicOutput"></div>
+      <button class="demo-button" id="basicFetchBtn" style="margin-top: 8px;">Execute Fetch Request</button>
+      <script>
+        document.getElementById("basicFetchBtn")?.addEventListener("click", async () => {
+          const output = document.getElementById("fetchBasicOutput");
+          output.innerHTML = "⏳ Fetching users from JSONPlaceholder...";
+          try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            const users = await response.json();
+            output.innerHTML = `✅ Fetched ${users.length} users!<br>First user: ${users[0].name} (${users[0].email})<br>Check browser console (F12) for full data.`;
+            console.log("API Users:", users);
+          } catch(err) {
+            output.innerHTML = `❌ Error: ${err.message}`;
+          }
+        });
+        document.getElementById("fetchBasicResult").addEventListener("showresult", function() {
+          // Just display info, actual fetch happens on button click
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== GET Request & Display ========== -->
+  <div class="section-title">4️⃣ GET Request – Fetch & Display Users (Mini Project)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>GET requests</strong> retrieve data from a server. After fetching, we manipulate the DOM to display the data to users. This is how most web apps load content dynamically.</p>
+    <p><strong>Where it's used:</strong> Product listings, user profiles, news feeds, search results, dashboard data.</p>
+  </div>
+  <div class="example-card">
+    <h3>👥 User Directory from API</h3>
+    <button class="btn-show" data-target="getDisplayResult">👥 Show User Directory</button>
+    <div id="getDisplayResult" class="result-area">
+      <div class="result-label">📋 Users from JSONPlaceholder API:</div>
+      <button class="demo-button" id="loadUsersBtn">🔄 Load Users (GET)</button>
+      <ul id="userDirectoryList" class="user-list" style="margin-top: 12px;"></ul>
+      <script>
+        document.getElementById("loadUsersBtn")?.addEventListener("click", async () => {
+          const listContainer = document.getElementById("userDirectoryList");
+          listContainer.innerHTML = "<li>Loading users...</li>";
+          try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            const users = await response.json();
+            listContainer.innerHTML = "";
+            users.forEach(user => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${user.name}</strong> — ${user.email} (${user.address.city})`;
+              listContainer.appendChild(li);
+            });
+          } catch(err) {
+            listContainer.innerHTML = `<li>❌ Error: ${err.message}</li>`;
+          }
+        });
+      </script>
+      <div class="console-output" id="getDisplayConsole"></div>
+    </div>
+  </div>
+
+  <!-- ========== HTTP Methods Table ========== -->
+  <div class="section-title">5️⃣ HTTP Methods (CRUD Operations)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>HTTP methods</strong> define the action to perform on a resource. GET retrieves, POST creates, PUT updates, DELETE removes. Understanding these is essential for full-stack development.</p>
+  </div>
+  <div class="example-card">
+    <table style="margin: 0;">
+      <thead><tr><th>Method</th><th>Purpose</th><th>Example Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>Fetch data</td><td>View products, user profiles</td></tr>
+        <tr><td>POST</td><td>Create new data</td><td>Register user, add comment</td></tr>
+        <tr><td>PUT</td><td>Update existing data</td><td>Edit profile, update order</td></tr>
+        <tr><td>DELETE</td><td>Remove data</td><td>Delete account, remove item</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========== POST Request ========== -->
+  <div class="section-title">6️⃣ POST Request – Send Data to Server</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>POST requests</strong> send data to the server to create new resources. Common for form submissions, user registrations, adding new items. Requires setting <span class="inline-code">method: "POST"</span> and <span class="inline-code">body</span> with JSON data.</p>
+    <p><strong>Where it's used:</strong> Signup forms, blog post creation, adding products to cart, sending messages.</p>
+  </div>
+  <div class="example-card">
+    <h3>📨 POST Request Example</h3>
+    <div class="code-block">
+      fetch("https://jsonplaceholder.typicode.com/posts", {<br>
+        method: "POST",<br>
+        headers: { "Content-Type": "application/json" },<br>
+        body: JSON.stringify({ title: "My Post", body: "Hello World" })<br>
+      });
+    </div>
+    <button class="btn-show" data-target="postResult">📨 Show POST Demo</button>
+    <div id="postResult" class="result-area">
+      <div class="result-label">📤 Sending POST Request:</div>
+      <button class="demo-button" id="sendPostBtn">📨 Send POST Request</button>
+      <div class="console-output" id="postOutput" style="margin-top: 8px;"></div>
+      <script>
+        document.getElementById("sendPostBtn")?.addEventListener("click", async () => {
+          const output = document.getElementById("postOutput");
+          output.innerHTML = "⏳ Sending POST request...";
+          try {
+            const newPost = { title: "JavaScript Fetch API", body: "Learning POST requests!", userId: 1 };
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(newPost)
+            });
+            const data = await response.json();
+            output.innerHTML = `✅ POST successful! Server response:<br>${JSON.stringify(data, null, 2)}<br>Note: This is a fake API, but shows the pattern.`;
+          } catch(err) {
+            output.innerHTML = `❌ Error: ${err.message}`;
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Async/Await with Fetch ========== -->
+  <div class="section-title">7️⃣ Async/Await (Modern Clean Syntax)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Async/Await</strong> is the modern way to handle Promises, making async code look synchronous and easier to read. Always wrap await calls in try...catch for error handling.</p>
+    <p><strong>Where it's used:</strong> All modern JavaScript projects — React, Node.js, Vue, Angular. Preferred over .then() chains for readability.</p>
+  </div>
+  <div class="example-card">
+    <h3>🚀 Async/Await Example</h3>
+    <div class="code-block">
+      async function fetchPost() {<br>
+        try {<br>
+          let res = await fetch("https://jsonplaceholder.typicode.com/posts/1");<br>
+          let post = await res.json();<br>
+          console.log(post);<br>
+        } catch(error) {<br>
+          console.log("Error:", error);<br>
+        }<br>
+      }
+    </div>
+    <button class="btn-show" data-target="asyncFetchResult">🚀 Show Async/Await Fetch</button>
+    <div id="asyncFetchResult" class="result-area">
+      <div class="result-label">✨ Async/Await in Action:</div>
+      <button class="demo-button" id="asyncFetchBtn">📖 Fetch Post with Async/Await</button>
+      <div class="console-output" id="asyncOutput" style="margin-top: 8px;"></div>
+      <script>
+        document.getElementById("asyncFetchBtn")?.addEventListener("click", async () => {
+          const output = document.getElementById("asyncOutput");
+          output.innerHTML = "⏳ Fetching post using async/await...";
+          try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+            const post = await response.json();
+            output.innerHTML = `✅ Post fetched!<br>Title: "${post.title}"<br>Body: ${post.body.substring(0, 80)}...`;
+          } catch(err) {
+            output.innerHTML = `❌ Error: ${err.message}`;
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Loading State & Error Handling ========== -->
+  <div class="section-title">8️⃣ Loading State & Error Handling (Professional UX)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Loading states</strong> inform users that data is being fetched. <strong>Error handling</strong> prevents crashes and provides user-friendly messages when something goes wrong (network issues, server errors).</p>
+    <p><strong>Where it's used:</strong> Every real-world application — shows spinners while loading, displays error messages instead of breaking.</p>
+  </div>
+  <div class="example-card">
+    <h3>🎯 Professional Fetch with Loading & Error</h3>
+    <button class="btn-show" data-target="loadingErrorResult">🎯 Show Loading + Error Handling Demo</button>
+    <div id="loadingErrorResult" class="result-area">
+      <div class="result-label">⏳ Loading State & Error Handling:</div>
+      <button class="demo-button" id="fetchWithLoadingBtn">📖 Fetch Post (with UX)</button>
+      <div id="loadingDemoContainer" style="margin-top: 12px; padding: 12px; background: #f1f5f9; border-radius: 16px;">
+        Click button to fetch a post
+      </div>
+      <script>
+        document.getElementById("fetchWithLoadingBtn")?.addEventListener("click", async () => {
+          const container = document.getElementById("loadingDemoContainer");
+          container.innerHTML = "⏳ Loading... Please wait";
+          try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts/2");
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const post = await response.json();
+            container.innerHTML = `<strong>${post.title}</strong><br>${post.body}`;
+          } catch(err) {
+            container.innerHTML = `❌ Failed to load: ${err.message}. Check your network.`;
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Complete Mini Project ========== -->
+  <div class="section-title">📁 Mini Project: Complete User Directory</div>
+  <div class="example-card">
+    <h3>🌟 Full User Directory (Fetch + DOM + Styling)</h3>
+    <button class="btn-show" data-target="fullProjectResult">👥 Show Complete User Directory</button>
+    <div id="fullProjectResult" class="result-area">
+      <div class="result-label">📇 User Directory from JSONPlaceholder:</div>
+      <button class="demo-button" id="fullDirectoryBtn">🔄 Load All Users</button>
+      <div id="userDirectoryContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 12px;"></div>
+      <script>
+        document.getElementById("fullDirectoryBtn")?.addEventListener("click", async () => {
+          const container = document.getElementById("userDirectoryContainer");
+          container.innerHTML = "<div style='grid-column:1/-1; text-align:center'>⏳ Loading users...</div>";
+          try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            const users = await response.json();
+            container.innerHTML = "";
+            users.forEach(user => {
+              const card = document.createElement("div");
+              card.style.background = "white";
+              card.style.padding = "1rem";
+              card.style.borderRadius = "20px";
+              card.style.border = "1px solid #e2e8f0";
+              card.innerHTML = `<h3>${user.name}</h3><p>📧 ${user.email}</p><p>🏙️ ${user.address.city}</p><p>📞 ${user.phone}</p>`;
+              container.appendChild(card);
+            });
+          } catch(err) {
+            container.innerHTML = `<div style='grid-column:1/-1; color:red'>❌ Error: ${err.message}</div>`;
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesFetchResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesFetchResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">response.json()</span> → fetch returns Response object, need to parse JSON. Use <span class="inline-code">await response.json()</span>.</li>
+        <li>❌ Using <span class="inline-code">fetch</span> without <span class="inline-code">catch</span> → unhandled promise rejections. Always use try...catch or .catch().</li>
+        <li>❌ Not checking <span class="inline-code">response.ok</span> → 404/500 errors don't reject fetch. Check <span class="inline-code">if(!response.ok) throw new Error()</span>.</li>
+        <li>❌ Forgetting to stringify body in POST requests → body must be a JSON string.</li>
+        <li>❌ Missing "Content-Type": "application/json" header → server may not parse request correctly.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World APIs -->
+  <div class="section-title">🌍 Real-World APIs You Can Practice With</div>
+  <div class="card-grid">
+    <div class="card">📦 JSONPlaceholder (fake API for testing)</div>
+    <div class="card">🌤️ OpenWeather API (weather data)</div>
+    <div class="card">🎬 TMDB API (movies database)</div>
+    <div class="card">💰 FakeStore API (ecommerce products)</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>📡 Task 1</h3><p>Fetch users from JSONPlaceholder and display names in a list using DOM.</p></div>
+    <div class="card"><h3>📝 Task 2</h3><p>Fetch posts from API and display titles in cards.</p></div>
+    <div class="card"><h3>➕ Task 3</h3><p>Create a POST request to add a new post using JSONPlaceholder.</p></div>
+    <div class="card"><h3>⚡ Task 4</h3><p>Rewrite any fetch GET request using async/await with try...catch.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 15 - Fetch API & JSON)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is API (communication between apps)</div>
+    <div class="card">✔️ JSON.stringify() / JSON.parse()</div>
+    <div class="card">✔️ Fetch API for GET & POST requests</div>
+    <div class="card">✔️ Displaying API data in DOM dynamically</div>
+    <div class="card">✔️ Async/Await with fetch (modern approach)</div>
+    <div class="card">✔️ Loading states & proper error handling</div>
+  </div>
+
+  <!-- Day 15 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 15 Ending Message</strong><br>
+    “Now you can communicate with backend servers using APIs — one of the most important skills in modern web development.”
+  </div>
+
+  <!-- Next: Day 16 -->
+  <div class="section-title">🔜 Next — Day 16 : Git & GitHub (Version Control)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Git init / clone</span>
+    <span class="badge">📝 Commit & Push</span>
+    <span class="badge">🔀 Branch & Merge</span>
+    <span class="badge">🐙 GitHub workflow</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 15 Completed ✅<br>
+    Click "Show Result" on each example to see live API calls. Practice Fetch API daily — build a mini project that loads real data!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 14: Async JavaScript | Callbacks, Promises, Async/Await, Event Loop</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+    }
+    .counter-timer {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⏳</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 14 · Asynchronous JavaScript (Show Results)</div>
+  </div>
+
+  <h1>⏳ Asynchronous JavaScript<br><span style="font-size:1rem;">setTimeout · setInterval · Callbacks · Promises · Async/Await · Event Loop</span></h1>
+
+  <!-- Introduction -->
+  <div class="section-title">1️⃣ What is Asynchronous JavaScript?</div>
+  <div class="highlight-box">
+    📚 Asynchronous JavaScript allows tasks to run without blocking other operations. Like ordering food online — you continue working while food is being prepared. This is essential for API calls, timers, and user interactions.
+  </div>
+  <div class="diagram">
+    Task Starts → JavaScript Continues Other Tasks → Task Completes Later
+  </div>
+
+  <!-- ========== Synchronous vs Asynchronous ========== -->
+  <div class="section-title">2️⃣ Synchronous vs Asynchronous Code</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Synchronous</strong> code executes line by line — each operation waits for the previous to finish. <strong>Asynchronous</strong> code doesn't block — it starts a task and continues executing other code, handling the result later when ready.</p>
+    <p><strong>Where it's used:</strong> API calls, file reading, database queries, timers, event handlers — any operation that takes time.</p>
+  </div>
+  <div class="example-card">
+    <h3>🔄 Async vs Sync Demo</h3>
+    <div class="code-block">
+      console.log("Start");<br>
+      setTimeout(() => console.log("Async Task"), 2000);<br>
+      console.log("End");<br>
+      // Output: Start → End → (after 2s) Async Task
+    </div>
+    <button class="btn-show" data-target="syncAsyncResult">▶️ Show Async Demonstration</button>
+    <div id="syncAsyncResult" class="result-area">
+      <div class="result-label">📋 Console Output:</div>
+      <div class="console-output" id="syncAsyncOutput"></div>
+      <script>
+        document.getElementById("syncAsyncResult").addEventListener("showresult", function() {
+          let output = "";
+          output += "Step 1: console.log('Start') → 'Start'<br>";
+          output += "Step 2: setTimeout schedules task for 2 seconds later (non-blocking)<br>";
+          output += "Step 3: console.log('End') → 'End'<br>";
+          output += "Step 4: After 2 seconds, 'Async Task' appears<br>";
+          output += "✅ This shows JavaScript doesn't wait for setTimeout — it continues!";
+          document.getElementById("syncAsyncOutput").innerHTML = output;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== setTimeout ========== -->
+  <div class="section-title">3️⃣ setTimeout() — Run Code After Delay</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>setTimeout()</strong> executes a function once after a specified delay (in milliseconds). It returns a timer ID that can be used with <span class="inline-code">clearTimeout()</span> to cancel.</p>
+    <p><strong>Where it's used:</strong> Delayed notifications, splash screens, loading states, debouncing search inputs, auto-save features.</p>
+  </div>
+  <div class="example-card">
+    <h3>⏰ setTimeout Example</h3>
+    <div class="code-block">
+      setTimeout(() => {<br>
+        console.log("Runs after 2 seconds");<br>
+      }, 2000);
+    </div>
+    <button class="btn-show" data-target="timeoutResult">⏰ Show setTimeout Demo</button>
+    <div id="timeoutResult" class="result-area">
+      <div class="result-label">⏱️ Delayed Message:</div>
+      <div id="timeoutMsg" style="padding: 10px; background: #f1f5f9; border-radius: 16px;">Click Show Result to start timer</div>
+      <script>
+        let timeoutTriggered = false;
+        document.getElementById("timeoutResult").addEventListener("showresult", function() {
+          const msgDiv = document.getElementById("timeoutMsg");
+          if (!timeoutTriggered) {
+            msgDiv.innerHTML = "⏳ Waiting 2 seconds...";
+            setTimeout(() => {
+              msgDiv.innerHTML = "✅ Message appeared after 2 seconds! setTimeout worked.";
+              timeoutTriggered = true;
+            }, 2000);
+          } else {
+            msgDiv.innerHTML = "✅ setTimeout already demonstrated above. Refresh to see again.";
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== setInterval & clearInterval ========== -->
+  <div class="section-title">4️⃣ setInterval() & clearInterval() — Repeated Execution</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>setInterval()</strong> repeatedly executes a function at specified intervals. <strong>clearInterval()</strong> stops it using the returned timer ID.</p>
+    <p><strong>Where it's used:</strong> Countdown timers, stopwatches, real-time clocks, live data refresh, animations, carousels.</p>
+  </div>
+  <div class="example-card">
+    <h3>⏲️ setInterval Counter</h3>
+    <div class="code-block">
+      let count = 0;<br>
+      let interval = setInterval(() => {<br>
+        count++;<br>
+        console.log(count);<br>
+        if(count === 5) clearInterval(interval);<br>
+      }, 1000);
+    </div>
+    <button class="btn-show" data-target="intervalResult">⏲️ Show Interval Demo</button>
+    <div id="intervalResult" class="result-area">
+      <div class="result-label">🔄 Live Counter (auto-stops at 5):</div>
+      <div class="counter-timer" id="intervalCounter">0</div>
+      <button class="demo-button" id="intervalStartBtn">Start Interval (counts to 5)</button>
+      <button class="demo-button" id="intervalStopBtn">Stop Now</button>
+      <script>
+        let intervalId = null;
+        let intervalCount = 0;
+        const intervalDisplay = document.getElementById("intervalCounter");
+        function updateIntervalDisplay() { intervalDisplay.textContent = intervalCount; }
+        document.getElementById("intervalStartBtn")?.addEventListener("click", () => {
+          if(intervalId) clearInterval(intervalId);
+          intervalCount = 0;
+          updateIntervalDisplay();
+          intervalId = setInterval(() => {
+            if(intervalCount >= 5) {
+              clearInterval(intervalId);
+              intervalDisplay.textContent = "Done!";
+              intervalId = null;
+            } else {
+              intervalCount++;
+              updateIntervalDisplay();
+            }
+          }, 800);
+        });
+        document.getElementById("intervalStopBtn")?.addEventListener("click", () => {
+          if(intervalId) clearInterval(intervalId);
+          intervalId = null;
+          intervalDisplay.textContent = "Stopped";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Callback Functions ========== -->
+  <div class="section-title">5️⃣ Callback Functions (Function as Argument)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Callback functions</strong> are functions passed as arguments to other functions, to be executed later. They are the foundation of async programming in JavaScript.</p>
+    <p><strong>Where it's used:</strong> Event listeners, setTimeout/setInterval, array methods (map, filter, forEach), API calls (older style).</p>
+  </div>
+  <div class="example-card">
+    <h3>📞 Callback Example</h3>
+    <div class="code-block">
+      function greet(name, callback) {<br>
+        console.log(`Hello ${name}`);<br>
+        callback();<br>
+      }<br>
+      greet("Kalyan", () => console.log("Callback executed!"));
+    </div>
+    <button class="btn-show" data-target="callbackResult">📞 Show Callback Demo</button>
+    <div id="callbackResult" class="result-area">
+      <div class="result-label">📞 Callback in Action:</div>
+      <div class="console-output" id="callbackOutput"></div>
+      <script>
+        document.getElementById("callbackResult").addEventListener("showresult", function() {
+          let log = [];
+          function greet(name, callback) {
+            log.push(`Hello ${name}`);
+            callback();
+          }
+          greet("Kalyan", () => log.push("✅ Callback executed after greeting!"));
+          document.getElementById("callbackOutput").innerHTML = log.join("<br>") + "<br>✅ Callbacks allow functions to run after other operations complete.";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Callback Hell ========== -->
+  <div class="section-title">6️⃣ Callback Hell (The Problem)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Callback Hell</strong> occurs when multiple nested callbacks create pyramid-like code that's hard to read, debug, and maintain. This led to Promises and Async/Await.</p>
+    <p><strong>Where it's seen:</strong> Legacy code, complex async workflows with many dependent steps.</p>
+  </div>
+  <div class="example-card">
+    <h3>🔗 Callback Hell Example</h3>
+    <div class="code-block">
+      step1(() => {<br>
+        step2(() => {<br>
+          step3(() => {<br>
+            step4(() => {<br>
+              // Hard to read!
+            });<br>
+          });<br>
+        });<br>
+      });
+    </div>
+    <button class="btn-show" data-target="callbackHellResult">📖 Show Callback Hell Explanation</button>
+    <div id="callbackHellResult" class="result-area">
+      <div class="console-output">⚠️ Callback Hell makes code difficult to maintain. Solution: Promises and Async/Await flatten the structure and improve readability.</div>
+    </div>
+  </div>
+
+  <!-- ========== Promises ========== -->
+  <div class="section-title">7️⃣ Promises (Future Result)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Promises</strong> represent a future value that will be available at some point. They have three states: Pending, Resolved (fulfilled), Rejected. Chain with <span class="inline-code">.then()</span> and <span class="inline-code">.catch()</span>.</p>
+    <p><strong>Where it's used:</strong> Modern JavaScript APIs, Fetch API, database operations, file reading, any async operation with success/failure states.</p>
+  </div>
+  <div class="example-card">
+    <h3>🤝 Promise Example</h3>
+    <div class="code-block">
+      let promise = new Promise((resolve, reject) => {<br>
+        let success = true;<br>
+        if(success) resolve("Data received");<br>
+        else reject("Error");<br>
+      });<br>
+      promise.then(data => console.log(data)).catch(err => console.log(err));
+    </div>
+    <button class="btn-show" data-target="promiseResult">🤝 Show Promise Demo</button>
+    <div id="promiseResult" class="result-area">
+      <div class="result-label">📦 Promise Resolution:</div>
+      <div class="console-output" id="promiseOutput"></div>
+      <script>
+        document.getElementById("promiseResult").addEventListener("showresult", function() {
+          let promise = new Promise((resolve, reject) => {
+            setTimeout(() => resolve("✅ Promise resolved successfully after 1 second!"), 1000);
+          });
+          promise.then(data => {
+            document.getElementById("promiseOutput").innerHTML = data;
+          }).catch(err => {
+            document.getElementById("promiseOutput").innerHTML = "Error: " + err;
+          });
+          document.getElementById("promiseOutput").innerHTML = "⏳ Promise pending... waiting for resolution...";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Async/Await ========== -->
+  <div class="section-title">8️⃣ Async/Await (Modern Async Code)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>async</strong> declares a function that returns a Promise. <strong>await</strong> pauses execution until the Promise resolves, making async code look synchronous.</p>
+    <p><strong>Where it's used:</strong> Modern React apps, Node.js backend, API calls, database queries — preferred over raw Promises for readability.</p>
+  </div>
+  <div class="example-card">
+    <h3>🚀 Async/Await Example</h3>
+    <div class="code-block">
+      async function fetchData() {<br>
+        let result = await Promise.resolve("Data loaded");<br>
+        console.log(result);<br>
+      }<br>
+      fetchData();
+    </div>
+    <button class="btn-show" data-target="asyncAwaitResult">🚀 Show Async/Await Demo</button>
+    <div id="asyncAwaitResult" class="result-area">
+      <div class="result-label">✨ Async/Await in Action:</div>
+      <div class="console-output" id="asyncAwaitOutput"></div>
+      <script>
+        document.getElementById("asyncAwaitResult").addEventListener("showresult", async function() {
+          document.getElementById("asyncAwaitOutput").innerHTML = "⏳ Fetching data with async/await...";
+          const getMessage = () => new Promise(resolve => setTimeout(() => resolve("✅ Data fetched successfully using async/await!"), 1500));
+          const result = await getMessage();
+          document.getElementById("asyncAwaitOutput").innerHTML = result;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== try/catch with async ========== -->
+  <div class="section-title">9️⃣ Error Handling with try...catch</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>try...catch</strong> blocks handle errors in async functions, preventing application crashes and providing graceful failure handling.</p>
+    <p><strong>Where it's used:</strong> All async operations that might fail — network requests, database operations, file system access.</p>
+  </div>
+  <div class="example-card">
+    <h3>🛡️ try...catch Example</h3>
+    <div class="code-block">
+      async function safeFetch() {<br>
+        try {<br>
+          let data = await riskyOperation();<br>
+          console.log(data);<br>
+        } catch(error) {<br>
+          console.log("Error handled:", error);<br>
+        }<br>
+      }
+    </div>
+    <button class="btn-show" data-target="trycatchResult">🛡️ Show Error Handling</button>
+    <div id="trycatchResult" class="result-area">
+      <div class="console-output">✅ try...catch catches errors in async/await without crashing the application. Use it for all API calls and async operations.</div>
+    </div>
+  </div>
+
+  <!-- ========== Event Loop ========== -->
+  <div class="section-title">🔄 Event Loop (How Async Works in JS)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Event Loop</strong> is what allows JavaScript (single-threaded) to handle async operations. It continuously checks the call stack and callback queue.</p>
+    <p><strong>Why it matters:</strong> Understanding the event loop helps debug timing issues and write efficient async code.</p>
+  </div>
+  <div class="diagram">
+    Call Stack → Web APIs (setTimeout, DOM events) → Callback Queue → Event Loop → Call Stack
+  </div>
+  <div class="highlight-box">
+    💡 Simple explanation: setTimeout, promises, clicks go to the queue. Event Loop moves them to call stack when it's empty.
+  </div>
+
+  <!-- ========== Countdown Timer Project ========== -->
+  <div class="section-title">⏲️ Mini Project: Countdown Timer (setInterval)</div>
+  <div class="example-card">
+    <h3>⏰ Countdown from 5</h3>
+    <button class="btn-show" data-target="countdownProject">▶️ Show Countdown Timer</button>
+    <div id="countdownProject" class="result-area">
+      <div class="result-label">⏲️ Interactive Countdown:</div>
+      <div id="countdownDisplay" class="counter-timer">5</div>
+      <button class="demo-button" id="startCountdown">▶️ Start Countdown (5 → 0)</button>
+      <button class="demo-button" id="resetCountdown">🔄 Reset</button>
+      <script>
+        let cdInterval = null;
+        let cdValue = 5;
+        const cdDisplay = document.getElementById("countdownDisplay");
+        function updateCD() { cdDisplay.textContent = cdValue; }
+        document.getElementById("startCountdown")?.addEventListener("click", () => {
+          if(cdInterval) clearInterval(cdInterval);
+          cdValue = 5;
+          updateCD();
+          cdInterval = setInterval(() => {
+            if(cdValue <= 0) {
+              clearInterval(cdInterval);
+              cdDisplay.textContent = "🎉 Time's Up!";
+              cdInterval = null;
+            } else {
+              cdValue--;
+              updateCD();
+            }
+          }, 1000);
+        });
+        document.getElementById("resetCountdown")?.addEventListener("click", () => {
+          if(cdInterval) clearInterval(cdInterval);
+          cdValue = 5;
+          updateCD();
+          cdInterval = null;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesAsyncResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesAsyncResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">clearInterval</span> → intervals run forever (memory leak). Always clean up.</li>
+        <li>❌ Using <span class="inline-code">await</span> without <span class="inline-code">async</span> function → SyntaxError. Every await must be inside an async function.</li>
+        <li>❌ Ignoring promise rejections (no .catch or try/catch) → unhandled errors.</li>
+        <li>❌ Assuming setTimeout runs exactly after delay (it can be delayed by call stack).</li>
+        <li>❌ Callback hell → switch to Promises or async/await for readability.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World Use Cases -->
+  <div class="section-title">🌍 Real-World Async JavaScript</div>
+  <div class="card-grid">
+    <div class="card">🌐 API Calls (fetch data from backend)</div>
+    <div class="card">⏱️ OTP Timers & Countdowns</div>
+    <div class="card">💬 Chat apps (real-time messages)</div>
+    <div class="card">📂 File uploads with progress</div>
+    <div class="card">🔐 Authentication (login requests)</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>⏱️ Task 1</h3><p>Create a delayed welcome message using setTimeout() after 2 seconds.</p></div>
+    <div class="card"><h3>🔁 Task 2</h3><p>Build a countdown timer from 10 to 0 using setInterval and clearInterval.</p></div>
+    <div class="card"><h3>🤝 Task 3</h3><p>Create a simple Promise that resolves after 2 seconds and log the result.</p></div>
+    <div class="card"><h3>🚀 Task 4</h3><p>Rewrite the Promise using async/await and try...catch.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 14 - Async JavaScript)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Synchronous vs Asynchronous</div>
+    <div class="card">✔️ setTimeout & setInterval/clearInterval</div>
+    <div class="card">✔️ Callback functions & Callback Hell</div>
+    <div class="card">✔️ Promises (resolve, reject, then, catch)</div>
+    <div class="card">✔️ Async/Await (modern syntax)</div>
+    <div class="card">✔️ try...catch error handling</div>
+    <div class="card">✔️ Event Loop overview</div>
+  </div>
+
+  <!-- Day 14 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 14 Ending Message</strong><br>
+    “Now you understand asynchronous programming — one of the most important concepts in modern JavaScript and backend development.”
+  </div>
+
+  <!-- Next: Day 15 -->
+  <div class="section-title">🔜 Next — Day 15 : Fetch API & JSON (Working with Real APIs)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🌐 Fetch API</span>
+    <span class="badge">📦 JSON.parse / stringify</span>
+    <span class="badge">📡 GET / POST requests</span>
+    <span class="badge">⚙️ Handling API responses</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 14 Completed ✅<br>
+    Click "Show Result" on each example to see live async demos. Practice Promises and async/await daily!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

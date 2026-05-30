@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 20: JavaScript Mini Project Day | Build Real Projects + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+      transition: 0.2s;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    .weather-card {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .todo-item {
+      background: #334155;
+      margin: 8px 0;
+      padding: 10px 16px;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🚀</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 20 · JavaScript Mini Project Day (Show Results)</div>
+  </div>
+
+  <h1>🚀 JavaScript Mini Project Day<br><span style="font-size:1rem;">Weather App · Notes App · CRUD · Fetch API · Local Storage — Click "Show Result" to see live projects</span></h1>
+
+  <!-- Section 1: Why Projects Matter -->
+  <div class="section-title">1️⃣ Why Projects Matter (Bridge Between Learning & Real Development)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose of Project Day</h4>
+    <p><strong>Building projects</strong> is the most effective way to solidify programming concepts. Today you'll build TWO complete real-world projects using everything learned: Variables, Functions, Arrays, Objects, DOM, Events, Fetch API, Async/Await, JSON, and Local Storage.</p>
+    <p><strong>Why it matters:</strong> Employers don't hire based on theory — they want to see what you can BUILD. These projects become your portfolio.</p>
+  </div>
+  <div class="diagram">
+    Learning → Building Projects → Real Developer Mindset → Job Ready
+  </div>
+
+  <!-- ========== PROJECT 1: WEATHER APP ========== -->
+  <div class="section-title">🌤️ Project 1: Weather App (Fetch API + Async/Await)</div>
+  <div class="topic-explanation">
+    <h4>📌 What This Project Teaches</h4>
+    <p><strong>Weather App</strong> uses the Fetch API to get real-time weather data from OpenWeatherMap. It teaches async/await, API integration, JSON parsing, and dynamic DOM updates.</p>
+    <p><strong>Where it's used:</strong> Weather widgets, travel apps, smart home dashboards, news websites, agriculture apps.</p>
+  </div>
+
+  <div class="example-card">
+    <h3>🌍 Weather App Demo (with Simulated API)</h3>
+    <div class="code-block">
+      async function getWeather() {<br>
+        const city = document.getElementById("cityInput").value;<br>
+        const response = await fetch(`api.openweathermap.org/data/2.5/weather?q=${city}`);<br>
+        const data = await response.json();<br>
+        displayWeather(data);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="weatherProject">🌦️ Show Weather App Demo</button>
+    <div id="weatherProject" class="result-area">
+      <div class="result-label">🌍 Weather App (Simulated with mock data for learning):</div>
+      <div class="weather-card">
+        <strong>🌤️ Weather Dashboard</strong>
+        <input type="text" id="weatherCity" placeholder="Enter city (e.g., London, Tokyo, New York)" style="width:100%; padding:10px; border-radius:40px; margin:12px 0; border:none;">
+        <button class="demo-btn" id="getWeatherBtn">🔍 Get Weather</button>
+        <div id="weatherDisplay" style="margin-top:16px;"></div>
+        <p class="inline-code" style="color:#a5f3c3; margin-top:8px;">✅ Concepts: fetch API, async/await, JSON, DOM manipulation</p>
+      </div>
+      <script>
+        document.getElementById("getWeatherBtn")?.addEventListener("click", async () => {
+          const city = document.getElementById("weatherCity").value;
+          const weatherDiv = document.getElementById("weatherDisplay");
+          if(!city.trim()) { alert("Please enter a city name"); return; }
+          weatherDiv.innerHTML = "⏳ Fetching weather data...";
+          // Simulated API response (real API would use OpenWeatherMap)
+          setTimeout(() => {
+            const weatherConditions = ["Sunny ☀️", "Cloudy ☁️", "Rainy 🌧️", "Stormy ⛈️", "Clear 🌤️"];
+            const randomCondition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            const mockData = {
+              name: city.toUpperCase(),
+              main: { temp: Math.floor(Math.random() * 35) + 10, humidity: Math.floor(Math.random() * 80) + 20 },
+              weather: [{ main: randomCondition.split(' ')[0] }],
+              wind: { speed: (Math.random() * 25).toFixed(1) }
+            };
+            weatherDiv.innerHTML = `
+              <h3 style="margin:0 0 8px 0;">📍 ${mockData.name}</h3>
+              <p>🌡️ Temperature: ${mockData.main.temp}°C</p>
+              <p>☁️ Condition: ${randomCondition}</p>
+              <p>💧 Humidity: ${mockData.main.humidity}%</p>
+              <p>💨 Wind Speed: ${mockData.wind.speed} km/h</p>
+              <p style="font-size:12px; opacity:0.7;">✨ For real API: sign up at OpenWeatherMap</p>
+            `;
+          }, 800);
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== PROJECT 2: NOTES APP ========== -->
+  <div class="section-title">📝 Project 2: Notes App (Local Storage + CRUD)</div>
+  <div class="topic-explanation">
+    <h4>📌 What This Project Teaches</h4>
+    <p><strong>Notes App</strong> demonstrates CRUD (Create, Read, Update, Delete) operations using Local Storage. Data persists even after page refresh — just like real note-taking apps.</p>
+    <p><strong>Where it's used:</strong> Google Keep, Evernote, To-do lists, shopping carts, user preferences, form auto-save.</p>
+  </div>
+
+  <div class="example-card">
+    <h3>📓 Notes App with Local Storage</h3>
+    <div class="code-block">
+      // Store notes in localStorage<br>
+      let notes = JSON.parse(localStorage.getItem("notes")) || [];<br>
+      function addNote() {<br>
+        notes.push(noteText);<br>
+        localStorage.setItem("notes", JSON.stringify(notes));<br>
+      }
+    </div>
+    <button class="btn-show" data-target="notesProject">📝 Show Notes App Demo</button>
+    <div id="notesProject" class="result-area">
+      <div class="result-label">📓 Your Notes (saved in localStorage — persists after refresh):</div>
+      <div style="margin: 16px 0;">
+        <input type="text" id="projectNoteInput" placeholder="Write a note..." style="width:70%; padding:10px; border-radius:40px; border:1px solid #ccc; margin-right:8px;">
+        <button class="demo-btn" id="addProjectNoteBtn">➕ Add Note</button>
+        <button class="demo-btn" id="deleteAllNotesBtn" style="background:#ef4444; color:white;">🗑️ Delete All</button>
+      </div>
+      <div id="projectNotesList"></div>
+      <div class="console-output" style="margin-top: 8px;">✅ Refresh the page — your notes persist! Uses localStorage + JSON.stringify/parse</div>
+      <script>
+        let projectNotes = JSON.parse(localStorage.getItem("projectNotesApp")) || [];
+        function renderProjectNotes() {
+          const container = document.getElementById("projectNotesList");
+          container.innerHTML = "";
+          if(projectNotes.length === 0) {
+            container.innerHTML = "<p style='color:#666;'>✨ No notes yet. Add your first note above!</p>";
+            return;
+          }
+          projectNotes.forEach((note, idx) => {
+            const noteDiv = document.createElement("div");
+            noteDiv.className = "todo-item";
+            noteDiv.innerHTML = `<span>📌 ${note}</span><button class="demo-btn" style="padding:4px 12px; background:#ef4444; color:white;" data-index="${idx}">Delete</button>`;
+            container.appendChild(noteDiv);
+          });
+          document.querySelectorAll("[data-index]").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+              const index = parseInt(btn.getAttribute("data-index"));
+              projectNotes.splice(index, 1);
+              localStorage.setItem("projectNotesApp", JSON.stringify(projectNotes));
+              renderProjectNotes();
+            });
+          });
+        }
+        document.getElementById("addProjectNoteBtn")?.addEventListener("click", () => {
+          const input = document.getElementById("projectNoteInput");
+          if(input.value.trim()) {
+            projectNotes.push(input.value.trim());
+            localStorage.setItem("projectNotesApp", JSON.stringify(projectNotes));
+            renderProjectNotes();
+            input.value = "";
+          } else alert("Enter a note");
+        });
+        document.getElementById("deleteAllNotesBtn")?.addEventListener("click", () => {
+          if(confirm("Delete all notes?")) {
+            projectNotes = [];
+            localStorage.setItem("projectNotesApp", JSON.stringify(projectNotes));
+            renderProjectNotes();
+          }
+        });
+        renderProjectNotes();
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPTS SUMMARY TABLE ========== -->
+  <div class="section-title">📚 Concepts Used in Both Projects</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Concept</th><th>Weather App</th><th>Notes App</th></tr></thead>
+      <tbody>
+        <tr><td>Fetch API / Async/Await</td><td>✅</td><td>❌</td></tr>
+        <tr><td>Local Storage</td><td>❌</td><td>✅</td></tr>
+        <tr><td>DOM Manipulation</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Events (click)</td><td>✅</td><td>✅</td></tr>
+        <tr><td>JSON.parse / stringify</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Arrays & Objects</td><td>✅</td><td>✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========== CHALLENGE TASKS ========== -->
+  <div class="section-title">🏆 Challenge Tasks (Improve Your Projects)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌤️ Weather App Challenges</h3><p>• Add weather icons/emojis<br>• Loading spinner while fetching<br>• Background changes based on temperature<br>• Add 5-day forecast</p></div>
+    <div class="card"><h3>📝 Notes App Challenges</h3><p>• Edit notes feature (click to edit)<br>• Add timestamps to each note<br>• Search/filter notes<br>• Color-coded categories</p></div>
+  </div>
+
+  <!-- ========== REAL INDUSTRY CONNECTION ========== -->
+  <div class="section-title">🌍 Real Industry Connection</div>
+  <div class="card-grid">
+    <div class="card">🛒 E-commerce cart → Local Storage + CRUD</div>
+    <div class="card">🌦️ Weather widgets → Fetch API + Async/Await</div>
+    <div class="card">📝 Google Keep → Notes app concept</div>
+    <div class="card">🎨 Theme preferences → Local Storage</div>
+    <div class="card">💬 Chat apps → Real-time API integration</div>
+  </div>
+
+  <!-- ========== INTERVIEW QUESTIONS ========== -->
+  <div class="section-title">💼 Common Interview Questions (After These Projects)</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ Why async/await?</h3><p>To handle asynchronous API calls cleanly without callback hell or complex .then chains.</p></div>
+    <div class="card"><h3>❓ Why localStorage?</h3><p>To persist data across page reloads (dark mode, notes, cart, user preferences).</p></div>
+    <div class="card"><h3>❓ What does fetch() return?</h3><p>A Promise that resolves to a Response object, which we then parse with .json().</p></div>
+    <div class="card"><h3>❓ Difference between localStorage and sessionStorage?</h3><p>localStorage persists until cleared; sessionStorage clears when tab closes.</p></div>
+  </div>
+
+  <!-- ========== MINI ASSIGNMENT ========== -->
+  <div class="section-title">📌 Mini Assignment (Build on Your Own)</div>
+  <div class="highlight-box">
+    <strong>💰 Build an Expense Tracker App</strong><br>
+    • Add expense with name and amount<br>
+    • Delete individual expenses<br>
+    • Calculate and display total expenses<br>
+    • Save everything in localStorage<br>
+    • Style it with CSS<br>
+    (This will strengthen your CRUD + storage + DOM skills)
+  </div>
+
+  <!-- ========== DEBUGGING TIPS ========== -->
+  <div class="section-title">🐛 Debugging Tips for Beginners</div>
+  <div class="example-card">
+    <ul style="margin-left: 1.2rem;">
+      <li>✅ Use <span class="inline-code">console.log(data)</span> to inspect API responses — see what data you're getting!</li>
+      <li>✅ Check browser DevTools → Application tab to view Local Storage contents.</li>
+      <li>✅ Use <span class="inline-code">try...catch</span> for fetch errors to handle network issues gracefully.</li>
+      <li>✅ Verify DOM element IDs match exactly — one typo breaks the app.</li>
+      <li>✅ Use <span class="inline-code">debugger;</span> statement to pause code execution and inspect variables.</li>
+    </ul>
+  </div>
+
+  <!-- ========== PRACTICE TASKS ========== -->
+  <div class="section-title">🎯 Practice Tasks (Do Them Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Task 1</h3><p>Add a <strong>delete all notes</strong> button to the Notes App (already done above).</p></div>
+    <div class="card"><h3>⏳ Task 2</h3><p>Add a <strong>loading spinner</strong> to the Weather App while fetching data.</p></div>
+    <div class="card"><h3>✏️ Task 3</h3><p>Add <strong>edit functionality</strong> to the Notes App (click note to edit text).</p></div>
+    <div class="card"><h3>💾 Task 4</h3><p>Build the Expense Tracker from the assignment above and save it to GitHub.</p></div>
+  </div>
+
+  <!-- ========== SUMMARY ========== -->
+  <div class="section-title">📖 Beginner Summary (Day 20 - Mini Projects Day)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Weather App (Fetch API, Async/Await, DOM)</div>
+    <div class="card">✔️ Notes App (Local Storage, CRUD, JSON)</div>
+    <div class="card">✔️ Problem-solving & debugging techniques</div>
+    <div class="card">✔️ Real project portfolio pieces for GitHub</div>
+  </div>
+
+  <!-- ========== DAY 20 ENDING MESSAGE ========== -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 20 Ending Message</strong><br>
+    “Congratulations! You've built REAL projects using everything learned in the first 19 days — variables, functions, arrays, objects, DOM, events, Fetch API, Async/Await, JSON, and Local Storage. This is a BIG achievement. Keep building — every project makes you a better developer!”
+  </div>
+
+  <!-- ========== NEXT DAY PREVIEW ========== -->
+  <div class="section-title">🔜 Next — Day 21 : Git & GitHub Basics (Version Control)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Git init</span>
+    <span class="badge">📝 Git add / commit</span>
+    <span class="badge">🐙 GitHub push</span>
+    <span class="badge">🔀 Branches</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 20 Completed ✅<br>
+    Build at least one project completely on your own — upload to GitHub and share your learning! 🚀
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

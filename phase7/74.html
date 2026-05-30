@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 74: CRUD Operations – MongoDB Shell & Compass | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .comparison-table {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .comparison-card {
+      flex: 1;
+      min-width: 250px;
+      background: #f1f5f9;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 74 · Phase 8</div>
+    <h1>
+      <i class="fas fa-edit"></i> 
+      CRUD Operations – MongoDB Shell & Compass
+    </h1>
+    <p>Master all CRUD operations (Create, Read, Update, Delete) in MongoDB using both the Shell and Compass GUI. Learn to manipulate data like a pro!</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Complete MongoDB CRUD Tutorial
+    </div>
+  </div>
+
+  <!-- What is CRUD? -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-question-circle"></i>
+      <span>1. What is CRUD?</span>
+    </div>
+    <p><strong>CRUD</strong> stands for Create, Read, Update, Delete – the four basic operations for any database. Every application you build will use these operations.</p>
+    <div class="comparison-table">
+      <div class="comparison-card">
+        <i class="fas fa-plus-circle" style="font-size: 2rem; color: #22c55e;"></i>
+        <h3>CREATE</h3>
+        <p>Insert new documents<br>📝 InsertOne, InsertMany</p>
+      </div>
+      <div class="comparison-card">
+        <i class="fas fa-search" style="font-size: 2rem; color: #3b82f6;"></i>
+        <h3>READ</h3>
+        <p>Query/find documents<br>🔍 Find, FindOne</p>
+      </div>
+      <div class="comparison-card">
+        <i class="fas fa-pen" style="font-size: 2rem; color: #f59e0b;"></i>
+        <h3>UPDATE</h3>
+        <p>Modify existing documents<br>✏️ UpdateOne, UpdateMany</p>
+      </div>
+      <div class="comparison-card">
+        <i class="fas fa-trash-alt" style="font-size: 2rem; color: #ef4444;"></i>
+        <h3>DELETE</h3>
+        <p>Remove documents<br>🗑️ DeleteOne, DeleteMany</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Setup Sample Database -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>2. Setup: Create Database and Collection</span>
+    </div>
+    <div class="subheading">💻 MongoDB Shell (mongosh)</div>
+    <div class="code-block" id="setupShell">
+# Open terminal and connect to MongoDB
+mongosh
+
+# Show all databases
+show dbs
+
+# Create/switch to database (creates when you insert data)
+use crudDemo
+
+# Create a collection explicitly (optional - MongoDB creates on first insert)
+db.createCollection("users")
+
+# Check current database
+db
+
+# Show collections
+show collections
+    </div>
+    <button class="copy-btn" onclick="copyCode('setupShell')"><i class="far fa-copy"></i> Copy Shell Setup</button>
+
+    <div class="subheading">🖥️ MongoDB Compass</div>
+    <div class="code-block">
+1. Open MongoDB Compass
+2. Click "Create Database"
+3. Database Name: crudDemo
+4. Collection Name: users
+5. Click "Create Database"
+    </div>
+  </div>
+
+  <!-- CREATE Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plus-circle"></i>
+      <span>3. CREATE – Inserting Data</span>
+    </div>
+    
+    <div class="subheading">📝 Insert One Document</div>
+    <div class="code-block" id="insertOne">
+// MongoDB Shell
+db.users.insertOne({
+  name: "Ramesh",
+  email: "ramesh@example.com",
+  age: 25,
+  city: "Hyderabad",
+  isActive: true,
+  hobbies: ["coding", "reading"]
+})
+
+// Response
+{
+  acknowledged: true,
+  insertedId: ObjectId("507f1f77bcf86cd799439011")
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('insertOne')"><i class="far fa-copy"></i> Copy InsertOne</button>
+
+    <div class="subheading">📝 Insert Multiple Documents</div>
+    <div class="code-block" id="insertMany">
+// MongoDB Shell
+db.users.insertMany([
+  {
+    name: "Priya",
+    email: "priya@example.com",
+    age: 22,
+    city: "Mumbai",
+    isActive: true,
+    hobbies: ["dancing", "music"]
+  },
+  {
+    name: "Suresh",
+    email: "suresh@example.com",
+    age: 28,
+    city: "Delhi",
+    isActive: false,
+    hobbies: ["gaming", "coding"]
+  },
+  {
+    name: "Anjali",
+    email: "anjali@example.com",
+    age: 30,
+    city: "Bangalore",
+    isActive: true,
+    hobbies: ["yoga", "reading", "travel"]
+  }
+])
+
+// Insert more sample data
+db.users.insertMany([
+  {
+    name: "Vikram",
+    email: "vikram@example.com",
+    age: 35,
+    city: "Chennai",
+    isActive: true,
+    hobbies: ["swimming", "chess"],
+    orders: 5
+  },
+  {
+    name: "Neha",
+    email: "neha@example.com",
+    age: 26,
+    city: "Hyderabad",
+    isActive: true,
+    hobbies: ["painting", "photography"]
+  },
+  {
+    name: "Raj",
+    email: "raj@example.com",
+    age: 32,
+    city: "Pune",
+    isActive: false,
+    hobbies: ["trekking", "gaming"]
+  }
+])
+    </div>
+    <button class="copy-btn" onclick="copyCode('insertMany')"><i class="far fa-copy"></i> Copy InsertMany</button>
+
+    <div class="subheading">🖥️ In Compass</div>
+    <div class="code-block">
+1. Select the "users" collection
+2. Click "Add Data" → "Insert Document"
+3. Paste JSON document
+4. Click "Insert"
+    </div>
+  </div>
+
+  <!-- READ Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-search"></i>
+      <span>4. READ – Querying Data</span>
+    </div>
+    
+    <div class="subheading">📖 Find All Documents</div>
+    <div class="code-block" id="findAll">
+// MongoDB Shell
+db.users.find()
+
+// Pretty print (formatted)
+db.users.find().pretty()
+
+// Get all documents as array
+db.users.find().toArray()
+
+// Count documents
+db.users.countDocuments()
+    </div>
+    <button class="copy-btn" onclick="copyCode('findAll')"><i class="far fa-copy"></i> Copy Find All</button>
+
+    <div class="subheading">📖 Find One Document</div>
+    <div class="code-block" id="findOne">
+// Find first matching document
+db.users.findOne({ name: "Ramesh" })
+
+// Find by _id
+db.users.findOne({ _id: ObjectId("507f1f77bcf86cd799439011") })
+    </div>
+    <button class="copy-btn" onclick="copyCode('findOne')"><i class="far fa-copy"></i> Copy Find One</button>
+
+    <div class="subheading">📖 Find with Filters</div>
+    <div class="code-block" id="findFilters">
+// Equal to
+db.users.find({ city: "Hyderabad" })
+
+// Greater than
+db.users.find({ age: { $gt: 25 } })
+
+// Greater than or equal
+db.users.find({ age: { $gte: 25 } })
+
+// Less than
+db.users.find({ age: { $lt: 30 } })
+
+// Not equal
+db.users.find({ city: { $ne: "Mumbai" } })
+
+// Multiple conditions (AND)
+db.users.find({ 
+  city: "Hyderabad", 
+  isActive: true 
+})
+
+// OR condition
+db.users.find({
+  $or: [
+    { city: "Hyderabad" },
+    { city: "Bangalore" }
+  ]
+})
+
+// IN operator
+db.users.find({ city: { $in: ["Hyderabad", "Mumbai", "Delhi"] } })
+
+// EXISTS operator
+db.users.find({ orders: { $exists: true } })
+
+// Array contains value
+db.users.find({ hobbies: "coding" })
+
+// Array contains multiple values
+db.users.find({ hobbies: { $all: ["coding", "reading"] } })
+    </div>
+    <button class="copy-btn" onclick="copyCode('findFilters')"><i class="far fa-copy"></i> Copy Find Filters</button>
+
+    <div class="subheading">📖 Sorting, Limiting, and Projection</div>
+    <div class="code-block" id="findSortLimit">
+// Sort by age ascending (1) or descending (-1)
+db.users.find().sort({ age: 1 })
+db.users.find().sort({ age: -1 })
+
+// Limit results
+db.users.find().limit(3)
+
+// Skip (for pagination)
+db.users.find().skip(2).limit(3)
+
+// Projection (select specific fields)
+db.users.find({}, { name: 1, email: 1, _id: 0 })
+
+// Chain methods
+db.users.find({ isActive: true })
+  .sort({ age: -1 })
+  .limit(5)
+    </div>
+    <button class="copy-btn" onclick="copyCode('findSortLimit')"><i class="far fa-copy"></i> Copy Sort/Limit/Projection</button>
+  </div>
+
+  <!-- UPDATE Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-pen"></i>
+      <span>5. UPDATE – Modifying Data</span>
+    </div>
+    
+    <div class="subheading">✏️ Update One Document</div>
+    <div class="code-block" id="updateOne">
+// $set – Update specific fields
+db.users.updateOne(
+  { name: "Ramesh" },
+  { $set: { age: 26, city: "Secunderabad" } }
+)
+
+// $inc – Increment a number field
+db.users.updateOne(
+  { name: "Ramesh" },
+  { $inc: { age: 1 } }
+)
+
+// $push – Add to array
+db.users.updateOne(
+  { name: "Priya" },
+  { $push: { hobbies: "singing" } }
+)
+
+// $addToSet – Add to array (no duplicates)
+db.users.updateOne(
+  { name: "Priya" },
+  { $addToSet: { hobbies: "dancing" } }
+)
+
+// $unset – Remove a field
+db.users.updateOne(
+  { name: "Suresh" },
+  { $unset: { orders: "" } }
+)
+    </div>
+    <button class="copy-btn" onclick="copyCode('updateOne')"><i class="far fa-copy"></i> Copy UpdateOne</button>
+
+    <div class="subheading">✏️ Update Multiple Documents</div>
+    <div class="code-block" id="updateMany">
+// Add a field to all active users
+db.users.updateMany(
+  { isActive: true },
+  { $set: { membership: "premium" } }
+)
+
+// Increment age for all users in Hyderabad
+db.users.updateMany(
+  { city: "Hyderabad" },
+  { $inc: { age: 1 } }
+)
+
+// Set default orders for users without orders
+db.users.updateMany(
+  { orders: { $exists: false } },
+  { $set: { orders: 0 } }
+)
+
+// Rename a field
+db.users.updateMany(
+  {},
+  { $rename: { "city": "location" } }
+)
+    </div>
+    <button class="copy-btn" onclick="copyCode('updateMany')"><i class="far fa-copy"></i> Copy UpdateMany</button>
+
+    <div class="subheading">✏️ Replace Document (Complete Replacement)</div>
+    <div class="code-block" id="replace">
+// Replaces entire document except _id
+db.users.replaceOne(
+  { name: "Raj" },
+  {
+    name: "Raj Kumar",
+    email: "rajkumar@example.com",
+    age: 33,
+    city: "Mumbai",
+    isActive: true
+  }
+)
+    </div>
+    <button class="copy-btn" onclick="copyCode('replace')"><i class="far fa-copy"></i> Copy Replace</button>
+  </div>
+
+  <!-- DELETE Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-trash-alt"></i>
+      <span>6. DELETE – Removing Data</span>
+    </div>
+    
+    <div class="subheading">🗑️ Delete One Document</div>
+    <div class="code-block" id="deleteOne">
+// Delete first matching document
+db.users.deleteOne({ name: "Suresh" })
+
+// Delete by _id
+db.users.deleteOne({ _id: ObjectId("507f1f77bcf86cd799439011") })
+    </div>
+    <button class="copy-btn" onclick="copyCode('deleteOne')"><i class="far fa-copy"></i> Copy DeleteOne</button>
+
+    <div class="subheading">🗑️ Delete Multiple Documents</div>
+    <div class="code-block" id="deleteMany">
+// Delete all inactive users
+db.users.deleteMany({ isActive: false })
+
+// Delete users older than 40
+db.users.deleteMany({ age: { $gt: 40 } })
+
+// Delete users from specific city
+db.users.deleteMany({ city: "Pune" })
+
+// Delete ALL documents (be careful!)
+// db.users.deleteMany({})
+    </div>
+    <button class="copy-btn" onclick="copyCode('deleteMany')"><i class="far fa-copy"></i> Copy DeleteMany</button>
+
+    <div class="subheading">🗑️ Drop Collection (Delete All Documents + Structure)</div>
+    <div class="code-block">
+// Delete the entire collection
+db.users.drop()
+
+// Drop database
+db.dropDatabase()
+    </div>
+  </div>
+
+  <!-- Bulk Write Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-layer-group"></i>
+      <span>7. Bulk Write Operations (Multiple Operations at Once)</span>
+    </div>
+    <div class="code-block" id="bulkWrite">
+db.users.bulkWrite([
+  // Insert a new user
+  {
+    insertOne: {
+      document: {
+        name: "Kiran",
+        email: "kiran@example.com",
+        age: 29,
+        city: "Hyderabad"
+      }
+    }
+  },
+  // Update an existing user
+  {
+    updateOne: {
+      filter: { name: "Ramesh" },
+      update: { $set: { age: 27 } }
+    }
+  },
+  // Delete a user
+  {
+    deleteOne: {
+      filter: { name: "Raj" }
+    }
+  }
+])
+    </div>
+    <button class="copy-btn" onclick="copyCode('bulkWrite')"><i class="far fa-copy"></i> Copy Bulk Write</button>
+  </div>
+
+  <!-- Upsert Operation -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-plus-square"></i>
+      <span>8. Upsert – Update or Insert (If Not Exists)</span>
+    </div>
+    <p><strong>Upsert</strong> updates a document if it exists, or inserts it if it doesn't. Very useful for avoiding duplicate checks!</p>
+    <div class="code-block" id="upsert">
+// Update user if exists, otherwise create new one
+db.users.updateOne(
+  { email: "newuser@example.com" },
+  { $set: { name: "New User", age: 25, city: "Mumbai", isActive: true } },
+  { upsert: true }
+)
+
+// Response shows if it was upserted
+{
+  acknowledged: true,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedId: ObjectId("...")
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('upsert')"><i class="far fa-copy"></i> Copy Upsert Example</button>
+  </div>
+
+  <!-- Compass CRUD Operations -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-pie"></i>
+      <span>9. CRUD in MongoDB Compass (Visual Guide)</span>
+    </div>
+    <div class="grid-2">
+      <div class="info-box">
+        <i class="fas fa-plus-circle"></i>
+        <strong>CREATE in Compass</strong>
+        <p>• Click "Add Data" → "Insert Document"<br>
+        • Or "Import File" for bulk insert<br>
+        • Type JSON directly or use form view</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-search"></i>
+        <strong>READ in Compass</strong>
+        <p>• Use filter bar to query<br>
+        • Click "Options" for advanced filters<br>
+        • Sort dropdown for ordering<br>
+        • Project fields to show/hide</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-pen"></i>
+        <strong>UPDATE in Compass</strong>
+        <p>• Hover document → click pencil icon<br>
+        • Modify fields directly<br>
+        • Or use "Update Many" for bulk changes<br>
+        • Click "Update" to save</p>
+      </div>
+      <div class="info-box">
+        <i class="fas fa-trash-alt"></i>
+        <strong>DELETE in Compass</strong>
+        <p>• Hover document → click trash icon<br>
+        • Confirm deletion<br>
+        • Or use filter + "Delete Documents"<br>
+        • Be careful with delete many!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Practice Scenario -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-briefcase"></i>
+      <span>10. Complete Practice Scenario – Blog Platform</span>
+    </div>
+    <div class="code-block" id="practiceScenario">
+// ========== 1. CREATE ==========
+// Create posts collection
+db.createCollection("posts")
+
+// Insert a blog post
+db.posts.insertOne({
+  title: "My First MongoDB Post",
+  content: "This is the content of my blog post...",
+  author: "Ramesh",
+  tags: ["mongodb", "database", "tutorial"],
+  views: 0,
+  likes: 0,
+  publishedAt: new Date()
+})
+
+// Insert multiple posts
+db.posts.insertMany([
+  {
+    title: "Express.js Guide",
+    content: "Express is a Node.js framework...",
+    author: "Priya",
+    tags: ["express", "nodejs"],
+    views: 150,
+    likes: 25,
+    publishedAt: new Date("2024-01-15")
+  },
+  {
+    title: "React Hooks Deep Dive",
+    content: "Learn all about React Hooks...",
+    author: "Ramesh",
+    tags: ["react", "frontend"],
+    views: 300,
+    likes: 45,
+    publishedAt: new Date("2024-02-01")
+  },
+  {
+    title: "Mongoose ODM Tutorial",
+    content: "Mongoose makes MongoDB easy...",
+    author: "Suresh",
+    tags: ["mongodb", "mongoose", "nodejs"],
+    views: 89,
+    likes: 12,
+    publishedAt: new Date("2024-02-10")
+  }
+])
+
+// ========== 2. READ ==========
+// Find all posts by Ramesh
+db.posts.find({ author: "Ramesh" })
+
+// Find posts with >100 views
+db.posts.find({ views: { $gt: 100 } })
+
+// Find posts with MongoDB tag AND >50 views
+db.posts.find({ tags: "mongodb", views: { $gt: 50 } })
+
+// Sort by most viewed
+db.posts.find().sort({ views: -1 })
+
+// Pagination: page 2 with 2 items per page
+db.posts.find().skip(2).limit(2)
+
+// ========== 3. UPDATE ==========
+// Increment views on a post
+db.posts.updateOne(
+  { title: "My First MongoDB Post" },
+  { $inc: { views: 1 } }
+)
+
+// Add new tag to all posts
+db.posts.updateMany(
+  {},
+  { $addToSet: { tags: "2024" } }
+)
+
+// Update multiple fields
+db.posts.updateOne(
+  { title: "Express.js Guide" },
+  {
+    $set: { views: 200, likes: 30 },
+    $inc: { version: 1 }
+  }
+)
+
+// ========== 4. DELETE ==========
+// Delete a specific post
+db.posts.deleteOne({ title: "Mongoose ODM Tutorial" })
+
+// Delete old posts (before 2024)
+db.posts.deleteMany({
+  publishedAt: { $lt: new Date("2024-01-01") }
+})
+
+// Verify results
+db.posts.find().pretty()
+    </div>
+    <button class="copy-btn" onclick="copyCode('practiceScenario')"><i class="far fa-copy"></i> Copy Practice Scenario</button>
+  </div>
+
+  <!-- Day 74 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Complete CRUD Mastery</span>
+    </div>
+    <p><strong>Task:</strong> Perform all these operations in MongoDB Shell AND Compass:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Create a database called <span class="inline-code">ecommerce</span></li>
+      <li>Create a collection called <span class="inline-code">products</span></li>
+      <li>Insert 5 products (name, price, category, stock, ratings, tags)</li>
+      <li>Find all products in "Electronics" category</li>
+      <li>Find products with price between $50 and $200</li>
+      <li>Find products that are in stock (stock > 0)</li>
+      <li>Update a product to increase price by 10%</li>
+      <li>Add a new tag "sale" to all products under $100</li>
+      <li>Delete products with zero stock</li>
+      <li>Export your products collection as JSON</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Starter Commands
+use ecommerce
+
+// Insert products
+db.products.insertMany([
+  { name: "Laptop", price: 999, category: "Electronics", stock: 10, ratings: 4.5, tags: ["computer"] },
+  { name: "Mouse", price: 25, category: "Electronics", stock: 50, ratings: 4.2, tags: ["accessory"] },
+  { name: "Keyboard", price: 75, category: "Electronics", stock: 30, ratings: 4.3, tags: ["accessory"] },
+  { name: "Notebook", price: 5, category: "Stationery", stock: 200, ratings: 4.0, tags: ["office"] },
+  { name: "Pen Set", price: 15, category: "Stationery", stock: 0, ratings: 3.8, tags: ["writing"] }
+])
+
+// Your queries here...
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Starter</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 74 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>CREATE:</strong> insertOne(), insertMany() for adding documents<br>
+    ✅ <strong>READ:</strong> find(), findOne() with filters, comparison operators<br>
+    ✅ <strong>UPDATE:</strong> updateOne(), updateMany() with $set, $inc, $push, $addToSet<br>
+    ✅ <strong>DELETE:</strong> deleteOne(), deleteMany() for removing documents<br>
+    ✅ <strong>Sorting & Pagination:</strong> sort(), limit(), skip()<br>
+    ✅ <strong>Projection:</strong> Selecting specific fields in queries<br>
+    ✅ <strong>Bulk Operations:</strong> Multiple operations in one command<br>
+    ✅ <strong>Upsert:</strong> Update or insert if not exists<br>
+    ✅ <strong>Compass CRUD:</strong> Visual operations in GUI<br>
+    ✅ <strong>Complete Practice:</strong> Blog platform CRUD scenario</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 75 – Mongoose Setup & Connection (ODM for Node.js)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're ready to connect MongoDB with Node.js! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-database"></i> Day 74 · CRUD Operations · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Practice these commands daily – CRUD is the foundation of every application!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Paste in mongosh to test these CRUD operations.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 96: Deploy Backend | Render & Railway</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .deploy-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .platform-badge {
+      display: inline-block;
+      background: #334155;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🚀</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 96 · Deploy Backend (Render / Railway)</div>
+  </div>
+
+  <h1>🚀 Deploy Backend (Render / Railway)<br><span style="font-size:1rem;">Host Node.js API · MongoDB Atlas · Environment Variables · Production Ready</span></h1>
+
+  <!-- Section 1: Why Deploy Backend -->
+  <div class="section-title">1️⃣ Why Deploy Backend? (Take Your App Live)</div>
+  <p>Deploying your backend makes your API accessible from anywhere on the internet. Users can interact with your app without running local servers.</p>
+  <div class="diagram">
+    Localhost:5000 → Only your computer
+    Deployed API → Anyone on internet can access (render.com/railway.app)
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> Local development is like rehearsing at home. Deployment is like performing on stage for the whole world!
+  </div>
+
+  <!-- Section 2: Deployment Platforms Comparison -->
+  <div class="section-title">2️⃣ Best Free Platforms for Backend Deployment</div>
+  <div class="card-grid">
+    <div class="card"><h3>⚡ Render</h3><p>✅ 750 hours free/month<br>✅ Auto-deploy from GitHub<br>✅ Built-in SSL<br>✅ Web Services + Databases</p></div>
+    <div class="card"><h3>🛤️ Railway</h3><p>✅ $5 credit (500 hours)<br>✅ Very simple UI<br>✅ Auto HTTPS<br>✅ Great for beginners</p></div>
+    <div class="card"><h3>🌊 Cyclic</h3><p>✅ 1000 requests/hour free<br>✅ One-click deploy<br>✅ Serverless functions</p></div>
+    <div class="card"><h3>🐙 Heroku</h3><p>Legacy option (paid now)</p></div>
+  </div>
+
+  <!-- Section 3: Prerequisites -->
+  <div class="section-title">3️⃣ Prerequisites Before Deployment</div>
+  <ul style="margin-left:1.5rem; background:#eef2ff; padding:1rem; border-radius:24px;">
+    <li>✅ Node.js app with Express server (port from env variable: <span class="inline-code">process.env.PORT || 5000</span>)</li>
+    <li>✅ Package.json with start script: <span class="inline-code">"start": "node server.js"</span></li>
+    <li>✅ MongoDB Atlas account for cloud database</li>
+    <li>✅ GitHub repository with your backend code</li>
+  </ul>
+
+  <!-- Section 4: MongoDB Atlas Setup -->
+  <div class="section-title">4️⃣ MongoDB Atlas — Cloud Database</div>
+  <div class="code-block">
+    # Step 1: Sign up at mongodb.com/atlas<br>
+    # Step 2: Create a cluster (free tier)<br>
+    # Step 3: Create database user<br>
+    # Step 4: Network Access → Add IP address 0.0.0.0/0 (allow anywhere)<br>
+    # Step 5: Get connection string<br>
+    mongodb+srv://username:password@cluster.mongodb.net/dbname<br><br>
+    # Step 6: Replace local MongoDB URI in .env<br>
+    MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/myapp
+  </div>
+  <div class="highlight-box">
+    🔐 <strong>Security Tip:</strong> Never commit MongoDB credentials to GitHub! Always use environment variables.
+  </div>
+
+  <!-- Section 5: Deploy on Render (Step by Step) -->
+  <div class="section-title">5️⃣ Deploy on Render — Step by Step</div>
+  <div class="code-block">
+    # Step 1: Push your backend code to GitHub<br>
+    git add .<br>
+    git commit -m "Ready for deployment"<br>
+    git push origin main<br><br>
+    # Step 2: Go to render.com → Dashboard → New + → Web Service<br>
+    # Step 3: Connect GitHub repository<br>
+    # Step 4: Configure:<br>
+    #   Name: myapp-backend<br>
+    #   Environment: Node<br>
+    #   Build Command: npm install<br>
+    #   Start Command: npm start<br>
+    # Step 5: Add Environment Variables:<br>
+    #   MONGO_URI = your_atlas_connection_string<br>
+    #   JWT_SECRET = your_secret_key<br>
+    #   PORT = 5000 (Render sets automatically)<br>
+    # Step 6: Click "Create Web Service"<br>
+    # Step 7: Wait for build → Your API is live!
+  </div>
+
+  <!-- Section 6: Deploy on Railway -->
+  <div class="section-title">6️⃣ Deploy on Railway — Simpler Alternative</div>
+  <div class="code-block">
+    # Step 1: Go to railway.app → Start New Project<br>
+    # Step 2: Deploy from GitHub → Select your repository<br>
+    # Step 3: Railway auto-detects Node.js<br>
+    # Step 4: Add environment variables:<br>
+    #   MONGO_URI, JWT_SECRET, etc.<br>
+    # Step 5: Wait for deployment → Get URL like:<br>
+    #   https://myapp-backend.up.railway.app<br><br>
+    # Railway automatically: installs dependencies, runs build, starts server
+  </div>
+
+  <!-- Section 7: Environment Variables Checklist -->
+  <div class="section-title">7️⃣ Essential Environment Variables</div>
+  <table>
+    <thead><tr><th>Variable</th><th>Purpose</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>PORT</span></span><td>Server port</span></span><td>5000</span>（Render sets automatically)</span></td></tr>
+      <tr><td>MONGO_URI</span></span><td>MongoDB Atlas connection</span></span><td>mongodb+srv://...</span></td></tr>
+      <tr><td>JWT_SECRET</span></span><td>Secret for JWT tokens</span></span><td>long_random_string_32chars</span></td></tr>
+      <tr><td>NODE_ENV</span></span><td>production (on deployment)</span></span><td>production</span></span></td></tr>
+      <tr><td>CLIENT_URL</span></span><td>Frontend URL (for CORS)</span></span><td>https://myapp.vercel.app</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 8: CORS Configuration for Production -->
+  <div class="section-title">8️⃣ CORS — Allow Frontend to Call Backend</div>
+  <div class="code-block">
+    // backend/server.js<br>
+    const cors = require('cors');<br>
+    const allowedOrigins = process.env.NODE_ENV === 'production'<br>
+      ? [process.env.CLIENT_URL, 'https://your-app.vercel.app']<br>
+      : ['http://localhost:5173'];<br><br>
+    app.use(cors({<br>
+      origin: allowedOrigins,<br>
+      credentials: true<br>
+    }));
+  </div>
+
+  <!-- Section 9: Health Check Endpoint -->
+  <div class="section-title">9️⃣ Health Check — Monitor Your API</div>
+  <div class="code-block">
+    // Add a health check route (Render/Railway uses this)<br>
+    app.get('/health', (req, res) => {<br>
+      res.status(200).json({ <br>
+        status: 'OK',<br>
+        timestamp: new Date().toISOString(),<br>
+        uptime: process.uptime()<br>
+      });<br>
+    });
+  </div>
+
+  <!-- Section 10: Live Demo — Deployment Simulation -->
+  <div class="section-title">🔟 Live Demo — Deployment Simulation</div>
+  <div class="live-demo">
+    <div class="deploy-preview">
+      <strong>🚀 Deployment Process Simulation:</strong>
+      <div style="margin: 16px 0; background: #1e293b; padding: 12px; border-radius: 12px; font-family: monospace; font-size: 0.8rem;">
+        $ git push origin main<br>
+        ✓ Pushed to GitHub<br><br>
+        ⚡ Render detecting changes...<br>
+        📦 Installing dependencies (npm install)<br>
+        🔨 Running build...<br>
+        🚀 Starting server...<br>
+        ✅ Deployment successful!<br><br>
+        🌐 API Live at: <span id="deployUrl">https://myapp-backend.onrender.com</span>
+      </div>
+      <button class="demo-btn" id="simulateDeployBtn">▶️ Simulate Deployment</button>
+    </div>
+    <script>
+      document.getElementById("simulateDeployBtn")?.addEventListener("click", () => {
+        const urlSpan = document.getElementById("deployUrl");
+        const domains = ["onrender.com", "up.railway.app", "cyclic.app"];
+        const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+        urlSpan.textContent = `https://myapp-backend.${randomDomain}`;
+      });
+    </script>
+  </div>
+
+  <!-- Section 11: Testing Deployed API -->
+  <div class="section-title">1️⃣1️⃣ Test Your Deployed API</div>
+  <div class="code-block">
+    # Using curl<br>
+    curl https://myapp-backend.onrender.com/api/products<br><br>
+    # Using browser — open the URL<br>
+    https://myapp-backend.onrender.com/health<br><br>
+    # Using Postman — send GET/POST requests to deployed URL
+  </div>
+
+  <!-- Section 12: Troubleshooting Common Issues -->
+  <div class="section-title">⚠️ Common Deployment Issues & Solutions</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ <strong>Port already in use?</strong> Use <span class="inline-code">process.env.PORT</span> — platforms assign dynamic ports</li>
+    <li>❌ <strong>MongoDB connection error?</strong> Check IP whitelist (0.0.0.0/0) and credentials</li>
+    <li>❌ <strong>CORS error?</strong> Set CLIENT_URL environment variable correctly</li>
+    <li>❌ <strong>Build failing?</strong> Check package.json scripts (start, build)</li>
+    <li>❌ <strong>Environment variables missing?</strong> Add them in platform dashboard</li>
+  </ul>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a MongoDB Atlas cluster (free tier)<br>
+    2. Get your MongoDB connection string<br>
+    3. Push your backend code to GitHub<br>
+    4. Deploy your backend on Render or Railway<br>
+    5. Add environment variables (MONGO_URI, JWT_SECRET, etc.)<br>
+    6. Test your API using the deployed URL (Postman or browser)<br>
+    7. Update your frontend to use the deployed backend URL
+  </div>
+
+  <!-- Section 14: Post-Deployment Checklist -->
+  <div class="section-title">✅ Post-Deployment Checklist</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔗 API Endpoints</h3><p>Test GET, POST, PUT, DELETE endpoints work</p></div>
+    <div class="card"><h3>🔐 Authentication</h3><p>Login/Register works with deployed backend</p></div>
+    <div class="card"><h3>📊 Database</h3><p>Data persists in MongoDB Atlas</p></div>
+    <div class="card"><h3>🌍 CORS</h3><p>Frontend can call backend</p></div>
+    <div class="card"><h3>📈 Logs</h3><p>Check platform logs for errors</p></div>
+    <div class="card"><h3>🔁 Auto-deploy</h3><p>Push to GitHub → auto-deploys</p></div>
+  </div>
+
+  <!-- Section 15: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How to deploy Node.js backend?</h3><p>Push to GitHub, connect to Render/Railway, add environment variables, deploy.</p></div>
+    <div class="card"><h3>❓ What is MongoDB Atlas?</h3><p>Cloud database service — no need to manage your own MongoDB server.</p></div>
+    <div class="card"><h3>❓ Why use environment variables?</h3><p>For sensitive data (API keys, DB passwords) — never hardcode.</p></div>
+  </div>
+
+  <!-- Section 16: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Deploy your backend on Render and Railway (both).</p></div>
+    <div class="card"><h3>Task 2</h3><p>Set up a custom domain for your deployed API.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement auto-deploy from GitHub branch.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 96)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why deploy backend — make API accessible worldwide</div>
+    <div class="card">✔️ MongoDB Atlas setup (cloud database)</div>
+    <div class="card">✔️ Deploy on Render (GitHub + environment variables)</div>
+    <div class="card">✔️ Deploy on Railway (simpler alternative)</div>
+    <div class="card">✔️ CORS configuration for production</div>
+    <div class="card">✔️ Health checks and troubleshooting</div>
+  </div>
+
+  <!-- Day 96 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 96 Ending Message</strong><br>
+    "Your backend is now live on the internet! 🚀 Anyone can now use your API. This is a huge milestone — your MERN app is becoming a real, production-grade application. Tomorrow we deploy the frontend and connect everything!"
+  </div>
+
+  <!-- Next: Day 97 -->
+  <div class="section-title">🔜 Next — Day 97 : Deploy Frontend (Vercel / Netlify)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚡ Vercel Deployment</span>
+    <span class="badge">🌐 Netlify Deployment</span>
+    <span class="badge">🔗 Connect to Backend</span>
+    <span class="badge">🌍 Custom Domains</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 96 Completed ✅<br>
+    Deploy your backend today — share your API URL with the world!
+  </div>
+</div>
+</body>
+</html>

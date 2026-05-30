@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 21: Git & Version Control | Essential Developer Tool + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .git-command {
+      background: #1e293b;
+      color: #facc15;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔧</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 21 · Git & Version Control (Show Results)</div>
+  </div>
+
+  <h1>🔧 Introduction to Git & Version Control<br><span style="font-size:1rem;">What is Git? · Install · Configure · git init · add · commit · Real Developer Workflow — Click "Show Result" for command demos</span></h1>
+
+  <!-- Section 1: What is Git -->
+  <div class="section-title">1️⃣ What is Git? (Version Control System)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Git</strong> is a Version Control System (VCS) that tracks changes in your code — like a time machine for your project. Every tech company (Google, Microsoft, Amazon, Netflix, Meta) uses Git daily. It allows you to save snapshots of your code, revert to previous versions, and collaborate with teams without overwriting each other's work.</p>
+    <p><strong>Where it's used:</strong> Every professional software project — from small personal projects to massive enterprise applications with thousands of developers.</p>
+  </div>
+  <div class="diagram">
+    Code Changes → Git tracks snapshots (commits) → View history → Restore any version
+  </div>
+
+  <!-- Section 2: Install Git -->
+  <div class="section-title">2️⃣ Install Git & Verify</div>
+  <div class="topic-explanation">
+    <h4>📌 Installation Steps</h4>
+    <p>Download Git from <strong>git-scm.com</strong> and install with default settings. After installation, verify by opening terminal/command prompt and running <span class="inline-code">git --version</span>.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Download from https://git-scm.com/<br>
+      # Install with default settings<br><br>
+      # Verify installation (open terminal/command prompt)<br>
+      git --version
+    </div>
+    <button class="btn-show" data-target="installResult">💾 Show Git Version Command</button>
+    <div id="installResult" class="result-area">
+      <div class="console-output">
+        $ git --version<br>
+        git version 2.43.0<br><br>
+        ✅ If you see a version number, Git is installed successfully!<br>
+        ⚠️ If not, download from git-scm.com and reinstall.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Configure Git -->
+  <div class="section-title">3️⃣ Configure Git (Your Identity)</div>
+  <div class="topic-explanation">
+    <h4>📌 Why Configure?</h4>
+    <p>Git uses your name and email to track who made each commit. This information becomes part of your project history and is essential for team collaboration.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      git config --global user.name "Your Name"<br>
+      git config --global user.email "your@email.com"<br><br>
+      # Verify configuration<br>
+      git config --list
+    </div>
+    <button class="btn-show" data-target="configResult">⚙️ Show Git Config Command</button>
+    <div id="configResult" class="result-area">
+      <div class="console-output">
+        $ git config --global user.name "Kalyan"<br>
+        $ git config --global user.email "kalyan@example.com"<br>
+        $ git config --list<br>
+        user.name=Kalyan<br>
+        user.email=kalyan@example.com<br><br>
+        ✅ Every commit you make will be attributed to this identity.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: git init -->
+  <div class="section-title">4️⃣ Create First Git Repository (git init)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is git init?</h4>
+    <p><span class="inline-code">git init</span> creates a hidden .git folder in your project, turning it into a Git repository. This folder stores all version history, branches, and configuration.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      mkdir my-first-project<br>
+      cd my-first-project<br>
+      git init<br>
+      # Output: Initialized empty Git repository in /my-first-project/.git/
+    </div>
+    <button class="btn-show" data-target="initResult">📁 Show git init Command</button>
+    <div id="initResult" class="result-area">
+      <div class="console-output">
+        $ mkdir my-first-project<br>
+        $ cd my-first-project<br>
+        $ git init<br>
+        Initialized empty Git repository in /my-first-project/.git/<br><br>
+        ✅ A hidden .git folder is created — this is your repository!<br>
+        🔍 To see it: ls -la (Mac/Linux) or dir /a (Windows)
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: git status -->
+  <div class="section-title">5️⃣ Check Status (git status)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is git status?</h4>
+    <p><span class="inline-code">git status</span> shows the current state of your working directory and staging area — which files are modified, staged, or untracked. Use it frequently!</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      git status<br>
+      # Shows: untracked files, modified files, staged files
+    </div>
+    <button class="btn-show" data-target="statusResult">🔍 Show git status Demo</button>
+    <div id="statusResult" class="result-area">
+      <div class="console-output">
+        $ git status<br>
+        On branch main<br><br>
+        No commits yet<br><br>
+        Untracked files:<br>
+          &nbsp;&nbsp;index.html<br>
+          &nbsp;&nbsp;style.css<br><br>
+        nothing added to commit but untracked files present<br><br>
+        ✅ Use 'git add' to start tracking files.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: git add & Staging Area -->
+  <div class="section-title">6️⃣ Staging Area (git add) — Prepare Changes</div>
+  <div class="topic-explanation">
+    <h4>📌 What is Staging?</h4>
+    <p>The staging area is like a "draft" — you can review changes before they become permanent commits. <span class="inline-code">git add</span> moves changes to staging.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Add specific file<br>
+      git add index.html<br><br>
+      # Add all files in current directory<br>
+      git add .
+    </div>
+    <button class="btn-show" data-target="addResult">📝 Show git add Command</button>
+    <div id="addResult" class="result-area">
+      <div class="diagram">
+        Working Directory (modified files)<br>
+              ↓ git add<br>
+        Staging Area (files ready to commit)<br>
+              ↓ git commit<br>
+        Repository (saved permanently)
+      </div>
+      <div class="console-output">
+        ✅ git add . stages all changes in current directory<br>
+        ✅ You can unstage with 'git reset'<br>
+        💡 Always check 'git status' after adding!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: git commit -->
+  <div class="section-title">7️⃣ Commit — Save Snapshot (git commit)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is a Commit?</h4>
+    <p>A commit is a snapshot of your project at a specific point in time. Each commit has a unique ID and a message describing what changed.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      git commit -m "Initial commit: added homepage structure"<br><br>
+      # View commit history<br>
+      git log<br>
+      git log --oneline
+    </div>
+    <button class="btn-show" data-target="commitResult">💾 Show git commit Demo</button>
+    <div id="commitResult" class="result-area">
+      <div class="console-output">
+        $ git commit -m "Initial commit: added homepage structure"<br>
+        [main (root-commit) a1b2c3d] Initial commit: added homepage structure<br>
+        2 files changed, 45 insertions(+)<br>
+        create mode 100644 index.html<br>
+        create mode 100644 style.css<br><br>
+        $ git log --oneline<br>
+        a1b2c3d Initial commit: added homepage structure<br><br>
+        ✅ Good commit messages describe WHAT and WHY, not HOW.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Complete Git Workflow -->
+  <div class="section-title">8️⃣ Complete Git Workflow (Real Developer Steps)</div>
+  <div class="example-card">
+    <div class="code-block">
+      # 1. Create/Modify files<br>
+      echo "Hello" > index.html<br><br>
+      # 2. Check what changed<br>
+      git status<br><br>
+      # 3. Stage changes<br>
+      git add .<br><br>
+      # 4. Commit with meaningful message<br>
+      git commit -m "Added homepage content"<br><br>
+      # 5. View history<br>
+      git log --oneline
+    </div>
+    <button class="btn-show" data-target="workflowResult">🔄 Show Complete Workflow Simulation</button>
+    <div id="workflowResult" class="result-area">
+      <div class="console-output">
+        ⚡ Developer Workflow Simulation:<br><br>
+        1. Edit files in your code editor<br>
+        2. $ git status → shows what changed<br>
+        3. $ git add . → stage all changes<br>
+        4. $ git commit -m "Describe your changes" → save snapshot<br>
+        5. $ git log → see history<br><br>
+        🔁 Repeat: edit → add → commit → (then push to GitHub later)
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: Essential Commands Table -->
+  <div class="section-title">9️⃣ Essential Git Commands Summary</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>git init</td><td>Initialize new Git repository</td></tr>
+        <tr><td>git status</td><td>Show current state (modified/staged files)</td></tr>
+        <tr><td>git add .</td><td>Stage all changes for commit</td></tr>
+        <tr><td>git commit -m "message"</td><td>Save snapshot with description</td></tr>
+        <tr><td>git log --oneline</td><td>View compact commit history</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 10: Good vs Bad Commit Messages -->
+  <div class="section-title">📝 Good Commit Messages vs Bad</div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Good examples</h3><p>"Added login form validation"<br>"Fixed navbar responsiveness on mobile"<br>"Refactored API service into separate module"</p></div>
+    <div class="card"><h3>❌ Bad examples</h3><p>"update"<br>"fix stuff"<br>"changes"<br>"asdf"</p></div>
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes & Solutions</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesGitResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesGitResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">git add .</span> before commit → nothing saved. Fix: Always run <span class="inline-code">git status</span> before committing.</li>
+        <li>❌ Vague commit messages → "stuff" is not helpful. Fix: Write descriptive messages that explain WHY.</li>
+        <li>❌ Not checking <span class="inline-code">git status</span> before committing → missing changes. Fix: Make <span class="inline-code">git status</span> a habit.</li>
+        <li>❌ Committing unnecessary files (node_modules, .env) → repo becomes huge. Fix: Use .gitignore (learn tomorrow).</li>
+        <li>❌ Confusing staging area vs commit. Fix: Staging = "I want to save these changes", Commit = "I'm saving them now".</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 12: Why Git is Required for Jobs -->
+  <div class="section-title">💼 Why Git is Mandatory for Developer Jobs</div>
+  <div class="card-grid">
+    <div class="card">🔍 Companies check your GitHub profile before interviews</div>
+    <div class="card">📊 Commit history shows activity & consistency</div>
+    <div class="card">👥 Team collaboration requires Git (merge, branches)</div>
+    <div class="card">🔄 Rolling back bugs is impossible without version control</div>
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>📝 Student App Project</strong><br>
+    1. Create a folder called <span class="inline-code">student-app</span><br>
+    2. Inside, create: <span class="inline-code">index.html</span>, <span class="inline-code">style.css</span>, <span class="inline-code">script.js</span><br>
+    3. Open terminal in that folder and run:<br>
+    &nbsp;&nbsp;<span class="inline-code">git init</span><br>
+    &nbsp;&nbsp;<span class="inline-code">git add .</span><br>
+    &nbsp;&nbsp;<span class="inline-code">git commit -m "Initial student app with HTML/CSS/JS"</span><br>
+    4. Check history with <span class="inline-code">git log --oneline</span><br>
+    5. Make a change, then commit again.
+  </div>
+
+  <!-- Section 14: Interview Questions -->
+  <div class="section-title">💼 Common Git Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Git?</h3><p>Distributed version control system that tracks changes in source code during development.</p></div>
+    <div class="card"><h3>❓ What is a repository?</h3><p>A folder managed by Git containing project files and complete version history.</p></div>
+    <div class="card"><h3>❓ Difference between git add and git commit?</h3><p>git add stages changes (prepares them), git commit permanently saves them to history.</p></div>
+    <div class="card"><h3>❓ What is a commit hash?</h3><p>A unique identifier (like a1b2c3d) for each commit, used to reference specific snapshots.</p></div>
+  </div>
+
+  <!-- Section 15: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Task 1</h3><p>Create a new Git repo with 2 files and make 3 different commits with meaningful messages.</p></div>
+    <div class="card"><h3>🔍 Task 2</h3><p>Modify a file and check <span class="inline-code">git status</span> before and after staging.</p></div>
+    <div class="card"><h3>📜 Task 3</h3><p>Use <span class="inline-code">git log --oneline</span> to view your commit history.</p></div>
+    <div class="card"><h3>✏️ Task 4</h3><p>Create a commit with a bad message, then amend it with <span class="inline-code">git commit --amend -m "Better message"</span></p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 21 - Git Basics)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Git & Version Control (time machine for code)</div>
+    <div class="card">✔️ Install Git from git-scm.com & configure user.name/user.email</div>
+    <div class="card">✔️ git init (create repository), git status (check state)</div>
+    <div class="card">✔️ git add . (stage changes), git commit (save snapshot)</div>
+    <div class="card">✔️ Staging area vs commit — understand the workflow</div>
+    <div class="card">✔️ git log --oneline to view commit history</div>
+  </div>
+
+  <!-- Day 21 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 21 Ending Message</strong><br>
+    “Git is not optional — it's required for every professional developer. Practice init → add → commit until it becomes muscle memory. Tomorrow we'll push code to GitHub!”
+  </div>
+
+  <!-- Next: Day 22 -->
+  <div class="section-title">🔜 Next — Day 22 : GitHub Basics (Push, Pull, Clone, Remote Repositories)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🐙 Create GitHub account</span>
+    <span class="badge">📤 git push</span>
+    <span class="badge">📥 git pull & clone</span>
+    <span class="badge">🔗 Remote origin</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 21 Completed ✅<br>
+    Click "Show Result" on each example to see Git commands explained. Practice git init → add → commit daily!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

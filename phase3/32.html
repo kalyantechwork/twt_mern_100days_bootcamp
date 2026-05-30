@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 32: Lists & Keys in React | Rendering Arrays with map() + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .list-container {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .fruit-item {
+      background: #334155;
+      margin: 8px 0;
+      padding: 8px 16px;
+      border-radius: 40px;
+    }
+    .todo-item-list {
+      background: #334155;
+      margin: 8px 0;
+      padding: 8px 16px;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📋</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 32 · Lists & Keys in React (Show Results)</div>
+  </div>
+
+  <h1>📋 Lists & Keys in React<br><span style="font-size:1rem;">Rendering Arrays with map() · Why Keys are Important · Key Best Practices — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: Why Lists -->
+  <div class="section-title">1️⃣ Why Do We Need Lists in React?</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>In real applications, data comes as arrays (users, products, todos, comments). React allows you to render arrays as lists using the <strong>map()</strong> function, transforming each array item into a JSX element.</p>
+    <p><strong>Where it's used:</strong> Product listings, user directories, todo lists, comment sections, shopping carts, search results — every dynamic list in a React app.</p>
+  </div>
+  <div class="diagram">
+    Array of Data → map() → Array of JSX elements → Rendered to UI
+  </div>
+
+  <!-- Section 2: Basic List with map() -->
+  <div class="section-title">2️⃣ Basic List Rendering — Using map()</div>
+  <div class="example-card">
+    <div class="code-block">
+      function FruitList() {<br>
+        const fruits = ["Apple", "Mango", "Orange", "Banana"];<br>
+        return (&lt;ul&gt;<br>
+          {fruits.map((fruit) => (&lt;li&gt;{fruit}&lt;/li&gt;))}<br>
+        &lt;/ul&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="basicListResult">🍎 Show Basic List</button>
+    <div id="basicListResult" class="result-area">
+      <div class="list-container">
+        <strong>🍎 Rendered List (map()):</strong>
+        <ul style="margin-top: 12px;">
+          <li class="fruit-item">Apple</li>
+          <li class="fruit-item">Mango</li>
+          <li class="fruit-item">Orange</li>
+          <li class="fruit-item">Banana</li>
+        </ul>
+      </div>
+      <div class="console-output">
+        ✅ map() transforms array into array of JSX elements<br>
+        ✅ Each item becomes an &lt;li&gt; element<br>
+        ⚠️ Without keys, React shows a warning!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: What are Keys -->
+  <div class="section-title">3️⃣ What are Keys? (Very Important!)</div>
+  <div class="topic-explanation">
+    <h4>📌 What are Keys?</h4>
+    <p><strong>Keys</strong> are special string attributes that help React identify which items have changed, been added, or been removed. Keys must be <strong>unique</strong> among their siblings. They are essential for React's reconciliation algorithm to update the DOM efficiently.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      // ❌ Without key (warning in console)<br>
+      {fruits.map((fruit) => (&lt;li&gt;{fruit}&lt;/li&gt;))}<br><br>
+      // ✅ With key (React happy!)<br>
+      {fruits.map((fruit, index) => (&lt;li key={index}&gt;{fruit}&lt;/li&gt;))}<br><br>
+      // ✅ Best practice: using unique ID<br>
+      {users.map((user) => (&lt;li key={user.id}&gt;{user.name}&lt;/li&gt;))}
+    </div>
+    <button class="btn-show" data-target="keysExplanation">🔑 Show Keys Explanation</button>
+    <div id="keysExplanation" class="result-area">
+      <div class="console-output">
+        🔑 <strong>What are Keys?</strong><br>
+        ✅ Keys help React identify which items changed, added, or removed<br>
+        ✅ React uses keys to optimize re-rendering (only update changed items)<br>
+        ✅ Keys must be UNIQUE among siblings<br>
+        ⚠️ React shows a warning in console when keys are missing!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Why Keys Matter -->
+  <div class="section-title">4️⃣ Why Keys are Important (Performance)</div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Efficient Updates</h3><p>Keys help React identify which items changed. Without keys, React re-renders the entire list.</p></div>
+    <div class="card"><h3>✅ Correct State Preservation</h3><p>Keys preserve component state when items are reordered (e.g., checkboxes stay checked).</p></div>
+    <div class="card"><h3>✅ Better Performance</h3><p>React skips re-rendering items with the same key — only updates changed ones.</p></div>
+  </div>
+  <div class="diagram">
+    Without Keys → Re-render everything → Slow & buggy<br>
+    With Keys → Update only changed items → Fast & correct
+  </div>
+
+  <!-- Section 5: Choosing the Right Key -->
+  <div class="section-title">5️⃣ Choosing the Right Key — Best Practices</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Key Source</th><th>Good/Bad</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Unique ID from database</td><td>✅ Best</td><td>&lt;li key={user.id}&gt;{user.name}&lt;/li&gt;</td></tr>
+        <tr><td>Index (map second parameter)</td><td>⚠️ Only for static lists (no reorder)</td><td>&lt;li key={index}&gt;{item}&lt;/li&gt;</td></tr>
+        <tr><td>Random value (Math.random)</td><td>❌ Bad — changes every render</td><td>&lt;li key={Math.random()}&gt;{item}&lt;/li&gt;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 6: List of Objects -->
+  <div class="section-title">6️⃣ Rendering List of Objects (Real Data)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function ProductList() {<br>
+        const products = [<br>
+          { id: 1, name: "Laptop", price: 50000 },<br>
+          { id: 2, name: "Phone", price: 20000 },<br>
+          { id: 3, name: "Tablet", price: 15000 }<br>
+        ];<br>
+        return products.map((product) => (<br>
+          &lt;div key={product.id}&gt;<br>
+            &lt;h3&gt;{product.name}&lt;/h3&gt;<br>
+            &lt;p&gt;₹{product.price}&lt;/p&gt;<br>
+          &lt;/div&gt;<br>
+        ));<br>
+      }
+    </div>
+    <button class="btn-show" data-target="objectListResult">🛍️ Show Product List</button>
+    <div id="objectListResult" class="result-area">
+      <div class="list-container">
+        <strong>🛍️ Product List (from object array with keys):</strong>
+        <div style="margin-top: 12px;">
+          <div style="background:#334155; padding:12px; border-radius:12px; margin:8px 0;">
+            <h3>Laptop</h3>
+            <p>₹50,000</p>
+          </div>
+          <div style="background:#334155; padding:12px; border-radius:12px; margin:8px 0;">
+            <h3>Phone</h3>
+            <p>₹20,000</p>
+          </div>
+          <div style="background:#334155; padding:12px; border-radius:12px; margin:8px 0;">
+            <h3>Tablet</h3>
+            <p>₹15,000</p>
+          </div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Using unique ID from data (product.id) as key — BEST PRACTICE!<br>
+        ✅ Keys should be stable, unique, and predictable
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Dynamic Todo List -->
+  <div class="section-title">7️⃣ Dynamic List — Adding and Removing Items</div>
+  <div class="example-card">
+    <div class="code-block">
+      function TodoList() {<br>
+        const [todos, setTodos] = useState([]);<br>
+        const addTodo = () => {<br>
+          setTodos([...todos, { id: Date.now(), text: input }]);<br>
+        };<br>
+        return todos.map((todo) => (<br>
+          &lt;li key={todo.id}&gt;{todo.text}&lt;button onClick={() => removeTodo(todo.id)}&gt;Delete&lt;/button&gt;&lt;/li&gt;<br>
+        ));<br>
+      }
+    </div>
+    <button class="btn-show" data-target="dynamicListResult">📝 Show Dynamic Todo List</button>
+    <div id="dynamicListResult" class="result-area">
+      <div class="list-container">
+        <strong>📝 Todo List (with Add/Delete)</strong>
+        <div style="margin-top: 12px;">
+          <input type="text" id="todoInputField" placeholder="Add a task..." style="width: 60%;">
+          <button class="demo-btn" id="addTodoDynamicBtn">Add</button>
+          <div id="dynamicTodosList" style="margin-top: 12px;"></div>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Each todo has unique ID (Date.now()) as key<br>
+        ✅ Keys remain stable even when items are added/deleted<br>
+        💡 This is how real todo apps work!
+      </div>
+      <script>
+        let todos = [];
+        const todoContainer = document.getElementById("dynamicTodosList");
+        const renderTodos = () => {
+          if(todoContainer) {
+            todoContainer.innerHTML = "";
+            todos.forEach(todo => {
+              const div = document.createElement("div");
+              div.className = "todo-item-list";
+              div.innerHTML = `<span>${todo.text}</span><button class="demo-btn" style="background:#ef4444; color:white;" data-id="${todo.id}">Delete</button>`;
+              todoContainer.appendChild(div);
+            });
+            document.querySelectorAll("[data-id]").forEach(btn => {
+              btn.addEventListener("click", (e) => {
+                const id = parseInt(btn.getAttribute("data-id"));
+                todos = todos.filter(t => t.id !== id);
+                renderTodos();
+              });
+            });
+          }
+        };
+        document.getElementById("addTodoDynamicBtn")?.addEventListener("click", () => {
+          const input = document.getElementById("todoInputField");
+          if(input.value.trim()) {
+            todos.push({ id: Date.now(), text: input.value.trim() });
+            renderTodos();
+            input.value = "";
+          }
+        });
+        renderTodos();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Common Key Mistakes -->
+  <div class="section-title">8️⃣ Common Key Mistakes to Avoid</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesKeysResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesKeysResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using array index as key when list can reorder (items shift, state gets mixed up — checkboxes, form inputs)</li>
+        <li>❌ Using random keys like <span class="inline-code">Math.random()</span> or <span class="inline-code">Date.now()</span> (creates new key every render → defeats purpose)</li>
+        <li>❌ Forgetting keys completely (React shows console warning and performance suffers)</li>
+        <li>❌ Using duplicate keys (causes rendering bugs — React can't distinguish items)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 9: Keys Only Need Uniqueness Among Siblings -->
+  <div class="section-title">9️⃣ Keys Only Need to be Unique Among Siblings</div>
+  <div class="example-card">
+    <div class="code-block">
+      // ✅ This is fine — keys are unique within each list<br>
+      function App() {<br>
+        return (&lt;&gt;<br>
+          &lt;ul&gt;{fruits.map(f => &lt;li key={f}&gt;{f}&lt;/li&gt;)}&lt;/ul&gt;<br>
+          &lt;ul&gt;{vegetables.map(v => &lt;li key={v}&gt;{v}&lt;/li&gt;)}&lt;/ul&gt;<br>
+        &lt;/&gt;);<br>
+      }
+    </div>
+    <div class="highlight-box">
+      🔑 <strong>Remember:</strong> Keys only need to be unique among their siblings, not globally across the whole app. Same key can be used in different lists!
+    </div>
+  </div>
+
+  <!-- Section 10: Complete User Directory Example -->
+  <div class="section-title">📁 Complete Example: User Directory</div>
+  <div class="example-card">
+    <div class="code-block">
+      function UserDirectory() {<br>
+        const users = [<br>
+          { id: 1, name: "Kalyan", email: "kalyan@example.com", role: "Admin" },<br>
+          { id: 2, name: "Priya", email: "priya@example.com", role: "User" }<br>
+        ];<br>
+        return users.map(user => (<br>
+          &lt;div key={user.id}&gt;<br>
+            &lt;h3&gt;{user.name}&lt;/h3&gt;<br>
+            &lt;p&gt;📧 {user.email}&lt;/p&gt;<br>
+            &lt;span&gt;{user.role}&lt;/span&gt;<br>
+          &lt;/div&gt;<br>
+        ));<br>
+      }
+    </div>
+    <button class="btn-show" data-target="userDirectoryResult">👥 Show User Directory</button>
+    <div id="userDirectoryResult" class="result-area">
+      <div class="list-container">
+        <strong>👥 User Directory (with unique IDs as keys):</strong>
+        <div style="margin-top: 12px;">
+          <div style="background:#334155; padding:12px; border-radius:12px; margin:8px 0;">
+            <h3>Kalyan</h3>
+            <p>📧 kalyan@example.com</p>
+            <span style="background:#facc15; color:#0f172a; padding:2px 8px; border-radius:20px;">Admin</span>
+          </div>
+          <div style="background:#334155; padding:12px; border-radius:12px; margin:8px 0;">
+            <h3>Priya</h3>
+            <p>📧 priya@example.com</p>
+            <span style="background:#facc15; color:#0f172a; padding:2px 8px; border-radius:20px;">User</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Movie List</strong> component that renders an array of movies (title, year, rating) using map()<br>
+    2. Add unique keys (use movie id or index as last resort)<br>
+    3. Create a <strong>Todo App</strong> with add and delete functionality (use unique IDs for keys)<br>
+    4. Create a <strong>Student Roster</strong> displaying name, grade, and subject with proper keys
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What are keys in React?</h3><p>Special attributes that help React identify which items changed in a list for efficient updates.</p></div>
+    <div class="card"><h3>❓ Why do we need keys?</h3><p>For efficient DOM updates, correct state preservation, and better performance when lists change.</p></div>
+    <div class="card"><h3>❓ Can we use index as key?</h3><p>Only for static lists that don't reorder, add, or delete. Avoid for dynamic lists.</p></div>
+    <div class="card"><h3>❓ What happens without keys?</h3><p>React shows a console warning and may have performance issues with list updates.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎨 Task 1</h3><p>Create a <strong>Color Palette</strong> — render array of color names as colored boxes with unique keys.</p></div>
+    <div class="card"><h3>💬 Task 2</h3><p>Create a <strong>Comment Section</strong> — render comments array with username and comment text (use comment id as key).</p></div>
+    <div class="card"><h3>🛒 Task 3</h3><p>Create a <strong>Shopping Cart</strong> — show product list with quantity and price (use product id as key).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 32 - Lists & Keys)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Rendering lists with map() — transforms array to JSX elements</div>
+    <div class="card">✔️ What are keys — unique identifiers for list items</div>
+    <div class="card">✔️ Why keys matter — performance & correct UI updates</div>
+    <div class="card">✔️ Best key source: unique ID from database</div>
+    <div class="card">✔️ Avoid index as key for dynamic/reordering lists</div>
+  </div>
+
+  <!-- Day 32 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 32 Ending Message</strong><br>
+    "Lists are everywhere in real apps — product listings, user directories, todo items, comment sections. Now you can render dynamic lists efficiently with proper keys. Always remember: unique keys = happy React = fast app!"
+  </div>
+
+  <!-- Next: Day 33 -->
+  <div class="section-title">🔜 Next — Day 33 : Forms in React (Controlled Components)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📝 Controlled Components</span>
+    <span class="badge">🔄 Two-way binding</span>
+    <span class="badge">📋 Form submission</span>
+    <span class="badge">✅ Form validation basics</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 32 Completed ✅<br>
+    Click "Show Result" on each example to see lists and keys in action. Practice rendering dynamic arrays with proper keys!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

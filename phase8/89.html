@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 89: File Upload with Multer | Image Upload in Node.js/Express</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .multer-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .upload-area {
+      border: 2px dashed #facc15;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📁</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 89 · File Upload with Multer (Express)</div>
+  </div>
+
+  <h1>📁 File Upload with Multer<br><span style="font-size:1rem;">Image Upload · Multer Middleware · File Validation · Cloud Storage</span></h1>
+
+  <!-- Section 1: Why File Upload -->
+  <div class="section-title">1️⃣ Why File Upload? (Real-World Use Cases)</div>
+  <p>File upload is essential for almost every web application — profile pictures, product images, documents, videos, and more. <strong>Multer</strong> is the most popular middleware for handling file uploads in Express.</p>
+  <div class="card-grid">
+    <div class="card"><h3>🖼️ Profile Pictures</h3><p>Users upload avatars</p></div>
+    <div class="card"><h3>🛍️ Product Images</h3><p>E-commerce product photos</p></div>
+    <div class="card"><h3>📄 Document Upload</h3><p>Resumes, PDFs, contracts</p></div>
+    <div class="card"><h3>📹 Video Upload</h3><p>Social media, courses</p></div>
+  </div>
+
+  <!-- Section 2: What is Multer? -->
+  <div class="section-title">2️⃣ What is Multer?</div>
+  <p><strong>Multer</strong> is a Node.js middleware for handling multipart/form-data, primarily used for uploading files. It processes files and makes them available in <span class="inline-code">req.file</span> or <span class="inline-code">req.files</span>.</p>
+  <div class="diagram">
+    Client (multipart/form-data) → Multer Middleware → Parse Files → req.file (single) or req.files (multiple) → Your Route Handler
+  </div>
+  <div class="highlight-box">
+    📦 <strong>Installation:</strong> <span class="inline-code">npm install multer</span>
+  </div>
+
+  <!-- Section 3: Basic Multer Setup (Disk Storage) -->
+  <div class="section-title">3️⃣ Basic Setup — Store on Local Disk</div>
+  <div class="code-block">
+    const multer = require('multer');<br>
+    const path = require('path');<br><br>
+    // Configure storage<br>
+    const storage = multer.diskStorage({<br>
+      destination: (req, file, cb) => {<br>
+        cb(null, 'uploads/'); // Save to 'uploads' folder<br>
+      },<br>
+      filename: (req, file, cb) => {<br>
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);<br>
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));<br>
+      }<br>
+    });<br><br>
+    // File filter (optional — only allow images)<br>
+    const fileFilter = (req, file, cb) => {<br>
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];<br>
+      if (allowedTypes.includes(file.mimetype)) {<br>
+        cb(null, true);<br>
+      } else {<br>
+        cb(new Error('Only images are allowed'), false);<br>
+      }<br>
+    };<br><br>
+    const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB limit
+  </div>
+
+  <!-- Section 4: Single File Upload Route -->
+  <div class="section-title">4️⃣ Single File Upload — Express Route</div>
+  <div class="code-block">
+    // backend/routes/upload.js<br>
+    const express = require('express');<br>
+    const multer = require('multer');<br>
+    const router = express.Router();<br><br>
+    // Setup multer (as above)<br>
+    const upload = multer({ storage, fileFilter });<br><br>
+    // Single file upload (field name = 'avatar')<br>
+    router.post('/upload-avatar', upload.single('avatar'), (req, res) => {<br>
+      try {<br>
+        if (!req.file) {<br>
+          return res.status(400).json({ error: 'No file uploaded' });<br>
+        }<br>
+        // File URL to save in database<br>
+        const fileUrl = `/uploads/${req.file.filename}`;<br>
+        res.json({ message: 'File uploaded successfully', fileUrl, file: req.file });<br>
+      } catch (error) {<br>
+        res.status(500).json({ error: error.message });<br>
+      }<br>
+    });<br><br>
+    // Multiple files upload (field name = 'images')<br>
+    router.post('/upload-multiple', upload.array('images', 5), (req, res) => {<br>
+      const fileUrls = req.files.map(file => `/uploads/${file.filename}`);<br>
+      res.json({ message: 'Files uploaded', files: fileUrls });<br>
+    });
+  </div>
+
+  <!-- Section 5: Frontend File Upload (React) -->
+  <div class="section-title">5️⃣ Frontend — File Upload Component</div>
+  <div class="code-block">
+    // components/FileUpload.jsx<br>
+    import { useState } from 'react';<br>
+    import axios from 'axios';<br><br>
+    function FileUpload() {<br>
+      const [file, setFile] = useState(null);<br>
+      const [preview, setPreview] = useState(null);<br>
+      const [uploading, setUploading] = useState(false);<br><br>
+      const handleFileChange = (e) => {<br>
+        const selectedFile = e.target.files[0];<br>
+        setFile(selectedFile);<br>
+        setPreview(URL.createObjectURL(selectedFile));<br>
+      };<br><br>
+      const handleUpload = async () => {<br>
+        if (!file) return;<br>
+        const formData = new FormData();<br>
+        formData.append('avatar', file);<br>
+        setUploading(true);<br>
+        try {<br>
+          const response = await axios.post('http://localhost:5000/api/upload-avatar', formData, {<br>
+            headers: { 'Content-Type': 'multipart/form-data' }<br>
+          });<br>
+          console.log('Upload success:', response.data);<br>
+          alert('File uploaded successfully!');<br>
+        } catch (error) {<br>
+          console.error('Upload error:', error);<br>
+          alert('Upload failed');<br>
+        } finally {<br>
+          setUploading(false);<br>
+        }<br>
+      };<br><br>
+      return (/* JSX with input type="file" */);<br>
+    }
+  </div>
+
+  <!-- Section 6: Live Demo — Simulated File Upload -->
+  <div class="section-title">6️⃣ Live Demo — File Upload Simulation</div>
+  <div class="live-demo">
+    <div class="multer-preview">
+      <strong>📸 Simulated Image Upload (Multer):</strong>
+      <div class="upload-area" id="uploadArea">
+        <div id="uploadPreview" style="margin-bottom: 16px;">
+          <img id="previewImage" src="#" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 50%; display: none;">
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="margin: 12px 0;">
+        <button class="demo-btn" id="uploadBtn">📤 Upload to Server (Simulated)</button>
+        <p id="uploadStatus" style="margin-top: 12px;"></p>
+      </div>
+      <p class="inline-code">✨ Multer processes the file and saves it to /uploads folder</p>
+    </div>
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const previewImg = document.getElementById("previewImage");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const statusDiv = document.getElementById("uploadStatus");
+      fileInput?.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if(file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            previewImg.src = event.target.result;
+            previewImg.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      uploadBtn?.addEventListener("click", () => {
+        if(fileInput.files.length === 0) {
+          statusDiv.innerHTML = "<span class='inline-code' style='color:#ef4444;'>❌ Please select a file first</span>";
+          return;
+        }
+        statusDiv.innerHTML = "<span class='inline-code'>⏳ Uploading to server...</span>";
+        setTimeout(() => {
+          statusDiv.innerHTML = "<span class='inline-code' style='color:#22c55e;'>✅ File uploaded successfully! Saved to /uploads folder. (Simulated)</span>";
+        }, 1500);
+      });
+    </script>
+  </div>
+
+  <!-- Section 7: Serving Static Files -->
+  <div class="section-title">7️⃣ Serving Uploaded Files — Express Static Middleware</div>
+  <div class="code-block">
+    // server.js — serve uploaded files statically<br>
+    const path = require('path');<br>
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));<br><br>
+    // Now files can be accessed at: http://localhost:5000/uploads/filename.jpg
+  </div>
+
+  <!-- Section 8: Cloud Storage with Cloudinary -->
+  <div class="section-title">8️⃣ Cloud Storage — Upload to Cloudinary (Production)</div>
+  <div class="code-block">
+    npm install cloudinary multer-storage-cloudinary<br><br>
+    const cloudinary = require('cloudinary').v2;<br>
+    const { CloudinaryStorage } = require('multer-storage-cloudinary');<br><br>
+    cloudinary.config({<br>
+      cloud_name: process.env.CLOUD_NAME,<br>
+      api_key: process.env.CLOUD_API_KEY,<br>
+      api_secret: process.env.CLOUD_API_SECRET<br>
+    });<br><br>
+    const storage = new CloudinaryStorage({<br>
+      cloudinary: cloudinary,<br>
+      params: {<br>
+        folder: 'user-avatars',<br>
+        allowed_formats: ['jpg', 'png', 'jpeg']<br>
+      }<br>
+    });<br><br>
+    const upload = multer({ storage });<br>
+    // Then use the same upload.single() — files go to Cloudinary!
+  </div>
+  <div class="highlight-box">
+    ☁️ <strong>Why Cloudinary?</strong> No need to manage server storage, automatic CDN, image optimization, resizing, and transformations built-in.
+  </div>
+
+  <!-- Section 9: Complete User Profile with Avatar -->
+  <div class="section-title">9️⃣ Complete Example — User Profile with Avatar Upload</div>
+  <div class="code-block">
+    // User model<br>
+    const userSchema = new mongoose.Schema({<br>
+      name: String,<br>
+      email: String,<br>
+      avatar: { type: String, default: '' } // URL to avatar image<br>
+    });<br><br>
+    // Upload route<br>
+    router.post('/profile/avatar', authenticate, upload.single('avatar'), async (req, res) => {<br>
+      const avatarUrl = `/uploads/${req.file.filename}`; // or Cloudinary URL<br>
+      await User.findByIdAndUpdate(req.user.id, { avatar: avatarUrl });<br>
+      res.json({ avatarUrl });<br>
+    });
+  </div>
+
+  <!-- Section 10: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Set up Multer in your Express backend with disk storage<br>
+    2. Create an uploads folder and serve it statically<br>
+    3. Build a React component that allows users to upload profile pictures<br>
+    4. Add file validation (only images, max 5MB)<br>
+    5. Save the file URL to the user's profile in database<br>
+    6. (Bonus) Integrate Cloudinary for production-ready cloud storage
+  </div>
+
+  <!-- Section 11: Common Mistakes -->
+  <div class="section-title">⚠️ Common Multer Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Forgetting <span class="inline-code">enctype="multipart/form-data"</span> in HTML form → files not sent</li>
+    <li>❌ Not creating uploads folder before first upload → ENOENT error</li>
+    <li>❌ Not handling file size limits → server crashes on large files</li>
+    <li>❌ Storing files directly in database (store path, not file content)</li>
+  </ul>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Multer?</h3><p>Node.js middleware for handling multipart/form-data (file uploads).</p></div>
+    <div class="card"><h3>❓ How to validate file type?</h3><p>Use fileFilter option in multer config to check mimetype.</p></div>
+    <div class="card"><h3>❓ Where should files be stored in production?</h3><p>Cloud storage (Cloudinary, AWS S3) — not on server disk.</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Build a product image upload feature (multiple images per product).</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add image preview before upload in React.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Implement drag-and-drop file upload area.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 89)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why file upload is essential</div>
+    <div class="card">✔️ Multer middleware setup (disk storage)</div>
+    <div class="card">✔️ Single and multiple file uploads</div>
+    <div class="card">✔️ File validation (type, size)</div>
+    <div class="card">✔️ Serving static files with Express</div>
+    <div class="card">✔️ Cloudinary for production storage</div>
+  </div>
+
+  <!-- Day 89 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 89 Ending Message</strong><br>
+    "File upload is a must-have feature in modern apps. Multer makes it easy! Now users can upload avatars, product images, and documents to your app — just like real-world applications."
+  </div>
+
+  <!-- Next: Day 90 -->
+  <div class="section-title">🔜 Next — Day 90 : MERN Project Integration (Frontend + Backend + Database)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🔄 Full Stack Integration</span>
+    <span class="badge">📦 Complete MERN App</span>
+    <span class="badge">🔐 Auth + CRUD + Upload</span>
+    <span class="badge">🚀 Deployment Prep</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 89 Completed ✅<br>
+    Implement file uploads in your app — users will love being able to add images!
+  </div>
+</div>
+</body>
+</html>

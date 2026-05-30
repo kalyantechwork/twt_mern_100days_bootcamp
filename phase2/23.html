@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 23: Branching & Pull Requests | Team Collaboration with Git + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .branch-visual {
+      background: #eef2ff;
+      border-radius: 28px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 23 · Branching & Pull Requests (Show Results)</div>
+  </div>
+
+  <h1>🌿 Git Branching & Pull Requests<br><span style="font-size:1rem;">Work in Parallel · Merge Code · Pull Requests · Real Team Workflow — Click "Show Result" for command demos</span></h1>
+
+  <!-- Section 1: What are Branches -->
+  <div class="section-title">1️⃣ What are Branches? (Parallel Development)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Branches</strong> are separate versions of your code. Think of them as creating a copy where you can experiment without affecting the main project. This allows multiple developers to work on different features simultaneously without interfering with each other.</p>
+    <p><strong>Where it's used:</strong> Every professional software team — feature development, bug fixes, hotfixes, experimentation, release preparation.</p>
+  </div>
+  <div class="branch-visual">
+    <strong>🌿 Branch Diagram:</strong><br>
+    main ─────────────────────────────────▶<br>
+       │<br>
+       └── feature-navbar ──▶ (changes) ──▶ merge back to main<br>
+       └── bugfix-header ───▶ (changes) ──▶ merge back to main
+  </div>
+
+  <!-- Section 2: Why Branches -->
+  <div class="section-title">2️⃣ Why Developers Use Branches</div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Isolate Features</h3><p>Work on new features without breaking main code.</p></div>
+    <div class="card"><h3>🐛 Bug Fixes</h3><p>Fix bugs separately and merge when ready.</p></div>
+    <div class="card"><h3>👥 Team Collaboration</h3><p>Multiple developers work simultaneously on different branches.</p></div>
+    <div class="card"><h3>🔀 Experiment Safely</h3><p>Try new ideas — if it fails, delete the branch.</p></div>
+  </div>
+
+  <!-- Section 3: Branch Commands -->
+  <div class="section-title">3️⃣ Essential Branch Commands</div>
+  <div class="example-card">
+    <div class="code-block">
+      # List all branches<br>
+      git branch<br><br>
+      # Create a new branch<br>
+      git branch feature-login<br><br>
+      # Switch to a branch<br>
+      git checkout feature-login<br><br>
+      # Create & switch in one command<br>
+      git checkout -b feature-navbar<br><br>
+      # Delete a branch (after merging)<br>
+      git branch -d feature-login
+    </div>
+    <button class="btn-show" data-target="branchCommandsResult">🌿 Show Branch Commands</button>
+    <div id="branchCommandsResult" class="result-area">
+      <div class="console-output">
+        $ git branch<br>
+        * main<br>
+        $ git checkout -b feature-login<br>
+        Switched to a new branch 'feature-login'<br>
+        $ git branch<br>
+        * feature-login<br>
+          main<br>
+        $ git checkout main<br>
+        Switched to branch 'main'<br>
+        $ git branch -d feature-login<br>
+        Deleted branch feature-login (was a1b2c3d)<br><br>
+        ✅ 'git branch -a' shows all local and remote branches
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Merging -->
+  <div class="section-title">4️⃣ Merging Branches (Combine Code)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is Merging?</h4>
+    <p>Merging combines changes from one branch into another. Typically, you merge feature branches into <span class="inline-code">main</span> when the feature is complete and tested.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # First, switch to the branch you want to merge INTO (e.g., main)<br>
+      git checkout main<br><br>
+      # Merge the feature branch into main<br>
+      git merge feature-login<br><br>
+      # Delete the feature branch after merge (optional)<br>
+      git branch -d feature-login
+    </div>
+    <button class="btn-show" data-target="mergeResult">🔀 Show Merge Command</button>
+    <div id="mergeResult" class="result-area">
+      <div class="diagram">
+        main: A---B---C---F---G<br>
+                 \<br>
+        feature:  D---E  (merged into main at F)
+      </div>
+      <div class="console-output">
+        $ git checkout main<br>
+        $ git merge feature-login<br>
+        Updating a1b2c3d..e4f5g6h<br>
+        Fast-forward<br>
+         index.html | 2 +-<br>
+         1 file changed, 1 insertion(+), 1 deletion(-)<br><br>
+        ✅ Fast-forward merge (no merge commit) — happens when branch is ahead of main.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Pull Requests -->
+  <div class="section-title">5️⃣ Pull Requests (PR) — GitHub Collaboration</div>
+  <div class="topic-explanation">
+    <h4>📌 What is a Pull Request?</h4>
+    <p>A <strong>Pull Request</strong> is a request to merge your branch into another branch (usually main). It allows code review, discussion, and automated testing before merging — essential for team workflows.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Step 1: Push your branch to GitHub<br>
+      git push origin feature-contact-page<br><br>
+      # Step 2: Go to GitHub.com → Your repository<br>
+      # Step 3: Click "Pull Requests" → "New Pull Request"<br>
+      # Step 4: Select base: main, compare: feature-contact-page<br>
+      # Step 5: Click "Create Pull Request"<br>
+      # Step 6: Team reviews → Click "Merge Pull Request"
+    </div>
+    <button class="btn-show" data-target="prResult">📋 Show Pull Request Workflow</button>
+    <div id="prResult" class="result-area">
+      <div class="diagram">
+        Local → git push → GitHub → Open PR → Review → Merge → main updated ✅
+      </div>
+      <div class="console-output">
+        🔄 Pull Request Workflow Summary:<br>
+        1. git push origin feature-branch<br>
+        2. Open GitHub → "Compare & Pull Request"<br>
+        3. Write description, add reviewers<br>
+        4. Team reviews code, leaves comments<br>
+        5. After approval, click "Merge Pull Request"<br>
+        6. Delete the branch (optional)<br><br>
+        💡 PRs are the standard for code review in every tech company!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Merge Conflicts -->
+  <div class="section-title">6️⃣ Merge Conflicts (When Git Can't Auto-Merge)</div>
+  <div class="topic-explanation">
+    <h4>📌 What is a Merge Conflict?</h4>
+    <p>A <strong>merge conflict</strong> occurs when two branches modify the same line(s) of code, or one branch deletes a file while another modifies it. Git cannot automatically decide which change to keep — you must resolve it manually.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # When merging, Git shows:<br>
+      Auto-merging index.html<br>
+      CONFLICT in index.html<br>
+      Fix conflicts and then commit.<br><br>
+      # Inside conflicted file:<br>
+      <<<<<<< HEAD<br>
+      Hello from main branch<br>
+      =======<br>
+      Hello from feature branch<br>
+      >>>>>>> feature-branch
+    </div>
+    <button class="btn-show" data-target="conflictResult">⚠️ Show Merge Conflict Resolution</button>
+    <div id="conflictResult" class="result-area">
+      <div class="console-output">
+        📝 How to Resolve Merge Conflicts:<br>
+        1. Open the conflicted file<br>
+        2. Look for conflict markers: <<<<<<< HEAD, =======, >>>>>>><br>
+        3. Edit the file to keep the correct code<br>
+        4. Remove all conflict markers (&lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt;)<br>
+        5. Save the file<br>
+        6. git add .<br>
+        7. git commit -m "Resolved merge conflict"<br>
+        8. git push<br><br>
+        💡 Merge conflicts are normal — don't panic! Practice resolving them.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Best Practices -->
+  <div class="section-title">7️⃣ Branching Best Practices</div>
+  <div class="card-grid">
+    <div class="card"><h3>📌 Name branches clearly</h3><p>feature/login-page, bugfix/navbar-crash, hotfix/security-patch</p></div>
+    <div class="card"><h3>🔀 Keep main branch stable</h3><p>Never commit directly to main — always use PRs</p></div>
+    <div class="card"><h3>🗑️ Delete merged branches</h3><p>Keeps repository clean and organized</p></div>
+    <div class="card"><h3>🔄 Pull before pushing</h3><p>git pull origin main to avoid conflicts</p></div>
+  </div>
+
+  <!-- Section 8: Real Team Workflow -->
+  <div class="section-title">8️⃣ Real Developer Team Workflow (GitHub Flow)</div>
+  <div class="example-card">
+    <div class="diagram">
+      main branch (production-ready)<br>
+         │<br>
+         ├── feature/auth (Developer A)<br>
+         ├── feature/payment (Developer B)<br>
+         └── bugfix/ui (Developer C)<br>
+         
+      Each developer → creates PR → code review → merge → deploy
+    </div>
+    <button class="btn-show" data-target="teamWorkflowResult">👥 Show Team Collaboration Workflow</button>
+    <div id="teamWorkflowResult" class="result-area">
+      <div class="code-block">
+        # Developer A's day:<br>
+        git checkout -b feature/api-integration<br>
+        # ... write code ...<br>
+        git add .<br>
+        git commit -m "Integrated payment API"<br>
+        git push origin feature/api-integration<br>
+        # Then open Pull Request on GitHub<br><br>
+        # Developer B reviews PR, approves, merges<br>
+        # All developers: git pull origin main
+      </div>
+      <div class="console-output">
+        ✅ This is the exact workflow used at Google, Microsoft, Amazon, and every tech company.<br>
+        🔁 Daily cycle: pull main → create branch → work → push → PR → merge → repeat
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesBranchResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesBranchResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to switch branch before making changes → commits on wrong branch. Fix: <span class="inline-code">git checkout</span> to correct branch.</li>
+        <li>❌ Merging without pulling latest main → creates unnecessary conflicts. Fix: <span class="inline-code">git pull origin main</span> before merging.</li>
+        <li>❌ Deleting branch before merging → losing work. Fix: Only delete after confirming merge.</li>
+        <li>❌ Not pushing feature branch to GitHub → no PR can be created. Fix: <span class="inline-code">git push origin branch-name</span>.</li>
+        <li>❌ Fear of merge conflicts → conflicts are normal! Practice resolving them.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 10: Important Commands Table -->
+  <div class="section-title">📋 Branch & PR Commands Summary</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>git branch --list</span></td><td>View all branches</td>
+        <tr><td><span class="inline-code">git checkout -b branch-name</span></td><td>Create & switch to new branch</td>
+        <tr><td><span class="inline-code">git checkout branch-name</span></td><td>Switch to existing branch</td>
+        <tr><td><span class="inline-code">git merge branch-name</span></td><td>Merge branch into current branch</td>
+        <tr><td><span class="inline-code">git push origin branch-name</span></td><td>Push branch to GitHub</td>
+        <tr><td><span class="inline-code">git branch -d branch-name</span></td><td>Delete local branch</td>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>📁 Practice Branching & PR:</strong><br>
+    1. Create a new GitHub repository (or use an existing one)<br>
+    2. Create a branch <span class="inline-code">feature-readme</span><br>
+    3. Add a README.md file with some content, commit, push to GitHub<br>
+    4. Open a Pull Request from <span class="inline-code">feature-readme</span> to <span class="inline-code">main</span><br>
+    5. As the owner, merge the PR<br>
+    6. Delete the branch both locally (<span class="inline-code">git branch -d feature-readme</span>) and on GitHub
+  </div>
+
+  <!-- Section 12: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is a Git branch?</h3><p>Separate line of development — allows parallel work without affecting main code.</p></div>
+    <div class="card"><h3>❓ What is a Pull Request?</h3><p>Request to merge one branch into another — enables code review and collaboration.</p></div>
+    <div class="card"><h3>❓ How to resolve merge conflicts?</h3><p>Manually edit conflicted files, remove conflict markers, then git add & commit.</p></div>
+    <div class="card"><h3>❓ How to see all branches?</h3><p><span class="inline-code">git branch</span> (local) or <span class="inline-code">git branch -a</span> (including remote)</p></div>
+  </div>
+
+  <!-- Section 13: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌿 Task 1</h3><p>Create 3 branches (feature-1, feature-2, bugfix) in a test repository.</p></div>
+    <div class="card"><h3>🔀 Task 2</h3><p>Merge one branch into main using command line.</p></div>
+    <div class="card"><h3>📋 Task 3</h3><p>Create a Pull Request on GitHub and merge it.</p></div>
+    <div class="card"><h3>⚠️ Task 4</h3><p>Simulate a merge conflict (create two branches that modify same line) and resolve it.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 23 - Branching & Pull Requests)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What are branches (parallel development)</div>
+    <div class="card">✔️ git branch, checkout, merge commands</div>
+    <div class="card">✔️ Pull Requests (code review workflow on GitHub)</div>
+    <div class="card">✔️ Merge conflicts & resolution techniques</div>
+    <div class="card">✔️ Real team collaboration workflow (GitHub Flow)</div>
+  </div>
+
+  <!-- Day 23 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 23 Ending Message</strong><br>
+    “Branches and Pull Requests are how professional teams collaborate. This is not optional — it's the standard workflow at every tech company. Master it, and you'll be ready for any development team.”
+  </div>
+
+  <!-- Next: Phase 4 Preview -->
+  <div class="section-title">🔜 Next — Phase 4: React Fundamentals (Day 24 onward)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚛️ Introduction to React</span>
+    <span class="badge">📦 Components & Props</span>
+    <span class="badge">✨ JSX</span>
+    <span class="badge">🪝 useState Hook</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 23 Completed ✅<br>
+    Click "Show Result" on each example to see branching/PR commands explained. Practice branching and PRs daily — it's how teams work!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

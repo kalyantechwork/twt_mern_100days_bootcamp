@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 84: Authentication Basics | Login, Register, JWT, bcrypt</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .auth-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 40px;
+      border: none;
+      background: #334155;
+      color: white;
+    }
+    .form-group input::placeholder {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🔐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 84 · Authentication Basics (Login/Register)</div>
+  </div>
+
+  <h1>🔐 Authentication Basics<br><span style="font-size:1rem;">Login · Register · JWT Tokens · bcrypt Password Hashing · Protected Routes</span></h1>
+
+  <!-- Section 1: What is Authentication -->
+  <div class="section-title">1️⃣ What is Authentication?</div>
+  <p><strong>Authentication</strong> is the process of verifying a user's identity. Login and registration are the most common authentication mechanisms in web applications.</p>
+  <div class="diagram">
+    User → Enters Credentials → Server Verifies → Returns Token → Subsequent requests include Token → User is Authenticated
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> Authentication is like showing your ID card at airport security. Once verified, you get a boarding pass (token) for all future flights.
+  </div>
+
+  <!-- Section 2: Authentication vs Authorization -->
+  <div class="section-title">2️⃣ Authentication vs Authorization</div>
+  <table>
+    <thead><tr><th>Concept</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Authentication</span></span><td>Verifying WHO you are</span></span><td>Login with email/password</span></span></td></tr>
+      <tr><td>Authorization</span></span><td>Verifying WHAT you can do</span></span><td>Admin can delete posts, users can only view</span></span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Section 3: Password Hashing with bcrypt -->
+  <div class="section-title">3️⃣ Password Hashing — bcrypt (Never Store Plain Passwords!)</div>
+  <div class="code-block">
+    npm install bcryptjs<br><br>
+    // backend/models/User.js (hash password before saving)<br>
+    const bcrypt = require('bcryptjs');<br>
+    const saltRounds = 10;<br><br>
+    // Hash password during registration<br>
+    const hashedPassword = await bcrypt.hash(password, saltRounds);<br>
+    <br>
+    // Compare password during login<br>
+    const isValid = await bcrypt.compare(plainPassword, hashedPassword);
+  </div>
+  <div class="highlight-box">
+    🔒 <strong>Why hash?</strong> Never store passwords as plain text! bcrypt hashes are one-way — even if database is hacked, passwords remain safe.
+  </div>
+
+  <!-- Section 4: JWT Tokens -->
+  <div class="section-title">4️⃣ JWT (JSON Web Tokens) — Stateless Authentication</div>
+  <div class="code-block">
+    npm install jsonwebtoken<br><br>
+    const jwt = require('jsonwebtoken');<br>
+    const JWT_SECRET = process.env.JWT_SECRET || 'mysecretkey';<br><br>
+    // Generate token on login<br>
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });<br>
+    <br>
+    // Verify token on protected routes<br>
+    const decoded = jwt.verify(token, JWT_SECRET);<br>
+    req.user = decoded;
+  </div>
+  <div class="diagram">
+    Header.payload.signature → Base64 encoded → Contains user info → Can't be tampered
+  </div>
+
+  <!-- Section 5: Complete Auth Backend -->
+  <div class="section-title">5️⃣ Complete Authentication Backend (Express)</div>
+  <div class="code-block">
+    // backend/routes/auth.js<br>
+    const express = require('express');<br>
+    const bcrypt = require('bcryptjs');<br>
+    const jwt = require('jsonwebtoken');<br>
+    const User = require('../models/User');<br>
+    const router = express.Router();<br>
+    <br>
+    // REGISTER<br>
+    router.post('/register', async (req, res) => {<br>
+      try {<br>
+        const { name, email, password } = req.body;<br>
+        // Check if user exists<br>
+        const existingUser = await User.findOne({ email });<br>
+        if (existingUser) return res.status(400).json({ error: 'User already exists' });<br>
+        <br>
+        // Hash password<br>
+        const hashedPassword = await bcrypt.hash(password, 10);<br>
+        <br>
+        // Create user<br>
+        const user = await User.create({ name, email, password: hashedPassword });<br>
+        <br>
+        // Generate token<br>
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });<br>
+        <br>
+        res.status(201).json({ user: { id: user._id, name, email }, token });<br>
+      } catch (error) {<br>
+        res.status(500).json({ error: error.message });<br>
+      }<br>
+    });<br>
+    <br>
+    // LOGIN<br>
+    router.post('/login', async (req, res) => {<br>
+      try {<br>
+        const { email, password } = req.body;<br>
+        const user = await User.findOne({ email });<br>
+        if (!user) return res.status(401).json({ error: 'Invalid credentials' });<br>
+        <br>
+        const isValid = await bcrypt.compare(password, user.password);<br>
+        if (!isValid) return res.status(401).json({ error: 'Invalid credentials' });<br>
+        <br>
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });<br>
+        <br>
+        res.json({ user: { id: user._id, name: user.name, email: user.email }, token });<br>
+      } catch (error) {<br>
+        res.status(500).json({ error: error.message });<br>
+      }<br>
+    });<br>
+    <br>
+    module.exports = router;
+  </div>
+
+  <!-- Section 6: Auth Middleware (Protect Routes) -->
+  <div class="section-title">6️⃣ Authentication Middleware — Protect Routes</div>
+  <div class="code-block">
+    // backend/middleware/auth.js<br>
+    const jwt = require('jsonwebtoken');<br>
+    <br>
+    const protect = async (req, res, next) => {<br>
+      try {<br>
+        const token = req.headers.authorization?.split(' ')[1];<br>
+        if (!token) return res.status(401).json({ error: 'Not authorized' });<br>
+        <br>
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);<br>
+        req.user = decoded;<br>
+        next();<br>
+      } catch (error) {<br>
+        res.status(401).json({ error: 'Invalid token' });<br>
+      }<br>
+    };<br>
+    <br>
+    // Use in protected routes<br>
+    router.get('/profile', protect, async (req, res) => {<br>
+      res.json({ user: req.user });<br>
+    });
+  </div>
+
+  <!-- Section 7: Frontend Auth with Axios -->
+  <div class="section-title">7️⃣ Frontend Authentication — Axios + LocalStorage</div>
+  <div class="code-block">
+    // services/authService.js<br>
+    import axios from 'axios';<br>
+    const API_URL = 'http://localhost:5000/api/auth';<br>
+    <br>
+    export const register = async (userData) => {<br>
+      const response = await axios.post(`${API_URL}/register`, userData);<br>
+      if (response.data.token) localStorage.setItem('token', response.data.token);<br>
+      return response.data;<br>
+    };<br>
+    <br>
+    export const login = async (credentials) => {<br>
+      const response = await axios.post(`${API_URL}/login`, credentials);<br>
+      if (response.data.token) localStorage.setItem('token', response.data.token);<br>
+      return response.data;<br>
+    };<br>
+    <br>
+    export const logout = () => {<br>
+      localStorage.removeItem('token');<br>
+    };<br>
+    <br>
+    export const getToken = () => localStorage.getItem('token');<br>
+    <br>
+    // Add token to all requests<br>
+    axios.interceptors.request.use(config => {<br>
+      const token = getToken();<br>
+      if (token) config.headers.Authorization = `Bearer ${token}`;<br>
+      return config;<br>
+    });
+  </div>
+
+  <!-- Section 8: React Auth Components -->
+  <div class="section-title">8️⃣ React Authentication Components</div>
+  <div class="live-demo">
+    <div class="auth-preview">
+      <strong>🔐 Authentication Demo (Simulated):</strong>
+      <div id="authStatus" style="margin-bottom: 16px; padding: 8px; background: #334155; border-radius: 40px; text-align: center;">
+        Status: <span id="loginStatus">Logged Out</span>
+      </div>
+      <div id="loginForm">
+        <div class="form-group">
+          <input type="email" id="loginEmail" placeholder="Email" value="user@example.com">
+        </div>
+        <div class="form-group">
+          <input type="password" id="loginPassword" placeholder="Password" value="password123">
+        </div>
+        <button class="demo-btn" id="loginBtn">🔑 Login</button>
+        <button class="demo-btn" id="registerBtn">📝 Register</button>
+        <button class="demo-btn" id="logoutBtn" style="display:none;">🚪 Logout</button>
+      </div>
+      <div id="userInfo" style="margin-top: 16px; display: none;">
+        <div class="code-block" style="background:#1e293b;">
+          ✅ Logged in as: <span id="userName">User</span><br>
+          📧 Email: <span id="userEmail">user@example.com</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      let loggedIn = false;
+      const statusSpan = document.getElementById("loginStatus");
+      const loginForm = document.getElementById("loginForm");
+      const userInfoDiv = document.getElementById("userInfo");
+      const userNameSpan = document.getElementById("userName");
+      const userEmailSpan = document.getElementById("userEmail");
+      const loginBtn = document.getElementById("loginBtn");
+      const registerBtn = document.getElementById("registerBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      function updateUI() {
+        if(loggedIn) {
+          statusSpan.textContent = "Logged In ✅";
+          loginForm.style.display = "none";
+          userInfoDiv.style.display = "block";
+          logoutBtn.style.display = "inline-block";
+        } else {
+          statusSpan.textContent = "Logged Out ❌";
+          loginForm.style.display = "block";
+          userInfoDiv.style.display = "none";
+          logoutBtn.style.display = "none";
+        }
+      }
+      loginBtn?.addEventListener("click", () => {
+        loggedIn = true;
+        userNameSpan.textContent = "Kalyan";
+        userEmailSpan.textContent = document.getElementById("loginEmail")?.value || "user@example.com";
+        updateUI();
+      });
+      registerBtn?.addEventListener("click", () => {
+        alert("Registration demo — in real app, this would create a new user");
+        loggedIn = true;
+        userNameSpan.textContent = "New User";
+        userEmailSpan.textContent = document.getElementById("loginEmail")?.value || "new@example.com";
+        updateUI();
+      });
+      logoutBtn?.addEventListener("click", () => {
+        loggedIn = false;
+        updateUI();
+      });
+      updateUI();
+    </script>
+  </div>
+
+  <!-- Section 9: Protected Route Component -->
+  <div class="section-title">9️⃣ Protected Route Component (Frontend)</div>
+  <div class="code-block">
+    // components/ProtectedRoute.jsx<br>
+    import { Navigate } from 'react-router-dom';<br>
+    <br>
+    function ProtectedRoute({ children }) {<br>
+      const token = localStorage.getItem('token');<br>
+      if (!token) return &lt;Navigate to="/login" replace /&gt;;<br>
+      return children;<br>
+    }<br>
+    <br>
+    // Usage in App.jsx<br>
+    &lt;Route path="/dashboard" element={<br>
+      &lt;ProtectedRoute&gt;<br>
+        &lt;Dashboard /&gt;<br>
+      &lt;/ProtectedRoute&gt;<br>
+    } /&gt;
+  </div>
+
+  <!-- Section 10: Auth Context (Global Auth State) -->
+  <div class="section-title">🔟 Auth Context — Global Authentication State</div>
+  <div class="code-block">
+    // context/AuthContext.jsx<br>
+    const AuthContext = createContext();<br>
+    <br>
+    export const AuthProvider = ({ children }) => {<br>
+      const [user, setUser] = useState(null);<br>
+      const [loading, setLoading] = useState(true);<br>
+      <br>
+      useEffect(() => {<br>
+        const token = localStorage.getItem('token');<br>
+        if (token) {<br>
+          // Verify token and load user<br>
+          fetchUser().then(setUser).finally(() => setLoading(false));<br>
+        } else setLoading(false);<br>
+      }, []);<br>
+      <br>
+      const login = async (email, password) => {<br>
+        const data = await authService.login({ email, password });<br>
+        setUser(data.user);<br>
+        localStorage.setItem('token', data.token);<br>
+      };<br>
+      <br>
+      const logout = () => {<br>
+        setUser(null);<br>
+        localStorage.removeItem('token');<br>
+      };<br>
+      <br>
+      return (&lt;AuthContext.Provider value={{ user, login, logout, loading }}&gt;{children}&lt;/AuthContext.Provider&gt;);<br>
+    };
+  </div>
+
+  <!-- Section 11: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a complete authentication system with Register and Login<br>
+    2. Store JWT token in localStorage and include in Axios headers<br>
+    3. Create protected routes that redirect to login if not authenticated<br>
+    4. Add Auth Context to manage global user state<br>
+    5. Implement logout functionality that clears token and user state<br>
+    6. Add loading states while checking authentication
+  </div>
+
+  <!-- Section 12: Common Mistakes -->
+  <div class="section-title">⚠️ Common Authentication Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Storing sensitive data (passwords) in localStorage → use tokens only</li>
+    <li>❌ Not hashing passwords before storing in database</li>
+    <li>❌ Exposing JWT secret in frontend code</li>
+    <li>❌ Not validating token on every protected request</li>
+  </ul>
+
+  <!-- Section 13: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is JWT?</h3><p>JSON Web Token — stateless authentication token containing encoded user data and signature.</p></div>
+    <div class="card"><h3>❓ Why hash passwords?</h3><p>Never store plain text passwords. bcrypt hashes are one-way and secure.</p></div>
+    <div class="card"><h3>❓ Difference between authentication and authorization?</h3><p>AuthN = who you are, AuthZ = what you can do.</p></div>
+    <div class="card"><h3>❓ Where to store JWT?</h3><p>localStorage (easy) or httpOnly cookies (more secure for production).</p></div>
+  </div>
+
+  <!-- Section 14: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Add "Remember Me" functionality to your login form.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Implement password reset flow (forgot password).</p></div>
+    <div class="card"><h3>Task 3</h3><p>Add role-based authorization (admin vs regular user).</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 84)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is authentication vs authorization</div>
+    <div class="card">✔️ Password hashing with bcrypt</div>
+    <div class="card">✔️ JWT tokens for stateless authentication</div>
+    <div class="card">✔️ Complete auth backend (register, login, protected routes)</div>
+    <div class="card">✔️ React auth components and protected routes</div>
+    <div class="card">✔️ Auth Context for global state</div>
+  </div>
+
+  <!-- Day 84 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 84 Ending Message</strong><br>
+    "Authentication is the gateway to user-specific features in your app. Now you can build secure login/register systems, protect routes, and manage user sessions like a pro!"
+  </div>
+
+  <!-- Next: Day 85 -->
+  <div class="section-title">🔜 Next — Day 85 : JWT Authentication Deep Dive (Token Generation, Verification, Refresh Tokens)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🎫 Token Generation</span>
+    <span class="badge">🔍 Token Verification</span>
+    <span class="badge">🔄 Refresh Tokens</span>
+    <span class="badge">🛡️ Middleware</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 84 Completed ✅<br>
+    Authentication is essential for every real-world app. Master JWT and bcrypt — they're everywhere!
+  </div>
+</div>
+</body>
+</html>

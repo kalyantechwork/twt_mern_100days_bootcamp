@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 95: Docker Basics for MERN Apps | Containerization</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .docker-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .file-structure {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🐳</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 95 · Docker Basics for MERN Apps</div>
+  </div>
+
+  <h1>🐳 Docker Basics for MERN Apps<br><span style="font-size:1rem;">Containerization · Dockerfile · docker-compose · Production Ready</span></h1>
+
+  <!-- Section 1: What is Docker -->
+  <div class="section-title">1️⃣ What is Docker? (Containers Explained)</div>
+  <p><strong>Docker</strong> is a platform for containerizing applications — packaging code with all its dependencies into a standardized unit that runs consistently anywhere.</p>
+  <div class="diagram">
+    App Code + Dependencies + Config → Docker Image → Docker Container (runs anywhere)
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Analogy:</strong> Docker is like a shipping container. Your app (like cargo) goes into the container, and the container can be shipped (deployed) to any port (server) without worrying about differences.
+  </div>
+
+  <!-- Section 2: Why Docker for MERN -->
+  <div class="section-title">2️⃣ Why Docker? (Benefits for MERN Developers)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🚀 Consistent Environment</h3><p>"Works on my machine" problem solved — same environment everywhere</p></div>
+    <div class="card"><h3>🐳 Easy Deployment</h3><p>Deploy to any cloud (AWS, GCP, Azure, DigitalOcean) with same commands</p></div>
+    <div class="card"><h3>📦 Isolated Services</h3><p>MongoDB, Node.js backend, React frontend in separate containers</p></div>
+    <div class="card"><h3>⚡ Fast Scaling</h3><p>Spin up multiple containers for high traffic</p></div>
+  </div>
+
+  <!-- Section 3: Install Docker -->
+  <div class="section-title">3️⃣ Install Docker (Windows/Mac/Linux)</div>
+  <div class="code-block">
+    # Download Docker Desktop from docker.com<br>
+    # Verify installation<br>
+    docker --version<br>
+    # Output: Docker version 24.0.7<br><br>
+    docker-compose --version<br>
+    # Output: Docker Compose version v2.23.0
+  </div>
+
+  <!-- Section 4: Dockerfile for Node.js Backend -->
+  <div class="section-title">4️⃣ Dockerfile — Node.js Backend</div>
+  <div class="code-block">
+    # backend/Dockerfile<br>
+    FROM node:20-alpine<br><br>
+    WORKDIR /app<br><br>
+    COPY package*.json ./<br>
+    RUN npm ci --only=production<br><br>
+    COPY . .<br><br>
+    EXPOSE 5000<br><br>
+    CMD ["node", "server.js"]
+  </div>
+  <div class="highlight-box">
+    📝 <strong>Best practices:</strong> Use Alpine for smaller images, multi-stage builds, don't copy node_modules to cache properly.
+  </div>
+
+  <!-- Section 5: Dockerfile for React Frontend -->
+  <div class="section-title">5️⃣ Dockerfile — React Frontend (Multi-stage)</div>
+  <div class="code-block">
+    # frontend/Dockerfile (multi-stage build)<br>
+    # Stage 1: Build<br>
+    FROM node:20-alpine AS builder<br>
+    WORKDIR /app<br>
+    COPY package*.json ./<br>
+    RUN npm ci<br>
+    COPY . .<br>
+    RUN npm run build<br><br>
+    # Stage 2: Serve with nginx<br>
+    FROM nginx:alpine<br>
+    COPY --from=builder /app/dist /usr/share/nginx/html<br>
+    COPY nginx.conf /etc/nginx/conf.d/default.conf<br>
+    EXPOSE 80<br>
+    CMD ["nginx", "-g", "daemon off;"]
+  </div>
+
+  <!-- Section 6: Docker Compose for MERN -->
+  <div class="section-title">6️⃣ Docker Compose — Complete MERN Stack</div>
+  <div class="code-block">
+    # docker-compose.yml<br>
+    version: '3.8'<br>
+    services:<br>
+      mongodb:<br>
+        image: mongo:6<br>
+        container_name: mongodb<br>
+        restart: always<br>
+        ports:<br>
+          - "27017:27017"<br>
+        volumes:<br>
+          - mongodb_data:/data/db<br>
+        environment:<br>
+          MONGO_INITDB_ROOT_USERNAME: admin<br>
+          MONGO_INITDB_ROOT_PASSWORD: password<br><br>
+      backend:<br>
+        build: ./backend<br>
+        container_name: backend<br>
+        restart: always<br>
+        ports:<br>
+          - "5000:5000"<br>
+        environment:<br>
+          - NODE_ENV=production<br>
+          - MONGO_URI=mongodb://admin:password@mongodb:27017/myapp?authSource=admin<br>
+          - JWT_SECRET=${JWT_SECRET}<br>
+        depends_on:<br>
+          - mongodb<br><br>
+      frontend:<br>
+        build: ./frontend<br>
+        container_name: frontend<br>
+        restart: always<br>
+        ports:<br>
+          - "80:80"<br>
+        depends_on:<br>
+          - backend<br><br>
+    volumes:<br>
+      mongodb_data:
+  </div>
+
+  <!-- Section 7: .dockerignore -->
+  <div class="section-title">7️⃣ .dockerignore — Exclude Unnecessary Files</div>
+  <div class="code-block">
+    # .dockerignore (backend & frontend)<br>
+    node_modules<br>
+    npm-debug.log<br>
+    .env<br>
+    .git<br>
+    .gitignore<br>
+    README.md<br>
+    .vscode<br>
+    .idea
+  </div>
+
+  <!-- Section 8: Building and Running -->
+  <div class="section-title">8️⃣ Build & Run Docker Containers</div>
+  <div class="code-block">
+    # Build all images and start containers<br>
+    docker-compose up -d --build<br><br>
+    # View running containers<br>
+    docker ps<br><br>
+    # View logs<br>
+    docker-compose logs -f backend<br><br>
+    # Stop containers<br>
+    docker-compose down<br><br>
+    # Stop and remove volumes (clear data)<br>
+    docker-compose down -v
+  </div>
+
+  <!-- Section 9: Useful Docker Commands -->
+  <div class="section-title">9️⃣ Essential Docker Commands Reference</div>
+  <table>
+    <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>docker ps</span></span><td>List running containers</span></td></tr>
+      <tr><td>docker images</span></span><td>List downloaded/built images</span></td></tr>
+      <tr><td>docker stop CONTAINER_ID</span></span><td>Stop a container</span></td></tr>
+      <tr><td>docker rm CONTAINER_ID</span></span><td>Remove a container</span></td></tr>
+      <tr><td>docker rmi IMAGE_ID</span></span><td>Remove an image</span></td></tr>
+      <tr><td>docker exec -it CONTAINER_ID bash</span></span><td>Access container shell</span></td></tr>
+      <tr><td>docker logs CONTAINER_ID</span></span><td>View container logs</span></span></td></tr>
+    </tbody>
+  </tr>
+
+  <!-- Section 10: Production vs Development Config -->
+  <div class="section-title">🔟 Development vs Production Docker</div>
+  <div class="card-grid">
+    <div class="card"><h3>🛠️ Development</h3><p>• Use nodemon for hot reload<br>• Mount local volumes for code changes<br>• Separate docker-compose.override.yml</p></div>
+    <div class="card"><h3>🚀 Production</h3><p>• Multi-stage builds (smaller images)<br>• Environment variables for secrets<br>• Use nginx to serve React build<br>• Health checks</p></div>
+  </div>
+
+  <!-- Section 11: Health Checks -->
+  <div class="section-title">1️⃣1️⃣ Health Checks — Monitor Container Status</div>
+  <div class="code-block">
+    # Add to backend service in docker-compose.yml<br>
+    healthcheck:<br>
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]<br>
+      interval: 30s<br>
+      timeout: 10s<br>
+      retries: 3<br><br>
+    # Backend health endpoint<br>
+    app.get('/health', (req, res) => {<br>
+      res.status(200).json({ status: 'ok', timestamp: new Date() });<br>
+    });
+  </div>
+
+  <!-- Section 12: Live Demo — Docker Simulation -->
+  <div class="section-title">1️⃣2️⃣ Live Demo — Docker Build Simulation</div>
+  <div class="live-demo">
+    <div class="docker-preview">
+      <strong>🐳 Docker Build Process Simulation:</strong>
+      <div class="file-structure" style="margin: 16px 0;">
+        $ docker-compose up -d --build<br>
+        ⚡ Building backend...<br>
+        ⚡ Step 1/6 : FROM node:20-alpine<br>
+        ⚡ Step 2/6 : WORKDIR /app<br>
+        ⚡ Step 3/6 : COPY package*.json ./<br>
+        ⚡ Step 4/6 : RUN npm ci<br>
+        ⚡ Step 5/6 : COPY . .<br>
+        ⚡ Step 6/6 : CMD ["node", "server.js"]<br>
+        ✅ Successfully built backend image<br>
+        ⚡ Building frontend...<br>
+        ✅ Successfully built frontend image<br>
+        🚀 Starting mongodb... done<br>
+        🚀 Starting backend... done<br>
+        🚀 Starting frontend... done<br>
+        🐳 All containers running!
+      </div>
+      <button class="demo-btn" id="dockerSimBtn">▶️ Simulate Docker Build</button>
+    </div>
+    <script>
+      document.getElementById("dockerSimBtn")?.addEventListener("click", () => {
+        const outputDiv = document.querySelector("#dockerSimBtn").previousElementSibling;
+        outputDiv.innerHTML = `$ docker-compose up -d --build<br>
+        📦 Building backend (node:20-alpine)...<br>
+        ✅ Backend image built: 245MB<br>
+        📦 Building frontend (multi-stage)...<br>
+        ✅ Frontend image built: 52MB (optimized!)<br>
+        🐳 Creating mongodb... done<br>
+        🐳 Creating backend... done<br>
+        🐳 Creating frontend... done<br>
+        🌐 App running at http://localhost:80<br>
+        🔧 Backend API at http://localhost:5000`;
+      });
+    </script>
+  </div>
+
+  <!-- Section 13: Deploying Docker Containers to Cloud -->
+  <div class="section-title">1️⃣3️⃣ Deploying Dockerized MERN App</div>
+  <div class="card-grid">
+    <div class="card"><h3>🟢 AWS ECS</h3><p>Elastic Container Service — managed container orchestration</p></div>
+    <div class="card"><h3>⚙️ Google Cloud Run</h3><p>Serverless containers — pay per request</p></div>
+    <div class="card"><h3>🔵 Azure Container Instances</h3><p>Simplest way to run containers</p></div>
+    <div class="card"><h3>🌊 DigitalOcean App Platform</h3><p>Deploy from GitHub + Dockerfile</p></div>
+  </div>
+
+  <!-- Section 14: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Install Docker Desktop on your machine<br>
+    2. Create a Dockerfile for your Node.js backend<br>
+    3. Create a Dockerfile for your React frontend (multi-stage with nginx)<br>
+    4. Write a docker-compose.yml that runs MongoDB, backend, and frontend<br>
+    5. Build and run your complete MERN app inside containers<br>
+    6. Test that everything works at localhost (frontend API calls to backend)
+  </div>
+
+  <!-- Section 15: Common Mistakes -->
+  <div class="section-title">⚠️ Common Docker Mistakes</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Forgetting .dockerignore → copying node_modules (huge image)</li>
+    <li>❌ Using root user inside containers (security risk)</li>
+    <li>❌ Hardcoding environment variables in Dockerfile (use .env)</li>
+    <li>❌ Not handling container networking — frontend can't reach backend by localhost</li>
+  </ul>
+
+  <!-- Section 16: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is a Docker container?</h3><p>Lightweight, standalone executable package with everything needed to run an application.</p></div>
+    <div class="card"><h3>❓ Difference between Docker image and container?</h3><p>Image = blueprint/template, Container = running instance of image.</p></div>
+    <div class="card"><h3>❓ What is docker-compose?</h3><p>Tool to define and run multi-container Docker applications (MERN stack).</p></div>
+    <div class="card"><h3>❓ Why multi-stage builds?</h3><p>Smaller final images — build tools in first stage, only runtime artifacts in final.</p></div>
+  </div>
+
+  <!-- Section 17: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Containerize an existing MERN app with Docker Compose.</p></div>
+    <div class="card"><h3>Task 2</h3><p>Add health checks to your backend container.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Optimize image sizes using Alpine base images and multi-stage builds.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 95)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Docker — containerization platform</div>
+    <div class="card">✔️ Dockerfile for Node.js backend and React frontend</div>
+    <div class="card">✔️ Multi-stage builds for smaller images</div>
+    <div class="card">✔️ Docker Compose for complete MERN stack</div>
+    <div class="card">✔️ Essential Docker commands</div>
+    <div class="card">✔️ Health checks and production considerations</div>
+  </div>
+
+  <!-- Day 95 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 95 Ending Message</strong><br>
+    "Docker eliminates 'works on my machine' problems forever! Your MERN app now runs consistently anywhere — from your laptop to any cloud provider. Containerization is the future of deployment."
+  </div>
+
+  <!-- Next: Day 96 -->
+  <div class="section-title">🔜 Next — Day 96 : Deploy Backend (Render / Railway)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🚀 Render Deployment</span>
+    <span class="badge">🛤️ Railway Deployment</span>
+    <span class="badge">🌐 Environment Variables</span>
+    <span class="badge">📦 MongoDB Atlas</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 95 Completed ✅<br>
+    Dockerize your MERN app — it's a game changer for deployment and scalability!
+  </div>
+</div>
+</body>
+</html>

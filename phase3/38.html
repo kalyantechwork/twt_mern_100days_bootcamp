@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 38: Context API | Global State Management in React + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .context-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌍</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 38 · Context API (Global State Management) — Show Results</div>
+  </div>
+
+  <h1>🌍 Context API<br><span style="font-size:1rem;">Global State Management · createContext · useContext · Avoid Prop Drilling — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What is Context API -->
+  <div class="section-title">1️⃣ What is Context API? (Global State Solution)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Context API</strong> is a React feature that allows you to share data across multiple components without passing props manually at every level (solving the "prop drilling" problem). It provides a way to pass data through the component tree without having to pass props down manually at every level.</p>
+    <p><strong>Where it's used:</strong> Theme (dark/light mode), User authentication status, Language preferences, Shopping cart state, User settings, Notifications — any data that needs to be accessed by many components at different levels.</p>
+  </div>
+  <div class="diagram">
+    Without Context: App → Parent → Child → GrandChild → Data (prop drilling nightmare)<br>
+    With Context: App (Provider) → Any Component (Consumer) → Direct Access!
+  </div>
+
+  <!-- Section 2: Prop Drilling Problem -->
+  <div class="section-title">2️⃣ The Problem: Prop Drilling</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Without Context — props must pass through every level<br>
+      function App() { const [user, setUser] = useState("Kalyan"); return &lt;Header user={user} /&gt;; }<br>
+      function Header({ user }) { return &lt;Navbar user={user} /&gt;; }<br>
+      function Navbar({ user }) { return &lt;div&gt;Welcome, {user}&lt;/div&gt;; }<br>
+      // Header component didn't need 'user', but had to pass it down!
+    </div>
+    <button class="btn-show" data-target="propDrillingResult">📦 Show Prop Drilling Problem</button>
+    <div id="propDrillingResult" class="result-area">
+      <div class="console-output">
+        🧠 <strong>Prop Drilling Problem:</strong><br>
+        • Data passes through components that don't need it<br>
+        • Makes code harder to maintain and refactor<br>
+        • Components become tightly coupled<br>
+        • Context API solves this by making data globally accessible!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Context Solution -->
+  <div class="section-title">3️⃣ The Solution: Context API in 3 Steps</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Step 1: Create Context<br>
+      import { createContext, useState } from 'react';<br>
+      export const UserContext = createContext();<br><br>
+      // Step 2: Provide value (wrap components that need access)<br>
+      function App() {<br>
+        const [user, setUser] = useState("Kalyan");<br>
+        return (&lt;UserContext.Provider value={{ user, setUser }}&gt;&lt;Header /&gt;&lt;/UserContext.Provider&gt;);<br>
+      }<br><br>
+      // Step 3: Consume anywhere!<br>
+      function Navbar() {<br>
+        const { user } = useContext(UserContext);<br>
+        return &lt;div&gt;Welcome, {user}&lt;/div&gt;;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="contextSolutionResult">🎯 Show Context Solution</button>
+    <div id="contextSolutionResult" class="result-area">
+      <div class="console-output">
+        ✅ Context API in 3 steps:<br>
+        1. createContext() — creates a context object<br>
+        2. Provider — wraps components and provides value<br>
+        3. useContext() — consumes the context value<br>
+        💡 Any component can access this data directly — no prop drilling!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Theme Context Live Demo -->
+  <div class="section-title">4️⃣ Live Demo: Theme Context (Light/Dark Mode)</div>
+  <div class="example-card">
+    <div class="code-block">
+      // ThemeContext.jsx<br>
+      const ThemeContext = createContext();<br>
+      export function useTheme() { return useContext(ThemeContext); }<br><br>
+      export function ThemeProvider({ children }) {<br>
+        const [theme, setTheme] = useState('light');<br>
+        const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');<br>
+        return (&lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;{children}&lt;/ThemeContext.Provider&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="themeContextResult">🎨 Show Theme Context Demo</button>
+    <div id="themeContextResult" class="result-area">
+      <div class="context-card">
+        <strong>🎨 Theme Context Demo (Global Theme)</strong>
+        <div id="themeDemoArea" style="margin-top: 16px; padding: 20px; border-radius: 16px; background: white; color: #0f172a; transition: 0.3s;">
+          <p>Current theme: <strong id="themeStatusText">light</strong></p>
+          <button class="demo-btn" id="toggleThemeBtn">🌓 Toggle Theme</button>
+          <p style="margin-top: 12px;">✅ This component and ANY other component can access this theme without prop drilling! Try clicking the button — theme is global.</p>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Theme state is available to ALL components via Context<br>
+        ✅ No prop drilling — any component can use useTheme() hook<br>
+        💡 This pattern is used in real apps like Twitter dark mode!
+      </div>
+      <script>
+        let isDarkMode = false;
+        const themeArea = document.getElementById("themeDemoArea");
+        const themeStatus = document.getElementById("themeStatusText");
+        function updateThemeDisplay() {
+          if(isDarkMode) {
+            themeArea.style.backgroundColor = "#1e293b";
+            themeArea.style.color = "#f1f5f9";
+            themeStatus.textContent = "dark";
+          } else {
+            themeArea.style.backgroundColor = "#ffffff";
+            themeArea.style.color = "#0f172a";
+            themeStatus.textContent = "light";
+          }
+        }
+        document.getElementById("toggleThemeBtn")?.addEventListener("click", () => {
+          isDarkMode = !isDarkMode;
+          updateThemeDisplay();
+        });
+        updateThemeDisplay();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: Auth Context -->
+  <div class="section-title">5️⃣ Real Example: User Authentication Context</div>
+  <div class="example-card">
+    <div class="code-block">
+      const AuthContext = createContext();<br><br>
+      function AuthProvider({ children }) {<br>
+        const [user, setUser] = useState(null);<br>
+        const login = (userData) => setUser(userData);<br>
+        const logout = () => setUser(null);<br>
+        return (&lt;AuthContext.Provider value={{ user, login, logout }}&gt;{children}&lt;/AuthContext.Provider&gt;);<br>
+      }<br><br>
+      // Any component can now access user, login, logout<br>
+      function Profile() { const { user, logout } = useContext(AuthContext); return ...; }
+    </div>
+    <button class="btn-show" data-target="authContextResult">🔐 Show Auth Context Demo</button>
+    <div id="authContextResult" class="result-area">
+      <div class="context-card">
+        <strong>🔐 Auth Context Demo (Login/Logout Global)</strong>
+        <div id="authDemoArea" style="margin-top: 16px; padding: 20px; border-radius: 16px; background: #0f172a;">
+          <div id="authStatus">🔒 Status: Logged Out</div>
+          <button class="demo-btn" id="loginBtnAuth">🔑 Login</button>
+          <button class="demo-btn" id="logoutBtnAuth">🚪 Logout</button>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Auth state (user login status) is global — any component can check if user is logged in<br>
+        ✅ Navbar, Profile, Dashboard, Checkout can all access this data directly<br>
+        💡 This is exactly how real authentication works in production apps!
+      </div>
+      <script>
+        let isLoggedIn = false;
+        const authDiv = document.getElementById("authStatus");
+        function updateAuthDisplay() {
+          if(isLoggedIn) authDiv.innerHTML = "✅ Status: Logged In as Kalyan";
+          else authDiv.innerHTML = "🔒 Status: Logged Out";
+        }
+        document.getElementById("loginBtnAuth")?.addEventListener("click", () => {
+          isLoggedIn = true;
+          updateAuthDisplay();
+        });
+        document.getElementById("logoutBtnAuth")?.addEventListener("click", () => {
+          isLoggedIn = false;
+          updateAuthDisplay();
+        });
+        updateAuthDisplay();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: Shopping Cart Context -->
+  <div class="section-title">6️⃣ Shopping Cart Context Example</div>
+  <div class="example-card">
+    <div class="code-block">
+      const CartContext = createContext();<br><br>
+      function CartProvider({ children }) {<br>
+        const [cart, setCart] = useState([]);<br>
+        const addToCart = (product) => setCart(prev => [...prev, product]);<br>
+        const total = cart.reduce((sum, item) => sum + item.price, 0);<br>
+        return (&lt;CartContext.Provider value={{ cart, addToCart, total }}&gt;{children}&lt;/CartContext.Provider&gt;);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="cartContextResult">🛒 Show Shopping Cart Context</button>
+    <div id="cartContextResult" class="result-area">
+      <div class="context-card">
+        <strong>🛒 Shopping Cart Context Demo</strong>
+        <div id="cartDemo" style="margin-top: 16px;">
+          <div id="cartItemsDisplay" style="margin-bottom: 12px;">Cart is empty</div>
+          <button class="demo-btn" id="addLaptopBtn">➕ Add Laptop ($999)</button>
+          <button class="demo-btn" id="addPhoneBtn">➕ Add Phone ($499)</button>
+          <button class="demo-btn" id="clearCartBtnSim">🗑️ Clear Cart</button>
+          <p id="cartTotalDisplay" style="margin-top: 12px;">Total: $0</p>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Cart state is global — any component can add/remove items<br>
+        ✅ Product list, Cart icon, Checkout page can all access the same cart data<br>
+        💡 This is how real e-commerce sites manage shopping carts!
+      </div>
+      <script>
+        let cartSim = [];
+        const cartItemsDivSim = document.getElementById("cartItemsDisplay");
+        const cartTotalSpanSim = document.getElementById("cartTotalDisplay");
+        function renderCartSim() {
+          if(cartSim.length === 0) cartItemsDivSim.innerHTML = "Cart is empty";
+          else cartItemsDivSim.innerHTML = cartSim.map(item => `<div>${item.name} - $${item.price}</div>`).join('');
+          const total = cartSim.reduce((sum, item) => sum + item.price, 0);
+          cartTotalSpanSim.innerHTML = `Total: $${total}`;
+        }
+        document.getElementById("addLaptopBtn")?.addEventListener("click", () => { cartSim.push({ id: Date.now(), name: "Laptop", price: 999 }); renderCartSim(); });
+        document.getElementById("addPhoneBtn")?.addEventListener("click", () => { cartSim.push({ id: Date.now(), name: "Phone", price: 499 }); renderCartSim(); });
+        document.getElementById("clearCartBtnSim")?.addEventListener("click", () => { cartSim = []; renderCartSim(); });
+        renderCartSim();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: Custom Hook for Context -->
+  <div class="section-title">7️⃣ Best Practice: Custom Hook for Context</div>
+  <div class="example-card">
+    <div class="code-block">
+      // Create custom hook for cleaner consumption<br>
+      export function useAuth() {<br>
+        const context = useContext(AuthContext);<br>
+        if (!context) throw new Error('useAuth must be used within AuthProvider');<br>
+        return context;<br>
+      }<br><br>
+      // Usage in components — clean and simple!<br>
+      function Profile() { const { user, logout } = useAuth(); return ...; }
+    </div>
+    <button class="btn-show" data-target="customHookResult">🪝 Show Custom Hook Pattern</button>
+    <div id="customHookResult" class="result-area">
+      <div class="console-output">
+        ✅ Custom hooks provide better error messages (fail early if used outside provider)<br>
+        ✅ Cleaner component code — useAuth() vs useContext(AuthContext)<br>
+        ✅ Easier to refactor — change context implementation without changing components<br>
+        💡 This is the recommended pattern in professional React codebases!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Comparison Table -->
+  <div class="section-title">8️⃣ Context API vs Prop Drilling vs Redux</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Approach</th><th>When to Use</th><th>Pros</th><th>Cons</th></tr></thead>
+      <tbody>
+        <tr><td>Prop Drilling</span></td><td>Small apps (2-3 levels)</span></td><td>Simple</span></td>}.\]
+
+Hard to maintain, messy</span></tr>
+        <tr><td>Context API</span></td><td>Medium apps, theme, auth, language</span>},
+
+Built-in, no extra install, lightweight</span>},
+
+Frequent updates cause re-renders</span></tr>
+        <tr><td>Redux</span></td><td>Large apps, complex state, frequent updates</span>},
+
+Powerful devtools, predictable</span>},
+
+More boilerplate, learning curve</span></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 9: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>Theme Context</strong> — toggle between light/dark mode globally<br>
+    2. Create an <strong>Auth Context</strong> — login/logout functionality accessible from any component<br>
+    3. Create a <strong>Language Context</strong> — switch between English and another language<br>
+    4. Build a small app that uses all three contexts together
+  </div>
+
+  <!-- Section 10: Common Mistakes -->
+  <div class="section-title">⚠️ Common Context API Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesContextResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesContextResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting to wrap components with <span class="inline-code">&lt;Provider&gt;</span> → context undefined, components can't access data</li>
+        <li>❌ Using context for every piece of state (only for truly global state that many components need)</li>
+        <li>❌ Not separating context into multiple files → messy, hard to maintain code</li>
+        <li>❌ Putting expensive computations in context value (causes unnecessary re-renders)</li>
+        <li>❌ Not creating custom hooks → no error messages when used outside provider</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What is Context API?</h3><p>React feature for global state management without prop drilling.</p></div>
+    <div class="card"><h3>❓ When to use Context?</h3><p>Theme, authentication, language, user preferences — data needed by many components.</p></div>
+    <div class="card"><h3>❓ Context vs Redux?</h3><p>Context is built-in, simpler. Redux has devtools, better for complex state and frequent updates.</p></div>
+    <div class="card"><h3>❓ What is prop drilling?</h3><p>Passing props through multiple components that don't need them — makes code messy.</p></div>
+  </div>
+
+  <!-- Section 12: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎨 Task 1</h3><p>Build a <strong>Theme Switcher</strong> — change entire app theme using Context.</p></div>
+    <div class="card"><h3>🔐 Task 2</h3><p>Build a <strong>User Preferences</strong> dashboard — save preferences globally using Context.</p></div>
+    <div class="card"><h3>🔔 Task 3</h3><p>Build a <strong>Notification System</strong> — show toast messages from any component using Context.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 38 - Context API)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Context API — React's built-in solution to prop drilling</div>
+    <div class="card">✔️ Three steps: createContext, Provider, useContext</div>
+    <div class="card">✔️ Real examples: Theme Switcher, Auth, Shopping Cart</div>
+    <div class="card">✔️ Custom hooks for cleaner context consumption (useTheme, useAuth)</div>
+    <div class="card">✔️ Context vs Props vs Redux — knowing when to use each</div>
+  </div>
+
+  <!-- Day 38 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 38 Ending Message</strong><br>
+    "Context API eliminates prop drilling and makes global state management simple and elegant. Now theme, authentication, shopping cart, and user preferences can be accessed from ANY component without passing props through intermediate components. This is how professional React apps manage global state!"
+  </div>
+
+  <!-- Next: Day 39 -->
+  <div class="section-title">🔜 Next — Day 39 : Custom Hooks (Reusable Logic)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🪝 Custom Hooks</span>
+    <span class="badge">♻️ Reusable Logic</span>
+    <span class="badge">📏 useLocalStorage</span>
+    <span class="badge">🖱️ useWindowSize</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 38 Completed ✅<br>
+    Click "Show Result" on each example to see Context API in action. Practice building theme switchers, auth systems, and shopping carts with global state!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

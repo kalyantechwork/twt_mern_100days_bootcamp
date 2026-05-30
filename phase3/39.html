@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 39: Custom Hooks | Reusable Logic in React + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .hook-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+    }
+    .size-display {
+      background: #334155;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #facc15;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 40px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🪝</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 39 · Custom Hooks (Reusable Logic) — Show Results</div>
+  </div>
+
+  <h1>🪝 Custom Hooks<br><span style="font-size:1rem;">Reusable Logic · Extract Component Logic · useLocalStorage · useWindowSize · useFetch — Click "Show Result" for live demos</span></h1>
+
+  <!-- Section 1: What are Custom Hooks -->
+  <div class="section-title">1️⃣ What are Custom Hooks? (Reusable Logic)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Custom Hooks</strong> are JavaScript functions that start with "use" and can call other React hooks. They let you extract component logic into reusable functions, making your code cleaner, more maintainable, and shareable across multiple components.</p>
+    <p><strong>Where it's used:</strong> Form handling, API calls, localStorage persistence, window size tracking, online status detection, timer logic — any repeating logic that uses React hooks.</p>
+  </div>
+  <div class="diagram">
+    Duplicate Logic in multiple components → Extract to Custom Hook → One source of truth → Reuse everywhere
+  </div>
+
+  <!-- Section 2: Why Custom Hooks -->
+  <div class="section-title">2️⃣ Why Custom Hooks? (Benefits)</div>
+  <div class="card-grid">
+    <div class="card"><h3>♻️ Reusability</h3><p>Write logic once, use in multiple components without duplication</p></div>
+    <div class="card"><h3>🧹 Clean Code</h3><p>Components become smaller and focused only on UI rendering</p></div>
+    <div class="card"><h3>🧪 Testability</h3><p>Easier to test isolated logic separate from UI components</p></div>
+    <div class="card"><h3>👥 Team Collaboration</h3><p>Share common logic across the team via a hooks library</p></div>
+  </div>
+
+  <!-- Section 3: Custom Hook Rules -->
+  <div class="section-title">3️⃣ Rules for Custom Hooks</div>
+  <div class="example-card">
+    <ul style="margin-left: 1.2rem;">
+      <li>✅ Must start with <strong>"use"</strong> (e.g., useFetch, useLocalStorage, useWindowSize)</li>
+      <li>✅ Can call other hooks inside (useState, useEffect, useContext, other custom hooks)</li>
+      <li>✅ Only call hooks at the top level (not inside conditions, loops, or nested functions)</li>
+      <li>✅ Two components using same custom hook do NOT share state — each gets isolated state</li>
+    </ul>
+    <button class="btn-show" data-target="hookRulesResult">📜 Show Custom Hook Rules</button>
+    <div id="hookRulesResult" class="result-area">
+      <div class="console-output">
+        ✅ Naming: starts with "use" — React uses this to check hook rules<br>
+        ✅ Can use other hooks — this is what makes them powerful!<br>
+        ✅ Top level only — no conditional hook calls inside custom hooks<br>
+        ✅ Isolated state — each component using the hook gets its own state
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: useWindowSize Demo -->
+  <div class="section-title">4️⃣ Example 1: useWindowSize (Track Window Dimensions)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function useWindowSize() {<br>
+        const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });<br>
+        useEffect(() => {<br>
+          const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });<br>
+          window.addEventListener('resize', handleResize);<br>
+          return () => window.removeEventListener('resize', handleResize);<br>
+        }, []);<br>
+        return windowSize;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="windowSizeResult">📐 Show useWindowSize Demo</button>
+    <div id="windowSizeResult" class="result-area">
+      <div class="hook-card">
+        <strong>📐 useWindowSize Demo (Simulated)</strong>
+        <div class="size-display" id="windowSizeDisplayHook">
+          Width: <span id="widthValueHook">—</span> | Height: <span id="heightValueHook">—</span>
+        </div>
+        <p class="inline-code">Resize your browser window — the dimensions update automatically!</p>
+      </div>
+      <div class="console-output">
+        ✅ useEffect with event listener and cleanup prevents memory leaks<br>
+        ✅ Component re-renders when window resizes<br>
+        ✅ This hook can be used in ANY component that needs window dimensions
+      </div>
+      <script>
+        const widthSpanHook = document.getElementById("widthValueHook");
+        const heightSpanHook = document.getElementById("heightValueHook");
+        function updateWindowSizeHook() {
+          if(widthSpanHook && heightSpanHook) {
+            widthSpanHook.textContent = window.innerWidth;
+            heightSpanHook.textContent = window.innerHeight;
+          }
+        }
+        window.addEventListener("resize", updateWindowSizeHook);
+        updateWindowSizeHook();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 5: useLocalStorage Demo -->
+  <div class="section-title">5️⃣ Example 2: useLocalStorage (Persist State to localStorage)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function useLocalStorage(key, initialValue) {<br>
+        const [storedValue, setStoredValue] = useState(() => {<br>
+          const item = localStorage.getItem(key);<br>
+          return item ? JSON.parse(item) : initialValue;<br>
+        });<br>
+        useEffect(() => localStorage.setItem(key, JSON.stringify(storedValue)), [key, storedValue]);<br>
+        return [storedValue, setStoredValue];<br>
+      }
+    </div>
+    <button class="btn-show" data-target="localStorageResult">💾 Show useLocalStorage Demo</button>
+    <div id="localStorageResult" class="result-area">
+      <div class="hook-card">
+        <strong>💾 useLocalStorage Demo (Data persists after refresh)</strong>
+        <div style="margin: 16px 0;">
+          <input type="text" id="localStorageInputHook" placeholder="Enter saved name" style="width: 70%;">
+          <button class="demo-btn" id="saveLocalBtn">💾 Save</button>
+          <p id="localStorageDisplayHook" style="margin-top: 12px;">Saved name: <span id="savedNameSpanHook">—</span></p>
+          <button class="demo-btn" id="clearLocalBtn">🗑️ Clear</button>
+        </div>
+      </div>
+      <div class="console-output">
+        ✅ Lazy initialization — reads from localStorage once on mount<br>
+        ✅ useEffect automatically saves to localStorage when value changes<br>
+        ✅ Refresh the page — the name persists! This is useLocalStorage in action.
+      </div>
+      <script>
+        let savedNameHook = localStorage.getItem("demoNameHook") || "";
+        const nameSpanHook = document.getElementById("savedNameSpanHook");
+        const inputFieldHook = document.getElementById("localStorageInputHook");
+        function updateDisplayHook() {
+          if(nameSpanHook) nameSpanHook.textContent = savedNameHook || "—";
+          if(inputFieldHook) inputFieldHook.value = savedNameHook;
+        }
+        document.getElementById("saveLocalBtn")?.addEventListener("click", () => {
+          savedNameHook = inputFieldHook.value;
+          localStorage.setItem("demoNameHook", savedNameHook);
+          updateDisplayHook();
+        });
+        document.getElementById("clearLocalBtn")?.addEventListener("click", () => {
+          savedNameHook = "";
+          localStorage.removeItem("demoNameHook");
+          updateDisplayHook();
+        });
+        updateDisplayHook();
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 6: useFetch Demo -->
+  <div class="section-title">6️⃣ Example 3: useFetch (API Calls Made Easy)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function useFetch(url) {<br>
+        const [data, setData] = useState(null);<br>
+        const [loading, setLoading] = useState(true);<br>
+        const [error, setError] = useState(null);<br>
+        useEffect(() => {<br>
+          const fetchData = async () => {<br>
+            try { const res = await fetch(url); const result = await res.json(); setData(result); }<br>
+            catch (err) { setError(err.message); } finally { setLoading(false); }<br>
+          }; fetchData();<br>
+        }, [url]);<br>
+        return { data, loading, error };<br>
+      }
+    </div>
+    <button class="btn-show" data-target="fetchResult">🌐 Show useFetch Demo</button>
+    <div id="fetchResult" class="result-area">
+      <div class="hook-card">
+        <strong>🌐 useFetch Demo (Simulated API)</strong>
+        <button class="demo-btn" id="fetchUsersCustomBtn">📡 Fetch Users (useFetch)</button>
+        <div id="hookUserListDisplay" style="margin-top: 16px;"></div>
+      </div>
+      <div class="console-output">
+        ✅ Encapsulates loading, error, and data states<br>
+        ✅ Reusable for any API endpoint<br>
+        ✅ Component becomes very clean: const { data, loading, error } = useFetch(url)
+      </div>
+      <script>
+        const mockUsersArray = ["Kalyan", "Priya", "Rahul", "Anjali", "Sneha"];
+        document.getElementById("fetchUsersCustomBtn")?.addEventListener("click", () => {
+          const container = document.getElementById("hookUserListDisplay");
+          container.innerHTML = '<div><span class="loading-spinner"></span> Loading...</div>';
+          setTimeout(() => {
+            container.innerHTML = `<ul style="list-style:none;">${mockUsersArray.map(u => `<li style="background:#334155; margin:8px 0; padding:8px 16px; border-radius:40px;">👤 ${u}</li>`).join('')}</ul><p class="inline-code">✅ useFetch returns { data, loading, error }</p>`;
+          }, 1000);
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 7: useToggle Demo -->
+  <div class="section-title">7️⃣ Example 4: useToggle (Boolean Toggle Helper)</div>
+  <div class="example-card">
+    <div class="code-block">
+      function useToggle(initialValue = false) {<br>
+        const [value, setValue] = useState(initialValue);<br>
+        const toggle = () => setValue(prev => !prev);<br>
+        return [value, toggle];<br>
+      }
+    </div>
+    <button class="btn-show" data-target="toggleResult">🔄 Show useToggle Demo</button>
+    <div id="toggleResult" class="result-area">
+      <div class="hook-card">
+        <strong>🔄 useToggle Demo</strong>
+        <button class="demo-btn" id="toggleCustomBtn">🔘 Toggle Switch</button>
+        <p id="toggleStatusCustom" style="margin-top: 12px;">Status: OFF</p>
+      </div>
+      <div class="console-output">
+        ✅ Encapsulates boolean state + toggle function<br>
+        ✅ Perfect for modals, dropdowns, dark mode, show/hide<br>
+        ✅ Clean component: const [isOpen, toggle] = useToggle(false)
+      </div>
+      <script>
+        let toggled = false;
+        const toggleStatusSpan = document.getElementById("toggleStatusCustom");
+        document.getElementById("toggleCustomBtn")?.addEventListener("click", () => {
+          toggled = !toggled;
+          toggleStatusSpan.textContent = `Status: ${toggled ? "ON ✅" : "OFF ❌"}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Section 8: Custom Hook vs Regular Function -->
+  <div class="section-title">8️⃣ Custom Hook vs Regular Function</div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Feature</th><th>Regular Function</th><th>Custom Hook</th></tr></thead>
+      <tbody>
+        <tr><td>Can use other hooks?</span></td><td>No</span></td><td>Yes (useState, useEffect, useContext)</span></td>
+        <tr>}<th>Naming convention</th><td>Any name</td><td>Must start with "use"</td></tr>
+        <tr>}<th>State persistence</th><td>No state management</td><td>Each component gets isolated state</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 9: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment (Practice Today)</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Create a <strong>useLocalStorage</strong> hook that persists any value (string, object, array)<br>
+    2. Create a <strong>useDebounce</strong> hook that delays value changes (for search inputs to reduce API calls)<br>
+    3. Create a <strong>usePrevious</strong> hook that tracks the previous value of a state variable<br>
+    4. Create a <strong>useMediaQuery</strong> hook that returns true/false for CSS media queries (e.g., useMediaQuery('(max-width: 768px)'))
+  </div>
+
+  <!-- Section 10: Common Mistakes -->
+  <div class="section-title">⚠️ Common Custom Hook Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesCustomResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesCustomResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Not starting hook name with "use" → React can't enforce hook rules, ESLint won't check</li>
+        <li>❌ Calling hooks conditionally inside custom hook → violates Rules of Hooks</li>
+        <li>❌ Forgetting to return values from the hook → component can't use the hook's data</li>
+        <li>❌ Using custom hooks for static values (no state/effects needed) → just use regular functions</li>
+        <li>❌ Creating infinite loops by updating state in useEffect without proper dependencies</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 11: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ What are custom hooks?</h3><p>Functions that start with "use" and encapsulate reusable stateful logic using React hooks.</p></div>
+    <div class="card"><h3>❓ Why create custom hooks?</h3><p>To reuse logic across multiple components, keep components clean, and improve testability.</p></div>
+    <div class="card"><h3>❓ Can custom hooks call other hooks?</h3><p>Yes! They can call useState, useEffect, useContext, and other custom hooks.</p></div>
+    <div class="card"><h3>❓ Do custom hooks share state between components?</h3><p>No — each component using the hook gets its own isolated state.</p></div>
+  </div>
+
+  <!-- Section 12: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks (Do These Today!)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔢 Task 1</h3><p>Create <strong>useCounter</strong> hook with increment, decrement, reset functions.</p></div>
+    <div class="card"><h3>🖱️ Task 2</h3><p>Create <strong>useHover</strong> hook to detect if mouse is over an element.</p></div>
+    <div class="card"><h3>📡 Task 3</h3><p>Create <strong>useOnlineStatus</strong> hook to detect browser online/offline status.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 39 - Custom Hooks)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What are custom hooks — reusable stateful logic functions starting with "use"</div>
+    <div class="card">✔️ Rules: start with "use", call hooks at top level, can use other hooks</div>
+    <div class="card">✔️ Examples: useWindowSize, useLocalStorage, useFetch, useToggle</div>
+    <div class="card">✔️ Custom hook vs regular function — hooks can use useState/useEffect</div>
+  </div>
+
+  <!-- Day 39 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 39 Ending Message</strong><br>
+    "Custom hooks are the ultimate tool for code reuse in React. Extract logic once, use everywhere — cleaner components, happier developers! Build your own library of custom hooks and watch your productivity soar."
+  </div>
+
+  <!-- Next: Day 40 -->
+  <div class="section-title">🔜 Next — Day 40 : React Performance Basics (Memo, useCallback, useMemo)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⚡ React.memo</span>
+    <span class="badge">📦 useCallback</span>
+    <span class="badge">🧠 useMemo</span>
+    <span class="badge">🚀 Performance Optimization</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 39 Completed ✅<br>
+    Click "Show Result" on each example to see custom hooks in action. Practice creating custom hooks — extract logic and build a reusable hooks library!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

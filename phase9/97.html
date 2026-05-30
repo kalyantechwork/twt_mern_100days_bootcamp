@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 97: Deploy Frontend | Vercel & Netlify</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1.2rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .live-demo {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .demo-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px;
+    }
+    .demo-btn:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .deploy-preview {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .platform-badge {
+      display: inline-block;
+      background: #334155;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 97 · Deploy Frontend (Vercel / Netlify)</div>
+  </div>
+
+  <h1>🌐 Deploy Frontend (Vercel / Netlify)<br><span style="font-size:1rem;">Host React App · Connect to Backend · Custom Domains · Production Ready</span></h1>
+
+  <!-- Section 1: Why Deploy Frontend -->
+  <div class="section-title">1️⃣ Why Deploy Frontend? (Complete Your App)</div>
+  <p>Your frontend is the user interface that people see and interact with. Deploying it makes your complete MERN application accessible to everyone on the internet.</p>
+  <div class="diagram">
+    Localhost:5173 → Only your computer
+    Deployed Frontend → Anyone on internet can use your app (vercel.app/netlify.app)
+  </div>
+  <div class="highlight-box">
+    💡 <strong>Yesterday:</strong> Backend deployed (API live). <strong>Today:</strong> Frontend deployed (UI live). <strong>Together:</strong> Complete working MERN app!
+  </div>
+
+  <!-- Section 2: Best Platforms for React Deployment -->
+  <div class="section-title">2️⃣ Best Free Platforms for React Frontend</div>
+  <div class="card-grid">
+    <div class="card"><h3>⚡ Vercel</h3><p>✅ Made by Next.js creators<br>✅ Auto-detects React/Vite<br>✅ Preview deployments for PRs<br>✅ Global CDN<br>✅ Free SSL</p></div>
+    <div class="card"><h3>🌐 Netlify</h3><p>✅ Drag-and-drop deploy<br>✅ Form handling<br>✅ Serverless functions<br>✅ Branch deploys<br>✅ Free SSL</p></div>
+    <div class="card"><h3>📦 GitHub Pages</h3><p>Free, but limited for SPAs (needs 404 redirect setup)</p></div>
+  </div>
+
+  <!-- Section 3: Prepare Frontend for Deployment -->
+  <div class="section-title">3️⃣ Prerequisites — Prepare Your React App</div>
+  <div class="code-block">
+    # Step 1: Update API URL to use deployed backend<br>
+    # Create .env file (not committed to Git)<br>
+    VITE_API_URL=https://your-backend.onrender.com/api<br><br>
+    # Step 2: Build the production version<br>
+    npm run build<br><br>
+    # Step 3: Test build locally<br>
+    npm run preview<br><br>
+    # Step 4: Push to GitHub<br>
+    git add .<br>
+    git commit -m "Ready for deployment"<br>
+    git push origin main
+  </div>
+  <div class="highlight-box">
+    🔧 <strong>Important:</strong> Never commit `.env` files! Add to `.gitignore`. Use platform environment variables instead.
+  </div>
+
+  <!-- Section 4: Deploy on Vercel (Step by Step) -->
+  <div class="section-title">4️⃣ Deploy on Vercel — Step by Step</div>
+  <div class="code-block">
+    # Step 1: Go to vercel.com → Sign up with GitHub<br>
+    # Step 2: Click "Add New" → "Project"<br>
+    # Step 3: Import your frontend GitHub repository<br>
+    # Step 4: Vercel auto-detects Vite/React!<br>
+    #   Framework Preset: Vite<br>
+    #   Build Command: npm run build<br>
+    #   Output Directory: dist<br>
+    # Step 5: Add Environment Variables:<br>
+    #   VITE_API_URL = https://your-backend.onrender.com/api<br>
+    # Step 6: Click "Deploy"<br>
+    # Step 7: Your app is live at: https://your-app.vercel.app
+  </div>
+
+  <!-- Section 5: Deploy on Netlify -->
+  <div class="section-title">5️⃣ Deploy on Netlify — Alternative</div>
+  <div class="code-block">
+    # Step 1: Go to netlify.com → Sign up with GitHub<br>
+    # Step 2: Click "Add new site" → "Import an existing project"<br>
+    # Step 3: Select GitHub repository<br>
+    # Step 4: Configure build settings:<br>
+    #   Build command: npm run build<br>
+    #   Publish directory: dist<br>
+    # Step 5: Add Environment Variables:<br>
+    #   VITE_API_URL = https://your-backend.onrender.com/api<br>
+    # Step 6: Click "Deploy site"<br>
+    # Step 7: Your app is live at: https://your-app.netlify.app
+  </div>
+
+  <!-- Section 6: Environment Variables in Production -->
+  <div class="section-title">6️⃣ Environment Variables — Frontend Config</div>
+  <div class="code-block">
+    # Vite requires VITE_ prefix for environment variables<br>
+    VITE_API_URL=https://your-backend.onrender.com/api<br><br>
+    # Use in your code<br>
+    const API_URL = import.meta.env.VITE_API_URL;<br><br>
+    // Example API call<br>
+    const response = await axios.get(`${API_URL}/products`);
+  </div>
+  <div class="highlight-box">
+    🔑 <strong>Pro Tip:</strong> Use different API URLs for development vs production:
+    <span class="inline-code">VITE_API_URL=http://localhost:5000/api</span> (local)
+    <span class="inline-code">VITE_API_URL=https://your-backend.onrender.com/api</span> (production)
+  </div>
+
+  <!-- Section 7: Connecting Frontend to Deployed Backend -->
+  <div class="section-title">7️⃣ Connect Frontend to Deployed Backend</div>
+  <div class="code-block">
+    // frontend/src/services/api.js<br>
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';<br><br>
+    // CORS must be configured on backend to accept frontend origin<br>
+    // backend/server.js<br>
+    const allowedOrigins = [<br>
+      'http://localhost:5173',<br>
+      'https://your-app.vercel.app',<br>
+      'https://your-app.netlify.app'<br>
+    ];
+  </div>
+
+  <!-- Section 8: SPA Routing Fix (Important!) -->
+  <div class="section-title">8️⃣ SPA Routing Fix — 404 on Refresh</div>
+  <div class="code-block">
+    # Vercel: Create vercel.json in root<br>
+    {<br>
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]<br>
+    }<br><br>
+    # Netlify: Create netlify.toml in root<br>
+    [[redirects]]<br>
+      from = "/*"<br>
+      to = "/index.html"<br>
+      status = 200
+  </div>
+  <div class="highlight-box">
+    🚨 <strong>Why this is needed:</strong> React Router creates client-side routes. Without this fix, refreshing a page like `/about` gives a 404. This redirects all routes to index.html.
+  </div>
+
+  <!-- Section 9: Custom Domain Setup -->
+  <div class="section-title">9️⃣ Custom Domain — Professional Look</div>
+  <div class="code-block">
+    # Vercel: Project → Settings → Domains → Add domain<br>
+    # Then add CNAME record in your DNS provider:<br>
+    # Type: CNAME, Name: www, Value: cname.vercel-dns.com<br><br>
+    # Netlify: Site settings → Domain management → Add custom domain<br>
+    # Then add CNAME record: your-domain.netlify.app
+  </div>
+
+  <!-- Section 10: Live Demo — Deployment Simulation -->
+  <div class="section-title">🔟 Live Demo — Deployment Simulation</div>
+  <div class="live-demo">
+    <div class="deploy-preview">
+      <strong>🚀 Frontend Deployment Simulation:</strong>
+      <div style="margin: 16px 0; background: #1e293b; padding: 12px; border-radius: 12px; font-family: monospace; font-size: 0.8rem;">
+        $ npm run build<br>
+        ✓ building for production...<br>
+        ✓ dist/index.html &nbsp;&nbsp;&nbsp;0.45 kB<br>
+        ✓ dist/assets/index-abc123.css &nbsp;&nbsp;&nbsp;12.34 kB<br>
+        ✓ dist/assets/index-def456.js &nbsp;&nbsp;&nbsp;128.56 kB<br><br>
+        ⚡ Deploying to Vercel...<br>
+        ✅ Production: https://myapp.vercel.app<br>
+        🔗 Preview: https://myapp-git-main.vercel.app<br>
+        🌍 Custom domain: https://myapp.com
+      </div>
+      <button class="demo-btn" id="simulateDeployBtn">▶️ Simulate Frontend Deployment</button>
+    </div>
+    <script>
+      document.getElementById("simulateDeployBtn")?.addEventListener("click", () => {
+        const outputDiv = document.querySelector("#simulateDeployBtn").previousElementSibling;
+        outputDiv.innerHTML = `$ npm run build<br>
+        ⚡ Building with Vite...<br>
+        ✓ 142 modules transformed.<br>
+        ✓ dist/index.html &nbsp;&nbsp;&nbsp;0.48 kB<br>
+        ✓ dist/assets/index-xyz789.js &nbsp;&nbsp;&nbsp;156.23 kB<br>
+        ✓ dist/assets/index-abc456.css &nbsp;&nbsp;&nbsp;15.67 kB<br><br>
+        🚀 Deploying to Netlify...<br>
+        ✅ Deploy successful!<br>
+        🌐 Live at: https://remarkable-biscuit-12345.netlify.app<br>
+        🔗 Backend connected to: https://myapp-backend.onrender.com`;
+      });
+    </script>
+  </div>
+
+  <!-- Section 11: Automatic Deploys (GitHub Integration) -->
+  <div class="section-title">1️⃣1️⃣ Automatic Deploys — Push to Deploy</div>
+  <p>Both Vercel and Netlify automatically redeploy whenever you push to your GitHub repository. Every commit = new deployment!</p>
+  <div class="diagram">
+    git push origin main → GitHub → Vercel/Netlify detects change → Auto-builds → Auto-deploys → New version live
+  </div>
+
+  <!-- Section 12: Preview Deployments (Pull Requests) -->
+  <div class="section-title">1️⃣2️⃣ Preview Deployments — Test Before Merge</div>
+  <div class="code-block">
+    # When you open a Pull Request on GitHub<br>
+    # Vercel/Netlify automatically creates a preview URL<br>
+    # Example PR: https://github.com/user/app/pull/1<br>
+    # Preview URL: https://app-git-feature-branch.vercel.app<br><br>
+    # Perfect for team collaboration and testing!
+  </div>
+
+  <!-- Section 13: Mini Assignment -->
+  <div class="section-title">📌 Mini Assignment</div>
+  <div class="highlight-box">
+    <strong>🎯 Practice Task:</strong><br>
+    1. Build your React app (<span class="inline-code">npm run build</span>)<br>
+    2. Deploy your frontend to Vercel (connect GitHub repo)<br>
+    3. Add environment variable <span class="inline-code">VITE_API_URL</span> pointing to your deployed backend<br>
+    4. Add the SPA routing fix (vercel.json or netlify.toml)<br>
+    5. Test your live app — login, add to cart, etc.<br>
+    6. (Bonus) Set up a custom domain
+  </div>
+
+  <!-- Section 14: Common Deployment Issues -->
+  <div class="section-title">⚠️ Common Frontend Deployment Issues</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ <strong>Blank page after deploy?</strong> Check dist folder exists, build command correct.</li>
+    <li>❌ <strong>API calls fail?</strong> Check <span class="inline-code">VITE_API_URL</span> environment variable in platform.</li>
+    <li>❌ <strong>404 on refresh?</strong> Add SPA routing fix (vercel.json/netlify.toml).</li>
+    <li>❌ <strong>Images not loading?</strong> Use absolute paths or import images.</li>
+    <li>❌ <strong>CORS errors?</strong> Add frontend URL to backend allowed origins.</li>
+  </ul>
+
+  <!-- Section 15: Post-Deployment Checklist -->
+  <div class="section-title">✅ Post-Deployment Checklist</div>
+  <div class="card-grid">
+    <div class="card"><h3>🌐 App loads</h3><p>No blank screen or errors</p></div>
+    <div class="card"><h3>🔗 API connected</h3><p>Data loads from backend</p></div>
+    <div class="card"><h3>🔐 Auth works</h3><p>Login/register functional</p></div>
+    <div class="card"><h3>📱 Responsive</h3><p>Mobile and desktop views work</p></div>
+    <div class="card"><h3>🔄 Routing</h3><p>Page refresh doesn't 404</p></div>
+    <div class="card"><h3>⚡ Performance</h3><p>Fast loading with CDN</p></div>
+  </div>
+
+  <!-- Section 16: Interview Questions -->
+  <div class="section-title">💼 Common Interview Questions</div>
+  <div class="card-grid">
+    <div class="card"><h3>❓ How to deploy React app?</h3><p>Build with npm run build, then deploy to Vercel/Netlify via GitHub.</p></div>
+    <div class="card"><h3>❓ What is the build command?</h3><p>Vite: <span class="inline-code">npm run build</span>, output to dist folder.</p></div>
+    <div class="card"><h3>❓ How to fix 404 on refresh in SPA?</h3><p>Add redirect rule to always serve index.html (vercel.json).</p></div>
+    <div class="card"><h3>❓ Vercel vs Netlify?</h3><p>Both great — Vercel best for Next.js, Netlify for forms/functions.</p></div>
+  </div>
+
+  <!-- Section 17: Practice Tasks -->
+  <div class="section-title">🎯 Practice Tasks</div>
+  <div class="card-grid">
+    <div class="card"><h3>Task 1</h3><p>Deploy your frontend on Vercel and Netlify (both).</p></div>
+    <div class="card"><h3>Task 2</h3><p>Set up preview deployments for pull requests.</p></div>
+    <div class="card"><h3>Task 3</h3><p>Add a custom domain to your deployed app.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 97)</div>
+  <div class="card-grid">
+    <div class="card">✔️ Why deploy frontend — complete your MERN app</div>
+    <div class="card">✔️ Vercel deployment (auto-detects React/Vite)</div>
+    <div class="card">✔️ Netlify deployment (alternative platform)</div>
+    <div class="card">✔️ Environment variables for API URL</div>
+    <div class="card">✔️ SPA routing fix (prevent 404 on refresh)</div>
+    <div class="card">✔️ Automatic deploys from GitHub</div>
+  </div>
+
+  <!-- Day 97 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 97 Ending Message</strong><br>
+    "Your complete MERN app is now LIVE on the internet! 🎉 Frontend on Vercel/Netlify + Backend on Render/Railway + MongoDB Atlas. Users worldwide can now access your application. Share your link — this is your portfolio-worthy project!"
+  </div>
+
+  <!-- Next: Day 98 -->
+  <div class="section-title">🔜 Next — Day 98 : CI/CD Pipeline (Continuous Integration & Deployment)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🔄 GitHub Actions</span>
+    <span class="badge">🚀 Auto-deploy on push</span>
+    <span class="badge">🧪 Automated Testing</span>
+    <span class="badge">🔧 CI/CD Workflow</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 97 Completed ✅<br>
+    Your app is live! Share your deployed URL — you've built a production-ready MERN application!
+  </div>
+</div>
+</body>
+</html>

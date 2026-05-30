@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 13: ES6+ Modern JavaScript | Features Explained + Show Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 13 · ES6+ Modern JavaScript (Show Results)</div>
+  </div>
+
+  <h1>⚡ ES6+ Modern JavaScript<br><span style="font-size:1rem;">let/const · Template Literals · Arrow Functions · Spread/Rest · Destructuring · Optional Chaining</span></h1>
+
+  <!-- Introduction Section -->
+  <div class="section-title">1️⃣ What is ES6 (ECMAScript 2015)?</div>
+  <div class="highlight-box">
+    📚 ES6 (ECMAScript 2015) is a major update to JavaScript that introduced modern features making code cleaner, shorter, and more readable. Frameworks like React, Node.js, Express heavily use ES6+ syntax.
+  </div>
+  <div class="diagram">
+    Old JavaScript (var, function) → Modern ES6 (let/const, arrow functions, spread) → Professional Code
+  </div>
+
+  <!-- ========== let & const ========== -->
+  <div class="section-title">2️⃣ let & const (Block-scoped variables)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>let</strong> and <strong>const</strong> replace the old <span class="inline-code">var</span>. They provide block-level scope (inside { }), preventing accidental variable leaks. <strong>const</strong> is for values that never change, <strong>let</strong> for values that need reassignment. Used everywhere in modern JavaScript — React state, loops, conditionals.</p>
+    <p><strong>Where it's used:</strong> All JavaScript projects (React, Node.js, Vue, Angular) — always use let/const instead of var.</p>
+  </div>
+  <div class="example-card">
+    <h3>📦 let & const Examples</h3>
+    <div class="code-block">
+      let score = 100;      // can be changed later<br>
+      score = 200;          // ✅ allowed<br><br>
+      const PI = 3.14159;   // cannot be changed<br>
+      // PI = 3.14;         // ❌ Error!
+    </div>
+    <button class="btn-show" data-target="letConstResult">🔍 Show let/const Demo</button>
+    <div id="letConstResult" class="result-area">
+      <div class="result-label">📋 let vs const Output:</div>
+      <div class="console-output" id="letConstOutput"></div>
+      <script>
+        document.getElementById("letConstResult").addEventListener("showresult", function() {
+          let score = 100;
+          score = 200;
+          const PI = 3.14159;
+          let errorMsg = "const reassignment would cause error";
+          document.getElementById("letConstOutput").innerHTML = `let score = 100 → score = 200 → final score = ${score}<br>const PI = 3.14159 → PI = ${PI} (cannot be reassigned)<br>✅ Use const by default, use let when value changes.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Template Literals ========== -->
+  <div class="section-title">3️⃣ Template Literals (Backticks ` `)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Template literals</strong> allow embedding variables and expressions directly inside strings using <span class="inline-code">${}</span> syntax. They support multi-line strings without concatenation.</p>
+    <p><strong>Where it's used:</strong> Dynamic HTML generation, console logs, API URL building, error messages, React JSX, email templates.</p>
+  </div>
+  <div class="example-card">
+    <h3>📝 Template Literal Examples</h3>
+    <div class="code-block">
+      let name = "Kalyan";<br>
+      let age = 25;<br>
+      // Old way: "Hello " + name + ", age " + age<br>
+      // ES6 way:<br>
+      let message = `Hello ${name}, age ${age}`;<br>
+      let multiLine = `Line 1<br>Line 2`;
+    </div>
+    <button class="btn-show" data-target="templateResult">✨ Show Template Literal Output</button>
+    <div id="templateResult" class="result-area">
+      <div class="result-label">📝 Template Literal Result:</div>
+      <div class="console-output" id="templateOutput"></div>
+      <script>
+        document.getElementById("templateResult").addEventListener("showresult", function() {
+          let name = "Kalyan", age = 25;
+          let message = `Hello ${name}, you are ${age} years old.`;
+          document.getElementById("templateOutput").innerHTML = `Template: \`Hello \${name}, you are \${age} years old.\`<br>Output: "${message}"<br>✅ No string concatenation needed!`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Arrow Functions ========== -->
+  <div class="section-title">4️⃣ Arrow Functions (Shorter Syntax)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Arrow functions</strong> provide a shorter function syntax using <span class="inline-code">=&gt;</span>. They don't bind their own <span class="inline-code">this</span>, making them perfect for callbacks, array methods (map, filter, reduce), and React components.</p>
+    <p><strong>Where it's used:</strong> Array methods (map, filter), event handlers, setTimeout/setInterval, React function components.</p>
+  </div>
+  <div class="example-card">
+    <h3>🏹 Arrow Function Examples</h3>
+    <div class="code-block">
+      // Traditional function<br>
+      function add(a,b) { return a + b; }<br><br>
+      // Arrow function (implicit return)<br>
+      const addArrow = (a,b) => a + b;<br><br>
+      // Arrow with multiple lines<br>
+      const multiply = (a,b) => {<br>
+        return a * b;<br>
+      };
+    </div>
+    <button class="btn-show" data-target="arrowResult">🏹 Show Arrow Function Result</button>
+    <div id="arrowResult" class="result-area">
+      <div class="result-label">🏹 Arrow Function Output:</div>
+      <div class="console-output" id="arrowOutput"></div>
+      <script>
+        document.getElementById("arrowResult").addEventListener("showresult", function() {
+          const addArrow = (a,b) => a + b;
+          const square = x => x * x;
+          document.getElementById("arrowOutput").innerHTML = `const addArrow = (a,b) => a + b → addArrow(5,3) = ${addArrow(5,3)}<br>const square = x => x * x → square(4) = ${square(4)}<br>✅ Arrow functions are shorter and don't bind their own 'this'.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Spread Operator ========== -->
+  <div class="section-title">5️⃣ Spread Operator (...) (Expand / Copy)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Spread operator (...)</strong> expands an array or object into individual elements. Perfect for copying arrays/objects without mutation, combining data, and passing arguments.</p>
+    <p><strong>Where it's used:</strong> React state updates (immutability), merging objects, converting NodeList to array, function arguments.</p>
+  </div>
+  <div class="example-card">
+    <h3>✨ Spread Operator Examples</h3>
+    <div class="code-block">
+      let arr1 = [1, 2];<br>
+      let arr2 = [...arr1, 3, 4];  // [1,2,3,4]<br><br>
+      let user = { name: "Kalyan" };<br>
+      let updated = { ...user, city: "Hyderabad" };<br>
+      // { name: "Kalyan", city: "Hyderabad" }
+    </div>
+    <button class="btn-show" data-target="spreadResult">✨ Show Spread Operator</button>
+    <div id="spreadResult" class="result-area">
+      <div class="result-label">📦 Spread in Action:</div>
+      <div class="console-output" id="spreadOutput"></div>
+      <script>
+        document.getElementById("spreadResult").addEventListener("showresult", function() {
+          let arr1 = [1, 2];
+          let arr2 = [...arr1, 3, 4];
+          let user = { name: "Kalyan", age: 25 };
+          let updated = { ...user, city: "Hyderabad" };
+          document.getElementById("spreadOutput").innerHTML = `arr1 = [${arr1}] → [...arr1, 3, 4] = [${arr2}]<br>user = ${JSON.stringify(user)} → { ...user, city: "Hyderabad" } = ${JSON.stringify(updated)}<br>✅ Spread creates copies without mutation.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Destructuring ========== -->
+  <div class="section-title">6️⃣ Destructuring (Extract values easily)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Destructuring</strong> unpacks values from arrays or properties from objects into distinct variables. Reduces repetitive code and makes data extraction clean.</p>
+    <p><strong>Where it's used:</strong> Extracting props in React, API response handling, function parameters, importing modules, useState hook.</p>
+  </div>
+  <div class="example-card">
+    <h3>📦 Object & Array Destructuring</h3>
+    <div class="code-block">
+      // Object destructuring<br>
+      let user = { name: "Kalyan", age: 25 };<br>
+      let { name, age } = user;<br><br>
+      // Array destructuring<br>
+      let colors = ["red", "blue"];<br>
+      let [first, second] = colors;
+    </div>
+    <button class="btn-show" data-target="destructureResult">🎁 Show Destructuring</button>
+    <div id="destructureResult" class="result-area">
+      <div class="result-label">📦 Destructuring Output:</div>
+      <div class="console-output" id="destructureOutput"></div>
+      <script>
+        document.getElementById("destructureResult").addEventListener("showresult", function() {
+          let user = { name: "Kalyan", age: 25, city: "Hyderabad" };
+          let { name, age, city } = user;
+          let colors = ["red", "blue", "green"];
+          let [first, second, third] = colors;
+          document.getElementById("destructureOutput").innerHTML = `user = ${JSON.stringify(user)}<br>let { name, age, city } = user → name="${name}", age=${age}, city="${city}"<br>colors = [${colors}]<br>let [first, second, third] = colors → first="${first}", second="${second}", third="${third}"`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Rest Operator ========== -->
+  <div class="section-title">7️⃣ Rest Operator (Collect remaining arguments)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Rest operator (...)</strong> collects remaining arguments into an array. Opposite of spread — it "gathers" values.</p>
+    <p><strong>Where it's used:</strong> Functions with variable number of arguments, destructuring to collect remaining items, React hooks dependencies.</p>
+  </div>
+  <div class="example-card">
+    <h3>📥 Rest Operator Example</h3>
+    <div class="code-block">
+      function sum(...numbers) {<br>
+        return numbers.reduce((acc, n) => acc + n, 0);<br>
+      }<br>
+      sum(1,2,3,4);  // 10
+    </div>
+    <button class="btn-show" data-target="restResult">📥 Show Rest Operator</button>
+    <div id="restResult" class="result-area">
+      <div class="result-label">📥 Rest Operator Output:</div>
+      <div class="console-output" id="restOutput"></div>
+      <script>
+        document.getElementById("restResult").addEventListener("showresult", function() {
+          function sum(...numbers) { return numbers.reduce((acc, n) => acc + n, 0); }
+          let result = sum(1, 2, 3, 4);
+          document.getElementById("restOutput").innerHTML = `function sum(...numbers) { return numbers.reduce(...) }<br>sum(1,2,3,4) = ${result}<br>✅ Rest collects all arguments into an array.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Optional Chaining ========== -->
+  <div class="section-title">8️⃣ Optional Chaining (?.) — Safe nested access</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Optional Chaining (?.)</strong> allows reading property values deep inside an object without checking if each reference exists. Returns <span class="inline-code">undefined</span> instead of throwing error.</p>
+    <p><strong>Where it's used:</strong> API responses, user data with optional fields, configuration objects, preventing "Cannot read property of undefined" errors.</p>
+  </div>
+  <div class="example-card">
+    <h3>🛡️ Optional Chaining Example</h3>
+    <div class="code-block">
+      let user = { profile: { name: "Kalyan" } };<br>
+      console.log(user.profile?.name);     // "Kalyan"<br>
+      console.log(user.address?.city);     // undefined (no error)
+    </div>
+    <button class="btn-show" data-target="optionalResult">🛡️ Show Optional Chaining</button>
+    <div id="optionalResult" class="result-area">
+      <div class="result-label">🛡️ Safe Access Output:</div>
+      <div class="console-output" id="optionalOutput"></div>
+      <script>
+        document.getElementById("optionalResult").addEventListener("showresult", function() {
+          let user = { profile: { name: "Kalyan" } };
+          let name = user.profile?.name;
+          let city = user.address?.city;
+          document.getElementById("optionalOutput").innerHTML = `user = { profile: { name: "Kalyan" } }<br>user.profile?.name = "${name}"<br>user.address?.city = ${city} (no error!)<br>✅ Optional chaining prevents crashes.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Default Parameters ========== -->
+  <div class="section-title">9️⃣ Default Parameters (Fallback values)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Default parameters</strong> allow functions to have preset values when no argument is passed or <span class="inline-code">undefined</span> is passed.</p>
+    <p><strong>Where it's used:</strong> Function arguments that are optional, API wrapper functions, configuration objects, React component props defaults.</p>
+  </div>
+  <div class="example-card">
+    <h3>⚙️ Default Parameters Example</h3>
+    <div class="code-block">
+      function greet(name = "Guest") {<br>
+        return `Hello ${name}`;<br>
+      }<br>
+      greet();           // "Hello Guest"<br>
+      greet("Kalyan");   // "Hello Kalyan"
+    </div>
+    <button class="btn-show" data-target="defaultResult">⚙️ Show Default Parameters</button>
+    <div id="defaultResult" class="result-area">
+      <div class="result-label">📋 Default Parameter Output:</div>
+      <div class="console-output" id="defaultOutput"></div>
+      <script>
+        document.getElementById("defaultResult").addEventListener("showresult", function() {
+          function greet(name = "Guest") { return `Hello ${name}`; }
+          document.getElementById("defaultOutput").innerHTML = `function greet(name = "Guest") { return "Hello " + name; }<br>greet() = "${greet()}"<br>greet("Kalyan") = "${greet("Kalyan")}"`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- ========== Mini Project ========== -->
+  <div class="section-title">📁 Mini Project: Products Display using ES6 Features</div>
+  <div class="example-card">
+    <h3>🛍️ Product List (map + template literals + destructuring)</h3>
+    <div class="code-block">
+      const products = [<br>
+        { name: "Laptop", price: 50000 },<br>
+        { name: "Phone", price: 20000 }<br>
+      ];<br>
+      products.map(({name, price}) => `${name} - ₹${price}`);
+    </div>
+    <button class="btn-show" data-target="miniProjectResult">🛍️ Show Products</button>
+    <div id="miniProjectResult" class="result-area">
+      <div class="result-label">📦 Products using ES6:</div>
+      <div id="es6ProductList" style="margin-top: 10px;"></div>
+      <div class="console-output" id="miniProjectOutput"></div>
+      <script>
+        const productItems = [
+          { name: "Laptop", price: 50000 },
+          { name: "Phone", price: 20000 },
+          { name: "Tablet", price: 15000 }
+        ];
+        document.getElementById("miniProjectResult").addEventListener("showresult", function() {
+          const container = document.getElementById("es6ProductList");
+          container.innerHTML = productItems.map(({name, price}) => 
+            `<div style="background:#f1f5f9; padding:10px; margin:8px 0; border-radius:16px;"><strong>${name}</strong> - ₹${price}</div>`
+          ).join('');
+          document.getElementById("miniProjectOutput").innerHTML = `Using map() + destructuring + template literals:<br>products.map(({name, price}) => \`\${name} - ₹\${price}\`)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Beginner Mistakes (ES6)</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Using <span class="inline-code">const</span> for variable that needs reassignment → use <span class="inline-code">let</span>.</li>
+        <li>❌ Forgetting backticks in template literals: <span class="inline-code">"Hello ${name}"</span> → must be <span class="inline-code">`Hello ${name}`</span>.</li>
+        <li>❌ Confusing spread <span class="inline-code">(...)</span> and rest: spread expands, rest collects.</li>
+        <li>❌ Using arrow functions when <span class="inline-code">this</span> binding is required (arrow functions don't bind their own <span class="inline-code">this</span>).</li>
+        <li>❌ Destructuring null/undefined → provide default values: <span class="inline-code">let { name = "Guest" } = user || {};</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Task 1</h3><p>Create a greeting using template literals with variables name and age.</p></div>
+    <div class="card"><h3>📦 Task 2</h3><p>Use spread operator to merge two arrays [1,2] and [3,4].</p></div>
+    <div class="card"><h3>🏹 Task 3</h3><p>Convert a normal function to an arrow function (add, multiply).</p></div>
+    <div class="card"><h3>🔍 Task 4</h3><p>Use object destructuring to extract properties from a user object and rename one property.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 13 - ES6+ Modern JS)</div>
+  <div class="card-grid">
+    <div class="card">✔️ let & const (block scope, no hoisting issues)</div>
+    <div class="card">✔️ Template Literals `${}` for dynamic strings</div>
+    <div class="card">✔️ Arrow Functions => (shorter, no own this)</div>
+    <div class="card">✔️ Default Parameters (fallback values)</div>
+    <div class="card">✔️ Spread (...) — expand / copy arrays & objects</div>
+    <div class="card">✔️ Rest (...) — collect remaining arguments</div>
+    <div class="card">✔️ Destructuring (object & array unpacking)</div>
+    <div class="card">✔️ Optional Chaining (?.) — safe nested access</div>
+  </div>
+
+  <!-- Day 13 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 13 Ending Message</strong><br>
+    “Now you are learning modern JavaScript used in real-world development. These ES6 concepts are extremely important for React and Node.js. Keep practicing!”
+  </div>
+
+  <!-- Next: Day 14 -->
+  <div class="section-title">🔜 Next — Day 14 : Asynchronous JavaScript (Callbacks, Event Loop, setTimeout)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">⏱️ setTimeout / setInterval</span>
+    <span class="badge">🔄 Synchronous vs Asynchronous</span>
+    <span class="badge">📞 Callbacks</span>
+    <span class="badge">🌀 Event Loop Explained</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 13 Completed ✅<br>
+    Click "Show Result" on each example to see live ES6 features. Write modern JavaScript daily!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

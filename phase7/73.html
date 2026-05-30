@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Day 73: MongoDB Compass Deep Dive – Advanced Queries & Aggregation | Telugu WebTech MERN Roadmap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b2b26 0%, #1e4a3b 100%);
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero h1 i {
+      background: #facc15;
+      color: #1e3a2f;
+      padding: 8px 12px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+    }
+    .hero-badge {
+      background: #facc15cc;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0a2e25;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 85%;
+    }
+    .channel-link {
+      margin-top: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #00000030;
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .section-title i {
+      color: #2d6a4f;
+      font-size: 1.6rem;
+    }
+    .subheading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem 0;
+      color: #1e4620;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #0c4a6e;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .info-box {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+    .diagram {
+      background: #fef9e3;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 500;
+      border: 1px dashed #facc15;
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+    button.copy-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    button.copy-btn:hover {
+      background: #1e293b;
+    }
+    .success-note {
+      background: #e6f7ec;
+      border-left: 4px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .warning-note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .agg-stage {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      margin: 0.5rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    @media (max-width: 680px) {
+      .hero p { max-width: 100%; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge"><i class="fas fa-calendar-alt"></i> 100 Days MERN Challenge · Day 73 · Phase 8</div>
+    <h1>
+      <i class="fas fa-chart-pie"></i> 
+      MongoDB Compass Deep Dive – Advanced Queries & Aggregation
+    </h1>
+    <p>Master MongoDB Compass like a pro! Learn advanced filtering, aggregation pipelines, indexes, and data visualization – all without writing a single line of code.</p>
+    <div class="channel-link">
+      <i class="fab fa-youtube"></i> Telugu WebTech · Become a MongoDB Compass Expert
+    </div>
+  </div>
+
+  <!-- Sample Data Setup -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-database"></i>
+      <span>1. Sample Data for Today's Tutorial</span>
+    </div>
+    <p>First, let's create a rich dataset to practice with. Copy and paste this into MongoDB Compass:</p>
+    <div class="code-block" id="sampleData">
+// Create database: "compassDemo" and collection: "products"
+
+// Insert these documents into the "products" collection:
+[
+  { "name": "Laptop Pro", "category": "Electronics", "price": 1200, "stock": 45, "rating": 4.8, "tags": ["computer", "work"], "createdAt": ISODate("2024-01-15") },
+  { "name": "Gaming Mouse", "category": "Electronics", "price": 49, "stock": 120, "rating": 4.5, "tags": ["gaming", "accessory"], "createdAt": ISODate("2024-01-20") },
+  { "name": "Mechanical Keyboard", "category": "Electronics", "price": 89, "stock": 78, "rating": 4.7, "tags": ["gaming", "typing"], "createdAt": ISODate("2024-02-01") },
+  { "name": "Notebook", "category": "Stationery", "price": 5, "stock": 500, "rating": 4.2, "tags": ["office", "school"], "createdAt": ISODate("2024-02-10") },
+  { "name": "Pen Set", "category": "Stationery", "price": 12, "stock": 300, "rating": 4.0, "tags": ["office", "writing"], "createdAt": ISODate("2024-02-15") },
+  { "name": "Monitor 27inch", "category": "Electronics", "price": 350, "stock": 32, "rating": 4.9, "tags": ["work", "gaming"], "createdAt": ISODate("2024-03-01") },
+  { "name": "Desk Lamp", "category": "Furniture", "price": 35, "stock": 95, "rating": 4.3, "tags": ["office", "lighting"], "createdAt": ISODate("2024-03-10") },
+  { "name": "Office Chair", "category": "Furniture", "price": 250, "stock": 28, "rating": 4.6, "tags": ["office", "comfort"], "createdAt": ISODate("2024-03-15") },
+  { "name": "USB Cable", "category": "Electronics", "price": 8, "stock": 1000, "rating": 4.1, "tags": ["accessory"], "createdAt": ISODate("2024-04-01") },
+  { "name": "Wireless Charger", "category": "Electronics", "price": 25, "stock": 150, "rating": 4.4, "tags": ["charging", "accessory"], "createdAt": ISODate("2024-04-05") }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('sampleData')"><i class="far fa-copy"></i> Copy Sample Data</button>
+  </div>
+
+  <!-- Advanced Filtering -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-filter"></i>
+      <span>2. Advanced Filtering in Compass</span>
+    </div>
+    <p>In Compass, click on the "Filter" bar and type these queries to find specific documents:</p>
+    
+    <div class="subheading">📋 Comparison Operators</div>
+    <div class="code-block" id="filter1">
+// Price greater than $100
+{ "price": { "$gt": 100 } }
+
+// Price between $20 and $100
+{ "price": { "$gte": 20, "$lte": 100 } }
+
+// Stock less than 50
+{ "stock": { "$lt": 50 } }
+
+// Rating not equal to 4.5
+{ "rating": { "$ne": 4.5 } }
+    </div>
+    <button class="copy-btn" onclick="copyCode('filter1')"><i class="far fa-copy"></i> Copy Comparison Filters</button>
+
+    <div class="subheading">📋 Logical Operators</div>
+    <div class="code-block" id="filter2">
+// Electronics with price > $100 OR rating > 4.8
+{ "$or": [
+  { "category": "Electronics", "price": { "$gt": 100 } },
+  { "rating": { "$gt": 4.8 } }
+] }
+
+// Stationery AND stock > 200
+{ "$and": [
+  { "category": "Stationery" },
+  { "stock": { "$gt": 200 } }
+] }
+
+// NOT Electronics
+{ "category": { "$ne": "Electronics" } }
+    </div>
+    <button class="copy-btn" onclick="copyCode('filter2')"><i class="far fa-copy"></i> Copy Logical Filters</button>
+
+    <div class="subheading">📋 Array & Element Operators</div>
+    <div class="code-block" id="filter3">
+// Products with "gaming" tag
+{ "tags": "gaming" }
+
+// Products that have BOTH "office" AND "accessory" tags
+{ "tags": { "$all": ["office", "accessory"] } }
+
+// Products that have at least 2 tags
+{ "tags": { "$size": 2 } }
+
+// Products where rating exists
+{ "rating": { "$exists": true } }
+
+// Products where price is a number
+{ "price": { "$type": "number" } }
+    </div>
+    <button class="copy-btn" onclick="copyCode('filter3')"><i class="far fa-copy"></i> Copy Array & Element Filters</button>
+
+    <div class="subheading">📋 Regular Expressions (Text Search)</div>
+    <div class="code-block" id="filter4">
+// Products starting with "Gaming"
+{ "name": { "$regex": "^Gaming", "$options": "i" } }
+
+// Products containing "Pro" anywhere
+{ "name": { "$regex": "Pro", "$options": "i" } }
+
+// Products ending with "Mouse"
+{ "name": { "$regex": "Mouse$", "$options": "i" } }
+    </div>
+    <button class="copy-btn" onclick="copyCode('filter4')"><i class="far fa-copy"></i> Copy Regex Filters</button>
+  </div>
+
+  <!-- Sorting & Projection -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-sort-amount-down"></i>
+      <span>3. Sorting & Field Selection (Projection)</span>
+    </div>
+    <p>In Compass, use the "Sort" and "Project" fields to organize your data:</p>
+    
+    <div class="subheading">📊 Sorting</div>
+    <div class="code-block">
+// Sort by price descending (highest first)
+{ "price": -1 }
+
+// Sort by rating descending, then name ascending
+{ "rating": -1, "name": 1 }
+
+// Sort by createdAt (oldest first)
+{ "createdAt": 1 }
+    </div>
+
+    <div class="subheading">👁️ Projection (Select specific fields)</div>
+    <div class="code-block">
+// Show only name, price, and rating (hide _id)
+{
+  "name": 1,
+  "price": 1,
+  "rating": 1,
+  "_id": 0
+}
+
+// Show everything except stock
+{
+  "stock": 0
+}
+    </div>
+    <div class="diagram">
+      <i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> Use projections to reduce data transfer and make queries faster!
+    </div>
+  </div>
+
+  <!-- Aggregation Pipeline -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-line"></i>
+      <span>4. Aggregation Pipeline – The Power of MongoDB</span>
+    </div>
+    <p>The <strong>Aggregation Pipeline</strong> is MongoDB's most powerful feature – it lets you process, transform, and analyze data through a series of stages. In Compass, click the "Aggregations" tab to build pipelines visually!</p>
+    
+    <div class="subheading">🔧 Common Aggregation Stages</div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>$match</strong><br>Filter documents (like WHERE in SQL)
+      </div>
+      <div class="info-box">
+        <strong>$group</strong><br>Group documents by a field
+      </div>
+      <div class="info-box">
+        <strong>$sort</strong><br>Sort documents
+      </div>
+      <div class="info-box">
+        <strong>$project</strong><br>Select/transform fields
+      </div>
+      <div class="info-box">
+        <strong>$limit</strong><br>Limit number of documents
+      </div>
+      <div class="info-box">
+        <strong>$skip</strong><br>Skip documents (pagination)
+      </div>
+      <div class="info-box">
+        <strong>$unwind</strong><br>Deconstruct arrays
+      </div>
+      <div class="info-box">
+        <strong>$lookup</strong><br>Join collections (like SQL JOIN)
+      </div>
+    </div>
+
+    <div class="subheading">📝 Example 1: Group by Category (Total Value)</div>
+    <div class="agg-stage">Stage 1: $group – Group by category and calculate totals</div>
+    <div class="code-block" id="agg1">
+[
+  { 
+    $group: {
+      _id: "$category",                    // Group by category
+      totalProducts: { $sum: 1 },          // Count products
+      averagePrice: { $avg: "$price" },    // Average price
+      totalStock: { $sum: "$stock" },      // Total stock count
+      maxPrice: { $max: "$price" },        // Highest price
+      minPrice: { $min: "$price" }         // Lowest price
+    }
+  },
+  { $sort: { totalProducts: -1 } }         // Sort by most products first
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg1')"><i class="far fa-copy"></i> Copy Category Grouping</button>
+
+    <div class="subheading">📝 Example 2: Products with Rating > 4.5, Sorted by Price</div>
+    <div class="code-block" id="agg2">
+[
+  { $match: { rating: { $gt: 4.5 } } },    // Filter high-rated products
+  { $sort: { price: -1 } },                // Sort by price descending
+  { $limit: 5 }                            // Get top 5
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg2')"><i class="far fa-copy"></i> Copy High-Rated Products</button>
+
+    <div class="subheading">📝 Example 3: Add Discount Field & Round Prices</div>
+    <div class="code-block" id="agg3">
+[
+  {
+    $project: {
+      name: 1,
+      originalPrice: "$price",
+      discountedPrice: { $multiply: ["$price", 0.9] },  // 10% discount
+      roundedPrice: { $round: ["$price", 0] },         // Round to integer
+      category: 1,
+      inStock: { $gt: ["$stock", 0] }                  // Boolean: true if stock > 0
+    }
+  }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg3')"><i class="far fa-copy"></i> Copy Projection with Calculations</button>
+
+    <div class="subheading">📝 Example 4: Analyze Tags (Unwind Array)</div>
+    <div class="code-block" id="agg4">
+[
+  { $unwind: "$tags" },                     // Create one document per tag
+  {
+    $group: {
+      _id: "$tags",                        // Group by each tag
+      count: { $sum: 1 },                  // Count products with this tag
+      averagePrice: { $avg: "$price" }     // Average price for tag
+    }
+  },
+  { $sort: { count: -1 } },                // Most popular tags first
+  { $limit: 5 }                            // Top 5 tags
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg4')"><i class="far fa-copy"></i> Copy Tag Analysis</button>
+  </div>
+
+  <!-- More Aggregation Examples -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-chart-bar"></i>
+      <span>5. Advanced Aggregation Examples</span>
+    </div>
+
+    <div class="subheading">📈 Revenue Analysis (Price × Stock)</div>
+    <div class="code-block" id="agg5">
+[
+  {
+    $project: {
+      name: 1,
+      category: 1,
+      potentialRevenue: { $multiply: ["$price", "$stock"] }
+    }
+  },
+  {
+    $group: {
+      _id: "$category",
+      totalRevenue: { $sum: "$potentialRevenue" }
+    }
+  },
+  { $sort: { totalRevenue: -1 } }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg5')"><i class="far fa-copy"></i> Copy Revenue Analysis</button>
+
+    <div class="subheading">📅 Monthly Product Creation Count</div>
+    <div class="code-block" id="agg6">
+[
+  {
+    $group: {
+      _id: {
+        year: { $year: "$createdAt" },
+        month: { $month: "$createdAt" }
+      },
+      count: { $sum: 1 },
+      products: { $push: "$name" }
+    }
+  },
+  { $sort: { "_id.year": 1, "_id.month": 1 } }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg6')"><i class="far fa-copy"></i> Copy Monthly Analysis</button>
+
+    <div class="subheading">⭐ Rating Distribution (Bucketing)</div>
+    <div class="code-block" id="agg7">
+[
+  {
+    $bucket: {
+      groupBy: "$rating",
+      boundaries: [0, 3, 4, 4.5, 5],
+      default: "Other",
+      output: {
+        count: { $sum: 1 },
+        products: { $push: "$name" }
+      }
+    }
+  }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('agg7')"><i class="far fa-copy"></i> Copy Rating Buckets</button>
+  </div>
+
+  <!-- Indexes in Compass -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-bolt"></i>
+      <span>6. Indexes – Making Queries Fast</span>
+    </div>
+    <p>Indexes dramatically speed up queries. In Compass, click the "Indexes" tab to manage them.</p>
+    
+    <div class="subheading">🔍 Creating an Index</div>
+    <div class="code-block">
+// Single field index
+{ "category": 1 }
+
+// Compound index (multiple fields)
+{ "category": 1, "price": -1 }
+
+// Text index (for text search)
+{ "name": "text", "tags": "text" }
+
+// Unique index (prevents duplicates)
+{ "email": 1 } with unique: true
+    </div>
+
+    <div class="subheading">📊 When to Create Indexes</div>
+    <div class="grid-2">
+      <div class="info-box">
+        <strong>✅ Create indexes for:</strong>
+        <p>• Fields used in WHERE (filter) clauses<br>
+        • Fields used for sorting<br>
+        • Fields used in JOINs ($lookup)<br>
+        • Unique fields (email, username)</p>
+      </div>
+      <div class="info-box">
+        <strong>⚠️ Avoid indexes for:</strong>
+        <p>• Small collections (< 1000 docs)<br>
+        • Fields with low cardinality (e.g., boolean)<br>
+        • Fields that change frequently</p>
+      </div>
+    </div>
+    <div class="success-note">
+      <i class="fas fa-rocket"></i> <strong>Performance Tip:</strong> Use Compass's "Explain Plan" feature to see if your query is using an index!
+    </div>
+  </div>
+
+  <!-- Validation Rules -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-shield-alt"></i>
+      <span>7. Schema Validation in Compass</span>
+    </div>
+    <p>Enforce data quality by adding validation rules to your collections. In Compass, click "Validation" tab.</p>
+    <div class="code-block" id="validation">
+// Example: Ensure products have required fields
+{
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["name", "price", "category"],
+    properties: {
+      name: { bsonType: "string", description: "must be a string" },
+      price: { bsonType: "double", minimum: 0, description: "must be positive" },
+      category: { bsonType: "string" },
+      rating: { bsonType: "double", minimum: 0, maximum: 5 }
+    }
+  }
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode('validation')"><i class="far fa-copy"></i> Copy Validation Rule</button>
+  </div>
+
+  <!-- Export/Import Data -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-file-export"></i>
+      <span>8. Exporting & Importing Data</span>
+    </div>
+    <div class="subheading">📤 Export to JSON/CSV</div>
+    <div class="code-block">
+1. Click "Collection" tab
+2. Click "Export Collection" button
+3. Choose format: JSON or CSV
+4. Select fields to export
+5. Download your data
+    </div>
+
+    <div class="subheading">📥 Import Data</div>
+    <div class="code-block">
+1. Click "Add Data" → "Import File"
+2. Choose JSON or CSV file
+3. Map fields if needed
+4. Click "Import"
+    </div>
+  </div>
+
+  <!-- Real-World Scenario -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-briefcase"></i>
+      <span>9. Real-World Scenario: E-commerce Dashboard</span>
+    </div>
+    <p>Imagine you're building an admin dashboard. Use this aggregation to get all insights in one query:</p>
+    <div class="code-block" id="dashboard">
+[
+  // 1. Filter active products
+  { $match: { stock: { $gt: 0 } } },
+  
+  // 2. Add calculated fields
+  {
+    $addFields: {
+      revenuePotential: { $multiply: ["$price", "$stock"] },
+      isPremium: { $gt: ["$price", 100] }
+    }
+  },
+  
+  // 3. Group by category
+  {
+    $group: {
+      _id: "$category",
+      productCount: { $sum: 1 },
+      avgPrice: { $avg: "$price" },
+      totalRevenue: { $sum: "$revenuePotential" },
+      premiumCount: { $sum: { $cond: ["$isPremium", 1, 0] } },
+      topProduct: { $max: "$name" }
+    }
+  },
+  
+  // 4. Format output
+  {
+    $project: {
+      category: "$_id",
+      productCount: 1,
+      avgPrice: { $round: ["$avgPrice", 2] },
+      totalRevenue: { $round: ["$totalRevenue", 2] },
+      premiumPercentage: {
+        $multiply: [
+          { $divide: ["$premiumCount", "$productCount"] },
+          100
+        ]
+      }
+    }
+  },
+  
+  // 5. Sort by revenue
+  { $sort: { totalRevenue: -1 } }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('dashboard')"><i class="far fa-copy"></i> Copy Dashboard Pipeline</button>
+  </div>
+
+  <!-- Day 73 Challenge -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-tasks"></i>
+      <span>🚀 Daily Challenge – Master Compass Queries</span>
+    </div>
+    <p><strong>Task:</strong> Using the sample data, perform these operations in MongoDB Compass:</p>
+    <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+      <li>Find all Electronics products with price > $100</li>
+      <li>Find products that have BOTH "office" and "gaming" tags</li>
+      <li>Sort products by rating descending, then by price ascending</li>
+      <li>Create an aggregation to find the average price per category</li>
+      <li>Create an aggregation to find the top 3 most expensive products</li>
+      <li>Create an aggregation to count products by month (using createdAt field)</li>
+      <li>Create an index on the "category" field</li>
+      <li>Export your results as JSON</li>
+    </ul>
+    <div class="code-block" id="challenge">
+// Challenge Solutions (try on your own first!)
+
+// 1. Electronics with price > $100
+{ "category": "Electronics", "price": { "$gt": 100 } }
+
+// 2. Products with both tags
+{ "tags": { "$all": ["office", "gaming"] } }
+
+// 3. Average price per category aggregation
+[
+  { $group: { _id: "$category", avgPrice: { $avg: "$price" } } },
+  { $sort: { avgPrice: -1 } }
+]
+
+// 4. Top 3 most expensive
+[
+  { $sort: { price: -1 } },
+  { $limit: 3 }
+]
+
+// 5. Products by month
+[
+  {
+    $group: {
+      _id: { $month: "$createdAt" },
+      count: { $sum: 1 }
+    }
+  }
+]
+    </div>
+    <button class="copy-btn" onclick="copyCode('challenge')"><i class="far fa-copy"></i> Copy Challenge Solutions</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-card">
+    <div class="section-title">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Day 73 Summary – You've Mastered:</span>
+    </div>
+    <p>✅ <strong>Advanced Filtering:</strong> Comparison, logical, array, regex operators in Compass<br>
+    ✅ <strong>Sorting & Projection:</strong> Organizing data and selecting specific fields<br>
+    ✅ <strong>Aggregation Pipeline:</strong> $match, $group, $project, $sort, $limit, $unwind<br>
+    ✅ <strong>Real Analytics:</strong> Revenue analysis, monthly trends, rating distribution<br>
+    ✅ <strong>Indexes:</strong> Creating indexes for performance in Compass<br>
+    ✅ <strong>Schema Validation:</strong> Enforcing data quality rules<br>
+    ✅ <strong>Export/Import:</strong> Moving data in and out of MongoDB<br>
+    ✅ <strong>Dashboard Pipeline:</strong> Complete business intelligence aggregation</p>
+    <div class="diagram">
+      <i class="fas fa-arrow-right"></i> <strong>Next Up: Day 74 – CRUD Operations (MongoDB Shell & Compass)</strong><br>
+      Keep following Telugu WebTech MERN roadmap – You're becoming a MongoDB expert! 🚀
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-database"></i> Day 73 · MongoDB Compass Deep Dive · <strong>Telugu WebTech</strong></p>
+    <p style="font-size: 0.85rem;">💡 Practice these aggregation pipelines – they're the key to MongoDB mastery!</p>
+  </footer>
+</div>
+
+<script>
+  function copyCode(elementId) {
+    const codeElement = document.getElementById(elementId);
+    let textToCopy = codeElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('✅ Code copied! Paste into MongoDB Compass to test these queries.');
+    }).catch(() => {
+      alert('⚠️ Please copy manually.');
+    });
+  }
+</script>
+</body>
+</html>

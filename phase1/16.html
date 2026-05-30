@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 16: Git & GitHub | Version Control · Push · Clone · Branches</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 0.5rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .topic-explanation {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      margin: 0.5rem 0 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .topic-explanation h4 {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .topic-explanation p {
+      color: #334155;
+      line-height: 1.5;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .git-command {
+      background: #1e293b;
+      color: #facc15;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🐙</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 16 · Git & GitHub (Version Control) — Show Results</div>
+  </div>
+
+  <h1>🐙 Git & GitHub<br><span style="font-size:1rem;">Version Control · Commit · Push · Pull · Clone · Branches · .gitignore — Click "Show Result" to see commands & explanations</span></h1>
+
+  <!-- Section 1: What is Git -->
+  <div class="section-title">1️⃣ What is Git? (Version Control System)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Git</strong> is a Version Control System (VCS) that tracks changes in your code over time. Like "save points" in video games — you can always go back to a previous version. Git enables collaboration, experiment safely with branches, and maintain complete project history.</p>
+    <p><strong>Where it's used:</strong> Every professional software project — from small personal projects to large teams at Google, Microsoft, and startups.</p>
+  </div>
+  <div class="example-card">
+    <h3>📦 What Git Does</h3>
+    <div class="code-block">
+      git init                    # Start tracking a folder<br>
+      git add index.html          # Stage changes<br>
+      git commit -m "message"     # Save snapshot<br>
+      git log                     # View history
+    </div>
+    <button class="btn-show" data-target="gitBasicResult">🔍 Show Git Explanation</button>
+    <div id="gitBasicResult" class="result-area">
+      <div class="result-label">📋 Git Core Concept:</div>
+      <div class="console-output">
+        ✅ Git tracks every change to your files.<br>
+        ✅ Each commit is like a photograph of your code at that moment.<br>
+        ✅ You can jump back to any commit using git checkout.<br>
+        ✅ Teams can work simultaneously without overwriting each other's work.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Git vs GitHub -->
+  <div class="section-title">2️⃣ Git vs GitHub (Difference)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Git</strong> is the tool that runs on your computer. <strong>GitHub</strong> is a cloud platform that hosts Git repositories online, enabling collaboration, code review, and portfolio hosting.</p>
+  </div>
+  <div class="example-card">
+    <table>
+      <thead><tr><th>Git (Local)</th><th>GitHub (Cloud)</th></tr></thead>
+      <tbody>
+        <tr><td>Runs on your computer</td><td>Website: github.com</td></tr>
+        <tr><td>Tracks changes locally</td><td>Stores repositories remotely</td></tr>
+        <tr><td>git init, add, commit</td><td>git push, pull, clone</td></tr>
+      </tbody>
+    </table>
+    <div class="diagram">
+      Local Git Repository → git push → GitHub Cloud Repository
+    </div>
+  </div>
+
+  <!-- Section 3: Install & Configure Git -->
+  <div class="section-title">3️⃣ Install Git & Basic Configuration</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>Before using Git, you must install it from <strong>git-scm.com</strong> and configure your identity. Every commit will be linked to your name and email — essential for team collaboration.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Download from git-scm.com and install<br>
+      git --version                  # Verify installation<br><br>
+      git config --global user.name "Your Name"<br>
+      git config --global user.email "your@email.com"<br><br>
+      git config --list              # View all settings
+    </div>
+    <button class="btn-show" data-target="configResult">⚙️ Show Git Configuration</button>
+    <div id="configResult" class="result-area">
+      <div class="result-label">📋 Setup Commands:</div>
+      <div class="console-output">
+        ✅ git config --global user.name "Kalyan"<br>
+        ✅ git config --global user.email "kalyan@example.com"<br>
+        ✅ These settings are stored in ~/.gitconfig<br>
+        ⚠️ Required before making commits!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: git init -->
+  <div class="section-title">4️⃣ Creating a Repository (git init)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>git init</strong> creates a hidden .git folder inside your project, turning it into a Git repository. This folder stores all version history and metadata.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      mkdir my-project<br>
+      cd my-project<br>
+      git init   # Initializes empty Git repository
+    </div>
+    <button class="btn-show" data-target="initResult">📁 Show git init Command</button>
+    <div id="initResult" class="result-area">
+      <div class="console-output">
+        $ git init<br>
+        Initialized empty Git repository in /my-project/.git/<br><br>
+        ✅ A hidden .git folder is created — contains all version history.<br>
+        ✅ Your project is now tracked by Git!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Git Workflow -->
+  <div class="section-title">5️⃣ Git Workflow: Working → Staging → Commit</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p>Files move through three stages: <strong>Working Directory</strong> (where you edit), <strong>Staging Area</strong> (git add), <strong>Commit</strong> (git commit saves to history). This gives you control over which changes to include.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      git status          # See which files changed<br>
+      git add index.html  # Stage specific file<br>
+      git add .           # Stage all changes<br>
+      git commit -m "Add homepage"  # Save snapshot
+    </div>
+    <button class="btn-show" data-target="workflowResult">📋 Show Git Workflow</button>
+    <div id="workflowResult" class="result-area">
+      <div class="diagram">
+        Working Directory (modified files)<br>
+              ↓ git add<br>
+        Staging Area (files to commit)<br>
+              ↓ git commit<br>
+        Commit → Saved in History
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: git status & git log -->
+  <div class="section-title">6️⃣ Check Status & History</div>
+  <div class="example-card">
+    <div class="code-block">
+      git status           # See modified/staged files<br>
+      git log              # Full commit history<br>
+      git log --oneline    # Compact history (one line per commit)
+    </div>
+    <button class="btn-show" data-target="statusLogResult">📜 Show git status & log</button>
+    <div id="statusLogResult" class="result-area">
+      <div class="console-output">
+        $ git status<br>
+        On branch main<br>
+        Changes not staged for commit:<br>
+        &nbsp;&nbsp;modified: index.html<br><br>
+        $ git log --oneline<br>
+        a1b2c3d Add navbar feature<br>
+        d4e5f6g Initial commit<br>
+        ✅ git status shows what changed, git log shows commit history.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: git remote & push -->
+  <div class="section-title">7️⃣ Connect to GitHub (Remote) & Push</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>git remote add</strong> links your local repo to a GitHub repository. <strong>git push</strong> uploads your commits to GitHub, making them available online.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # Create repo on GitHub first<br>
+      git remote add origin https://github.com/username/repo.git<br>
+      git branch -M main<br>
+      git push -u origin main   # First push
+    </div>
+    <button class="btn-show" data-target="remoteResult">🌐 Show git remote & push</button>
+    <div id="remoteResult" class="result-area">
+      <div class="console-output">
+        $ git remote add origin https://github.com/kalyan/my-app.git<br>
+        $ git push -u origin main<br>
+        ✅ origin = nickname for your GitHub repository<br>
+        ✅ After this, just "git push" works!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: git pull & clone -->
+  <div class="section-title">8️⃣ Pull & Clone (Download from GitHub)</div>
+  <div class="example-card">
+    <div class="code-block">
+      git pull origin main     # Download latest changes<br>
+      git clone https://github.com/username/repo.git  # Full copy
+    </div>
+    <button class="btn-show" data-target="pullCloneResult">📥 Show git pull & clone</button>
+    <div id="pullCloneResult" class="result-area">
+      <div class="console-output">
+        ✅ git pull = fetch + merge — gets latest changes from GitHub<br>
+        ✅ git clone creates a local copy of any GitHub repository<br>
+        $ git clone https://github.com/facebook/react.git<br>
+        → Downloads React's entire codebase!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 9: Branches -->
+  <div class="section-title">🌿 Branches (Parallel Development)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>Branches</strong> allow you to work on features independently without affecting the main codebase. This is how teams collaborate — each developer works on their own branch, then merges.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      git branch feature-login        # Create branch<br>
+      git checkout feature-login      # Switch to branch<br>
+      git checkout -b new-feature     # Create & switch (shortcut)<br>
+      git merge feature-login         # Merge into current branch
+    </div>
+    <button class="btn-show" data-target="branchResult">🌿 Show Branch Commands</button>
+    <div id="branchResult" class="result-area">
+      <div class="diagram">
+        main (stable) ←─── feature-login<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ git merge<br>
+        main now includes feature-login
+      </div>
+      <div class="console-output">
+        ✅ Branches enable safe experimentation<br>
+        ✅ git branch -a shows all branches<br>
+        ✅ git merge combines changes
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 10: .gitignore -->
+  <div class="section-title">📁 .gitignore (Exclude Files from Git)</div>
+  <div class="topic-explanation">
+    <h4>📌 Purpose & Usage</h4>
+    <p><strong>.gitignore</strong> tells Git which files/folders to ignore. Prevents committing temporary files, dependencies, secrets, and large binaries.</p>
+  </div>
+  <div class="example-card">
+    <div class="code-block">
+      # .gitignore file example<br>
+      node_modules/<br>
+      .env<br>
+      .DS_Store<br>
+      dist/<br>
+      *.log
+    </div>
+    <button class="btn-show" data-target="gitignoreResult">🚫 Show .gitignore Example</button>
+    <div id="gitignoreResult" class="result-area">
+      <div class="console-output">
+        ✅ node_modules/ → never commit (can be reinstalled via npm install)<br>
+        ✅ .env → contains API keys/secrets (security risk)<br>
+        ✅ .DS_Store → macOS system file<br>
+        ⚠️ Always add .gitignore BEFORE committing node_modules!
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 11: Complete Workflow -->
+  <div class="section-title">📋 Complete Git Workflow Example</div>
+  <div class="example-card">
+    <div class="code-block">
+      # 1. Create project<br>
+      mkdir mern-app && cd mern-app<br>
+      git init<br><br>
+      # 2. Create file and commit<br>
+      echo "# My MERN App" > README.md<br>
+      git add .<br>
+      git commit -m "Initial commit"<br><br>
+      # 3. Connect to GitHub & push<br>
+      git remote add origin https://github.com/username/mern-app.git<br>
+      git branch -M main<br>
+      git push -u origin main
+    </div>
+    <button class="btn-show" data-target="fullWorkflowResult">🚀 Show Complete Workflow</button>
+    <div id="fullWorkflowResult" class="result-area">
+      <div class="console-output">
+        ✅ This is the exact workflow used by developers daily!<br>
+        1. git init → start tracking<br>
+        2. git add + commit → save changes<br>
+        3. git remote add → link to GitHub<br>
+        4. git push → upload to cloud<br><br>
+        🔁 Repeat: edit → add → commit → push
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Git Mistakes & Solutions</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesGitResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesGitResult" class="result-area">
+      <ul style="margin-left: 1.2rem;">
+        <li>❌ Forgetting <span class="inline-code">git add .</span> before commit → files not saved. Use <span class="inline-code">git status</span> to check.</li>
+        <li>❌ Using wrong remote URL → check with <span class="inline-code">git remote -v</span>, fix with <span class="inline-code">git remote set-url origin new-url</span>.</li>
+        <li>❌ Committing <span class="inline-code">node_modules</span> → huge repo size. Add to <span class="inline-code">.gitignore</span> immediately.</li>
+        <li>❌ Writing vague commit messages → "fixed stuff" is bad. Use "Add login validation" or "Fix navbar responsive issue".</li>
+        <li>❌ Merge conflicts fear → practice! Conflicts are normal. Read conflict markers and resolve carefully.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Why GitHub Portfolio -->
+  <div class="section-title">🌟 GitHub Portfolio — Your Developer Resume</div>
+  <div class="card-grid">
+    <div class="card">✅ Companies check GitHub activity before hiring</div>
+    <div class="card">✅ Show your projects, code quality, and consistency</div>
+    <div class="card">✅ Regular commits = active, passionate developer</div>
+    <div class="card">✅ Contribute to open source — best way to learn</div>
+  </div>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔧 Task 1</h3><p>Install Git on your computer and verify version (<span class="inline-code">git --version</span>).</p></div>
+    <div class="card"><h3>🐙 Task 2</h3><p>Create a GitHub account (if you don't have one).</p></div>
+    <div class="card"><h3>📁 Task 3</h3><p>Initialize a local Git repository, add a file, commit it, and push to GitHub.</p></div>
+    <div class="card"><h3>🌿 Task 4</h3><p>Create a new branch, make changes, merge back to main, and push both branches.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Beginner Summary (Day 16 - Git & GitHub)</div>
+  <div class="card-grid">
+    <div class="card">✔️ What is Git (version control) & GitHub (cloud hosting)</div>
+    <div class="card">✔️ git init, git add, git commit, git status, git log</div>
+    <div class="card">✔️ git remote add, git push, git pull, git clone</div>
+    <div class="card">✔️ Branches: create, switch, merge</div>
+    <div class="card">✔️ .gitignore (exclude node_modules, .env, secrets)</div>
+  </div>
+
+  <!-- Day 16 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 16 Ending Message</strong><br>
+    “Now you know the professional workflow used by developers worldwide for managing code and collaborating on projects. Push your projects to GitHub daily — build your portfolio!”
+  </div>
+
+  <!-- Next: Day 17 -->
+  <div class="section-title">🔜 Next — Day 17 : Advanced JavaScript Concepts</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🔒 Closures</span>
+    <span class="badge">⚡ Higher-Order Functions</span>
+    <span class="badge">🫧 Event Bubbling</span>
+    <span class="badge">⏳ Debouncing & Throttling</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 16 Completed ✅<br>
+    Click "Show Result" on each example to see Git commands explained. Practice Git daily — push your code to GitHub!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
