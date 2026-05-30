@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 11: JavaScript Arrays & Methods | Beginner Friendly + Live Outputs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 10px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .concept-box {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .concept-box h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #1e3a8a;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📊</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 11 · Arrays & Powerful Array Methods (Explanations + Live Outputs)</div>
+  </div>
+
+  <h1>📦 JavaScript Arrays & Array Methods<br><span style="font-size:1rem;">forEach, map, filter, reduce, find, includes, spread, destructuring — Explained for Beginners, Click "Show Result"</span></h1>
+
+  <!-- SECTION 1: What is an Array? -->
+  <div class="section-title">1️⃣ What is an Array? (Storing Multiple Values)</div>
+  <div class="example-card">
+    <h3>📦 Understanding Arrays</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> An array is a special variable that can hold multiple values at once. Instead of creating separate variables for each item (like fruit1, fruit2, fruit3), you use one array: <span class="inline-code">let fruits = ["Apple", "Mango", "Orange"]</span>.</p>
+      <p><strong>💡 Key points:</strong> Arrays are ordered, each item has an index (position) starting from 0. The first item is at index 0, second at index 1, etc.</p>
+      <p><strong>🏠 Analogy:</strong> An array is like a train with multiple compartments. Each compartment can hold different items (numbers, text, even other arrays).</p>
+    </div>
+    <div class="code-block">
+      // Creating arrays<br>
+      let fruits = ["Apple", "Mango", "Orange"];<br>
+      let numbers = [10, 20, 30, 40];<br>
+      let mixed = ["Kalyan", 25, true];<br><br>
+      // Accessing elements (index starts at 0)<br>
+      console.log(fruits[0]); // "Apple"<br>
+      console.log(fruits.length); // 3 (number of items)
+    </div>
+    <button class="btn-show" data-target="arrayBasicResult">🔍 Show Array Example</button>
+    <div id="arrayBasicResult" class="result-area">
+      <div class="result-label">📋 Array Output:</div>
+      <div class="console-output" id="arrayBasicOutput"></div>
+      <script>
+        document.getElementById("arrayBasicResult").addEventListener("showresult", function() {
+          let fruits = ["Apple", "Mango", "Orange"];
+          let numbers = [10, 20, 30, 40];
+          document.getElementById("arrayBasicOutput").innerHTML = `fruits = [${fruits}]<br>numbers = [${numbers}]<br>fruits[0] = "${fruits[0]}" (first element)<br>fruits.length = ${fruits.length} (number of items)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Accessing & Updating Arrays -->
+  <div class="section-title">2️⃣ Accessing & Updating Elements by Index</div>
+  <div class="example-card">
+    <h3>🔢 Working with Index Positions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Each item in an array has a numeric index (position). The first item is index 0, second is index 1, and so on. You can read or change any item using its index.</p>
+      <p><strong>💡 Important:</strong> Trying to access an index that doesn't exist returns <span class="inline-code">undefined</span> (not an error).</p>
+    </div>
+    <div class="code-block">
+      let colors = ["Red", "Green", "Blue"];<br>
+      console.log(colors[1]);  // "Green" (second item)<br>
+      colors[2] = "Yellow";    // Change third item<br>
+      console.log(colors);     // ["Red", "Green", "Yellow"]
+    </div>
+    <button class="btn-show" data-target="accessResult">🎯 Show Access/Update Demo</button>
+    <div id="accessResult" class="result-area">
+      <div class="result-label">🔄 Before and After Update:</div>
+      <div class="console-output" id="accessOutput"></div>
+      <script>
+        document.getElementById("accessResult").addEventListener("showresult", function() {
+          let colors = ["Red", "Green", "Blue"];
+          let before = [...colors];
+          colors[2] = "Yellow";
+          document.getElementById("accessOutput").innerHTML = `Original: [${before}]<br>After updating index 2 (third item): [${colors}]<br>colors[1] (second item) = "${colors[1]}"`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Basic Array Methods (push, pop, shift, unshift) -->
+  <div class="section-title">3️⃣ Basic Array Methods (Adding & Removing Items)</div>
+  <div class="example-card">
+    <h3>➕➖ Modify Arrays</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> These methods help you add or remove items from arrays:</p>
+      <ul style="margin-left: 1.5rem; margin-top: 5px;">
+        <li><span class="inline-code">push()</span> - adds item to the END</li>
+        <li><span class="inline-code">pop()</span> - removes item from the END</li>
+        <li><span class="inline-code">unshift()</span> - adds item to the BEGINNING</li>
+        <li><span class="inline-code">shift()</span> - removes item from the BEGINNING</li>
+      </ul>
+    </div>
+    <div class="code-block">
+      let arr = [1, 2];<br>
+      arr.push(3);     // [1, 2, 3] (add to end)<br>
+      arr.pop();       // [1, 2] (remove from end)<br>
+      arr.unshift(0);  // [0, 1, 2] (add to start)<br>
+      arr.shift();     // [1, 2] (remove from start)
+    </div>
+    <button class="btn-show" data-target="basicMethodsResult">⚙️ See Methods in Action</button>
+    <div id="basicMethodsResult" class="result-area">
+      <div class="result-label">🛠️ push/pop/unshift/shift Demo:</div>
+      <div class="console-output" id="methodsOutput"></div>
+      <script>
+        document.getElementById("basicMethodsResult").addEventListener("showresult", function() {
+          let arr = [1, 2];
+          let steps = [];
+          steps.push(`Start: [${arr}]`);
+          arr.push(3); steps.push(`After push(3) → adds to END: [${arr}]`);
+          arr.pop(); steps.push(`After pop() → removes from END: [${arr}]`);
+          arr.unshift(0); steps.push(`After unshift(0) → adds to START: [${arr}]`);
+          arr.shift(); steps.push(`After shift() → removes from START: [${arr}]`);
+          document.getElementById("methodsOutput").innerHTML = steps.join("<br>");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 4: forEach() Loop -->
+  <div class="section-title">4️⃣ forEach() — Looping Through Arrays</div>
+  <div class="example-card">
+    <h3>🔄 Iterating Without a For Loop</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">forEach()</span> executes a function once for each array element. It's a cleaner, more readable way to loop through arrays compared to traditional <span class="inline-code">for</span> loops.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">array.forEach((element, index) => { // do something })</span></p>
+    </div>
+    <div class="code-block">
+      let fruits = ["Apple", "Mango", "Orange"];<br>
+      fruits.forEach((fruit, index) => {<br>
+        console.log(`${index}: ${fruit}`);<br>
+      });<br>
+      // Output: 0: Apple, 1: Mango, 2: Orange
+    </div>
+    <button class="btn-show" data-target="forEachResult">🔄 Run forEach Demo</button>
+    <div id="forEachResult" class="result-area">
+      <div class="result-label">🍎 forEach Iteration Output:</div>
+      <div class="console-output" id="forEachOutput"></div>
+      <script>
+        document.getElementById("forEachResult").addEventListener("showresult", function() {
+          let fruits = ["Apple", "Mango", "Orange"];
+          let output = "";
+          fruits.forEach((fruit, idx) => { output += `Index ${idx}: ${fruit}<br>`; });
+          document.getElementById("forEachOutput").innerHTML = output;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 5: map() Method -->
+  <div class="section-title">5️⃣ map() — Transform Every Element</div>
+  <div class="example-card">
+    <h3>📐 Creating a New Array from an Existing One</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">map()</span> creates a brand new array by applying a function to each element of the original array. The original array remains unchanged.</p>
+      <p><strong>💡 Use case:</strong> Converting prices to include tax, squaring numbers, extracting specific properties from objects.</p>
+    </div>
+    <div class="code-block">
+      let numbers = [1, 2, 3, 4];<br>
+      let doubled = numbers.map(n => n * 2);<br>
+      // doubled = [2, 4, 6, 8]<br>
+      // original numbers still [1, 2, 3, 4]
+    </div>
+    <button class="btn-show" data-target="mapResult">🧮 See map() in Action</button>
+    <div id="mapResult" class="result-area">
+      <div class="result-label">🔢 map() Transformation:</div>
+      <div class="console-output" id="mapOutput"></div>
+      <script>
+        document.getElementById("mapResult").addEventListener("showresult", function() {
+          let nums = [1, 2, 3, 4];
+          let doubled = nums.map(n => n * 2);
+          let squared = nums.map(n => n * n);
+          document.getElementById("mapOutput").innerHTML = `Original: [${nums}]<br>map(n => n * 2): [${doubled}]<br>map(n => n * n): [${squared}]<br>✅ Original array unchanged!`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 6: filter() Method -->
+  <div class="section-title">6️⃣ filter() — Select Matching Elements</div>
+  <div class="example-card">
+    <h3>🎯 Creating a Subset Based on Conditions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">filter()</span> creates a new array with only the elements that pass a test (return true from the callback function). Elements that return false are excluded.</p>
+      <p><strong>💡 Use case:</strong> Finding all products under a certain price, getting only active users, filtering search results.</p>
+    </div>
+    <div class="code-block">
+      let numbers = [10, 20, 30, 40, 50];<br>
+      let greaterThan30 = numbers.filter(n => n > 30);<br>
+      // greaterThan30 = [40, 50]
+    </div>
+    <button class="btn-show" data-target="filterResult">🔍 Run filter() Demo</button>
+    <div id="filterResult" class="result-area">
+      <div class="result-label">✅ filter() in Action:</div>
+      <div class="console-output" id="filterOutput"></div>
+      <script>
+        document.getElementById("filterResult").addEventListener("showresult", function() {
+          let nums = [10, 20, 30, 40, 50];
+          let greaterThan30 = nums.filter(n => n > 30);
+          let evenNumbers = nums.filter(n => n % 2 === 0);
+          document.getElementById("filterOutput").innerHTML = `Original: [${nums}]<br>filter(n => n > 30): [${greaterThan30}]<br>filter(n => n % 2 === 0) (even): [${evenNumbers}]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 7: reduce() Method -->
+  <div class="section-title">7️⃣ reduce() — Accumulate into Single Value</div>
+  <div class="example-card">
+    <h3>💰 Calculating Sums, Averages, Totals</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">reduce()</span> reduces an array to a single value by applying a function that accumulates results. It's perfect for calculating totals, averages, or combining data.</p>
+      <p><strong>💡 Parameters:</strong> <span class="inline-code">reduce((accumulator, currentValue) => accumulator + currentValue, initialValue)</span></p>
+    </div>
+    <div class="code-block">
+      let cart = [100, 200, 50];<br>
+      let total = cart.reduce((sum, price) => sum + price, 0);<br>
+      // total = 350
+    </div>
+    <button class="btn-show" data-target="reduceResult">📊 See reduce() Demo</button>
+    <div id="reduceResult" class="result-area">
+      <div class="result-label">➕ reduce() Sum Calculation:</div>
+      <div class="console-output" id="reduceOutput"></div>
+      <script>
+        document.getElementById("reduceResult").addEventListener("showresult", function() {
+          let cart = [100, 200, 50];
+          let total = cart.reduce((sum, price) => sum + price, 0);
+          let product = [2, 3, 4].reduce((acc, num) => acc * num, 1);
+          document.getElementById("reduceOutput").innerHTML = `Cart prices: [${cart}]<br>Total sum using reduce: ${total}<br><br>Another example: [2, 3, 4] multiplied using reduce: ${product}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 8: find() & includes() -->
+  <div class="section-title">8️⃣ find() and includes() — Searching Arrays</div>
+  <div class="example-card">
+    <h3>🔎 Finding Elements and Checking Existence</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">find()</span> returns the first element that satisfies a condition (unlike filter which returns all). <span class="inline-code">includes()</span> returns true/false if an element exists.</p>
+      <p><strong>💡 Difference:</strong> <span class="inline-code">find()</span> → returns the element, <span class="inline-code">includes()</span> → returns boolean.</p>
+    </div>
+    <div class="code-block">
+      let nums = [5, 12, 8, 130];<br>
+      let firstBig = nums.find(n => n > 10);  // returns 12<br>
+      let hasEight = nums.includes(8);        // returns true
+    </div>
+    <button class="btn-show" data-target="findResult">🔍 Run Search Methods</button>
+    <div id="findResult" class="result-area">
+      <div class="result-label">🔎 Search Results:</div>
+      <div class="console-output" id="findOutput"></div>
+      <script>
+        document.getElementById("findResult").addEventListener("showresult", function() {
+          let nums = [5, 12, 8, 130];
+          let found = nums.find(n => n > 10);
+          let hasEight = nums.includes(8);
+          document.getElementById("findOutput").innerHTML = `Array: [${nums}]<br>find(n => n > 10): returns ${found} (first element > 10)<br>includes(8): ${hasEight}<br>includes(99): ${nums.includes(99)}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 9: sort() & reverse() -->
+  <div class="section-title">9️⃣ sort() and reverse() — Ordering Arrays</div>
+  <div class="example-card">
+    <h3>📋 Sorting and Reversing Order</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">sort()</span> arranges array elements in order (alphabetical for strings, numeric with compare function). <span class="inline-code">reverse()</span> reverses the order. <strong>Important:</strong> Both methods modify the original array.</p>
+    </div>
+    <div class="code-block">
+      let letters = ["c", "a", "b"];<br>
+      letters.sort();     // ["a", "b", "c"]<br>
+      letters.reverse();  // ["c", "b", "a"]<br><br>
+      let numbers = [40, 5, 100];<br>
+      numbers.sort((a,b) => a - b); // [5, 40, 100] (numeric sort)
+    </div>
+    <button class="btn-show" data-target="sortResult">📊 Show sort/reverse Demo</button>
+    <div id="sortResult" class="result-area">
+      <div class="result-label">🔄 Sorting & Reversing:</div>
+      <div class="console-output" id="sortOutput"></div>
+      <script>
+        document.getElementById("sortResult").addEventListener("showresult", function() {
+          let letters = ["c", "a", "b"];
+          let lettersCopy = [...letters];
+          lettersCopy.sort();
+          let reversed = [...lettersCopy].reverse();
+          document.getElementById("sortOutput").innerHTML = `Original: [${letters}]<br>After sort(): [${lettersCopy}]<br>After reverse(): [${reversed}]<br><br>⚠️ sort() changes the original array! Use [...array] to copy first.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Spread Operator (...) -->
+  <div class="section-title">🔟 Spread Operator (...) — Copy and Combine Arrays</div>
+  <div class="example-card">
+    <h3>✨ The Three Dots Magic</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The spread operator <span class="inline-code">...</span> "spreads" array elements into individual items. It's perfect for copying arrays (without affecting original) and combining multiple arrays.</p>
+      <p><strong>💡 Why copy?</strong> Arrays are reference types. Changing a copied array shouldn't change the original. Spread creates a shallow copy.</p>
+    </div>
+    <div class="code-block">
+      let arr1 = [1, 2];<br>
+      let arr2 = [3, 4];<br>
+      let combined = [...arr1, ...arr2]; // [1, 2, 3, 4]<br>
+      let copy = [...arr1];              // independent copy
+    </div>
+    <button class="btn-show" data-target="spreadResult">✨ Run Spread Demo</button>
+    <div id="spreadResult" class="result-area">
+      <div class="result-label">📦 Spread Operator Examples:</div>
+      <div class="console-output" id="spreadOutput"></div>
+      <script>
+        document.getElementById("spreadResult").addEventListener("showresult", function() {
+          let arr1 = [1, 2];
+          let arr2 = [3, 4];
+          let combined = [...arr1, ...arr2];
+          let copy = [...arr1];
+          copy.push(99);
+          document.getElementById("spreadOutput").innerHTML = `arr1: [${arr1}], arr2: [${arr2}]<br>Combined [...arr1, ...arr2]: [${combined}]<br>Copy of arr1: [${copy}] (changing copy doesn't affect original: original is still [${arr1}])`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Array Destructuring -->
+  <div class="section-title">📦 Array Destructuring (Unpacking Values)</div>
+  <div class="example-card">
+    <h3>🎁 Extracting Array Values into Variables</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Destructuring allows you to unpack array values into distinct variables in one line. It's cleaner than accessing each element with index.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">let [first, second, third] = myArray</span></p>
+    </div>
+    <div class="code-block">
+      let fruits = ["Apple", "Mango", "Orange"];<br>
+      let [first, second] = fruits;<br>
+      console.log(first);  // "Apple"<br>
+      console.log(second); // "Mango"
+    </div>
+    <button class="btn-show" data-target="destructureResult">🎯 Show Destructuring</button>
+    <div id="destructureResult" class="result-area">
+      <div class="result-label">📦 Unpacking Arrays:</div>
+      <div class="console-output" id="destructureOutput"></div>
+      <script>
+        document.getElementById("destructureResult").addEventListener("showresult", function() {
+          let fruits = ["Apple", "Mango", "Orange", "Grapes"];
+          let [first, second, third] = fruits;
+          let [primary, secondary, ...rest] = fruits;
+          document.getElementById("destructureOutput").innerHTML = `fruits = [${fruits}]<br>let [first, second, third] = fruits;<br>first = "${first}", second = "${second}", third = "${third}"<br><br>Using rest pattern:<br>let [primary, secondary, ...rest] = fruits;<br>primary = "${primary}", secondary = "${secondary}", rest = [${rest}]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 12: Mini Project - Product Filter -->
+  <div class="section-title">🛍️ Mini Project: Filter Products with map() & filter()</div>
+  <div class="example-card">
+    <h3>💸 Real-world Array Methods Application</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> This project demonstrates how <span class="inline-code">filter()</span> and <span class="inline-code">map()</span> work together to filter and transform data — a common pattern in e-commerce sites.</p>
+    </div>
+    <div class="code-block">
+      const products = [<br>
+        { name: "Laptop", price: 50000 },<br>
+        { name: "Phone", price: 20000 },<br>
+        { name: "Tablet", price: 15000 }<br>
+      ];<br>
+      let expensive = products.filter(p => p.price > 18000);<br>
+      let names = expensive.map(p => p.name);
+    </div>
+    <button class="btn-show" data-target="productFilterResult">🛒 Launch Product Filter</button>
+    <div id="productFilterResult" class="result-area">
+      <div class="result-label">📦 Products & Filtering:</div>
+      <div style="background: #fefce8; padding: 15px; border-radius: 20px; margin: 10px 0;">
+        <p><strong>Products in our store:</strong></p>
+        <ul style="margin-left: 1.5rem;">
+          <li>💻 Laptop - ₹50,000</li>
+          <li>📱 Phone - ₹20,000</li>
+          <li>📟 Tablet - ₹15,000</li>
+        </ul>
+        <button class="demo-button" id="filterProductsBtn">💰 Show Products > ₹18,000</button>
+        <p id="filterResultMsg" style="margin-top: 12px; font-weight: 500;"></p>
+      </div>
+      <div class="console-output" id="productFilterConsole"></div>
+      <script>
+        const productList = [
+          { name: "Laptop", price: 50000 },
+          { name: "Phone", price: 20000 },
+          { name: "Tablet", price: 15000 }
+        ];
+        document.getElementById("filterProductsBtn")?.addEventListener("click", () => {
+          let expensive = productList.filter(p => p.price > 18000);
+          let names = expensive.map(p => p.name);
+          let prices = expensive.map(p => p.price);
+          document.getElementById("filterResultMsg").innerHTML = `✅ Products above ₹18,000: ${names.join(", ")}<br>💰 Prices: ₹${prices.join(", ₹")}`;
+        });
+        document.getElementById("productFilterResult").addEventListener("showresult", function() {
+          let expensive = productList.filter(p => p.price > 18000);
+          let names = expensive.map(p => p.name);
+          document.getElementById("productFilterConsole").innerHTML = `filter(p => p.price > 18000) → ${JSON.stringify(expensive)}<br>map() to extract names → [${names}]<br><br>✅ This is exactly how real e-commerce sites filter products!`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Quick Reference Table -->
+  <div class="section-title">📋 Array Methods Quick Reference</div>
+  <div class="example-card">
+    <table>
+      <thead style="background:#e2e8f0;"> 
+        <tr><th>Method</th><th>What it does</th><th>Returns</th><th>Changes original?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="inline-code">push()</span></td><td>Adds to end</td><td>New length</td><td>Yes</td></tr>
+        <tr><td><span class="inline-code">pop()</span></td><td>Removes from end</td><td>Removed item</td><td>Yes</td></tr>
+        <tr><td><span class="inline-code">forEach()</span></td><td>Loops through items</td><td>undefined</td><td>No</td></tr>
+        <tr><td><span class="inline-code">map()</span></td><td>Transforms each item</td><td>New array</td><td>No</td></tr>
+        <tr><td><span class="inline-code">filter()</span></td><td>Selects matching items</td><td>New array</td><td>No</td></tr>
+        <tr><td><span class="inline-code">reduce()</span></td><td>Accumulates to single value</td><td>Single value</td><td>No</td></tr>
+        <tr><td><span class="inline-code">find()</span></td><td>Finds first match</td><td>Element or undefined</td><td>No</td></tr>
+        <tr><td><span class="inline-code">includes()</span></td><td>Checks if exists</td><td>true/false</td><td>No</td></tr>
+        <tr><td><span class="inline-code">sort()</span></td><td>Sorts elements</td><td>Sorted array</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Common Mistakes Section -->
+  <div class="section-title">⚠️ Common Array Mistakes for Beginners</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesArrayResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesArrayResult" class="result-area">
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ <strong>Forgetting map() needs return:</strong> <span class="inline-code">arr.map(n => n * 2)</span> works; <span class="inline-code">arr.map(n => { n * 2 })</span> returns undefined (curly braces need explicit return)</li>
+        <li>❌ <strong>Confusing filter() and find():</strong> filter() returns ALL matching elements (array), find() returns FIRST matching element (single)</li>
+        <li>❌ <strong>Accessing index out of bounds:</strong> <span class="inline-code">arr[10]</span> when length is 3 returns undefined (not error)</li>
+        <li>❌ <strong>sort() on numbers:</strong> default sort is alphabetical: [1, 10, 2] becomes [1, 10, 2]. Use <span class="inline-code">sort((a,b) => a - b)</span> for numbers</li>
+        <li>❌ <strong>Mutating original array accidentally:</strong> Use spread <span class="inline-code">[...arr]</span> to create a copy before modifying</li>
+        <li>❌ <strong>reduce() without initial value:</strong> Can cause error on empty arrays. Always provide initial value: <span class="inline-code">reduce((sum, n) => sum + n, 0)</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World Applications -->
+  <div class="section-title">🌍 Where Array Methods Are Used in Real Projects</div>
+  <div class="card-grid">
+    <div class="card"><strong>🛒 Shopping Cart</strong><br>reduce() → calculate total price<br>filter() → remove items</div>
+    <div class="card"><strong>🔍 Search Feature</strong><br>filter() → find matching products<br>map() → display search results</div>
+    <div class="card"><strong>📊 Data Dashboard</strong><br>map() → transform API data<br>reduce() → calculate averages</div>
+    <div class="card"><strong>✅ Todo List</strong><br>filter() → show completed tasks<br>forEach() → render tasks</div>
+    <div class="card"><strong>🎨 React Rendering</strong><br>map() → render lists of components</div>
+    <div class="card"><strong>📈 Analytics</strong><br>filter() → segment users<br>reduce() → aggregate metrics</div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice These)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📊 Task 1</h3><p>Create an array of marks [85, 92, 78, 90, 88]. Use filter() to get marks greater than 80.</p></div>
+    <div class="card"><h3>🧮 Task 2</h3><p>Use map() to double each number in [2, 4, 6, 8, 10]. Store result in a new array.</p></div>
+    <div class="card"><h3>💰 Task 3</h3><p>Use reduce() to calculate total of [150, 200, 350, 100]. Also calculate average.</p></div>
+    <div class="card"><h3>✅ Task 4</h3><p>Create fruits array ["Apple", "Banana", "Mango", "Orange"]. Use includes() to check if "Mango" exists. Use find() to find first fruit starting with "O".</p></div>
+    <div class="card"><h3>📦 Task 5</h3><p>Practice spread operator: combine two arrays [1,2,3] and [4,5,6] into one. Then create a copy and add a new element without changing original.</p></div>
+    <div class="card"><h3>🎯 Task 6</h3><p>Use destructuring to extract first two elements from [10, 20, 30, 40] into variables a and b.</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 11 Summary: What You Learned About Arrays</div>
+  <div class="card-grid">
+    <div class="card">✔️ What arrays are and how to create them</div>
+    <div class="card">✔️ Accessing/updating elements by index</div>
+    <div class="card">✔️ push(), pop(), unshift(), shift() for adding/removing</div>
+    <div class="card">✔️ forEach() for looping through arrays</div>
+    <div class="card">✔️ map() for transforming data (creates new array)</div>
+    <div class="card">✔️ filter() for selecting matching elements</div>
+    <div class="card">✔️ reduce() for calculating totals/averages</div>
+    <div class="card">✔️ find() and includes() for searching</div>
+    <div class="card">✔️ sort() and reverse() for ordering</div>
+    <div class="card">✔️ Spread operator (...) for copying and combining</div>
+    <div class="card">✔️ Array destructuring for unpacking values</div>
+    <div class="card">✔️ Built a real product filter using map() and filter()</div>
+  </div>
+
+  <!-- Day 11 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 11 Ending Message for Beginners</strong><br>
+    “Arrays and their methods are among the most important concepts in JavaScript. You now know how to transform, filter, search, and reduce data — skills that are used daily in React, Node.js, and every modern JavaScript framework. Practice these methods until they become second nature!”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 12 : JavaScript Objects & Object Destructuring</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Creating Objects (key-value pairs)</span>
+    <span class="badge">🔁 Accessing object properties (dot vs bracket)</span>
+    <span class="badge">⚙️ Object methods (this keyword)</span>
+    <span class="badge">📦 Object destructuring</span>
+    <span class="badge">🔍 Object.keys(), Object.values(), Object.entries()</span>
+    <span class="badge">🔄 Looping through objects</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 11 Completed ✅<br>
+    Click "Show Result" on every card to see live array method outputs. Practice map, filter, and reduce daily!
+  </div>
+</div>
+
+<script>
+  // Add click handlers for all "Show Result" buttons with custom event triggering
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

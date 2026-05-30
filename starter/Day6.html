@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 6: CSS Layouts & Responsive | Beginner's Deep Dive + Live Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 2rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    /* Demo styles used inside results */
+    .demo-flex-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 24px;
+      flex-wrap: wrap;
+    }
+    .demo-flex-item {
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      width: 100px;
+      text-align: center;
+    }
+    .demo-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 24px;
+    }
+    .demo-grid-item {
+      background: #facc15;
+      padding: 24px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 20px;
+    }
+    @media (max-width: 768px) {
+      .demo-grid-container {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📐</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 6 · CSS Layouts & Responsive (Explanations + Live Outputs)</div>
+  </div>
+
+  <h1>📐 CSS Layouts & Responsive Design<br><span style="font-size:1rem;">Flexbox · Grid · Position · Media Queries — Explained for Beginners, Click "Show Result"</span></h1>
+
+  <!-- SECTION 1: Display Property -->
+  <div class="section-title">1️⃣ Display Property (block, inline, flex, grid)</div>
+  <div class="example-card">
+    <h3>🔲 Understanding How Elements Behave</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The <span class="inline-code">display</span> property determines how an element is shown on the page. <strong>block</strong> elements take full width (like &lt;div&gt;), <strong>inline</strong> elements only take as much width as needed (like &lt;span&gt;), <strong>flex</strong> enables powerful one-dimensional layouts, and <strong>grid</strong> enables two-dimensional layouts.</p>
+      <p><strong>💡 Key insight:</strong> Changing display changes how other elements interact with it. Flex and Grid are the foundation of modern responsive designs.</p>
+    </div>
+    <div class="code-block">
+      .block { display: block; background: orange; width: 100%; }<br>
+      .inline { display: inline; background: lightblue; }<br>
+      .flex { display: flex; gap: 10px; }
+    </div>
+    <button class="btn-show" data-target="displayResult">🎨 See Display Examples</button>
+    <div id="displayResult" class="result-area">
+      <div class="result-label">📦 Each display type in action:</div>
+      <div style="background: orange; padding: 10px; margin: 5px 0; border-radius: 12px;">block → takes full width, forces line break</div>
+      <div>
+        <span style="background: lightblue; padding: 5px 15px; border-radius: 20px; display: inline-block;">inline element 1</span>
+        <span style="background: lightblue; padding: 5px 15px; border-radius: 20px;">inline element 2 (sits next to each other)</span>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 12px; background: #e2e8f0; padding: 12px; border-radius: 20px;">
+        <div style="background: #0f172a; color:white; padding: 8px 15px; border-radius: 20px;">Flex Child 1</div>
+        <div style="background: #0f172a; color:white; padding: 8px 15px; border-radius: 20px;">Flex Child 2</div>
+      </div>
+      <p class="inline-code">✅ Flex and Grid give you ultimate layout control.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Flexbox Explained -->
+  <div class="section-title">2️⃣ Flexbox (One-Dimensional Layout - Rows OR Columns)</div>
+  <div class="example-card">
+    <h3>↔️ What is Flexbox?</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Flexbox is a layout model designed for one direction at a time — either a row (horizontal) or a column (vertical). It makes distributing space and aligning items super easy. Perfect for navigation bars, card groups, and centering content.</p>
+      <p><strong>💡 Key properties:</strong> <span class="inline-code">justify-content</span> (main axis alignment), <span class="inline-code">align-items</span> (cross axis), <span class="inline-code">flex-wrap</span> (allow items to wrap to next line), <span class="inline-code">gap</span> (space between items).</p>
+    </div>
+    <div class="code-block">
+      .flex-container {<br>
+        display: flex;<br>
+        justify-content: center;  /* centers horizontally */<br>
+        gap: 20px;               /* space between items */<br>
+        flex-wrap: wrap;         /* wrap on small screens */<br>
+      }
+    </div>
+    <button class="btn-show" data-target="flexboxResult">📦 Show Flexbox Demo</button>
+    <div id="flexboxResult" class="result-area">
+      <div class="result-label">✨ Live Flexbox (centered, wraps on resize)</div>
+      <div class="demo-flex-container">
+        <div class="demo-flex-item">Item 1</div>
+        <div class="demo-flex-item">Item 2</div>
+        <div class="demo-flex-item">Item 3</div>
+      </div>
+      <p class="inline-code">✅ Try shrinking window → items wrap because of flex-wrap: wrap</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3: justify-content Variations -->
+  <div class="section-title">3️⃣ justify-content (Aligning Items on Main Axis)</div>
+  <div class="example-card">
+    <h3>🎯 Space-Between vs Center vs Space-Around</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">justify-content</span> controls how extra space is distributed between flex items. <strong>space-between</strong> puts first item at start, last at end, space evenly in between. <strong>center</strong> groups items in the middle. <strong>space-around</strong> gives equal space around each item.</p>
+    </div>
+    <div class="code-block">
+      .space-between { justify-content: space-between; }<br>
+      .center { justify-content: center; }
+    </div>
+    <button class="btn-show" data-target="justifyResult">✨ Compare justify-content Values</button>
+    <div id="justifyResult" class="result-area">
+      <div class="result-label">🔹 space-between (first & last at edges):</div>
+      <div style="display: flex; justify-content: space-between; background: #e2e8f0; padding: 15px; border-radius: 20px; margin-bottom: 16px;">
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">First</span>
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">Middle</span>
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">Last</span>
+      </div>
+      <div class="result-label">🔸 center (all items together in middle):</div>
+      <div style="display: flex; justify-content: center; gap: 15px; background: #e2e8f0; padding: 15px; border-radius: 20px;">
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">A</span>
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">B</span>
+        <span style="background:#0f172a; color:white; padding:8px 16px; border-radius: 20px;">C</span>
+      </div>
+      <p class="inline-code">✅ Use space-between for navbars, center for hero sections.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CSS Grid (2D Layout) -->
+  <div class="section-title">4️⃣ CSS Grid (Two-Dimensional Layout - Rows AND Columns)</div>
+  <div class="example-card">
+    <h3>🔲 What is CSS Grid?</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Grid is for layouts that need both rows and columns simultaneously. You define a grid with <span class="inline-code">grid-template-columns</span> and <span class="inline-code">grid-template-rows</span>. It's ideal for overall page structure, image galleries, dashboards, and complex responsive designs.</p>
+      <p><strong>💡 Key insight:</strong> With Flexbox you control one direction; with Grid you control both. Use <span class="inline-code">fr</span> unit for fractional space (like 1fr = 1 part).</p>
+    </div>
+    <div class="code-block">
+      .grid { <br>
+        display: grid; <br>
+        grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */<br>
+        gap: 16px; <br>
+      }
+    </div>
+    <button class="btn-show" data-target="gridResult">📊 Show Grid Demo</button>
+    <div id="gridResult" class="result-area">
+      <div class="result-label">📐 3-Column Grid (1fr each)</div>
+      <div class="demo-grid-container" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="demo-grid-item">1</div>
+        <div class="demo-grid-item">2</div>
+        <div class="demo-grid-item">3</div>
+        <div class="demo-grid-item">4</div>
+        <div class="demo-grid-item">5</div>
+        <div class="demo-grid-item">6</div>
+      </div>
+      <p class="inline-code">✅ Perfect for image galleries, pricing tables, blog layouts.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Position Property -->
+  <div class="section-title">5️⃣ Position Property (relative, absolute, fixed, sticky)</div>
+  <div class="example-card">
+    <h3>📍 Controlling Element Placement</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The <span class="inline-code">position</span> property changes how an element is placed in the document flow. <strong>relative</strong> moves element relative to its normal position. <strong>absolute</strong> positions relative to nearest positioned ancestor. <strong>fixed</strong> stays in place while scrolling. <strong>sticky</strong> toggles between relative and fixed when scrolled past.</p>
+      <p><strong>💡 Use case:</strong> Absolute for badges, fixed for back-to-top buttons, sticky for headers that stick on scroll.</p>
+    </div>
+    <div class="code-block">
+      .relative { position: relative; left: 20px; }<br>
+      .absolute-parent { position: relative; }<br>
+      .absolute-child { position: absolute; top: 0; right: 0; }
+    </div>
+    <button class="btn-show" data-target="positionResult">🎯 See Position Examples</button>
+    <div id="positionResult" class="result-area">
+      <div class="result-label">📌 relative + absolute demo</div>
+      <div style="position: relative; background: #e2e8f0; padding: 30px; border-radius: 20px; margin-top: 10px;">
+        <span>Parent container (position: relative)</span>
+        <div style="position: absolute; top: 5px; right: 15px; background: #0f172a; color: white; padding: 5px 15px; border-radius: 30px; font-size: 0.8rem;">absolute badge</div>
+      </div>
+      <p class="inline-code">✅ Absolute element is positioned inside the relative parent (top-right corner).</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6: z-index -->
+  <div class="section-title">6️⃣ z-index (Stacking Order of Overlapping Elements)</div>
+  <div class="example-card">
+    <h3>📚 Controlling Which Element Appears On Top</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> When elements overlap, <span class="inline-code">z-index</span> decides who's on top. Higher z-index values appear above lower ones. Only works on positioned elements (relative, absolute, fixed).</p>
+      <p><strong>💡 Common use:</strong> Dropdown menus, modals, tooltips, floating action buttons.</p>
+    </div>
+    <div class="code-block">
+      .box1 { position: relative; z-index: 2; }<br>
+      .box2 { position: relative; z-index: 1; top: -20px; }
+    </div>
+    <button class="btn-show" data-target="zindexResult">🔝 Show z-index Demo</button>
+    <div id="zindexResult" class="result-area">
+      <div class="result-label">🎚️ Higher z-index appears on top:</div>
+      <div style="position: relative; height: 80px;">
+        <div style="position: absolute; z-index: 2; background: #facc15; width: 110px; height: 65px; border-radius: 16px; top: 0; left: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold;">z-index:2 (top)</div>
+        <div style="position: absolute; z-index: 1; background: #0f172a; color: white; width: 110px; height: 65px; border-radius: 16px; top: 25px; left: 50px; display: flex; align-items: center; justify-content: center;">z-index:1</div>
+      </div>
+      <p class="inline-code">✅ The yellow box (z-index:2) is visible on top of the dark box.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Responsive Design & Media Queries -->
+  <div class="section-title">7️⃣ Media Queries (Making Websites Responsive)</div>
+  <div class="example-card">
+    <h3>📱 How Websites Adapt to Any Screen Size</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">@media</span> queries apply different CSS styles based on screen width. They are the heart of responsive design — allowing layouts to change from desktop (3 columns) to tablet (2 columns) to mobile (1 column).</p>
+      <p><strong>💡 Best practice:</strong> Design for mobile first, then use <span class="inline-code">min-width</span> for larger screens. Always include viewport meta tag: <span class="inline-code">&lt;meta name="viewport" content="width=device-width"&gt;</span></p>
+    </div>
+    <div class="code-block">
+      /* Default: mobile layout */<br>
+      .container { display: flex; flex-direction: column; }<br>
+      /* Tablet and up */<br>
+      @media (min-width: 768px) { <br>
+        .container { flex-direction: row; } <br>
+      }
+    </div>
+    <button class="btn-show" data-target="responsiveExplain">📱 Understand Media Queries</button>
+    <div id="responsiveExplain" class="result-area">
+      <div class="result-label">🔄 Resize your browser window to see changes!</div>
+      <div style="background: #0f172a; color: white; padding: 20px; border-radius: 24px; text-align: center;">
+        <div style="font-size: 1.2rem;">📏 Current layout behavior</div>
+        <p>Desktop (>768px) → horizontal arrangement<br>Mobile (≤768px) → stacked vertically</p>
+      </div>
+      <p class="inline-code">✅ Media queries = responsive magic. Test by resizing this window.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Responsive Navbar Demo -->
+  <div class="section-title">8️⃣ Responsive Navbar (Flexbox + Media Query)</div>
+  <div class="example-card">
+    <h3>🧭 Real-world Example: Navigation that adapts</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A navbar that changes from horizontal on desktop to vertical (stacked) on mobile. This is one of the most common responsive patterns.</p>
+    </div>
+    <button class="btn-show" data-target="navbarResult">🌐 Show Responsive Navbar</button>
+    <div id="navbarResult" class="result-area">
+      <div class="result-label">🔽 Resize window to see mobile layout:</div>
+      <div style="display: flex; justify-content: space-between; background: #0f172a; color: white; padding: 16px 24px; border-radius: 60px; flex-wrap: wrap;">
+        <span style="font-weight: bold;">🏠 Telugu WebTech</span>
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+          <span>Home</span>
+          <span>Courses</span>
+          <span>Contact</span>
+        </div>
+      </div>
+      <style>
+        @media (max-width: 600px) {
+          #navbarResult div[style*="display: flex"] {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important;
+            text-align: center;
+          }
+          #navbarResult div[style*="display: flex"] div {
+            flex-direction: column !important;
+            gap: 8px !important;
+          }
+        }
+      </style>
+      <p class="inline-code">✅ Below 600px, navbar stacks vertically → mobile friendly!</p>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Responsive Cards -->
+  <div class="section-title">9️⃣ Responsive Cards (Flex + Media Query)</div>
+  <div class="example-card">
+    <h3>📇 Cards that reflow on small screens</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A card layout that shows 3 cards per row on desktop, then wraps to 1 card per row on mobile using <span class="inline-code">flex-wrap</span> and media queries.</p>
+    </div>
+    <button class="btn-show" data-target="cardsResult">🃏 See Responsive Cards</button>
+    <div id="cardsResult" class="result-area">
+      <div class="result-label">📦 Shrink screen → cards become full width:</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        <div style="background: white; width: 220px; padding: 20px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;"><h3>📘 HTML</h3><p>Structure of webpages</p></div>
+        <div style="background: white; width: 220px; padding: 20px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;"><h3>🎨 CSS</h3><p>Styling & Layouts</p></div>
+        <div style="background: white; width: 220px; padding: 20px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;"><h3>⚡ JS</h3><p>Interactivity</p></div>
+      </div>
+      <style>
+        @media (max-width: 700px) {
+          #cardsResult div[style*="display: flex"] > div {
+            width: 100% !important;
+          }
+        }
+      </style>
+      <p class="inline-code">✅ flex-wrap + media query makes cards responsive on all devices.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Responsive Grid Gallery -->
+  <div class="section-title">🔟 Responsive Grid Gallery (3 cols → 1 col)</div>
+  <div class="example-card">
+    <h3>🖼️ Image Gallery that adapts</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A grid gallery that shows 3 columns on desktop, 2 columns on tablet, 1 column on mobile. This is perfect for photo portfolios or product listings.</p>
+    </div>
+    <button class="btn-show" data-target="galleryResult">🏞️ Show Responsive Gallery</button>
+    <div id="galleryResult" class="result-area">
+      <div class="result-label">🖼️ Grid Gallery (resize to see columns change):</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 1</div>
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 2</div>
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 3</div>
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 4</div>
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 5</div>
+        <div style="background: #cbd5e1; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">📷 Image 6</div>
+      </div>
+      <style>
+        @media (max-width: 768px) {
+          #galleryResult div[style*="display: grid"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #galleryResult div[style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      </style>
+      <p class="inline-code">✅ 3 cols → 2 cols → 1 col as screen shrinks. Perfect responsiveness!</p>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Complete Responsive Project -->
+  <div class="section-title">🏗️ Complete Responsive Layout (Real Website Demo)</div>
+  <div class="example-card">
+    <h3>📱 Putting It All Together</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A full webpage that uses Flexbox (navbar), Grid (main content area), and media queries to adapt from desktop to mobile. This is exactly how professional websites are built.</p>
+    </div>
+    <button class="btn-show" data-target="fullLayoutResult">🚀 See Full Responsive Demo</button>
+    <div id="fullLayoutResult" class="result-area">
+      <div class="result-label">🌐 Complete Responsive Mini Site:</div>
+      <div style="background: white; border-radius: 24px; overflow: hidden; border:1px solid #e2e8f0;">
+        <div style="display: flex; justify-content: space-between; background: #0f172a; color: white; padding: 16px 20px; flex-wrap: wrap; align-items: center;">
+          <span style="font-weight: bold;">✨ Telugu WebTech</span>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">Home | Courses | Contact</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 24px;">
+          <div style="background:#f1f5f9; padding: 20px; border-radius: 20px;"><strong>📘 HTML</strong><br>Learn structure</div>
+          <div style="background:#f1f5f9; padding: 20px; border-radius: 20px;"><strong>🎨 CSS</strong><br>Styling & layouts</div>
+          <div style="background:#f1f5f9; padding: 20px; border-radius: 20px;"><strong>⚡ JavaScript</strong><br>Interactivity</div>
+        </div>
+        <div style="background: #facc15; text-align: center; padding: 14px;">© 2026 Telugu WebTech — Responsive Footer</div>
+      </div>
+      <style>
+        @media (max-width: 700px) {
+          #fullLayoutResult div[style*="grid-template-columns: repeat(3, 1fr)"] {
+            grid-template-columns: 1fr !important;
+          }
+          #fullLayoutResult div[style*="display: flex; justify-content: space-between"] {
+            flex-direction: column !important;
+            gap: 12px !important;
+            text-align: center;
+          }
+        }
+      </style>
+      <p class="inline-code">✅ Shrink window: navbar stacks, grid becomes 1 column, everything mobile-friendly!</p>
+    </div>
+  </div>
+
+  <!-- SECTION 12: Comparison Table -->
+  <div class="section-title">⚖️ Flexbox vs Grid: When to Use Each?</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="comparisonResult">📊 Show Comparison Table</button>
+    <div id="comparisonResult" class="result-area">
+      <div class="result-label">📐 Choose the right tool:</div>
+      <table style="width:100%; border-collapse: collapse;">
+        <thead style="background:#e2e8f0;"><tr><th>Scenario</th><th>Best Choice</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Navigation bar</td><td>Flexbox</td><td>One-dimensional row alignment</td></tr>
+          <tr><td>Card group (wrapping)</td><td>Flexbox + wrap</td><td>Items flow naturally</td></tr>
+          <tr><td>Full page layout</td><td>Grid</td><td>Rows and columns control</td></tr>
+          <tr><td>Image gallery</td><td>Grid</td><td>Perfect 2D arrangement</td></tr>
+          <tr><td>Centering a button</td><td>Flexbox</td><td>Simple justify/align</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common CSS Layout Mistakes (Avoid These!)</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesResultLayout">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesResultLayout" class="result-area">
+      <ul style="margin-left: 1.5rem; list-style-type: disc;">
+        <li>❌ Forgetting <span class="inline-code">display: flex</span> or <span class="inline-code">display: grid</span> → no layout appears</li>
+        <li>❌ Using absolute positioning everywhere → breaks responsiveness and flow</li>
+        <li>❌ Not testing media queries on actual mobile sizes → always use DevTools device emulation</li>
+        <li>❌ Missing viewport meta tag → <span class="inline-code">&lt;meta name="viewport"&gt;</span> is essential for responsive design</li>
+        <li>❌ Confusing <span class="inline-code">justify-content</span> (main axis) with <span class="inline-code">align-items</span> (cross axis) in Flexbox</li>
+        <li>❌ Using pixels instead of fr or % in Grid → fr adapts to screen size beautifully</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice Makes Perfect)</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>🎯 Task 1</h3><p>Create a responsive navbar with logo and 3 links that stacks vertically on mobile (max-width:600px). Use flexbox.</p></div>
+    <div class="example-card"><h3>🖼️ Task 2</h3><p>Build a photo gallery using CSS Grid: 3 columns on desktop, 2 columns on tablet (768px), 1 column on mobile (480px).</p></div>
+    <div class="example-card"><h3>📇 Task 3</h3><p>Design a pricing card section with 3 cards using flex-wrap. On mobile, cards should take full width.</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 6 Summary: What You Learned About Layouts & Responsive</div>
+  <div class="card-grid">
+    <div class="example-card">✔️ Display property: block, inline, flex, grid</div>
+    <div class="example-card">✔️ Flexbox for 1D layouts (navbar, card groups)</div>
+    <div class="example-card">✔️ justify-content: space-between, center, etc.</div>
+    <div class="example-card">✔️ CSS Grid for 2D layouts (galleries, page structure)</div>
+    <div class="example-card">✔️ Position: relative, absolute, fixed, sticky</div>
+    <div class="example-card">✔️ z-index for stacking order</div>
+    <div class="example-card">✔️ Media queries (@media) for responsiveness</div>
+    <div class="example-card">✔️ Responsive navbar, cards, and grid galleries</div>
+    <div class="example-card">✔️ Flexbox vs Grid: when to use each</div>
+  </div>
+
+  <!-- Day 6 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 6 Ending Message for Beginners</strong><br>
+    “Congratulations! You now understand how to build layouts that work on phones, tablets, and desktops. This is a superpower in web development. Tomorrow we start JavaScript — making pages interactive!”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 7 : JavaScript Basics (Variables, Data Types, Conditions, Loops)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Variables (let, const)</span>
+    <span class="badge">🔢 Data Types</span>
+    <span class="badge">⚡ Operators</span>
+    <span class="badge">🎛️ if/else Conditions</span>
+    <span class="badge">🔄 Loops (for, while)</span>
+    <span class="badge">📝 Functions</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 6 Completed ✅<br>
+    Click "Show Result" on any card to see live layout examples. Practice responsive design every day!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

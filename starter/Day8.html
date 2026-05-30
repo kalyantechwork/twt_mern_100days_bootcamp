@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 8: Advanced JavaScript Functions | Beginner Friendly + Live Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 10px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px 6px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🧩</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 8 · Advanced JavaScript Functions (Explanations + Live Outputs)</div>
+  </div>
+
+  <h1>🧩 JavaScript Functions: Deep Dive<br><span style="font-size:1rem;">Parameters · Return · Arrow Functions · Scope · Hoisting · Callbacks — Explained for Beginners, Click "Show Result"</span></h1>
+
+  <!-- SECTION 1: What are Functions? Review -->
+  <div class="section-title">1️⃣ What are Functions? (Reusable Code Blocks)</div>
+  <div class="example-card">
+    <h3>🎯 Why Functions Matter</h3>
+    <div class="explanation">
+      <p><strong>📌 Purpose:</strong> A function is a reusable block of code that performs a specific task. Instead of writing the same code multiple times, you write it once inside a function and call it whenever needed. Functions help organize code, reduce repetition, and make debugging easier.</p>
+      <p><strong>💡 Key parts:</strong> <span class="inline-code">function</span> keyword, function name, parentheses <span class="inline-code">()</span> for parameters, curly braces <span class="inline-code">{}</span> for code block, and optional <span class="inline-code">return</span> statement.</p>
+    </div>
+    <div class="code-block">
+      // Basic function declaration<br>
+      function sayHello() {<br>
+        return "Hello, World!";<br>
+      }<br>
+      console.log(sayHello()); // Call the function
+    </div>
+    <button class="btn-show" data-target="basicFuncResult">▶️ Run Function Demo</button>
+    <div id="basicFuncResult" class="result-area">
+      <div class="result-label">💻 Function Output:</div>
+      <div class="console-output" id="basicOutput"></div>
+      <script>
+        document.getElementById("basicFuncResult").addEventListener("showresult", function() {
+          function sayHello() { return "Hello, World!"; }
+          document.getElementById("basicOutput").innerHTML = `✨ sayHello() → "${sayHello()}"<br>✅ Functions let you reuse code without rewriting.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Parameters vs Arguments -->
+  <div class="section-title">2️⃣ Parameters vs Arguments (Inputs to Functions)</div>
+  <div class="example-card">
+    <h3>👤 Passing Data to Functions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <strong>Parameters</strong> are placeholders defined in the function declaration (like <span class="inline-code">name</span>). <strong>Arguments</strong> are actual values passed when calling the function (like <span class="inline-code">"Kalyan"</span>). Parameters make functions flexible and reusable with different inputs.</p>
+      <p><strong>💡 Pro tip:</strong> You can have multiple parameters separated by commas.</p>
+    </div>
+    <div class="code-block">
+      function greetUser(name, age) {<br>
+        return `Hello ${name}, you are ${age} years old.`;<br>
+      }<br>
+      greetUser("Kalyan", 25);
+    </div>
+    <button class="btn-show" data-target="paramResult">🔍 See Parameters in Action</button>
+    <div id="paramResult" class="result-area">
+      <div class="result-label">👋 Parameter Example:</div>
+      <div class="console-output" id="paramOutput"></div>
+      <script>
+        document.getElementById("paramResult").addEventListener("showresult", function() {
+          function greetUser(name, age) { return `Hello ${name}, you are ${age} years old.`; }
+          document.getElementById("paramOutput").innerHTML = `greetUser("Kalyan", 25) → "${greetUser("Kalyan", 25)}"<br>greetUser("Priya", 22) → "${greetUser("Priya", 22)}"<br><br>✅ Same function, different arguments = different outputs.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Return Statement -->
+  <div class="section-title">3️⃣ Return Statement (Sending Output Back)</div>
+  <div class="example-card">
+    <h3>📤 Getting Results from Functions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The <span class="inline-code">return</span> statement specifies the value a function sends back to the caller. Without <span class="inline-code">return</span>, a function returns <span class="inline-code">undefined</span>. Return stops function execution immediately.</p>
+      <p><strong>💡 Remember:</strong> A function can only return one value, but that value can be an array or object containing multiple pieces of data.</p>
+    </div>
+    <div class="code-block">
+      function addNumbers(a, b) {<br>
+        return a + b;  // sends result back<br>
+      }<br>
+      let result = addNumbers(10, 20); // result = 30
+    </div>
+    <button class="btn-show" data-target="returnResult">📤 Show Return Value</button>
+    <div id="returnResult" class="result-area">
+      <div class="result-label">🔢 Return Value Demo:</div>
+      <div class="console-output" id="returnOutput"></div>
+      <script>
+        document.getElementById("returnResult").addEventListener("showresult", function() {
+          function addNumbers(a, b) { return a + b; }
+          document.getElementById("returnOutput").innerHTML = `addNumbers(10, 20) → ${addNumbers(10, 20)}<br>addNumbers(45, 55) → ${addNumbers(45, 55)}<br>✅ return gives back a value that can be stored in a variable.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Function Expression -->
+  <div class="section-title">4️⃣ Function Expression (Function as a Value)</div>
+  <div class="example-card">
+    <h3>📜 Storing Functions in Variables</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A function expression stores a function in a variable. Unlike declarations, function expressions are NOT hoisted (cannot be called before definition). Useful for conditional function creation and passing functions as arguments.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">const multiply = function(x, y) { return x * y; };</span></p>
+    </div>
+    <div class="code-block">
+      const multiply = function(x, y) {<br>
+        return x * y;<br>
+      };<br>
+      console.log(multiply(4, 6)); // 24
+    </div>
+    <button class="btn-show" data-target="exprResult">📦 Run Function Expression</button>
+    <div id="exprResult" class="result-area">
+      <div class="result-label">✖️ Function Expression Result:</div>
+      <div class="console-output" id="exprOutput"></div>
+      <script>
+        document.getElementById("exprResult").addEventListener("showresult", function() {
+          const multiply = function(x, y) { return x * y; };
+          document.getElementById("exprOutput").innerHTML = `multiply(4, 6) → ${multiply(4, 6)}<br>multiply(7, 8) → ${multiply(7, 8)}<br>✅ Functions are "first-class citizens" — can be stored in variables.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Arrow Functions (Modern ES6) -->
+  <div class="section-title">5️⃣ Arrow Functions (=>) - Modern JavaScript</div>
+  <div class="example-card">
+    <h3>🏹 Shorter Function Syntax</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Arrow functions provide a concise syntax. If there's a single expression, you can omit <span class="inline-code">return</span> and curly braces (implicit return). Great for short callbacks and array methods. However, they behave differently with the <span class="inline-code">this</span> keyword.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">(param1, param2) => param1 + param2</span> or <span class="inline-code">param => param * 2</span> for single parameter.</p>
+    </div>
+    <div class="code-block">
+      // Single line implicit return<br>
+      const square = (n) => n * n;<br>
+      // Multi-line arrow (needs explicit return and {})<br>
+      const greet = (name) => {<br>
+        return `Hello ${name}!`;<br>
+      };
+    </div>
+    <button class="btn-show" data-target="arrowResult">🏹 See Arrow Functions</button>
+    <div id="arrowResult" class="result-area">
+      <div class="result-label">⚡ Arrow Function Outputs:</div>
+      <div class="console-output" id="arrowOutput"></div>
+      <script>
+        document.getElementById("arrowResult").addEventListener("showresult", function() {
+          const square = (n) => n * n;
+          const greet = (name) => `Hello ${name}!`;
+          const add = (a, b) => a + b;
+          document.getElementById("arrowOutput").innerHTML = `square(5) → ${square(5)}<br>greet("Ravi") → "${greet("Ravi")}"<br>add(10, 15) → ${add(10, 15)}<br>✅ Arrow functions are shorter and perfect for simple logic.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Scope (Global vs Local) -->
+  <div class="section-title">6️⃣ Scope (Where Variables Live)</div>
+  <div class="example-card">
+    <h3>🌍 Understanding Variable Accessibility</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Scope defines where variables are accessible. <strong>Global scope</strong> variables are accessible everywhere. <strong>Local scope</strong> (inside functions) are only accessible within that function. This prevents naming conflicts.</p>
+      <p><strong>💡 Best practice:</strong> Always use <span class="inline-code">let</span> or <span class="inline-code">const</span> instead of <span class="inline-code">var</span> to avoid accidental global variables.</p>
+    </div>
+    <div class="code-block">
+      let globalVar = "I am global";<br>
+      function showScope() {<br>
+        let localVar = "I am local";<br>
+        return globalVar + " & " + localVar;<br>
+      }<br>
+      // console.log(localVar); // Error! Not accessible
+    </div>
+    <button class="btn-show" data-target="scopeResult">🔭 Show Scope Demo</button>
+    <div id="scopeResult" class="result-area">
+      <div class="result-label">📦 Scope Explanation:</div>
+      <div class="console-output" id="scopeOutput"></div>
+      <script>
+        document.getElementById("scopeResult").addEventListener("showresult", function() {
+          let globalVar = "I am global";
+          function showScope() {
+            let localVar = "I am local";
+            return globalVar + " & " + localVar;
+          }
+          document.getElementById("scopeOutput").innerHTML = `✅ Inside function: ${showScope()}<br>❌ Outside function: localVar is NOT accessible (ReferenceError)<br>🔹 Global variables can be used anywhere, local variables stay inside functions.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Block Scope (let/const) -->
+  <div class="section-title">7️⃣ Block Scope (let & const inside {})</div>
+  <div class="example-card">
+    <h3>📦 Scope in if/for blocks</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Variables declared with <span class="inline-code">let</span> and <span class="inline-code">const</span> have <strong>block scope</strong> — they exist only inside the nearest <span class="inline-code">{}</span> (if statements, loops, etc.). This is safer than <span class="inline-code">var</span>, which ignores block scope.</p>
+    </div>
+    <div class="code-block">
+      if (true) {<br>
+        let blockScoped = "Only inside if";<br>
+        const alsoBlock = "Constant block";<br>
+      }<br>
+      // console.log(blockScoped); // Error!
+    </div>
+    <button class="btn-show" data-target="blockScopeResult">🔒 Show Block Scope</button>
+    <div id="blockScopeResult" class="result-area">
+      <div class="result-label">🧱 Block Scope Explained:</div>
+      <div class="console-output" id="blockOutput"></div>
+      <script>
+        document.getElementById("blockScopeResult").addEventListener("showresult", function() {
+          document.getElementById("blockOutput").innerHTML = `🔹 let and const variables declared inside { } are NOT accessible outside.<br>🔸 Example: if(true) { let x = 10; } → x is undefined outside.<br>✅ Always prefer let/const over var for predictable scoping.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Hoisting -->
+  <div class="section-title">8️⃣ Hoisting (Moving Declarations to Top)</div>
+  <div class="example-card">
+    <h3>📤 Hoisting Behavior in JavaScript</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Hoisting is JavaScript's behavior of moving declarations to the top of their scope during compilation. <strong>Function declarations</strong> are fully hoisted (can be called before definition). <strong>var</strong> variables are hoisted but initialized as <span class="inline-code">undefined</span>. <strong>let/const</strong> are hoisted but not initialized (Temporal Dead Zone).</p>
+    </div>
+    <div class="code-block">
+      // Function hoisting works!<br>
+      sayHi(); // "Hi there!"<br>
+      function sayHi() { console.log("Hi there!"); }<br><br>
+      // var hoisting (undefined, not error)<br>
+      console.log(myVar); // undefined<br>
+      var myVar = 5;
+    </div>
+    <button class="btn-show" data-target="hoistingResult">📈 Understand Hoisting</button>
+    <div id="hoistingResult" class="result-area">
+      <div class="result-label">🚀 Hoisting in Action:</div>
+      <div class="console-output" id="hoistingOutput"></div>
+      <script>
+        document.getElementById("hoistingResult").addEventListener("showresult", function() {
+          document.getElementById("hoistingOutput").innerHTML = `🔹 Function declarations are fully hoisted: can call before defining.<br>🔸 var is hoisted but value is 'undefined' until assigned.<br>🔹 let/const are hoisted but NOT initialized (ReferenceError if used early).<br>✅ Best practice: Always declare variables at the top of their scope.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Callback Functions -->
+  <div class="section-title">9️⃣ Callback Functions (Function as Argument)</div>
+  <div class="example-card">
+    <h3>🔄 Passing Functions to Functions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A callback is a function passed as an argument to another function. The outer function then calls (executes) the callback. This is fundamental for asynchronous operations (like timers, event listeners, API calls).</p>
+      <p><strong>💡 Real-world:</strong> <span class="inline-code">setTimeout</span>, <span class="inline-code">addEventListener</span>, array methods (<span class="inline-code">map</span>, <span class="inline-code">filter</span>) all use callbacks.</p>
+    </div>
+    <div class="code-block">
+      function processUser(name, callback) {<br>
+        return callback(name);<br>
+      }<br>
+      const sayHello = (n) => `Hello ${n}!`;<br>
+      processUser("Kalyan", sayHello); // "Hello Kalyan!"
+    </div>
+    <button class="btn-show" data-target="callbackResult">📞 Show Callback Demo</button>
+    <div id="callbackResult" class="result-area">
+      <div class="result-label">🔄 Callback Execution:</div>
+      <div class="console-output" id="callbackOutput"></div>
+      <button class="demo-button" onclick="runCallbackDemo()">🔁 Test Callback (Alert)</button>
+      <script>
+        document.getElementById("callbackResult").addEventListener("showresult", function() {
+          function processUser(name, callback) { return callback(name); }
+          const sayHello = (n) => `Hello ${n}!`;
+          const shout = (n) => `HELLO ${n.toUpperCase()}!!!`;
+          document.getElementById("callbackOutput").innerHTML = `processUser("Kalyan", sayHello) → "${processUser("Kalyan", sayHello)}"<br>processUser("Teja", shout) → "${processUser("Teja", shout)}"<br><br>✅ Callbacks make functions flexible and reusable.`;
+        });
+        function runCallbackDemo() {
+          function greetAndAlert(name, callback) {
+            alert(callback(name));
+          }
+          const welcomeMsg = (n) => `Welcome to callbacks, ${n}!`;
+          greetAndAlert("Student", welcomeMsg);
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 10: setTimeout (Real-world Callback) -->
+  <div class="section-title">⏱️ setTimeout (Asynchronous Callback)</div>
+  <div class="example-card">
+    <h3>⏰ Delayed Execution with Callbacks</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">setTimeout</span> is a built-in function that executes a callback after a specified delay (in milliseconds). It's a perfect example of asynchronous JavaScript — the code continues running while waiting.</p>
+    </div>
+    <div class="code-block">
+      setTimeout(() => {<br>
+        console.log("Runs after 2 seconds");<br>
+      }, 2000);
+    </div>
+    <button class="btn-show" data-target="timeoutResult">🕒 Show setTimeout Demo</button>
+    <div id="timeoutResult" class="result-area">
+      <div class="result-label">⏱️ Interactive Timeout:</div>
+      <button class="demo-button" onclick="runTimeoutDemo()">⏰ Start 2-Second Timer</button>
+      <button class="demo-button" onclick="runDelayedGreeting()">👋 Delayed Greeting (3 sec)</button>
+      <div id="timeoutMessage" class="console-output" style="margin-top: 10px;">Click a button above</div>
+      <script>
+        function runTimeoutDemo() {
+          setTimeout(() => { alert("✅ 2 seconds passed! Callback executed."); }, 2000);
+        }
+        function runDelayedGreeting() {
+          setTimeout(() => { 
+            document.getElementById("timeoutMessage").innerHTML = "🎉 Hello after 3 seconds! setTimeout callback works!";
+          }, 3000);
+          document.getElementById("timeoutMessage").innerHTML = "⏳ Waiting 3 seconds...";
+        }
+      </script>
+      <p class="inline-code">✅ setTimeout(callback, delay) — non-blocking, JavaScript continues running.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Complete Mini Project - Function Calculator -->
+  <div class="section-title">📁 Mini Project: Multi-operation Calculator</div>
+  <div class="example-card">
+    <h3>🧮 Function-based Calculator with Arrow Functions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A practical calculator that uses different function types (arrow, multiple parameters, return values) to perform math operations.</p>
+    </div>
+    <div class="code-block">
+      const calculate = (operation, a, b) => {<br>
+        if (operation === 'add') return a + b;<br>
+        if (operation === 'subtract') return a - b;<br>
+        if (operation === 'multiply') return a * b;<br>
+        if (operation === 'divide') return a / b;<br>
+      };
+    </div>
+    <button class="btn-show" data-target="calcProjectResult">🧪 Launch Calculator Project</button>
+    <div id="calcProjectResult" class="result-area">
+      <div class="result-label">📟 Interactive Function Calculator</div>
+      <div style="margin: 10px 0;">
+        <button class="demo-button" onclick="calcOperation('add')">➕ Add (10+5)</button>
+        <button class="demo-button" onclick="calcOperation('subtract')">➖ Subtract (10-5)</button>
+        <button class="demo-button" onclick="calcOperation('multiply')">✖️ Multiply (10×5)</button>
+        <button class="demo-button" onclick="calcOperation('divide')">➗ Divide (10÷5)</button>
+      </div>
+      <div id="calcDisplay" class="console-output">Click a button to see result</div>
+      <button class="demo-button" onclick="customCalculator()">🔢 Custom Calculator (prompt)</button>
+      <script>
+        const calculate = (operation, a, b) => {
+          if (operation === 'add') return a + b;
+          if (operation === 'subtract') return a - b;
+          if (operation === 'multiply') return a * b;
+          if (operation === 'divide') return a / b;
+        };
+        function calcOperation(type) {
+          let result = calculate(type, 10, 5);
+          const symbols = { add: '+', subtract: '-', multiply: '×', divide: '÷' };
+          document.getElementById("calcDisplay").innerHTML = `10 ${symbols[type]} 5 = ${result}<br>✅ Function called: calculate("${type}", 10, 5) → returns ${result}`;
+        }
+        function customCalculator() {
+          let a = Number(prompt("Enter first number:"));
+          let b = Number(prompt("Enter second number:"));
+          let op = prompt("Enter operation (add, subtract, multiply, divide):").toLowerCase();
+          if (isNaN(a) || isNaN(b)) {
+            alert("Invalid numbers");
+            return;
+          }
+          let result = calculate(op, a, b);
+          if (result !== undefined) {
+            alert(`Result: ${a} ${op} ${b} = ${result}`);
+            document.getElementById("calcDisplay").innerHTML = `Custom: ${a} ${op} ${b} = ${result}`;
+          } else {
+            alert("Invalid operation. Use: add, subtract, multiply, divide");
+          }
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes Section -->
+  <div class="section-title">⚠️ Common Function Mistakes for Beginners</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesFuncResult">📖 Show Common Mistakes & Fixes</button>
+    <div id="mistakesFuncResult" class="result-area">
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ Forgetting parentheses when calling: <span class="inline-code">myFunction</span> vs <span class="inline-code">myFunction()</span> — parentheses execute!</li>
+        <li>❌ Missing <span class="inline-code">return</span> statement: function returns <span class="inline-code">undefined</span> by default</li>
+        <li>❌ Confusing parameters with arguments: parameters are placeholders, arguments are actual values</li>
+        <li>❌ Trying to access local variable outside its scope → ReferenceError</li>
+        <li>❌ Arrow function with multiple lines missing <span class="inline-code">return</span> and <span class="inline-code">{}</span>: <span class="inline-code">(a,b) => a+b</span> works, but <span class="inline-code">(a,b) => { a+b }</span> returns undefined</li>
+        <li>❌ Callback hell: nesting too many callbacks — use promises/async-await later</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World Use Cases -->
+  <div class="section-title">🌍 Real-World Function Use Cases</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>🔐 Authentication</h3><p>Functions to validate login credentials, hash passwords, check user permissions.</p></div>
+    <div class="example-card"><h3>💰 E-commerce</h3><p>Calculate cart total, apply discounts, compute tax, process payments.</p></div>
+    <div class="example-card"><h3>🌐 API Calls</h3><p>Functions to fetch data from backend, handle responses, display results.</p></div>
+    <div class="example-card"><h3>📝 Form Validation</h3><p>Check email format, password strength, required fields before submission.</p></div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice These)</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>➕ Task 1</h3><p>Create separate functions: add, subtract, multiply, divide. Each takes two parameters and returns result. Test with different numbers.</p></div>
+    <div class="example-card"><h3>🏹 Task 2</h3><p>Rewrite all four math functions as arrow functions (one-liner implicit return).</p></div>
+    <div class="example-card"><h3>📊 Task 3</h3><p>Create a grading function: takes marks (0-100) and returns "A" (90+), "B" (75-89), "C" (60-74), "F" (below 60).</p></div>
+    <div class="example-card"><h3>🔄 Task 4</h3><p>Write a function <span class="inline-code">repeatMessage(msg, times, callback)</span> that calls the callback with the repeated message using a loop.</p></div>
+    <div class="example-card"><h3>⏲️ Task 5</h3><p>Use setTimeout to show "Learning JavaScript!" in console after 4 seconds, then show "Functions are powerful!" after another 2 seconds.</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 8 Summary: Advanced Function Concepts Mastered</div>
+  <div class="card-grid">
+    <div class="example-card">✔️ Function declaration & calling basics</div>
+    <div class="example-card">✔️ Parameters vs Arguments — passing data</div>
+    <div class="example-card">✔️ Return statement for sending output</div>
+    <div class="example-card">✔️ Function Expression (storing functions in variables)</div>
+    <div class="example-card">✔️ Arrow Functions (=>) — modern concise syntax</div>
+    <div class="example-card">✔️ Global vs Local vs Block Scope</div>
+    <div class="example-card">✔️ Hoisting: function declarations vs var/let/const</div>
+    <div class="example-card">✔️ Callback Functions (function as argument)</div>
+    <div class="example-card">✔️ setTimeout for asynchronous callbacks</div>
+    <div class="example-card">✔️ Built a complete calculator using arrow functions</div>
+  </div>
+
+  <!-- Day 8 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 8 Ending Message for Beginners</strong><br>
+    “Functions are the building blocks of JavaScript applications. You now understand parameters, return values, scope, arrow functions, and callbacks. Tomorrow we start manipulating web pages directly with DOM (Document Object Model) — making websites dynamic and interactive!”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 9 : DOM Manipulation (Making Webpages Dynamic)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📄 What is DOM?</span>
+    <span class="badge">🖱️ querySelector & getElementById</span>
+    <span class="badge">🎨 Changing HTML content (innerHTML, textContent)</span>
+    <span class="badge">✨ Modifying CSS with JavaScript</span>
+    <span class="badge">🎯 Event Listeners (click, input, submit)</span>
+    <span class="badge">➕ Creating & Removing Elements</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 8 Completed ✅<br>
+    Click "Show Result" on every card to see live function execution. Practice writing different types of functions every day!
+  </div>
+</div>
+
+<script>
+  // Add click handlers for all "Show Result" buttons with custom event triggering
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

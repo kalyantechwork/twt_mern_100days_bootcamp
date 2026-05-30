@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 9: DOM Manipulation | Beginner Friendly + Live Interactive Demos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 12px;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 6px 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .counter-number {
+      font-size: 3rem;
+      font-weight: 800;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .dark-card {
+      background: #0f172a !important;
+      color: #facc15 !important;
+      border: 1px solid #334155 !important;
+      transition: 0.2s;
+    }
+    .demo-dark-bg {
+      background-color: #0f172a !important;
+      color: #e2e8f0 !important;
+      transition: 0.2s;
+    }
+    .demo-dark-bg .demo-button {
+      background: #334155;
+    }
+    .todo-item {
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .delete-todo {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🖱️</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 9 · DOM Manipulation (Explanations + Live Demos)</div>
+  </div>
+
+  <h1>🖱️ DOM Manipulation: Making Webpages Dynamic<br><span style="font-size:1rem;">Select Elements · Change Content/Styles · Handle Events · Create/Remove Elements — Click "Show Result" for live demos</span></h1>
+
+  <!-- SECTION 1: What is DOM? -->
+  <div class="section-title">1️⃣ What is the DOM? (Document Object Model)</div>
+  <div class="example-card">
+    <div class="explanation">
+      <p><strong>📌 Purpose:</strong> The DOM is a programming interface for HTML. When a browser loads a webpage, it creates a tree-like structure of all HTML elements. JavaScript can access and modify this tree — adding, removing, or changing elements — to make webpages dynamic and interactive.</p>
+      <p><strong>🌳 Analogy:</strong> Think of the DOM as a family tree of your HTML. Each element (like &lt;div&gt;, &lt;p&gt;, &lt;button&gt;) is a node. JavaScript can find any node, read it, change it, or delete it, and even create new nodes.</p>
+      <p><strong>💡 Key insight:</strong> The DOM is not HTML — it's a live representation that JavaScript can manipulate. When you change the DOM, the page updates instantly without refreshing.</p>
+    </div>
+    <div class="code-block">
+      // The DOM tree example:<br>
+      // document (root)<br>
+      //   └── html<br>
+      //        ├── head<br>
+      //        └── body<br>
+      //             ├── div<br>
+      //             └── p
+    </div>
+    <button class="btn-show" data-target="domConceptResult">🌳 Show DOM Explanation</button>
+    <div id="domConceptResult" class="result-area">
+      <div class="result-label">📚 DOM Tree Visualization</div>
+      <div style="background: #e2e8f0; padding: 15px; border-radius: 16px; font-family: monospace;">
+        document<br>
+        └── html<br>
+        &nbsp;&nbsp;&nbsp;├── head (title, meta)<br>
+        &nbsp;&nbsp;&nbsp;└── body<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── header (navigation)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── main (content)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── footer (copyright)
+      </div>
+      <p class="inline-code">✅ JavaScript accesses the DOM via the global <strong>document</strong> object.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Selecting Elements -->
+  <div class="section-title">2️⃣ Selecting Elements (querySelector, getElementById)</div>
+  <div class="example-card">
+    <h3>🔍 Finding Elements in the DOM</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Before you can change an element, you need to select it. <span class="inline-code">document.querySelector()</span> is the most powerful method — it uses CSS selectors. Use <span class="inline-code">#id</span> for IDs, <span class="inline-code">.class</span> for classes.</p>
+      <p><strong>💡 Common selectors:</strong> <span class="inline-code">querySelector('#myId')</span>, <span class="inline-code">querySelector('.myClass')</span>, <span class="inline-code">querySelector('p')</span> (first paragraph).</p>
+    </div>
+    <div class="code-block">
+      // Select by ID<br>
+      let title = document.querySelector("#mainTitle");<br>
+      // Select by class<br>
+      let boxes = document.querySelectorAll(".box");<br>
+      // Change content<br>
+      title.textContent = "New Text!";
+    </div>
+    <button class="btn-show" data-target="selectResult">🔍 Try Selection Demo</button>
+    <div id="selectResult" class="result-area">
+      <div class="result-label">🎯 Live Selection Example:</div>
+      <p id="demoParagraph" style="background:#f1f5f9; padding: 12px; border-radius: 16px;">This paragraph has id="demoParagraph"</p>
+      <button class="demo-button" id="selectChangeBtn">Select & Change Text</button>
+      <script>
+        document.getElementById("selectChangeBtn")?.addEventListener("click", function() {
+          const para = document.querySelector("#demoParagraph");
+          if(para) para.textContent = "✅ Selected using querySelector('#demoParagraph') and changed the text!";
+        });
+      </script>
+      <p class="inline-code">✅ querySelector returns the first matching element. Use querySelectorAll for multiple.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Changing Content (textContent & innerHTML) -->
+  <div class="section-title">3️⃣ Changing Content (textContent vs innerHTML)</div>
+  <div class="example-card">
+    <h3>📝 Modifying What Users See</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">textContent</span> changes plain text (safe, faster). <span class="inline-code">innerHTML</span> parses HTML tags (powerful but can be risky with user input). Use textContent for regular text, innerHTML when you need to insert HTML elements.</p>
+    </div>
+    <div class="code-block">
+      element.textContent = "Plain text only";<br>
+      element.innerHTML = "&lt;strong&gt;Bold text&lt;/strong&gt;";
+    </div>
+    <button class="btn-show" data-target="contentResult">📄 Compare textContent vs innerHTML</button>
+    <div id="contentResult" class="result-area">
+      <div class="result-label">✨ Content Change Demo:</div>
+      <div id="contentDemo" style="background:#f1f5f9; padding: 12px; border-radius: 16px; margin-bottom: 10px;">Original text here</div>
+      <button class="demo-button" id="textContentBtn">textContent (plain)</button>
+      <button class="demo-button" id="innerHTMLBtn">innerHTML (with HTML)</button>
+      <script>
+        const contentBox = document.getElementById("contentDemo");
+        document.getElementById("textContentBtn")?.addEventListener("click", () => {
+          contentBox.textContent = "This is plain text using textContent";
+        });
+        document.getElementById("innerHTMLBtn")?.addEventListener("click", () => {
+          contentBox.innerHTML = "<strong>✨ Bold HTML!</strong> <span style='color:#dc2626'>Colored text</span> via innerHTML";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Changing Styles -->
+  <div class="section-title">4️⃣ Changing CSS Styles with JavaScript</div>
+  <div class="example-card">
+    <h3>🎨 Style Property Manipulation</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Use <span class="inline-code">element.style.property</span> to change CSS dynamically. Property names become camelCase (e.g., <span class="inline-code">backgroundColor</span> instead of <span class="inline-code">background-color</span>).</p>
+    </div>
+    <div class="code-block">
+      element.style.color = "blue";<br>
+      element.style.fontSize = "24px";<br>
+      element.style.backgroundColor = "#facc15";
+    </div>
+    <button class="btn-show" data-target="styleResult">🎨 Live Style Demo</button>
+    <div id="styleResult" class="result-area">
+      <div class="result-label">✨ Interactive Styling:</div>
+      <h3 id="styleDemoText" style="transition: 0.2s;">I will change colors</h3>
+      <button class="demo-button" id="makeBlueBtn">Make Blue + Large</button>
+      <button class="demo-button" id="makeYellowBtn">Yellow Background</button>
+      <button class="demo-button" id="resetStyleBtn">Reset</button>
+      <script>
+        const styleTarget = document.getElementById("styleDemoText");
+        document.getElementById("makeBlueBtn")?.addEventListener("click", () => {
+          styleTarget.style.color = "#2563eb";
+          styleTarget.style.fontSize = "28px";
+          styleTarget.textContent = "✨ Blue and big!";
+        });
+        document.getElementById("makeYellowBtn")?.addEventListener("click", () => {
+          styleTarget.style.backgroundColor = "#facc15";
+          styleTarget.style.padding = "10px";
+          styleTarget.style.borderRadius = "16px";
+        });
+        document.getElementById("resetStyleBtn")?.addEventListener("click", () => {
+          styleTarget.style.color = "";
+          styleTarget.style.fontSize = "";
+          styleTarget.style.backgroundColor = "";
+          styleTarget.style.padding = "";
+          styleTarget.textContent = "I will change colors";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Events & addEventListener -->
+  <div class="section-title">5️⃣ Events (addEventListener)</div>
+  <div class="example-card">
+    <h3>🖱️ Responding to User Actions</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Events like <span class="inline-code">click</span>, <span class="inline-code">mouseover</span>, <span class="inline-code">keydown</span> let you run code when users interact with your page. <span class="inline-code">addEventListener</span> is the modern way to attach event handlers.</p>
+      <p><strong>💡 Common events:</strong> click, dblclick, mouseenter, mouseleave, input, submit, keyup.</p>
+    </div>
+    <div class="code-block">
+      button.addEventListener("click", () => {<br>
+        alert("Button clicked!");<br>
+      });
+    </div>
+    <button class="btn-show" data-target="eventResult">🎯 See Events in Action</button>
+    <div id="eventResult" class="result-area">
+      <div class="result-label">⚡ Event Listeners Demo:</div>
+      <button class="demo-button" id="alertBtn">Click for Alert</button>
+      <button class="demo-button" id="hoverBtn">Hover Over Me</button>
+      <p id="hoverMessage" style="margin-top: 8px;"></p>
+      <script>
+        document.getElementById("alertBtn")?.addEventListener("click", () => alert("🎉 Click event triggered!"));
+        const hoverBtn = document.getElementById("hoverBtn");
+        const hoverMsg = document.getElementById("hoverMessage");
+        hoverBtn?.addEventListener("mouseenter", () => hoverMsg.textContent = "✅ Mouse entered! mouseenter event.");
+        hoverBtn?.addEventListener("mouseleave", () => hoverMsg.textContent = "👋 Mouse left! mouseleave event.");
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Getting Input Values -->
+  <div class="section-title">6️⃣ Getting Form Input Values</div>
+  <div class="example-card">
+    <h3>📝 Reading What Users Type</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Use <span class="inline-code">.value</span> property to get what's inside text inputs, textareas, and select dropdowns.</p>
+    </div>
+    <div class="code-block">
+      let userInput = document.querySelector("#myInput").value;<br>
+      console.log(userInput);
+    </div>
+    <button class="btn-show" data-target="inputResult">📥 Live Input Demo</button>
+    <div id="inputResult" class="result-area">
+      <div class="result-label">📌 Type and see the value:</div>
+      <input type="text" id="liveNameInput" placeholder="Type your name..." style="padding: 10px; border-radius: 40px; border: 1px solid #ccc; width: 70%;">
+      <button class="demo-button" id="showValueBtn">Show Value</button>
+      <p id="valueDisplay" style="margin-top: 10px;"></p>
+      <script>
+        document.getElementById("showValueBtn")?.addEventListener("click", () => {
+          let val = document.querySelector("#liveNameInput").value;
+          document.getElementById("valueDisplay").innerHTML = val ? `You typed: "${val}"` : "Input is empty. Type something!";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Form Submission & preventDefault -->
+  <div class="section-title">7️⃣ Form Handling (preventDefault)</div>
+  <div class="example-card">
+    <h3>🚫 Stop Page Reload on Form Submit</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> When a form submits, the browser reloads the page by default. Use <span class="inline-code">e.preventDefault()</span> to stop this and handle the data with JavaScript instead.</p>
+    </div>
+    <div class="code-block">
+      form.addEventListener("submit", (e) => {<br>
+        e.preventDefault();<br>
+        // process data here<br>
+      });
+    </div>
+    <button class="btn-show" data-target="formResult">📋 Show Form Demo</button>
+    <div id="formResult" class="result-area">
+      <div class="result-label">📄 Form without page reload:</div>
+      <form id="demoForm">
+        <input type="text" id="formMessageInput" placeholder="Enter a message" style="padding: 8px; border-radius: 40px; width: 70%;">
+        <button type="submit" class="demo-button">Submit (No reload)</button>
+      </form>
+      <p id="formFeedback" style="margin-top: 10px;"></p>
+      <script>
+        document.getElementById("demoForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const msg = document.querySelector("#formMessageInput").value;
+          document.getElementById("formFeedback").innerHTML = msg ? `✅ Submitted: "${msg}" — Page did NOT reload!` : "Please enter a message.";
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Creating & Removing Elements -->
+  <div class="section-title">8️⃣ Creating and Removing Elements Dynamically</div>
+  <div class="example-card">
+    <h3>➕ Building Elements with JavaScript</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">createElement()</span> creates a new element in memory. <span class="inline-code">appendChild()</span> adds it to the DOM. <span class="inline-code">removeChild()</span> or <span class="inline-code">remove()</span> deletes elements. This is how to-do lists, shopping carts, and dynamic content work.</p>
+    </div>
+    <div class="code-block">
+      let newDiv = document.createElement("div");<br>
+      newDiv.textContent = "Hello!";<br>
+      parent.appendChild(newDiv);
+    </div>
+    <button class="btn-show" data-target="createResult">📦 Dynamic Creation Demo</button>
+    <div id="createResult" class="result-area">
+      <div class="result-label">🆕 To-Do List Demo (Add/Remove):</div>
+      <div id="todoListContainer" style="margin-bottom: 12px;"></div>
+      <input type="text" id="newTodoInput" placeholder="Enter task..." style="padding: 8px; border-radius: 40px; width: 60%;">
+      <button class="demo-button" id="addTodoBtn">➕ Add Task</button>
+      <button class="demo-button" id="clearAllBtn">🗑️ Clear All</button>
+      <script>
+        const todoContainer = document.getElementById("todoListContainer");
+        function addTodoItem(text) {
+          if(!text.trim()) return;
+          const todoDiv = document.createElement("div");
+          todoDiv.className = "todo-item";
+          todoDiv.innerHTML = `<span>📌 ${text}</span><button class="delete-todo">Delete</button>`;
+          const deleteBtn = todoDiv.querySelector(".delete-todo");
+          deleteBtn.addEventListener("click", () => todoDiv.remove());
+          todoContainer.appendChild(todoDiv);
+        }
+        document.getElementById("addTodoBtn")?.addEventListener("click", () => {
+          const input = document.querySelector("#newTodoInput");
+          addTodoItem(input.value);
+          input.value = "";
+        });
+        document.getElementById("clearAllBtn")?.addEventListener("click", () => {
+          todoContainer.innerHTML = "";
+        });
+      </script>
+      <p class="inline-code">✅ createElement + appendChild + remove = dynamic to-do list!</p>
+    </div>
+  </div>
+
+  <!-- SECTION 9: classList (Add/Remove/Toggle) -->
+  <div class="section-title">9️⃣ classList: Managing CSS Classes</div>
+  <div class="example-card">
+    <h3>🎭 Toggle, Add, Remove Classes</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">classList</span> makes it easy to add, remove, or toggle CSS classes. This is better than directly modifying styles because you keep styling in CSS and behavior in JavaScript.</p>
+    </div>
+    <div class="code-block">
+      element.classList.add("dark-mode");<br>
+      element.classList.remove("dark-mode");<br>
+      element.classList.toggle("active");
+    </div>
+    <button class="btn-show" data-target="classListResult">🌈 Show classList Demo</button>
+    <div id="classListResult" class="result-area">
+      <div class="result-label">🔄 Toggle Theme on Card:</div>
+      <div class="card" id="toggleCardDemo" style="transition: 0.2s;">
+        <p>This card can change appearance using classList.toggle()</p>
+        <p><strong>Click the button below!</strong></p>
+      </div>
+      <button class="demo-button" id="toggleDarkBtn">🌗 Toggle Dark Card</button>
+      <style>
+        .dark-card-demo {
+          background: #0f172a !important;
+          color: #facc15 !important;
+          border: 1px solid #facc15 !important;
+        }
+      </style>
+      <script>
+        document.getElementById("toggleDarkBtn")?.addEventListener("click", () => {
+          document.getElementById("toggleCardDemo").classList.toggle("dark-card-demo");
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Mini Project - Counter -->
+  <div class="section-title">🔟 Mini Project: Interactive Counter</div>
+  <div class="example-card">
+    <h3>🔢 Applying Everything: Counter App</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A complete counter that uses selection, events, and content manipulation — demonstrating core DOM skills.</p>
+    </div>
+    <button class="btn-show" data-target="counterProject">📊 Launch Counter Project</button>
+    <div id="counterProject" class="result-area">
+      <div class="result-label">➕➖ Live Counter:</div>
+      <div class="counter-number" id="counterValue">0</div>
+      <button class="demo-button" id="incBtn">+1 Increase</button>
+      <button class="demo-button" id="decBtn">-1 Decrease</button>
+      <button class="demo-button" id="resetCounterBtn">Reset</button>
+      <script>
+        let counter = 0;
+        const counterSpan = document.getElementById("counterValue");
+        document.getElementById("incBtn")?.addEventListener("click", () => { counter++; counterSpan.textContent = counter; });
+        document.getElementById("decBtn")?.addEventListener("click", () => { counter--; counterSpan.textContent = counter; });
+        document.getElementById("resetCounterBtn")?.addEventListener("click", () => { counter = 0; counterSpan.textContent = counter; });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Dark Mode Toggle Project -->
+  <div class="section-title">🌙 Complete Project: Dark Mode Toggle</div>
+  <div class="example-card">
+    <h3>🎨 Real-World Theme Switcher</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A dark mode feature that toggles a CSS class on the body — used by millions of websites. Shows how a single class can transform an entire page.</p>
+    </div>
+    <button class="btn-show" data-target="darkModeFull">🌓 Show Dark Mode Project</button>
+    <div id="darkModeFull" class="result-area">
+      <div class="result-label">🌙 Toggle Dark Theme (for this demo area):</div>
+      <button class="demo-button" id="darkModeToggleBtn">🌗 Toggle Dark Mode</button>
+      <p id="darkMsg" style="margin-top: 10px;">Click the button to switch theme for this demo section!</p>
+      <style>
+        .dark-demo-bg {
+          background-color: #0f172a !important;
+          color: #e2e8f0 !important;
+        }
+        .dark-demo-bg .demo-button {
+          background: #334155;
+        }
+      </style>
+      <script>
+        const darkDemoContainer = document.getElementById("darkModeFull");
+        document.getElementById("darkModeToggleBtn")?.addEventListener("click", () => {
+          darkDemoContainer.classList.toggle("dark-demo-bg");
+          const msg = darkDemoContainer.classList.contains("dark-demo-bg") ? "🌙 Dark mode active!" : "☀️ Light mode restored.";
+          document.getElementById("darkMsg").innerHTML = msg;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes Section -->
+  <div class="section-title">⚠️ Common DOM Manipulation Mistakes</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="domMistakes">📖 Show Common Mistakes & Fixes</button>
+    <div id="domMistakes" class="result-area">
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ Script runs before DOM loads → use <span class="inline-code">DOMContentLoaded</span> event or put script at bottom of body</li>
+        <li>❌ Wrong selector syntax: <span class="inline-code">querySelector('.myclass')</span> needs dot, <span class="inline-code">querySelector('#myid')</span> needs hash</li>
+        <li>❌ Forgetting <span class="inline-code">event.preventDefault()</span> → form reloads the page</li>
+        <li>❌ Using innerHTML with user input → <strong>security risk (XSS)</strong> — use textContent for untrusted data</li>
+        <li>❌ Not checking if element exists: <span class="inline-code">if(element) { ... }</span> before manipulating</li>
+        <li>❌ Confusing <span class="inline-code">textContent</span> (plain text) with <span class="inline-code">innerHTML</span> (parses HTML)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-World Applications -->
+  <div class="section-title">🌍 Real-World DOM Applications</div>
+  <div class="card-grid">
+    <div class="card">✅ Form validation (real-time error messages)</div>
+    <div class="card">✅ Dark/Light mode theme switcher</div>
+    <div class="card">✅ Shopping cart (add/remove items, update total)</div>
+    <div class="card">✅ To-do list (create, edit, delete tasks)</div>
+    <div class="card">✅ Accordions, tabs, modals (show/hide content)</div>
+    <div class="card">✅ Infinite scroll (load more content dynamically)</div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice These)</div>
+  <div class="card-grid">
+    <div class="card"><h3>🎯 Task 1</h3><p>Create a button that changes the text and color of a paragraph when clicked.</p></div>
+    <div class="card"><h3>🌙 Task 2</h3><p>Build a dark mode toggle for a card component using classList.toggle().</p></div>
+    <div class="card"><h3>🔢 Task 3</h3><p>Build a counter with increase, decrease, and reset buttons (like the demo).</p></div>
+    <div class="card"><h3>📝 Task 4</h3><p>Create a simple to-do list where you can add tasks and delete them individually.</p></div>
+    <div class="card"><h3>📊 Task 5</h3><p>Make a form that displays what the user typed below the input without page reload.</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 9 Summary: DOM Manipulation Mastered</div>
+  <div class="card-grid">
+    <div class="card">✔️ Understanding the DOM tree structure</div>
+    <div class="card">✔️ Selecting elements with querySelector</div>
+    <div class="card">✔️ Changing content: textContent vs innerHTML</div>
+    <div class="card">✔️ Modifying CSS with element.style</div>
+    <div class="card">✔️ addEventListener for clicks, hovers, and more</div>
+    <div class="card">✔️ Reading input values with .value</div>
+    <div class="card">✔️ Form submission & preventDefault()</div>
+    <div class="card">✔️ createElement, appendChild, remove()</div>
+    <div class="card">✔️ classList.add/remove/toggle for managing classes</div>
+    <div class="card">✔️ Built Counter and Dark Mode projects</div>
+  </div>
+
+  <!-- Day 9 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 9 Ending Message for Beginners</strong><br>
+    “You can now make webpages come alive! DOM manipulation is the bridge between static HTML/CSS and dynamic, interactive experiences. Tomorrow we'll build real mini-projects using everything you've learned so far.”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 10 : Mini JavaScript Projects</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🧮 Calculator App</span>
+    <span class="badge">✅ To-do List App (localStorage)</span>
+    <span class="badge">🎨 Random Color Generator</span>
+    <span class="badge">📝 Quote Generator</span>
+    <span class="badge">💬 Digital Clock</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 9 Completed ✅<br>
+    Click "Show Result" on every card to see interactive DOM manipulation examples. Practice daily to build dynamic websites!
+  </div>
+</div>
+
+<script>
+  // Add click handlers for all "Show Result" buttons
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

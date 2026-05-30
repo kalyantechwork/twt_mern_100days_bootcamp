@@ -1,0 +1,732 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 7: JavaScript Basics | Beginner Friendly Explanations + Live Code Results</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 10px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 7 · JavaScript Basics (Detailed for Beginners + Live Outputs)</div>
+  </div>
+
+  <h1>⚡ JavaScript Basics: Making Websites Interactive<br><span style="font-size:1rem;">Variables · Data Types · Conditions · Loops · Arrays · Functions — Click "Show Result" to see code in action</span></h1>
+
+  <!-- SECTION 1: What is JavaScript? -->
+  <div class="section-title">1️⃣ What is JavaScript? (The Brain of Web Pages)</div>
+  <div class="example-card">
+    <h3>🎯 Why JavaScript?</h3>
+    <div class="explanation">
+      <p><strong>📌 Purpose:</strong> JavaScript is a programming language that makes websites <strong>interactive</strong>. HTML gives structure (skeleton), CSS gives style (skin/clothes), and JavaScript gives behavior (brain/muscles). Without JS, webpages are static — no button clicks, no popups, no dynamic content updates.</p>
+      <p><strong>💡 What can JS do?</strong> Respond to button clicks, validate forms, create animations, fetch data from servers, build games, and much more. It runs inside the browser.</p>
+      <p><strong>🏠 Analogy:</strong> HTML = house structure, CSS = paint & furniture, JavaScript = electricity, plumbing, and smart home features.</p>
+    </div>
+    <div class="code-block">
+      // Simple JavaScript example<br>
+      console.log("Hello, World!");<br>
+      alert("Welcome to JavaScript!");
+    </div>
+    <button class="btn-show" data-target="whatIsJsResult">🎬 Show JS in Action</button>
+    <div id="whatIsJsResult" class="result-area">
+      <div class="result-label">✨ JavaScript Execution Demo</div>
+      <button class="demo-button" onclick="alert('🎉 Hello! This alert came from JavaScript! You just saw JS in action.')">Click to see alert()</button>
+      <div class="console-output" id="consoleDemo"></div>
+      <script>
+        document.getElementById("whatIsJsResult").addEventListener("showresult", function() {
+          document.getElementById("consoleDemo").innerHTML = `📌 console.log("Hello, World!") → <span style="color:#facc15;">Hello, World!</span><br>✅ JavaScript is running in your browser right now!`;
+        });
+      </script>
+      <p class="inline-code" style="margin-top:8px;">✅ JS can show alerts, write to console, and respond to user actions.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Variables (let, const) -->
+  <div class="section-title">2️⃣ Variables (Storing Data - let, const)</div>
+  <div class="example-card">
+    <h3>📦 What are Variables?</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Variables are containers that store values. Think of them as labeled boxes where you put information (numbers, text, etc.). <strong>let</strong> creates a variable that can change later. <strong>const</strong> creates a constant that cannot be changed (fixed value).</p>
+      <p><strong>💡 Rules:</strong> Variable names can't start with numbers, are case-sensitive, use camelCase (firstName). Always declare with let or const before using.</p>
+    </div>
+    <div class="code-block">
+      let userName = "Kalyan";    // can be changed later<br>
+      const country = "India";    // cannot be reassigned<br>
+      let age = 25;<br>
+      console.log(userName, country, age);
+    </div>
+    <button class="btn-show" data-target="varResult">🔍 Show Variables Output</button>
+    <div id="varResult" class="result-area">
+      <div class="result-label">💻 Variable Values:</div>
+      <div class="console-output" id="varOutput"></div>
+      <script>
+        document.getElementById("varResult").addEventListener("showresult", function() {
+          let userName = "Kalyan";
+          const country = "India";
+          let age = 25;
+          document.getElementById("varOutput").innerHTML = `📌 userName = "${userName}" (can change - let)<br>📌 country = "${country}" (fixed - const)<br>📌 age = ${age} (number - let)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Data Types -->
+  <div class="section-title">3️⃣ Data Types (String, Number, Boolean, Undefined, Null)</div>
+  <div class="example-card">
+    <h3>🔢 Different Kinds of Values</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Data types tell JavaScript what kind of value you're storing. <strong>String</strong> = text (inside quotes), <strong>Number</strong> = numeric value, <strong>Boolean</strong> = true/false, <strong>Undefined</strong> = variable declared but no value, <strong>Null</strong> = intentionally empty.</p>
+      <p><strong>💡 Check type:</strong> Use <span class="inline-code">typeof</span> operator to find a variable's type.</p>
+    </div>
+    <div class="code-block">
+      let name = "Telugu";    // String<br>
+      let score = 100;       // Number<br>
+      let isActive = true;   // Boolean<br>
+      let empty;             // Undefined<br>
+      let data = null;       // Null
+    </div>
+    <button class="btn-show" data-target="dataTypeResult">📊 Show Data Types</button>
+    <div id="dataTypeResult" class="result-area">
+      <div class="result-label">🧪 Type Checking Results:</div>
+      <div class="console-output" id="typeOutput"></div>
+      <script>
+        document.getElementById("dataTypeResult").addEventListener("showresult", function() {
+          let name = "Telugu";
+          let score = 100;
+          let isActive = true;
+          let empty;
+          let data = null;
+          document.getElementById("typeOutput").innerHTML = `"${name}" → type: ${typeof name}<br>${score} → type: ${typeof score}<br>${isActive} → type: ${typeof isActive}<br>empty variable → type: ${typeof empty}<br>null variable → type: ${typeof data} (known quirk in JS)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Operators -->
+  <div class="section-title">4️⃣ Operators (Arithmetic & Comparison)</div>
+  <div class="example-card">
+    <h3>➕ Performing Calculations & Comparisons</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Operators let you perform math (+, -, *, /) and compare values (>, <, ===, !==). Arithmetic operators return numbers; comparison operators return true or false.</p>
+      <p><strong>💡 Important:</strong> Use <span class="inline-code">===</span> (strict equality) instead of <span class="inline-code">==</span> to avoid type coercion bugs.</p>
+    </div>
+    <div class="code-block">
+      let a = 10, b = 3;<br>
+      let sum = a + b;      // 13<br>
+      let isGreater = a > b; // true<br>
+      let isEqual = (a === 10); // true
+    </div>
+    <button class="btn-show" data-target="opResult">🧮 Run Operators Demo</button>
+    <div id="opResult" class="result-area">
+      <div class="result-label">🧮 Calculation Results:</div>
+      <div class="console-output" id="opOutput"></div>
+      <script>
+        document.getElementById("opResult").addEventListener("showresult", function() {
+          let a = 10, b = 3;
+          let sum = a + b;
+          let isGreater = a > b;
+          let multiply = a * b;
+          document.getElementById("opOutput").innerHTML = `➕ ${a} + ${b} = ${sum}<br>✖️ ${a} × ${b} = ${multiply}<br>🔁 ${a} > ${b} → ${isGreater}<br>✅ ${a} === 10 → ${a === 10}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Conditionals (if/else) -->
+  <div class="section-title">5️⃣ Conditionals (if, else if, else)</div>
+  <div class="example-card">
+    <h3>🎤 Making Decisions in Code</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Conditions allow your code to make decisions based on values. If a condition is true, run one block; otherwise, run another. Perfect for age verification, login checks, grading systems.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">if (condition) { // code } else { // other code }</span></p>
+    </div>
+    <div class="code-block">
+      let age = 18;<br>
+      if (age >= 18) {<br>
+        console.log("Adult");<br>
+      } else {<br>
+        console.log("Minor");<br>
+      }
+    </div>
+    <button class="btn-show" data-target="conditionResult">🎯 Show Conditional Demo</button>
+    <div id="conditionResult" class="result-area">
+      <div class="result-label">🔀 Decision Making Example:</div>
+      <div class="console-output" id="conditionOutput"></div>
+      <button class="demo-button" onclick="checkAgePrompt()">📝 Try it: Enter your age</button>
+      <script>
+        document.getElementById("conditionResult").addEventListener("showresult", function() {
+          let age = 18;
+          let result = age >= 18 ? "✅ Adult (age 18 or above)" : "❌ Minor";
+          document.getElementById("conditionOutput").innerHTML = `Age = ${age} → ${result}<br><br>👇 Click the button above to test with your own age!`;
+        });
+        function checkAgePrompt() {
+          let userAge = prompt("Enter your age:");
+          if (userAge >= 18) {
+            alert("✅ You are an adult!");
+          } else if (userAge > 0) {
+            alert("❌ You are a minor.");
+          } else {
+            alert("Invalid age entered.");
+          }
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Grading System (else if ladder) -->
+  <div class="section-title">6️⃣ Grading System (else if ladder)</div>
+  <div class="example-card">
+    <h3>📊 Multiple Conditions in Sequence</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> When you have more than two possible outcomes, use <span class="inline-code">else if</span> to check multiple conditions in order. The first true condition executes.</p>
+    </div>
+    <div class="code-block">
+      let marks = 85;<br>
+      if (marks >= 90) { grade = "A"; }<br>
+      else if (marks >= 75) { grade = "B"; }<br>
+      else if (marks >= 60) { grade = "C"; }<br>
+      else { grade = "F"; }
+    </div>
+    <button class="btn-show" data-target="gradeResult">🏆 Show Grade Example</button>
+    <div id="gradeResult" class="result-area">
+      <div class="result-label">🎓 Grade Calculator (marks = 85):</div>
+      <div class="console-output" id="gradeOutput"></div>
+      <button class="demo-button" onclick="checkGrade()">📊 Try your own marks</button>
+      <script>
+        document.getElementById("gradeResult").addEventListener("showresult", function() {
+          let marks = 85;
+          let grade;
+          if (marks >= 90) grade = "A (Excellent)";
+          else if (marks >= 75) grade = "B (Good)";
+          else if (marks >= 60) grade = "C (Average)";
+          else grade = "F (Needs Improvement)";
+          document.getElementById("gradeOutput").innerHTML = `📝 Marks: ${marks}<br>🏅 Grade: ${grade}`;
+        });
+        function checkGrade() {
+          let marks = prompt("Enter your marks (0-100):");
+          let gradeMsg;
+          if (marks >= 90) gradeMsg = "A (Excellent)";
+          else if (marks >= 75) gradeMsg = "B (Good)";
+          else if (marks >= 60) gradeMsg = "C (Average)";
+          else if (marks >= 0) gradeMsg = "F (Needs Improvement)";
+          else gradeMsg = "Invalid marks";
+          alert(`Your grade: ${gradeMsg}`);
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Loops (for loop) -->
+  <div class="section-title">7️⃣ Loops (for loop - Repeat Code)</div>
+  <div class="example-card">
+    <h3>🔄 Running Code Multiple Times</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Loops repeat a block of code. <strong>for loop</strong> has three parts: initialization (let i=0), condition (i < 5), and increment (i++). Perfect for counting, iterating arrays, or repeating tasks.</p>
+    </div>
+    <div class="code-block">
+      for (let i = 1; i <= 5; i++) {<br>
+        console.log("Number: " + i);<br>
+      }
+    </div>
+    <button class="btn-show" data-target="loopResult">▶️ Run for Loop</button>
+    <div id="loopResult" class="result-area">
+      <div class="result-label">🔁 Loop Output (1 to 5):</div>
+      <div class="console-output" id="loopOutput"></div>
+      <script>
+        document.getElementById("loopResult").addEventListener("showresult", function() {
+          let output = "";
+          for (let i = 1; i <= 5; i++) {
+            output += `📌 Number: ${i}<br>`;
+          }
+          document.getElementById("loopOutput").innerHTML = output;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 8: While Loop -->
+  <div class="section-title">8️⃣ While Loop (Condition-based Repetition)</div>
+  <div class="example-card">
+    <h3>🔁 While Loop Explanation</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The <span class="inline-code">while</span> loop repeats as long as a condition is true. Use it when you don't know exactly how many times to loop (e.g., until user enters correct input).</p>
+    </div>
+    <div class="code-block">
+      let i = 1;<br>
+      while (i <= 5) {<br>
+        console.log(i);<br>
+        i++;<br>
+      }
+    </div>
+    <button class="btn-show" data-target="whileResult">🔄 Show While Loop</button>
+    <div id="whileResult" class="result-area">
+      <div class="result-label">🔄 While Loop Result:</div>
+      <div class="console-output" id="whileOutput"></div>
+      <script>
+        document.getElementById("whileResult").addEventListener("showresult", function() {
+          let output = "";
+          let i = 1;
+          while (i <= 5) {
+            output += `🔸 ${i}<br>`;
+            i++;
+          }
+          document.getElementById("whileOutput").innerHTML = output;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Arrays -->
+  <div class="section-title">9️⃣ Arrays (Lists of Data)</div>
+  <div class="example-card">
+    <h3>🍎 What is an Array?</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> An array stores multiple values in a single variable. Each item has an index (position) starting from 0. Useful for lists, shopping carts, user names, etc.</p>
+      <p><strong>💡 Common methods:</strong> <span class="inline-code">push()</span> to add, <span class="inline-code">pop()</span> to remove, <span class="inline-code">length</span> to get size.</p>
+    </div>
+    <div class="code-block">
+      let fruits = ["Apple", "Mango", "Orange"];<br>
+      console.log(fruits[0]);     // Apple<br>
+      console.log(fruits.length); // 3
+    </div>
+    <button class="btn-show" data-target="arrayResult">🍇 Show Array Demo</button>
+    <div id="arrayResult" class="result-area">
+      <div class="result-label">📦 Array Data:</div>
+      <div class="console-output" id="arrayOutput"></div>
+      <script>
+        document.getElementById("arrayResult").addEventListener("showresult", function() {
+          let fruits = ["Apple", "Mango", "Orange"];
+          document.getElementById("arrayOutput").innerHTML = `Fruits array: [${fruits.join(", ")}]<br>🍎 First fruit (index 0): ${fruits[0]}<br>📏 Array length: ${fruits.length}<br>➕ Add "Grapes" → ${fruits.push("Grapes")} items now: [${fruits.join(", ")}]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Functions -->
+  <div class="section-title">🔟 Functions (Reusable Code Blocks)</div>
+  <div class="example-card">
+    <h3>📦 Creating Reusable Logic</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A function is a reusable block of code that performs a specific task. You <strong>define</strong> it once and <strong>call/invoke</strong> it whenever needed. Functions can accept inputs (parameters) and return outputs.</p>
+      <p><strong>💡 Why functions?</strong> Avoid code duplication, organize better, make debugging easier.</p>
+    </div>
+    <div class="code-block">
+      function greet(name) {<br>
+        return "Hello, " + name + "!";<br>
+      }<br>
+      let message = greet("Kalyan");<br>
+      console.log(message);
+    </div>
+    <button class="btn-show" data-target="funcResult">📞 Show Function Output</button>
+    <div id="funcResult" class="result-area">
+      <div class="result-label">✨ Function Execution:</div>
+      <div class="console-output" id="funcOutput"></div>
+      <button class="demo-button" onclick="showGreetingPrompt()">👋 Try function with your name</button>
+      <script>
+        document.getElementById("funcResult").addEventListener("showresult", function() {
+          function greet(name) {
+            return "Hello, " + name + "! Welcome to JavaScript.";
+          }
+          document.getElementById("funcOutput").innerHTML = `greet("Kalyan") → ${greet("Kalyan")}<br>greet("Priya") → ${greet("Priya")}<br><br>✅ Functions can be called multiple times with different inputs.`;
+        });
+        function showGreetingPrompt() {
+          let userName = prompt("Enter your name:");
+          function greet(name) {
+            return "Hello, " + name + "! Welcome to JavaScript functions!";
+          }
+          alert(greet(userName));
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Events (onclick) -->
+  <div class="section-title">📌 Events (Responding to User Actions)</div>
+  <div class="example-card">
+    <h3>🖱️ Making Buttons Work</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Events like <span class="inline-code">onclick</span> allow JavaScript to react when users click, hover, type, or scroll. This is how you make websites interactive.</p>
+    </div>
+    <div class="code-block">
+      &lt;button onclick="alert('Clicked!')"&gt;Click Me&lt;/button&gt;
+    </div>
+    <button class="btn-show" data-target="eventResult">🎯 Show Event Demo</button>
+    <div id="eventResult" class="result-area">
+      <div class="result-label">👇 Click the button to trigger JavaScript event:</div>
+      <button class="demo-button" onclick="alert('🎉 Event triggered! You clicked the button. JavaScript is responding to your action.')">✨ Click Me (Alert)</button>
+      <button class="demo-button" onclick="document.getElementById('eventMessage').innerHTML = 'Message updated by JavaScript at ' + new Date().toLocaleTimeString();" style="margin-left: 10px;">📝 Update Text Below</button>
+      <p id="eventMessage" style="margin-top: 10px; padding: 8px; background: #e2e8f0; border-radius: 12px;">Click the second button to change this text!</p>
+      <p class="inline-code">✅ onclick is one of many events (onmouseover, onkeydown, etc.)</p>
+    </div>
+  </div>
+
+  <!-- SECTION 12: Complete Mini Project - Calculator -->
+  <div class="section-title">📁 Complete Mini Project: Simple Calculator</div>
+  <div class="example-card">
+    <h3>🧮 Putting It All Together</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> A real calculator that uses variables, operators, functions, prompt, and alert — combining everything you learned today.</p>
+    </div>
+    <div class="code-block">
+      function calculate() {<br>
+        let a = Number(prompt("First number"));<br>
+        let b = Number(prompt("Second number"));<br>
+        alert("Sum: " + (a + b));<br>
+      }
+    </div>
+    <button class="btn-show" data-target="calcResult">🧪 Launch Calculator Demo</button>
+    <div id="calcResult" class="result-area">
+      <div class="result-label">➕ Click to add two numbers:</div>
+      <button class="demo-button" onclick="runCalculator()">🧮 Open Calculator</button>
+      <div class="console-output" id="calcExplanation" style="margin-top: 10px;"></div>
+      <script>
+        document.getElementById("calcResult").addEventListener("showresult", function() {
+          document.getElementById("calcExplanation").innerHTML = `✅ This calculator uses:<br>• let variables to store numbers<br>• Number() to convert string to number<br>• + operator for addition<br>• prompt() for user input<br>• alert() to show result<br><br>🎯 Try it! Click the button above.`;
+        });
+        function runCalculator() {
+          let a = Number(prompt("Enter first number:"));
+          let b = Number(prompt("Enter second number:"));
+          if (!isNaN(a) && !isNaN(b)) {
+            alert(`✅ ${a} + ${b} = ${a + b}`);
+          } else {
+            alert("❌ Invalid input. Please enter numbers only.");
+          }
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- Common Mistakes Section -->
+  <div class="section-title">⚠️ Common JavaScript Mistakes for Beginners</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesJsResult">📖 Show Common Mistakes & Fixes</button>
+    <div id="mistakesJsResult" class="result-area">
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ Using <span class="inline-code">=</span> instead of <span class="inline-code">===</span> in conditions → <span class="inline-code">if (x = 5)</span> assigns value, use <span class="inline-code">if (x === 5)</span></li>
+        <li>❌ Forgetting to declare variables → <span class="inline-code">count = 5</span> (creates global) → use <span class="inline-code">let count = 5</span></li>
+        <li>❌ Off-by-one errors in loops → <span class="inline-code">i <= 5</span> vs <span class="inline-code">i < 5</span> (includes 5 or not)</li>
+        <li>❌ Case sensitivity: <span class="inline-code">let myName</span> vs <span class="inline-code">myNAME</span> are different</li>
+        <li>❌ Forgetting to call function: <span class="inline-code">myFunction</span> vs <span class="inline-code">myFunction()</span> — parentheses execute!</li>
+        <li>❌ Not handling NaN: when converting user input, always check <span class="inline-code">isNaN()</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice These)</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>📝 Task 1</h3><p>Create variables for your name, age, favorite color. Print them using console.log or alert.</p></div>
+    <div class="example-card"><h3>🧮 Task 2</h3><p>Build a simple calculator that asks for two numbers and shows sum, difference, product, and division.</p></div>
+    <div class="example-card"><h3>🎓 Task 3</h3><p>Create a grading system: take marks input (0-100) and show A (90+), B (75-89), C (60-74), F (below 60).</p></div>
+    <div class="example-card"><h3>🔄 Task 4</h3><p>Use a for loop to print even numbers from 2 to 20.</p></div>
+    <div class="example-card"><h3>📦 Task 5</h3><p>Create an array of 5 cities. Display the first and last city using array indexing.</p></div>
+    <div class="example-card"><h3>📞 Task 6</h3><p>Write a function that takes a person's name as input and returns "Good morning, [name]!"</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 7 Summary: JavaScript Basics You Mastered</div>
+  <div class="card-grid">
+    <div class="example-card">✔️ What JavaScript is and why it matters</div>
+    <div class="example-card">✔️ Variables: let (changeable) vs const (fixed)</div>
+    <div class="example-card">✔️ Data Types: String, Number, Boolean, Undefined</div>
+    <div class="example-card">✔️ Operators: Arithmetic (+, -, *, /) & Comparison (>, <, ===)</div>
+    <div class="example-card">✔️ Conditionals: if, else if, else for decision making</div>
+    <div class="example-card">✔️ Loops: for loop and while loop for repetition</div>
+    <div class="example-card">✔️ Arrays: storing lists of data (index starts at 0)</div>
+    <div class="example-card">✔️ Functions: reusable code blocks with parameters and return values</div>
+    <div class="example-card">✔️ Events: onclick to respond to user clicks</div>
+    <div class="example-card">✔️ Interactive prompts, alerts, and console logging</div>
+  </div>
+
+  <!-- Day 7 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 7 Ending Message for Beginners</strong><br>
+    “You've taken your first steps into programming! JavaScript is the most popular language for web development. Keep practicing — tomorrow we dive deeper into functions and start manipulating web pages with DOM (Document Object Model).”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 8 : JavaScript Functions (Advanced) & DOM Manipulation</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📦 Arrow Functions (=>)</span>
+    <span class="badge">🔍 Function Scope & Hoisting</span>
+    <span class="badge">🔄 Callback Functions</span>
+    <span class="badge">🧩 What is DOM?</span>
+    <span class="badge">🎯 Selecting & Changing HTML with JS</span>
+    <span class="badge">✨ Adding/Removing Elements</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 7 Completed ✅<br>
+    Click "Show Result" on every card to see live JavaScript execution. Practice writing code yourself!
+  </div>
+</div>
+
+<script>
+  // Add click handlers for all "Show Result" buttons with custom event triggering
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          // Dispatch custom event to populate dynamic content if needed
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

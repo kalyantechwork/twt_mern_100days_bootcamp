@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Telugu WebTech · Day 3: HTML Basics | Live Outputs for Every Example</title>
+  <title>Telugu WebTech · Day 3: HTML Deep Dive | Beginner Friendly Explanations + Live Outputs</title>
   <style>
     * {
       margin: 0;
@@ -153,28 +153,39 @@
       border-radius: 8px;
       font-size: 0.85rem;
     }
-    .diagram {
+    .explanation-text {
       background: #f1f5f9;
-      border-radius: 24px;
-      padding: 1rem;
-      text-align: center;
-      font-family: monospace;
-      font-size: 0.85rem;
-      overflow-x: auto;
-      margin: 1rem 0;
+      border-radius: 18px;
+      padding: 0.9rem;
+      margin: 0.5rem 0 0.8rem;
+      font-size: 0.92rem;
+      border-left: 4px solid #facc15;
+      line-height: 1.5;
+      color: #1e293b;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      margin: 0.5rem 0;
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
     }
-    th, td {
-      text-align: left;
-      padding: 8px 12px;
-      border-bottom: 1px solid #e9edf2;
+    @media (max-width: 700px) {
+      .container { padding: 1rem; }
+      .two-col-grid { grid-template-columns: 1fr; }
+    }
+    .form-demo input, .form-demo button, .form-demo select {
+      margin: 4px 0;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 500;
     }
     .highlight-box {
       background: #fefce8;
@@ -205,29 +216,18 @@
       display: inline-block;
       margin: 0.2rem;
     }
-    .two-col-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-      gap: 1.2rem;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
     }
-    @media (max-width: 700px) {
-      .container { padding: 1rem; }
-      .two-col-grid { grid-template-columns: 1fr; }
-    }
-    .form-demo input, .form-demo button, .form-demo select {
-      margin: 4px 0;
-      padding: 6px 10px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #0f172a;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 40px;
-      cursor: pointer;
-      font-weight: 500;
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e9edf2;
     }
   </style>
 </head>
@@ -242,23 +242,28 @@
         <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
       </div>
     </div>
-    <div class="day-chip">📅 Day 3 · HTML Basics (Live Outputs)</div>
+    <div class="day-chip">📅 Day 3 · HTML Basics (Detailed for Beginners)</div>
   </div>
 
-  <h1>🏷️ HTML Basics<br><span style="font-size: 1rem; color:#2c3e66;">Every code example → see live result instantly</span></h1>
+  <h1>🏷️ HTML Basics <span style="font-size: 1rem; color:#2c3e66;">Complete Beginner's Guide with Explanations + Live Outputs</span></h1>
 
-  <!-- Section 1 -->
-  <div class="section-title">1️⃣ What is HTML?</div>
-  <p><strong>HTML</strong> = HyperText Markup Language. Skeleton of webpages.</p>
+  <!-- Section 1: What is HTML? Detailed Explanation -->
+  <div class="section-title">1️⃣ What is HTML? (Concept for Absolute Beginners)</div>
+  <div class="explanation-text">
+    <strong>🔍 HTML stands for HyperText Markup Language.</strong> It is NOT a programming language — it's a <strong>markup language</strong> used to create the structure of web pages. Think of a house: HTML provides the <strong>walls, rooms, doors, and windows</strong> (the skeleton). CSS adds paint & decorations, JavaScript adds electricity & moving parts. Every website you visit uses HTML to display text, images, buttons, links, and more. Browsers like Chrome, Firefox read HTML files and show them as beautiful pages.
+  </div>
   <div class="highlight-box">
-    🏠 Analogy: HTML = Walls & rooms (structure) · CSS = Paint & design · JS = Electricity
+    🧠 <strong>Key point for beginners:</strong> HTML uses "tags" inside angle brackets like <span class="inline-code">&lt;h1&gt;</span> and <span class="inline-code">&lt;p&gt;</span>. Most tags come in pairs: opening <span class="inline-code">&lt;tag&gt;</span> and closing <span class="inline-code">&lt;/tag&gt;</span>.
   </div>
 
-  <!-- 2. First HTML file + live preview -->
-  <div class="section-title">2️⃣ Your First HTML Skeleton (Live demo)</div>
+  <!-- 2. First HTML file + live preview with explanation -->
+  <div class="section-title">2️⃣ Your First HTML Document (The Skeleton)</div>
+  <div class="explanation-text">
+    📘 Every HTML page starts with <span class="inline-code">&lt;!DOCTYPE html&gt;</span> (tells browser it's HTML5). Then <span class="inline-code">&lt;html&gt;</span> wraps everything. <span class="inline-code">&lt;head&gt;</span> contains meta info, title (shown on browser tab). <span class="inline-code">&lt;body&gt;</span> holds all visible content.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>📄 Basic index.html code</h3>
+      <h3>📄 Basic HTML Structure</h3>
       <div class="code-snippet">
         &lt;!DOCTYPE html&gt;<br>
         &lt;html&gt;<br>
@@ -268,23 +273,27 @@
         &nbsp;&nbsp;&lt;p&gt;This is my first webpage.&lt;/p&gt;<br>
         &lt;/body&gt;&lt;/html&gt;
       </div>
+      <div class="explanation-text" style="font-size:0.8rem;">✅ <strong>Explanation:</strong> The title appears on tab. Everything inside body is visible. h1 is main heading, p is paragraph.</div>
     </div>
     <div class="example-card">
-      <h3>✨ Live Output</h3>
+      <h3>✨ Live Output (Browser View)</h3>
       <div class="output-preview">
         <div class="output-label">▶️ Browser renders:</div>
         <h1 style="font-size: 1.6rem; margin: 5px 0;">Welcome to HTML</h1>
         <p>This is my first webpage.</p>
-        <small style="color: gray;">(tab title would be "My First Page")</small>
+        <small style="color: gray;">(Browser tab shows "My First Page")</small>
       </div>
     </div>
   </div>
 
-  <!-- 3: Headings h1-h6 -->
-  <div class="section-title">3️⃣ Headings (h1 to h6) + Live Output</div>
+  <!-- 3: Headings h1-h6 Deep explanation -->
+  <div class="section-title">3️⃣ Headings: from &lt;h1&gt; to &lt;h6&gt; (Importance & Hierarchy)</div>
+  <div class="explanation-text">
+    🔤 Headings define titles and subtitles. <span class="inline-code">&lt;h1&gt;</span> is the most important (usually main page title), <span class="inline-code">&lt;h6&gt;</span> is least important. Search engines use h1 for SEO. Never skip levels — maintain structure.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>🔤 Code Example</h3>
+      <h3>🔤 Heading Tags Code</h3>
       <div class="code-snippet">
         &lt;h1&gt;Main Title (h1)&lt;/h1&gt;<br>
         &lt;h2&gt;Section Title (h2)&lt;/h2&gt;<br>
@@ -295,7 +304,7 @@
       </div>
     </div>
     <div class="example-card">
-      <h3>🎯 Live Headings</h3>
+      <h3>🎯 Live Headings (Size & Boldness)</h3>
       <div class="output-preview">
         <div class="output-label">▶️ Output:</div>
         <h1 style="margin: 4px 0; font-size:1.7rem;">Main Title (h1)</h1>
@@ -308,31 +317,37 @@
     </div>
   </div>
 
-  <!-- 4: Paragraph, line break, formatting -->
-  <div class="section-title">4️⃣ Paragraph & Text Formatting (Live)</div>
+  <!-- 4: Paragraph & Text Formatting (detailed) -->
+  <div class="section-title">4️⃣ Paragraphs, Line Breaks & Text Formatting</div>
+  <div class="explanation-text">
+    📝 <span class="inline-code">&lt;p&gt;</span> defines a paragraph (adds spacing). <span class="inline-code">&lt;br&gt;</span> creates a line break without starting new paragraph. <span class="inline-code">&lt;hr&gt;</span> draws a horizontal line. Use <span class="inline-code">&lt;b&gt;</span> for bold, <span class="inline-code">&lt;i&gt;</span> for italic, <span class="inline-code">&lt;u&gt;</span> for underline.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>📝 Code</h3>
+      <h3>📝 Formatting Code</h3>
       <div class="code-snippet">
-        &lt;p&gt;This is a paragraph. HTML is fun!&lt;/p&gt;<br>
+        &lt;p&gt;This is a normal paragraph.&lt;/p&gt;<br>
         First line &lt;br&gt; Second line after break.<br>
-        &lt;hr&gt; horizontal rule<br>
-        &lt;b&gt;Bold&lt;/b&gt;, &lt;i&gt;Italic&lt;/i&gt;, &lt;u&gt;Underline&lt;/u&gt;
+        &lt;hr&gt; <br>
+        &lt;b&gt;Bold text&lt;/b&gt;, &lt;i&gt;Italic&lt;/i&gt;, &lt;u&gt;Underline&lt;/u&gt;
       </div>
     </div>
     <div class="example-card">
       <h3>🎨 Rendered Result</h3>
       <div class="output-preview">
-        <p>This is a paragraph. HTML is fun!</p>
+        <p>This is a normal paragraph.</p>
         First line <br> Second line after break.
         <hr style="margin: 8px 0;">
-        <b>Bold</b>, <i>Italic</i>, <u>Underline</u>
+        <b>Bold text</b>, <i>Italic</i>, <u>Underline</u>
       </div>
     </div>
   </div>
 
-  <!-- 5: Lists (ul / ol) -->
-  <div class="section-title">5️⃣ Lists - Unordered & Ordered</div>
+  <!-- 5: Lists with explanation -->
+  <div class="section-title">5️⃣ Lists: Unordered (bullet) & Ordered (numbered)</div>
+  <div class="explanation-text">
+    📋 <span class="inline-code">&lt;ul&gt;</span> = unordered list (bullets). <span class="inline-code">&lt;ol&gt;</span> = ordered list (numbers or letters). Each item inside uses <span class="inline-code">&lt;li&gt;</span> (list item).
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
       <h3>📋 Unordered list (ul)</h3>
@@ -340,87 +355,83 @@
         &lt;ul&gt;<br>
         &nbsp;&nbsp;&lt;li&gt;Apple&lt;/li&gt;<br>
         &nbsp;&nbsp;&lt;li&gt;Mango&lt;/li&gt;<br>
-        &nbsp;&nbsp;&lt;li&gt;Grapes&lt;/li&gt;<br>
         &lt;/ul&gt;
       </div>
     </div>
     <div class="example-card">
       <h3>🍎 Output</h3>
       <div class="output-preview">
-        <ul style="margin-left: 1.2rem;">
-          <li>Apple</li>
-          <li>Mango</li>
-          <li>Grapes</li>
-        </ul>
+        <ul style="margin-left: 1.2rem;"><li>Apple</li><li>Mango</li></ul>
       </div>
     </div>
     <div class="example-card">
       <h3>🔢 Ordered list (ol)</h3>
       <div class="code-snippet">
-        &lt;ol&gt;<br>
-        &nbsp;&nbsp;&lt;li&gt;HTML&lt;/li&gt;<br>
-        &nbsp;&nbsp;&lt;li&gt;CSS&lt;/li&gt;<br>
-        &nbsp;&nbsp;&lt;li&gt;JS&lt;/li&gt;<br>
-        &lt;/ol&gt;
+        &lt;ol&gt;<br>&nbsp;&nbsp;&lt;li&gt;HTML&lt;/li&gt;<br>&nbsp;&nbsp;&lt;li&gt;CSS&lt;/li&gt;<br>&lt;/ol&gt;
       </div>
     </div>
     <div class="example-card">
       <h3>✅ Output</h3>
       <div class="output-preview">
-        <ol style="margin-left: 1.2rem;">
-          <li>HTML</li>
-          <li>CSS</li>
-          <li>JS</li>
-        </ol>
+        <ol style="margin-left: 1.2rem;"><li>HTML</li><li>CSS</li></ol>
       </div>
     </div>
   </div>
 
-  <!-- 6: Links anchor tag -->
-  <div class="section-title">6️⃣ Links (Anchor Tags) - Live Clickable</div>
+  <!-- 6: Links anchor tags detailed -->
+  <div class="section-title">6️⃣ Links (Anchor <span class="inline-code">&lt;a&gt;</span>) - Navigate the Web</div>
+  <div class="explanation-text">
+    🔗 <span class="inline-code">&lt;a href="URL"&gt;link text&lt;/a&gt;</span> creates clickable links. <span class="inline-code">target="_blank"</span> opens link in new tab. Without it, link opens in same tab. Essential for navigation!
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>🔗 Code</h3>
+      <h3>🔗 Link Code</h3>
       <div class="code-snippet">
         &lt;a href="https://google.com"&gt;Go to Google&lt;/a&gt;<br>
         &lt;a href="https://youtube.com" target="_blank"&gt;YouTube (new tab)&lt;/a&gt;
       </div>
     </div>
     <div class="example-card">
-      <h3>🌍 Live Links</h3>
+      <h3>🌍 Live Clickable Links</h3>
       <div class="output-preview">
         <a href="https://google.com" target="_blank">🔍 Go to Google</a><br>
         <a href="https://youtube.com" target="_blank">📺 YouTube (new tab)</a>
-        <div style="font-size: 0.7rem; margin-top: 6px;">✅ clicks work in real browser</div>
+        <div style="font-size: 0.7rem; margin-top: 6px;">✅ Try clicking — they open real websites!</div>
       </div>
     </div>
   </div>
 
-  <!-- 7: Images -->
-  <div class="section-title">7️⃣ Images with alt attribute</div>
+  <!-- 7: Images with alt explanation -->
+  <div class="section-title">7️⃣ Images (<span class="inline-code">&lt;img&gt;</span>) - Adding Graphics</div>
+  <div class="explanation-text">
+    🖼️ Use <span class="inline-code">&lt;img src="image-url" alt="description"&gt;</span>. <strong>src</strong> = source of image, <strong>alt</strong> = alternative text (shows if image fails to load, also helps screen readers). Always add alt for accessibility.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>🖼️ Code</h3>
+      <h3>🖼️ Image Code</h3>
       <div class="code-snippet">
         &lt;img src="https://picsum.photos/id/1015/150/100" alt="Mountain landscape"&gt;<br>
-        &lt;img src="https://picsum.photos/id/26/150/100" alt="beach"&gt;
+        &lt;img src="https://picsum.photos/id/26/150/100" alt="beach scene"&gt;
       </div>
     </div>
     <div class="example-card">
       <h3>📸 Rendered Images</h3>
       <div class="output-preview">
         <img src="https://picsum.photos/id/1015/150/100" alt="Mountain landscape" style="border-radius: 12px; margin: 5px;">
-        <img src="https://picsum.photos/id/26/150/100" alt="beach" style="border-radius: 12px; margin: 5px;">
-        <div><small>random placeholder images from Lorem Picsum</small></div>
+        <img src="https://picsum.photos/id/26/150/100" alt="beach scene" style="border-radius: 12px; margin: 5px;">
+        <div><small>Images from free Lorem Picsum service</small></div>
       </div>
     </div>
   </div>
 
-  <!-- 8: Tables -->
-  <div class="section-title">8️⃣ Tables (Students data)</div>
+  <!-- 8: Tables with explanation -->
+  <div class="section-title">8️⃣ Tables - Display Data in Rows & Columns</div>
+  <div class="explanation-text">
+    📊 Tables use <span class="inline-code">&lt;table&gt;</span>, rows <span class="inline-code">&lt;tr&gt;</span>, header cells <span class="inline-code">&lt;th&gt;</span>, data cells <span class="inline-code">&lt;td&gt;</span>. Perfect for showing marks, product lists, etc.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>📊 Table code</h3>
+      <h3>📊 Table Code</h3>
       <div class="code-snippet">
         &lt;table border="1"&gt;<br>
         &nbsp;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;<br>
@@ -436,66 +447,70 @@
           <tr><th>Name</th><th>Age</th></tr>
           <tr><td>Krishna</td><td>25</td></tr>
           <tr><td>Priya</td><td>23</td></tr>
-        </table>
+         </table>
       </div>
     </div>
   </div>
 
-  <!-- 9: Forms multiple inputs -->
-  <div class="section-title">9️⃣ Forms - Collect User Data</div>
+  <!-- 9: Forms explanation beginner -->
+  <div class="section-title">9️⃣ Forms - Collecting User Input</div>
+  <div class="explanation-text">
+    📝 Forms let users enter data (login, signup, search). <span class="inline-code">&lt;form&gt;</span> wraps input fields like text, email, password, buttons. <span class="inline-code">&lt;input&gt;</span> has different <span class="inline-code">type</span> attributes. <span class="inline-code">&lt;button&gt;</span> submits data.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
       <h3>📝 Registration Form Code</h3>
       <div class="code-snippet">
-        &lt;form&gt;<br>
-        &nbsp;&lt;input type="text" placeholder="Full Name"&gt;<br>
-        &nbsp;&lt;input type="email" placeholder="Email"&gt;<br>
-        &nbsp;&lt;input type="password" placeholder="Password"&gt;<br>
-        &nbsp;&lt;input type="date"&gt;<br>
-        &nbsp;&lt;button&gt;Register&lt;/button&gt;<br>
-        &lt;/form&gt;
+        &lt;input type="text" placeholder="Full Name"&gt;<br>
+        &lt;input type="email" placeholder="Email"&gt;<br>
+        &lt;input type="password" placeholder="Password"&gt;<br>
+        &lt;input type="date"&gt;<br>
+        &lt;button&gt;Register&lt;/button&gt;
       </div>
     </div>
     <div class="example-card">
-      <h3>✨ Interactive Form (try it)</h3>
+      <h3>✨ Interactive Form (Try typing!)</h3>
       <div class="output-preview form-demo">
         <form onsubmit="return false;">
-          <input type="text" placeholder="Full Name" style="width: 90%; padding: 6px; margin: 4px 0; border-radius: 12px; border: 1px solid #ccc;"><br>
-          <input type="email" placeholder="Email" style="width: 90%; padding: 6px; margin: 4px 0; border-radius: 12px;"><br>
+          <input type="text" placeholder="Full Name" style="width: 90%; padding: 6px; margin: 4px 0;"><br>
+          <input type="email" placeholder="Email" style="width: 90%; padding: 6px; margin: 4px 0;"><br>
           <input type="password" placeholder="Password" style="width: 90%; padding: 6px; margin: 4px 0;"><br>
           <input type="date" style="margin: 4px 0;"><br>
           <button type="button" style="margin-top: 6px;">Register</button>
         </form>
-        <small>📌 All fields are interactive (demo)</small>
+        <small>✏️ You can type in these fields — they are live!</small>
       </div>
     </div>
   </div>
 
-  <!-- Input Types summary table + extra live types -->
-  <div class="subsection-title">🔢 Additional Input Types Live Demo</div>
+  <!-- Input Types extra -->
+  <div class="subsection-title">🎛️ More Input Types: number, range, color, select (dropdown)</div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>🎛️ Different Inputs Code</h3>
+      <h3>🎚️ Code for inputs</h3>
       <div class="code-snippet">
         &lt;input type="number" placeholder="age"&gt;<br>
-        &lt;input type="range"&gt;<br>
-        &lt;input type="color"&gt;<br>
-        &lt;select&gt;&lt;option&gt;Select&lt;/option&gt;&lt;/select&gt;
+        &lt;input type="range"&gt; slider<br>
+        &lt;input type="color"&gt; picker<br>
+        &lt;select&gt;&lt;option&gt;Choose&lt;/option&gt;&lt;/select&gt;
       </div>
     </div>
     <div class="example-card">
       <h3>🎨 Live Examples</h3>
       <div class="output-preview">
         <input type="number" placeholder="Age" style="margin: 3px;"> <br>
-        Range: <input type="range" style="width: 120px;"><br>
+        Range slider: <input type="range" style="width: 120px;"><br>
         Color picker: <input type="color" value="#facc15"><br>
         <select><option>HTML</option><option>CSS</option></select>
       </div>
     </div>
   </div>
 
-  <!-- 10: Semantic Tags Visual Preview -->
-  <div class="section-title">🏗️ Semantic Tags (Header, Nav, Section, Footer)</div>
+  <!-- 10: Semantic Tags detailed -->
+  <div class="section-title">🏗️ Semantic HTML Tags (Meaningful Structure)</div>
+  <div class="explanation-text">
+    🧱 Semantic tags describe their meaning: <span class="inline-code">&lt;header&gt;</span> (top area), <span class="inline-code">&lt;nav&gt;</span> (navigation links), <span class="inline-code">&lt;section&gt;</span> (content blocks), <span class="inline-code">&lt;footer&gt;</span> (bottom info). Improves accessibility & SEO.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
       <h3>📐 Semantic Code</h3>
@@ -513,16 +528,19 @@
         <div style="background: #e2e8f0; padding: 6px; margin: 6px 0; border-radius: 20px;">🏠 Home | 📖 About | 📞 Contact</div>
         <div style="padding: 8px; background: white; border-radius: 20px;">Main content section — articles go here</div>
         <div style="margin-top: 8px; font-size: 0.7rem; text-align: center; border-top: 1px solid #ddd; padding: 6px;">© 2026 Telugu WebTech</div>
-        <small>✨ semantic tags improve accessibility & SEO</small>
+        <small>✨ semantic tags make layout logical for browsers & screen readers</small>
       </div>
     </div>
   </div>
 
-  <!-- Mini complete Project -->
-  <div class="section-title">✅ Complete Mini Project (Live Preview)</div>
+  <!-- Mini Project with Full Explanation -->
+  <div class="section-title">✅ Complete Mini Project (Applying All Concepts)</div>
+  <div class="explanation-text">
+    🚀 Below is a small webpage that combines headings, paragraphs, lists, form, image link (concept). This is a real "mini website" you can build on day 3.
+  </div>
   <div class="two-col-grid">
     <div class="example-card">
-      <h3>💻 Full HTML Code</h3>
+      <h3>💻 Full Mini Website Code</h3>
       <div class="code-snippet" style="max-height: 280px; overflow-y: auto;">
         &lt;!DOCTYPE html&gt;<br>
         &lt;html&gt;<br>
@@ -535,12 +553,11 @@
         &nbsp;&nbsp;&lt;ul&gt;&lt;li&gt;HTML&lt;/li&gt;&lt;li&gt;CSS&lt;/li&gt;&lt;li&gt;JavaScript&lt;/li&gt;&lt;/ul&gt;<br>
         &nbsp;&nbsp;&lt;h2&gt;Contact Form&lt;/h2&gt;<br>
         &nbsp;&nbsp;&lt;form&gt;&lt;input type="text" placeholder="Name"&gt;&lt;br&gt;&lt;input type="email" placeholder="Email"&gt;&lt;br&gt;&lt;button&gt;Submit&lt;/button&gt;&lt;/form&gt;<br>
-        &lt;/body&gt;<br>
-        &lt;/html&gt;
+        &lt;/body&gt;&lt;/html&gt;
       </div>
     </div>
     <div class="example-card">
-      <h3>🌟 Rendered Mini Project</h3>
+      <h3>🌟 Rendered Mini Project (Live)</h3>
       <div class="output-preview" style="max-height: 350px; overflow-y: auto;">
         <h1 style="font-size: 1.6rem;">Welcome to My Website</h1>
         <p>Learning HTML is very interesting.</p>
@@ -557,53 +574,56 @@
     </div>
   </div>
 
-  <!-- Common Mistakes -->
-  <div class="section-title">⚠️ Common Mistakes & Solutions</div>
-  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
-    <li>❌ Not closing tags → always use <span class="inline-code">&lt;/h1&gt;</span> etc.</li>
-    <li>❌ Wrong file extension → save as <span class="inline-code">.html</span></li>
-    <li>❌ Typing &lt;hl&gt; instead of &lt;h1&gt;</li>
-    <li>❌ Forgetting alt attribute → always add meaningful alt</li>
+  <!-- Common Mistakes for Beginners -->
+  <div class="section-title">⚠️ Common Mistakes Beginners Make (Avoid These!)</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1.2rem; border-radius:24px;">
+    <li>❌ Forgetting to close tags: <span class="inline-code">&lt;p&gt;text&lt;/p&gt;</span> not <span class="inline-code">&lt;p&gt;text</span></li>
+    <li>❌ Using wrong file extension: Save as <span class="inline-code">.html</span> not .txt</li>
+    <li>❌ Typo in tag names: <span class="inline-code">&lt;hl&gt;</span> instead of <span class="inline-code">&lt;h1&gt;</span> (L vs 1)</li>
+    <li>❌ Missing alt attribute in images → always add meaningful alt text</li>
+    <li>❌ Nesting incorrectly: keep tags properly inside each other</li>
   </ul>
 
-  <!-- Homework -->
-  <div class="section-title">📌 Homework for Students</div>
+  <!-- Homework with Beginner Tasks -->
+  <div class="section-title">📌 Homework for Absolute Beginners (Practice is key)</div>
   <div class="card-grid">
-    <div class="example-card"><h3>📝 Task 1</h3><p>Create webpage: heading, paragraph, image, list + link.</p></div>
-    <div class="example-card"><h3>📊 Task 2</h3><p>Student table (Name, Subject, Marks).</p></div>
-    <div class="example-card"><h3>📋 Task 3</h3><p>Registration form: name, email, password, DOB, submit button.</p></div>
+    <div class="example-card"><h3>📝 Task 1</h3><p>Build a personal intro page: h1 heading, paragraph about you, an image from internet (any URL), and a link to your favorite website.</p></div>
+    <div class="example-card"><h3>📊 Task 2</h3><p>Create a student marks table with columns: Student Name, Subject, Marks (use at least 2 students).</p></div>
+    <div class="example-card"><h3>📋 Task 3</h3><p>Registration form including: Name, Email, Password, Date of Birth, and a Register button.</p></div>
   </div>
 
-  <!-- Summary & Day 3 message -->
-  <div class="section-title">📖 Beginner Summary (Day 3)</div>
+  <!-- Beginner Summary -->
+  <div class="section-title">📖 Day 3 Summary (What you learned today)</div>
   <div class="card-grid">
-    <div class="example-card">✔️ HTML structure & skeleton</div>
-    <div class="example-card">✔️ Headings h1-h6</div>
-    <div class="example-card">✔️ Paragraphs, breaks, formatting</div>
-    <div class="example-card">✔️ Lists (ul/ol) + tables & forms</div>
-    <div class="example-card">✔️ Links & images with live preview</div>
-    <div class="example-card">✔️ Semantic layout tags</div>
+    <div class="example-card">✔️ HTML definition & role — skeleton of websites</div>
+    <div class="example-card">✔️ Headings h1 to h6 for structuring titles</div>
+    <div class="example-card">✔️ Paragraphs, line breaks & text formatting tags</div>
+    <div class="example-card">✔️ Lists (ordered/unordered), tables for data</div>
+    <div class="example-card">✔️ Links (anchor tags) & images with alt</div>
+    <div class="example-card">✔️ Forms: text, email, password, buttons, extra inputs</div>
+    <div class="example-card">✔️ Semantic tags: header, nav, section, footer</div>
+    <div class="example-card">✔️ Built a mini project combining everything</div>
   </div>
 
   <!-- Ending Message -->
   <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
-    <strong>🌟 Day 3 Ending Message</strong><br>
-    “Now you understand the foundation of every website. From tomorrow, we will learn advanced HTML concepts and build better webpages.”
+    <strong>🌟 Day 3 Ending Message for Beginners</strong><br>
+    “Congratulations! You’ve learned the fundamental building blocks of every website. Practice each example, modify the code, and see changes. From tomorrow, we’ll explore advanced HTML features and make even richer pages.”
   </div>
 
-  <!-- Next video -->
-  <div class="section-title">🔜 Next — Day 4 : Advanced HTML</div>
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 4 : Advanced HTML & Multimedia</div>
   <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
-    <span class="badge">🎵 Audio & Video</span>
-    <span class="badge">🖼️ iframe (embed maps, YouTube)</span>
-    <span class="badge">📅 Advanced input types</span>
-    <span class="badge">♿ Accessibility basics</span>
+    <span class="badge">🎵 Audio & Video tags</span>
+    <span class="badge">🖼️ iframe (embed Maps/YouTube)</span>
+    <span class="badge">📅 Advanced input types (datetime-local, search)</span>
+    <span class="badge">♿ Accessibility basics (ARIA)</span>
     <span class="badge">🔍 SEO meta tags</span>
   </div>
   <hr>
   <div class="footer">
     Telugu WebTech — MERN Stack 100 Days Journey · Day 3 Completed ✅<br>
-    Practice HTML daily · Build mini webpages · Every example shows output!
+    Build daily, break things, learn faster! Every concept here has a live demo.
   </div>
 </div>
 </body>

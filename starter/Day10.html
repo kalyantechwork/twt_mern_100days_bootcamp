@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Telugu WebTech · Day 10: Mini JavaScript Projects | Concepts + Code Explained</title>
+  <title>Telugu WebTech · Day 10: Mini JavaScript Projects | Beginner Friendly + Live Demos</title>
   <style>
     * {
       margin: 0;
@@ -100,10 +100,26 @@
     .example-card {
       background: white;
       border-radius: 28px;
-      padding: 1.3rem;
+      padding: 1.5rem;
       border: 1px solid #eef2ff;
       box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
       margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
     }
     .code-block {
       background: #0f172a;
@@ -120,7 +136,7 @@
       background: #eef2ff;
       color: #1e293b;
       font-family: monospace;
-      padding: 0.2rem 0.4rem;
+      padding: 0.2rem 0.5rem;
       border-radius: 8px;
       font-size: 0.85rem;
     }
@@ -128,7 +144,7 @@
       background: #0f172a;
       color: white;
       border: none;
-      padding: 8px 20px;
+      padding: 8px 24px;
       border-radius: 40px;
       cursor: pointer;
       font-weight: 600;
@@ -172,7 +188,7 @@
       background: #0f172a;
       color: white;
       border: none;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 40px;
       font-weight: 600;
       cursor: pointer;
@@ -203,7 +219,7 @@
       background: #ef4444;
       color: white;
       border: none;
-      padding: 4px 12px;
+      padding: 4px 14px;
       border-radius: 40px;
       cursor: pointer;
       transition: 0.2s;
@@ -269,6 +285,9 @@
       margin: 10px 0;
       font-size: 0.9rem;
     }
+    input, button {
+      font-family: inherit;
+    }
   </style>
 </head>
 <body>
@@ -281,10 +300,10 @@
         <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
       </div>
     </div>
-    <div class="day-chip">📅 Day 10 · Mini JavaScript Projects (Concepts + Code)</div>
+    <div class="day-chip">📅 Day 10 · Mini JavaScript Projects (Explanations + Live Demos)</div>
   </div>
 
-  <h1>📁 Mini JavaScript Projects<br><span style="font-size:1rem;">Concepts Explained: Variables · Events · DOM · Arrays · Functions · Dynamic Creation</span></h1>
+  <h1>📁 Mini JavaScript Projects<br><span style="font-size:1rem;">Concepts Explained: Variables · Events · DOM · Arrays · Functions · Dynamic Creation — Click "Show Result" for live demos</span></h1>
 
   <!-- Why Mini Projects -->
   <div class="section-title">1️⃣ Why Mini Projects Matter</div>
@@ -301,17 +320,20 @@
   <!-- Concept Explanation for Counter -->
   <div class="concept-box">
     <h4>📚 Concepts Used in Counter App</h4>
-    <ul style="margin-left: 1.2rem;">
-      <li><strong>Variables (let):</strong> <span class="inline-code">let count = 0;</span> stores the current number.</li>
-      <li><strong>DOM Selection:</strong> <span class="inline-code">document.getElementById()</span> or <span class="inline-code">querySelector()</span> to access HTML elements.</li>
-      <li><strong>addEventListener:</strong> Listens for "click" events on buttons and triggers functions.</li>
-      <li><strong>textContent:</strong> Updates the displayed number dynamically.</li>
-      <li><strong>State Management:</strong> Keeping track of count value and updating UI when it changes.</li>
+    <ul style="margin-left: 1.2rem; line-height: 1.6;">
+      <li><strong>Variables (let):</strong> <span class="inline-code">let count = 0;</span> stores the current number that changes over time.</li>
+      <li><strong>DOM Selection:</strong> <span class="inline-code">document.getElementById()</span> or <span class="inline-code">querySelector()</span> to access HTML elements like the display and buttons.</li>
+      <li><strong>addEventListener:</strong> Listens for "click" events on buttons and triggers functions when clicked.</li>
+      <li><strong>textContent:</strong> Updates the displayed number dynamically without reloading the page.</li>
+      <li><strong>State Management:</strong> Keeping track of count value and updating UI whenever it changes.</li>
     </ul>
   </div>
 
   <div class="example-card">
-    <h3>🔢 Counter with Explanation</h3>
+    <h3>🔢 Counter with Step-by-Step Explanation</h3>
+    <div class="explanation">
+      <p><strong>💡 How it works:</strong> The counter starts at 0. When you click the "+" button, JavaScript adds 1 to the <span class="inline-code">count</span> variable and updates the display. The "-" button subtracts 1. The Reset button sets the count back to 0.</p>
+    </div>
     <div class="code-block">
       // Step 1: Create a variable to store count<br>
       let count = 0;<br><br>
@@ -326,7 +348,7 @@
     </div>
     <button class="btn-show" data-target="counterResult">🔢 Show Counter App</button>
     <div id="counterResult" class="result-area">
-      <div class="result-label">➕➖ Live Counter (Try it):</div>
+      <div class="result-label">➕➖ Live Counter (Try it yourself):</div>
       <div class="project-preview" style="margin-top: 0;">
         <div class="counter-num" id="counterDisplayDemo">0</div>
         <button class="demo-button" id="incCounterDemo">➕ Increase</button>
@@ -334,7 +356,7 @@
         <button class="demo-button" id="resetCounterDemo">🔄 Reset</button>
       </div>
       <div class="explanation-text">
-        ✅ <strong>How it works:</strong> Every time you click "+", the count increases by 1 and the display updates. Clicking "-" decreases. Reset sets count back to 0.
+        ✅ <strong>What's happening:</strong> Each click triggers an event listener that changes the <span class="inline-code">count</span> variable and updates the number you see. The display always matches the current count.
       </div>
       <script>
         (function() {
@@ -357,10 +379,10 @@
   
   <div class="concept-box">
     <h4>📚 Concepts Used in Calculator</h4>
-    <ul style="margin-left: 1.2rem;">
-      <li><strong>Input Values & Type Conversion:</strong> <span class="inline-code">.value</span> returns a string, so we use <span class="inline-code">Number()</span> to convert to number.</li>
-      <li><strong>Arithmetic Operators:</strong> +, -, *, / for calculations.</li>
-      <li><strong>Conditional Logic:</strong> Check division by zero to avoid errors.</li>
+    <ul style="margin-left: 1.2rem; line-height: 1.6;">
+      <li><strong>Input Values & Type Conversion:</strong> <span class="inline-code">.value</span> returns a string from input fields, so we use <span class="inline-code">Number()</span> to convert to numbers for math operations.</li>
+      <li><strong>Arithmetic Operators:</strong> +, -, *, / perform calculations on the converted numbers.</li>
+      <li><strong>Conditional Logic:</strong> Check division by zero to avoid errors (can't divide by 0 in math).</li>
       <li><strong>Multiple Event Listeners:</strong> Different buttons perform different operations on the same input values.</li>
       <li><strong>toFixed():</strong> Format decimal results to 2 decimal places for cleaner display.</li>
     </ul>
@@ -368,6 +390,9 @@
 
   <div class="example-card">
     <h3>📟 Calculator with Explanation</h3>
+    <div class="explanation">
+      <p><strong>💡 Why Number() is important:</strong> Without <span class="inline-code">Number()</span>, "10" + "5" becomes "105" (string concatenation). With Number(), it becomes 15 (numeric addition). Always convert input values!</p>
+    </div>
     <div class="code-block">
       // Step 1: Get input values and convert to numbers<br>
       let a = Number(num1.value);<br>
@@ -380,10 +405,10 @@
     </div>
     <button class="btn-show" data-target="calculatorResult">🧮 Show Calculator App</button>
     <div id="calculatorResult" class="result-area">
-      <div class="result-label">🧮 Interactive Calculator:</div>
+      <div class="result-label">🧮 Interactive Calculator (try different numbers):</div>
       <div class="project-preview" style="margin-top: 0; text-align:center">
-        <input type="number" id="calcNum1Demo" placeholder="First number" style="padding:8px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
-        <input type="number" id="calcNum2Demo" placeholder="Second number" style="padding:8px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
+        <input type="number" id="calcNum1Demo" placeholder="First number" style="padding:10px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
+        <input type="number" id="calcNum2Demo" placeholder="Second number" style="padding:10px; margin:6px; border-radius:40px; border:1px solid #ccc; width:40%;">
         <br>
         <button class="demo-button" id="addCalcDemo">➕ Add</button>
         <button class="demo-button" id="subCalcDemo">➖ Subtract</button>
@@ -392,7 +417,7 @@
         <h3 id="calcResultDemo" style="margin-top:20px;">Result: —</h3>
       </div>
       <div class="explanation-text">
-        ✅ <strong>Why Number() is important:</strong> Without <span class="inline-code">Number()</span>, "10" + "5" becomes "105" (string concatenation). With Number(), it becomes 15 (numeric addition).
+        ✅ <strong>Type conversion in action:</strong> Try entering "10" and "5" — notice how JavaScript treats them as numbers, not text. Division by zero shows an error message.
       </div>
       <script>
         (function() {
@@ -406,7 +431,7 @@
             if(op === "add") res = a + b;
             else if(op === "sub") res = a - b;
             else if(op === "mul") res = a * b;
-            else if(op === "div") res = b !== 0 ? a / b : "Error (÷0)";
+            else if(op === "div") res = b !== 0 ? a / b : "Error (division by zero)";
             if(typeof res === "number") res = res.toFixed(2);
             resultSpan.textContent = `Result: ${res}`;
           }
@@ -424,18 +449,21 @@
   
   <div class="concept-box">
     <h4>📚 Concepts Used in To-Do App</h4>
-    <ul style="margin-left: 1.2rem;">
-      <li><strong>createElement():</strong> Dynamically creates new HTML elements (li, button, span).</li>
-      <li><strong>appendChild():</strong> Adds created elements to the DOM tree.</li>
-      <li><strong>remove():</strong> Deletes an element from the DOM when delete button is clicked.</li>
-      <li><strong>Event Delegation / Individual Listeners:</strong> Each delete button gets its own click listener.</li>
-      <li><strong>Keyboard Events:</strong> <span class="inline-code">keypress</span> and <span class="inline-code">Enter</span> key to add tasks without clicking button.</li>
-      <li><strong>Input Validation:</strong> Check if task is empty before adding.</li>
+    <ul style="margin-left: 1.2rem; line-height: 1.6;">
+      <li><strong>createElement():</strong> Dynamically creates new HTML elements (div, span, button) in memory.</li>
+      <li><strong>appendChild():</strong> Adds created elements to the actual DOM tree so they appear on the page.</li>
+      <li><strong>remove():</strong> Deletes an element from the DOM when the delete button is clicked.</li>
+      <li><strong>Event Listeners on Dynamic Elements:</strong> Each delete button gets its own click listener when created.</li>
+      <li><strong>Keyboard Events:</strong> <span class="inline-code">keypress</span> event to detect when user presses "Enter" key to add tasks.</li>
+      <li><strong>Input Validation:</strong> Check if task is empty before adding to avoid blank tasks.</li>
     </ul>
   </div>
 
   <div class="example-card">
     <h3>📝 To-Do List with Explanation</h3>
+    <div class="explanation">
+      <p><strong>💡 Dynamic Creation:</strong> Each task is NOT written in HTML. Instead, JavaScript <span class="inline-code">createElement()</span> creates brand new elements when you add a task. The delete button removes that specific task using <span class="inline-code">remove()</span>.</p>
+    </div>
     <div class="code-block">
       // Step 1: Create new elements dynamically<br>
       const li = document.createElement("li");<br>
@@ -453,14 +481,14 @@
     </div>
     <button class="btn-show" data-target="todoResult">✅ Show To-Do App</button>
     <div id="todoResult" class="result-area">
-      <div class="result-label">📝 Task Manager (Add + Delete):</div>
+      <div class="result-label">📝 Task Manager (Add + Delete tasks):</div>
       <div class="project-preview" style="margin-top: 0;">
-        <input type="text" id="todoInputDemo" placeholder="Write a task..." style="padding:10px; width:70%; border-radius:60px; border:1px solid #ccc;">
+        <input type="text" id="todoInputDemo" placeholder="Write a task..." style="padding:12px; width:70%; border-radius:60px; border:1px solid #ccc;">
         <button class="demo-button" id="addTodoBtnDemo">➕ Add Task</button>
-        <ul id="todoListDemo" style="list-style:none; margin-top:20px;"></ul>
+        <div id="todoListDemo" style="margin-top:20px;"></div>
       </div>
       <div class="explanation-text">
-        ✅ <strong>Dynamic Creation:</strong> Each task is a new <span class="inline-code">&lt;li&gt;</span> element created with JavaScript. Delete button removes that specific task using <span class="inline-code">li.remove()</span>.
+        ✅ <strong>How dynamic creation works:</strong> Every task is a new <span class="inline-code">&lt;div&gt;</span> created by JavaScript. The delete button removes only that specific task. Press "Enter" key to add tasks faster!
       </div>
       <script>
         (function() {
@@ -470,17 +498,17 @@
           
           function createTodoItem(taskText) {
             if(!taskText || !taskText.trim()) return null;
-            const li = document.createElement("li");
-            li.className = "todo-list-item";
+            const div = document.createElement("div");
+            div.className = "todo-list-item";
             const span = document.createElement("span");
             span.textContent = taskText;
             const delBtn = document.createElement("button");
             delBtn.textContent = "Delete";
             delBtn.className = "delete-task";
-            delBtn.addEventListener("click", () => li.remove());
-            li.appendChild(span);
-            li.appendChild(delBtn);
-            return li;
+            delBtn.addEventListener("click", () => div.remove());
+            div.appendChild(span);
+            div.appendChild(delBtn);
+            return div;
           }
           
           if(addBtn) {
@@ -510,32 +538,36 @@
   
   <div class="concept-box">
     <h4>📚 Concepts Used in Color Generator</h4>
-    <ul style="margin-left: 1.2rem;">
-      <li><strong>Math.random():</strong> Generates a random decimal between 0 and 1.</li>
-      <li><strong>Math.floor():</strong> Rounds down to get an integer.</li>
-      <li><strong>toString(16):</strong> Converts number to hexadecimal (base 16) for hex color codes.</li>
-      <li><strong>padStart():</strong> Ensures 6 digits for hex color (e.g., #0f0f0f).</li>
-      <li><strong>Dynamic Style Change:</strong> <span class="inline-code">element.style.backgroundColor</span> to change color.</li>
+    <ul style="margin-left: 1.2rem; line-height: 1.6;">
+      <li><strong>Math.random():</strong> Generates a random decimal between 0 and 1 (like 0.345, 0.892).</li>
+      <li><strong>Math.floor():</strong> Rounds down to get a whole integer (removes decimal part).</li>
+      <li><strong>toString(16):</strong> Converts number to hexadecimal (base 16) which uses digits 0-9 and letters A-F — perfect for hex color codes.</li>
+      <li><strong>padStart():</strong> Ensures we always have 6 digits for hex color (adds leading zeros if needed).</li>
+      <li><strong>Dynamic Style Change:</strong> <span class="inline-code">element.style.backgroundColor</span> to change color instantly.</li>
     </ul>
   </div>
 
   <div class="example-card">
     <h3>🌈 Random Hex Color Generator</h3>
+    <div class="explanation">
+      <p><strong>💡 How hex colors work:</strong> #RRGGBB where RR = red, GG = green, BB = blue (each from 00 to ff in hex). <span class="inline-code">16777215</span> is the decimal equivalent of <span class="inline-code">ffffff</span> (maximum hex value). Multiplying by Math.random() gives any possible color!</p>
+    </div>
     <div class="code-block">
       // Generate random hex color: # + 6 random hex digits<br>
-      const randomColor = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`;<br>
+      const randomNum = Math.floor(Math.random() * 16777215);<br>
+      const randomColor = `#${randomNum.toString(16).padStart(6, '0')}`;<br>
       element.style.backgroundColor = randomColor;
     </div>
     <button class="btn-show" data-target="colorResult">🎨 Show Color Generator</button>
     <div id="colorResult" class="result-area">
       <div class="result-label">🎲 Click to generate random color:</div>
-      <div class="project-preview" style="text-align:center;" id="colorBoxDemo">
+      <div class="project-preview" style="text-align:center; transition: 0.2s;" id="colorBoxDemo">
         <p style="margin-bottom:10px;">Click button to change this box color</p>
         <button class="demo-button" id="randomColorBtnDemo">🎨 Random Color</button>
-        <p id="colorCodeDisplayDemo" style="margin-top:10px; font-family:monospace;">#ffffff</p>
+        <p id="colorCodeDisplayDemo" style="margin-top:10px; font-family:monospace; font-size:1.1rem;">#ffffff</p>
       </div>
       <div class="explanation-text">
-        ✅ <strong>How hex colors work:</strong> #RRGGBB where RR=red, GG=green, BB=blue (00 to ff in hex). <span class="inline-code">16777215</span> is the decimal equivalent of <span class="inline-code">ffffff</span> (max hex value).
+        ✅ <strong>Math.random() in action:</strong> Each click generates a random number between 0 and 16,777,215, converts it to hex, and creates a beautiful random color. Every color is equally possible!
       </div>
       <script>
         (function() {
@@ -544,7 +576,8 @@
           const randomBtn = document.getElementById("randomColorBtnDemo");
           if(randomBtn) {
             randomBtn.addEventListener("click", () => {
-              const randomColor = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`;
+              const randomNum = Math.floor(Math.random() * 16777215);
+              const randomColor = `#${randomNum.toString(16).padStart(6, '0')}`;
               colorBox.style.backgroundColor = randomColor;
               colorCode.textContent = randomColor;
             });
@@ -557,13 +590,13 @@
   <!-- Folder Structure -->
   <div class="section-title">📁 Project Folder Structure (Best Practice)</div>
   <div class="code-block">
-    project-folder/<br>
-    ├── index.html      (HTML structure)<br>
-    ├── style.css       (CSS styling)<br>
-    └── script.js       (JavaScript logic)
+    my-project/<br>
+    ├── index.html      (HTML structure - content)<br>
+    ├── style.css       (CSS styling - presentation)<br>
+    └── script.js       (JavaScript logic - behavior)
   </div>
   <div class="diagram">
-    ✅ Separation of concerns: HTML for content, CSS for presentation, JS for behavior
+    ✅ Separation of concerns: HTML for content, CSS for presentation, JS for interactivity
   </div>
 
   <!-- Common Mistakes -->
@@ -571,12 +604,14 @@
   <div class="example-card">
     <button class="btn-show" data-target="mistakesResult">📖 Show Mistakes & Solutions</button>
     <div id="mistakesResult" class="result-area">
-      <ul style="margin-left: 1.2rem;">
-        <li>❌ <strong>Wrong selector IDs:</strong> always match HTML id exactly → use <span class="inline-code">getElementById</span> or correct <span class="inline-code">querySelector</span> syntax.</li>
-        <li>❌ <strong>Forgetting Number() conversion:</strong> "10" + "5" = "105" → fix with <span class="inline-code">Number()</span> or <span class="inline-code">parseFloat()</span>.</li>
-        <li>❌ <strong>Not clearing input after adding task:</strong> bad UX → set <span class="inline-code">input.value = ""</span> after adding.</li>
-        <li>❌ <strong>Script running before DOM loads:</strong> place script before closing &lt;/body&gt; or use <span class="inline-code">DOMContentLoaded</span>.</li>
-        <li>❌ <strong>Creating duplicate IDs:</strong> IDs must be unique on a page.</li>
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ <strong>Wrong selector IDs:</strong> always match HTML id exactly → use <span class="inline-code">getElementById</span> with correct spelling</li>
+        <li>❌ <strong>Forgetting Number() conversion:</strong> "10" + "5" = "105" → fix with <span class="inline-code">Number()</span> or <span class="inline-code">parseFloat()</span></li>
+        <li>❌ <strong>Not clearing input after adding task:</strong> bad UX → set <span class="inline-code">input.value = ""</span> after adding</li>
+        <li>❌ <strong>Script running before DOM loads:</strong> place script before closing &lt;/body&gt; or use <span class="inline-code">DOMContentLoaded</span></li>
+        <li>❌ <strong>Creating duplicate IDs:</strong> IDs must be unique on a page → use classes for multiple elements</li>
+        <li>❌ <strong>Division by zero:</strong> always check if divisor is not zero before dividing</li>
       </ul>
     </div>
   </div>
@@ -590,32 +625,43 @@
     <div class="card">✔️ Type conversion: Number() for input values</div>
     <div class="card">✔️ createElement, appendChild, remove()</div>
     <div class="card">✔️ textContent and style manipulation</div>
-    <div class="card">✔️ Math.random() for random generation</div>
+    <div class="card">✔️ Math.random() & Math.floor() for random generation</div>
+    <div class="card">✔️ Hexadecimal color codes and toString(16)</div>
   </div>
 
   <!-- Homework -->
-  <div class="section-title">📌 Homework for Students (Improve Projects)</div>
+  <div class="section-title">📌 Homework for Students (Improve These Projects)</div>
   <div class="card-grid">
-    <div class="card"><h3>🔁 Task 1</h3><p>Enhance Counter: limit count to not go below 0 and show alert.</p></div>
-    <div class="card"><h3>🧮 Task 2</h3><p>Calculator: add percentage (%) and power (xʸ) buttons.</p></div>
-    <div class="card"><h3>✅ Task 3</h3><p>To-Do App: add "mark as completed" (strikethrough) with checkbox.</p></div>
-    <div class="card"><h3>🎨 Task 4</h3><p>Color Generator: add button to copy hex code to clipboard.</p></div>
+    <div class="card"><h3>🔁 Task 1</h3><p>Enhance Counter: add a limit so count cannot go below 0, and show an alert when trying to go negative.</p></div>
+    <div class="card"><h3>🧮 Task 2</h3><p>Calculator: add percentage (%) and power (xʸ) buttons with proper calculations.</p></div>
+    <div class="card"><h3>✅ Task 3</h3><p>To-Do App: add "mark as completed" feature (strikethrough text) with a checkbox next to each task.</p></div>
+    <div class="card"><h3>🎨 Task 4</h3><p>Color Generator: add a button to copy the hex color code to clipboard using <span class="inline-code">navigator.clipboard.writeText()</span>.</p></div>
+    <div class="card"><h3>📝 Task 5</h3><p>Build a new project: Quote Generator that displays random quotes from an array of quotes using <span class="inline-code">Math.random()</span>.</p></div>
+  </div>
+
+  <!-- What's Next Summary -->
+  <div class="section-title">📖 Day 10 Summary: Projects You Built</div>
+  <div class="card-grid">
+    <div class="card">✅ Counter App (Variables + Events + DOM updates)</div>
+    <div class="card">✅ Calculator (Type conversion + Arithmetic + Conditions)</div>
+    <div class="card">✅ To-Do List (Dynamic element creation + Event listeners)</div>
+    <div class="card">✅ Random Color Generator (Math.random + hex conversion)</div>
   </div>
 
   <!-- Day 10 Ending Message -->
   <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
-    <strong>🌟 Day 10 Ending Message</strong><br>
-    “Congratulations! You have completed your first 10 days of MERN stack journey. You now understand HTML, CSS, JavaScript, DOM, and have built 4 projects with clear explanations of every concept.”
+    <strong>🌟 Day 10 Ending Message for Beginners</strong><br>
+    “Congratulations! You have completed your first 10 days of the MERN stack journey. You now understand HTML, CSS, JavaScript, DOM manipulation, and have built 4 working projects with clear explanations of every concept. Keep practicing — you're on your way to becoming a full-stack developer!”
   </div>
 
-  <!-- Next: Day 11 -->
+  <!-- Next: Day 11 Preview -->
   <div class="section-title">🔜 Next — Day 11 : Advanced JavaScript (Array Methods)</div>
   <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
-    <span class="badge">📦 map()</span>
-    <span class="badge">🔍 filter()</span>
-    <span class="badge">🔄 forEach()</span>
-    <span class="badge">📉 reduce()</span>
-    <span class="badge">🎯 Array methods with examples</span>
+    <span class="badge">📦 map() - transform arrays</span>
+    <span class="badge">🔍 filter() - find matching items</span>
+    <span class="badge">🔄 forEach() - loop through arrays</span>
+    <span class="badge">📉 reduce() - accumulate values</span>
+    <span class="badge">✅ find(), some(), every()</span>
   </div>
   <hr>
   <div class="footer">

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 12: JavaScript Objects & Destructuring | Beginner Friendly + Live Outputs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.8rem;
+    }
+    .example-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .explanation {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 20px;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+      border-left: 4px solid #facc15;
+    }
+    .explanation p {
+      margin: 5px 0;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 10px;
+    }
+    .console-output {
+      background: #1e293b;
+      color: #a5f3c3;
+      padding: 12px;
+      border-radius: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .concept-box {
+      background: #f0f9ff;
+      border-radius: 20px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-left: 4px solid #0f172a;
+    }
+    .concept-box h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #1e3a8a;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .demo-button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 4px;
+    }
+    .demo-button:hover {
+      background: #dc2626;
+      transform: scale(1.02);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    .product-card {
+      background: white;
+      border-radius: 20px;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">📦</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 12 · JavaScript Objects & Destructuring (Explanations + Live Outputs)</div>
+  </div>
+
+  <h1>📦 JavaScript Objects & Destructuring<br><span style="font-size:1rem;">Key-Value Pairs · Nested Objects · Arrays of Objects · Destructuring — Explained for Beginners, Click "Show Result"</span></h1>
+
+  <!-- SECTION 1: What is an Object? -->
+  <div class="section-title">1️⃣ What is an Object? (Storing Related Data)</div>
+  <div class="example-card">
+    <h3>📦 Understanding Objects</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> An object is a collection of <strong>key-value pairs</strong> (properties) that describe a single entity. Unlike arrays (numbered list), objects use meaningful names (keys) to store data. Think of an object as a real-world thing — a student, a car, a product — with multiple attributes.</p>
+      <p><strong>🏠 Analogy:</strong> A student object has properties like name, age, roll number. Each property has a value. Objects are the foundation of how JavaScript handles complex data.</p>
+    </div>
+    <div class="code-block">
+      // Creating an object using curly braces {}<br>
+      let student = {<br>
+        name: "Kalyan",    // key: "name", value: "Kalyan"<br>
+        age: 25,          // key: "age", value: 25<br>
+        city: "Hyderabad",<br>
+        isEnrolled: true<br>
+      };
+    </div>
+    <button class="btn-show" data-target="objectBasicResult">🔍 Show Object Example</button>
+    <div id="objectBasicResult" class="result-area">
+      <div class="result-label">📋 Object Output:</div>
+      <div class="console-output" id="objectBasicOutput"></div>
+      <script>
+        document.getElementById("objectBasicResult").addEventListener("showresult", function() {
+          let student = { name: "Kalyan", age: 25, city: "Hyderabad", isEnrolled: true };
+          document.getElementById("objectBasicOutput").innerHTML = `student = {<br>&nbsp;&nbsp;name: "${student.name}",<br>&nbsp;&nbsp;age: ${student.age},<br>&nbsp;&nbsp;city: "${student.city}",<br>&nbsp;&nbsp;isEnrolled: ${student.isEnrolled}<br>}<br><br>student.name = "${student.name}"<br>student.age = ${student.age}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Accessing & Updating Properties -->
+  <div class="section-title">2️⃣ Accessing & Updating Object Properties</div>
+  <div class="example-card">
+    <h3>🔍 Dot Notation vs Bracket Notation</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> You can access object values using <strong>dot notation</strong> (<span class="inline-code">object.key</span>) or <strong>bracket notation</strong> (<span class="inline-code">object["key"]</span>). Use dot notation when you know the property name. Use brackets when the property name is stored in a variable or contains special characters.</p>
+      <p><strong>💡 Adding/Updating:</strong> Assign a value to a new or existing key. Use <span class="inline-code">delete</span> to remove a property.</p>
+    </div>
+    <div class="code-block">
+      let user = { name: "Priya", role: "Developer" };<br>
+      console.log(user.name);      // "Priya" (dot notation)<br>
+      console.log(user["role"]);   // "Developer" (bracket notation)<br>
+      user.city = "Chennai";       // Add new property<br>
+      delete user.role;            // Remove property
+    </div>
+    <button class="btn-show" data-target="accessUpdateResult">🎯 Show Access/Update Demo</button>
+    <div id="accessUpdateResult" class="result-area">
+      <div class="result-label">🔄 Object Operations:</div>
+      <div class="console-output" id="accessUpdateOutput"></div>
+      <script>
+        document.getElementById("accessUpdateResult").addEventListener("showresult", function() {
+          let user = { name: "Priya", role: "Developer" };
+          let initial = JSON.stringify(user);
+          let nameValue = user.name;
+          let roleValue = user["role"];
+          user.city = "Chennai";
+          let afterAdd = JSON.stringify(user);
+          delete user.role;
+          let afterDelete = JSON.stringify(user);
+          document.getElementById("accessUpdateOutput").innerHTML = `Initial: ${initial}<br>user.name (dot) = "${nameValue}"<br>user["role"] (bracket) = "${roleValue}"<br>After adding city: ${afterAdd}<br>After deleting role: ${afterDelete}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Nested Objects -->
+  <div class="section-title">3️⃣ Nested Objects (Object Inside Object)</div>
+  <div class="example-card">
+    <h3>🏠 Creating Hierarchical Data</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Objects can contain other objects as property values. This is called nesting — useful for representing complex relationships like a user with an address, a company with multiple departments, etc.</p>
+      <p><strong>💡 Access nested properties:</strong> Use chained dot notation: <span class="inline-code">user.address.city</span></p>
+    </div>
+    <div class="code-block">
+      let user = {<br>
+        name: "Kalyan",<br>
+        address: {<br>
+          city: "Hyderabad",<br>
+          pincode: 500001,<br>
+          street: "MG Road"<br>
+        }<br>
+      };<br>
+      console.log(user.address.city);  // "Hyderabad"
+    </div>
+    <button class="btn-show" data-target="nestedResult">🏢 Show Nested Object</button>
+    <div id="nestedResult" class="result-area">
+      <div class="result-label">📦 Nested Object Structure:</div>
+      <div class="console-output" id="nestedOutput"></div>
+      <script>
+        document.getElementById("nestedResult").addEventListener("showresult", function() {
+          let user = { name: "Kalyan", address: { city: "Hyderabad", pincode: 500001, street: "MG Road" } };
+          document.getElementById("nestedOutput").innerHTML = `user = {<br>&nbsp;&nbsp;name: "${user.name}",<br>&nbsp;&nbsp;address: {<br>&nbsp;&nbsp;&nbsp;&nbsp;city: "${user.address.city}",<br>&nbsp;&nbsp;&nbsp;&nbsp;pincode: ${user.address.pincode}<br>&nbsp;&nbsp;}<br>}<br><br>user.address.city = "${user.address.city}"<br>user.address.pincode = ${user.address.pincode}`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Arrays of Objects -->
+  <div class="section-title">4️⃣ Arrays of Objects (Real API Data)</div>
+  <div class="example-card">
+    <h3>🛍️ List of Products</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Most real-world data from APIs comes as an array of objects. Each object represents one item (product, user, post). This structure allows you to use array methods like <span class="inline-code">map()</span>, <span class="inline-code">filter()</span>, and <span class="inline-code">forEach()</span> to work with the data.</p>
+    </div>
+    <div class="code-block">
+      let products = [<br>
+        { id: 1, name: "Laptop", price: 50000 },<br>
+        { id: 2, name: "Phone", price: 20000 },<br>
+        { id: 3, name: "Tablet", price: 15000 }<br>
+      ];<br>
+      console.log(products[0].name);  // "Laptop"
+    </div>
+    <button class="btn-show" data-target="arrayObjectsResult">📊 Show Array of Objects</button>
+    <div id="arrayObjectsResult" class="result-area">
+      <div class="result-label">📦 Products List:</div>
+      <div class="console-output" id="arrayObjectsOutput"></div>
+      <script>
+        document.getElementById("arrayObjectsResult").addEventListener("showresult", function() {
+          let products = [{ id: 1, name: "Laptop", price: 50000 }, { id: 2, name: "Phone", price: 20000 }, { id: 3, name: "Tablet", price: 15000 }];
+          let output = `products = [<br>`;
+          products.forEach(p => { output += `&nbsp;&nbsp;{ id: ${p.id}, name: "${p.name}", price: ${p.price} },<br>`; });
+          output += `]<br><br>products[0].name = "${products[0].name}"<br>products[1].price = ₹${products[1].price}`;
+          document.getElementById("arrayObjectsOutput").innerHTML = output;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Object.keys() & Object.values() -->
+  <div class="section-title">5️⃣ Object.keys() & Object.values() (Introspection)</div>
+  <div class="example-card">
+    <h3>🔑 Getting All Keys or Values</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> <span class="inline-code">Object.keys()</span> returns an array of all property names (keys). <span class="inline-code">Object.values()</span> returns an array of all property values. These are useful for looping through objects when you don't know the property names in advance.</p>
+    </div>
+    <div class="code-block">
+      let student = { name: "Kalyan", age: 25, city: "Hyderabad" };<br>
+      let keys = Object.keys(student);    // ["name", "age", "city"]<br>
+      let values = Object.values(student); // ["Kalyan", 25, "Hyderabad"]
+    </div>
+    <button class="btn-show" data-target="keysValuesResult">🔑 Show Keys & Values</button>
+    <div id="keysValuesResult" class="result-area">
+      <div class="result-label">📋 Object.keys / Object.values:</div>
+      <div class="console-output" id="keysValuesOutput"></div>
+      <script>
+        document.getElementById("keysValuesResult").addEventListener("showresult", function() {
+          let student = { name: "Kalyan", age: 25, city: "Hyderabad" };
+          let keys = Object.keys(student);
+          let values = Object.values(student);
+          document.getElementById("keysValuesOutput").innerHTML = `student = ${JSON.stringify(student)}<br><br>Object.keys(student) → [${keys.map(k => `"${k}"`).join(", ")}]<br>Object.values(student) → [${values.map(v => typeof v === 'string' ? `"${v}"` : v).join(", ")}]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Object Methods & this -->
+  <div class="section-title">6️⃣ Object Methods & 'this' Keyword</div>
+  <div class="example-card">
+    <h3>📞 Functions Inside Objects</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Objects can also contain functions as properties, called <strong>methods</strong>. Inside a method, the <span class="inline-code">this</span> keyword refers to the object itself, allowing you to access other properties of the same object.</p>
+    </div>
+    <div class="code-block">
+      let user = {<br>
+        name: "Kalyan",<br>
+        greet() {<br>
+          return `Hello, my name is ${this.name}!`;<br>
+        }<br>
+      };<br>
+      user.greet();  // "Hello, my name is Kalyan!"
+    </div>
+    <button class="btn-show" data-target="methodResult">🔊 Show Object Method</button>
+    <div id="methodResult" class="result-area">
+      <div class="result-label">💬 Method with 'this':</div>
+      <div class="console-output" id="methodOutput"></div>
+      <script>
+        document.getElementById("methodResult").addEventListener("showresult", function() {
+          let user = { name: "Kalyan", greet() { return `Hello, my name is ${this.name}!`; } };
+          let user2 = { name: "Priya", greet() { return `Hello, my name is ${this.name}!`; } };
+          document.getElementById("methodOutput").innerHTML = `user = { name: "Kalyan", greet() {...} }<br>user.greet() → "${user.greet()}"<br><br>user2 = { name: "Priya", greet() {...} }<br>user2.greet() → "${user2.greet()}"<br><br>✅ 'this' refers to the object that calls the method.`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Object Destructuring -->
+  <div class="section-title">7️⃣ Object Destructuring (Clean Variable Extraction)</div>
+  <div class="example-card">
+    <h3>📦 Unpacking Object Properties</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Destructuring allows you to extract multiple properties from an object into variables in one line — no need for repetitive <span class="inline-code">person.name</span>, <span class="inline-code">person.age</span>. You can also rename variables and set default values.</p>
+      <p><strong>💡 Syntax:</strong> <span class="inline-code">let { property1, property2 } = object</span></p>
+    </div>
+    <div class="code-block">
+      let student = { name: "Kalyan", age: 25, city: "Hyderabad" };<br>
+      let { name, age } = student;        // name = "Kalyan", age = 25<br>
+      let { name: studentName } = student; // rename to studentName<br>
+      let { country = "India" } = student; // default value
+    </div>
+    <button class="btn-show" data-target="destructureObjectResult">🎁 Show Object Destructuring</button>
+    <div id="destructureObjectResult" class="result-area">
+      <div class="result-label">📦 Destructuring in Action:</div>
+      <div class="console-output" id="destructureObjectOutput"></div>
+      <script>
+        document.getElementById("destructureObjectResult").addEventListener("showresult", function() {
+          let student = { name: "Kalyan", age: 25, city: "Hyderabad" };
+          let { name, age } = student;
+          let { name: studentName } = student;
+          let { country = "India" } = student;
+          document.getElementById("destructureObjectOutput").innerHTML = `student = ${JSON.stringify(student)}<br><br>let { name, age } = student;<br>name = "${name}", age = ${age}<br><br>let { name: studentName } = student;<br>studentName = "${studentName}"<br><br>let { country = "India" } = student;<br>country = "${country}" (default value)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Array Destructuring (Review) -->
+  <div class="section-title">8️⃣ Array Destructuring (Unpacking Arrays)</div>
+  <div class="example-card">
+    <h3>🎯 Destructuring Arrays</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> Array destructuring works similarly to object destructuring but uses square brackets <span class="inline-code">[]</span> and relies on position (index) rather than property names. Perfect for swapping variables or extracting values from returned arrays.</p>
+    </div>
+    <div class="code-block">
+      let fruits = ["Apple", "Mango", "Orange"];<br>
+      let [first, second] = fruits;  // first = "Apple", second = "Mango"<br>
+      let [a, , c] = fruits;         // skip second element<br>
+      let [x, ...rest] = fruits;     // rest = ["Mango", "Orange"]
+    </div>
+    <button class="btn-show" data-target="destructureArrayResult">🍎 Show Array Destructuring</button>
+    <div id="destructureArrayResult" class="result-area">
+      <div class="result-label">📦 Array Destructuring:</div>
+      <div class="console-output" id="destructureArrayOutput"></div>
+      <script>
+        document.getElementById("destructureArrayResult").addEventListener("showresult", function() {
+          let fruits = ["Apple", "Mango", "Orange"];
+          let [first, second] = fruits;
+          let [a, , c] = fruits;
+          let [x, ...rest] = fruits;
+          document.getElementById("destructureArrayOutput").innerHTML = `fruits = [${fruits}]<br><br>let [first, second] = fruits;<br>first = "${first}", second = "${second}"<br><br>let [a, , c] = fruits; (skip second)<br>a = "${a}", c = "${c}"<br><br>let [x, ...rest] = fruits; (rest operator)<br>x = "${x}", rest = [${rest}]`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Spread Operator with Objects -->
+  <div class="section-title">9️⃣ Spread Operator (...) with Objects (Copy & Merge)</div>
+  <div class="example-card">
+    <h3>✨ Copying and Combining Objects</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> The spread operator <span class="inline-code">...</span> can also be used with objects to create shallow copies or merge multiple objects. This is the modern way to update state in React and other frameworks.</p>
+      <p><strong>💡 Important:</strong> Later properties overwrite earlier ones when merging.</p>
+    </div>
+    <div class="code-block">
+      let user = { name: "Kalyan", age: 25 };<br>
+      let copy = { ...user };                    // independent copy<br>
+      let updated = { ...user, city: "Hyderabad" }; // add property<br>
+      let merged = { ...user, ...{ age: 26, role: "dev" } }; // merge & override
+    </div>
+    <button class="btn-show" data-target="spreadObjectResult">✨ Show Spread Operator</button>
+    <div id="spreadObjectResult" class="result-area">
+      <div class="result-label">📦 Spread with Objects:</div>
+      <div class="console-output" id="spreadObjectOutput"></div>
+      <script>
+        document.getElementById("spreadObjectResult").addEventListener("showresult", function() {
+          let user = { name: "Kalyan", age: 25 };
+          let copy = { ...user };
+          let updated = { ...user, city: "Hyderabad" };
+          let merged = { ...user, ...{ age: 26, role: "developer" } };
+          document.getElementById("spreadObjectOutput").innerHTML = `user = ${JSON.stringify(user)}<br><br>let copy = { ...user } → ${JSON.stringify(copy)}<br>(independent copy)<br><br>let updated = { ...user, city: "Hyderabad" } → ${JSON.stringify(updated)}<br><br>let merged = { ...user, ...{ age: 26, role: "dev" } } → ${JSON.stringify(merged)}<br>(age overwritten to 26)`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Mini Project - Product Display -->
+  <div class="section-title">📦 Mini Project: Display Products from Array of Objects</div>
+  <div class="example-card">
+    <h3>🛒 Real-World Product Renderer</h3>
+    <div class="explanation">
+      <p><strong>🎯 Purpose:</strong> This project demonstrates how to take an array of product objects and dynamically display them on a webpage — exactly how e-commerce sites show product listings.</p>
+    </div>
+    <div class="code-block">
+      const products = [<br>
+        { id: 1, name: "Wireless Mouse", price: 799 },<br>
+        { id: 2, name: "Mechanical Keyboard", price: 2499 },<br>
+        { id: 3, name: "USB Hub", price: 499 }<br>
+      ];<br>
+      products.forEach(product => {<br>
+        // Create HTML element for each product<br>
+        // Display name and price<br>
+      });
+    </div>
+    <button class="btn-show" data-target="miniProjectResult">🛍️ Show Product Display</button>
+    <div id="miniProjectResult" class="result-area">
+      <div class="result-label">📦 Products from Array of Objects:</div>
+      <div id="productDisplayArea" style="margin-top: 10px;"></div>
+      <div class="console-output" id="miniProjectOutput"></div>
+      <script>
+        const storeProducts = [
+          { id: 1, name: "Wireless Mouse", price: 799 },
+          { id: 2, name: "Mechanical Keyboard", price: 2499 },
+          { id: 3, name: "USB Hub", price: 499 },
+          { id: 4, name: "Monitor Stand", price: 1299 }
+        ];
+        document.getElementById("miniProjectResult").addEventListener("showresult", function() {
+          const container = document.getElementById("productDisplayArea");
+          container.innerHTML = "";
+          storeProducts.forEach(prod => {
+            const div = document.createElement("div");
+            div.className = "product-card";
+            div.innerHTML = `<strong>${prod.name}</strong> <span style="color:#0f172a; font-weight:600;">₹${prod.price}</span>`;
+            container.appendChild(div);
+          });
+          document.getElementById("miniProjectOutput").innerHTML = `// Using forEach() to loop through array of objects<br>storeProducts = [<br>${storeProducts.map(p => `  { id: ${p.id}, name: "${p.name}", price: ${p.price} }`).join(",<br>")}<br>];<br><br>✅ Each product object is destructured or accessed via dot notation<br>✅ Dynamically created HTML elements for each product`;
+        });
+      </script>
+    </div>
+  </div>
+
+  <!-- Quick Reference Table -->
+  <div class="section-title">📋 Object Methods Quick Reference</div>
+  <div class="example-card">
+    <table>
+      <thead style="background:#e2e8f0;"> 
+        <tr><th>Method/Syntax</th><th>What it does</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="inline-code">object.key</span> / <span class="inline-code">object["key"]</span></td><td>Access property value</td><td><span class="inline-code">user.name</span></td></tr>
+        <tr><td><span class="inline-code">object.key = value</span></td><td>Add/update property</td><td><span class="inline-code">user.age = 26</span></td></tr>
+        <tr><td><span class="inline-code">delete object.key</span></td><td>Remove property</td><td><span class="inline-code">delete user.role</span></td></tr>
+        <tr><td><span class="inline-code">Object.keys(obj)</span></td><td>Get array of keys</td><td><span class="inline-code">["name", "age"]</span></td></tr>
+        <tr><td><span class="inline-code">Object.values(obj)</span></td><td>Get array of values</td><td><span class="inline-code">["Kalyan", 25]</span></td></tr>
+        <tr><td><span class="inline-code">{ ...obj }</span></td><td>Spread (copy/merge)</td><td><span class="inline-code">{ ...user, city: "HYD" }</span></td></tr>
+        <tr><td><span class="inline-code">let { a, b } = obj</span></td><td>Object destructuring</td><td><span class="inline-code">let { name, age } = user</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Real-World Applications -->
+  <div class="section-title">🌍 Where Objects Are Used in Real Projects</div>
+  <div class="card-grid">
+    <div class="card"><strong>🗄️ Database Records</strong><br>MongoDB stores data as JSON-like documents (objects)</div>
+    <div class="card"><strong>🌐 API Responses</strong><br>REST APIs return data as objects and arrays of objects</div>
+    <div class="card"><strong>⚛️ React State & Props</strong><br>Component state and props are JavaScript objects</div>
+    <div class="card"><strong>👤 User Profiles</strong><br>User data (name, email, preferences) stored in objects</div>
+    <div class="card"><strong>🛒 Shopping Cart</strong><br>Cart items, quantities, totals stored in objects</div>
+    <div class="card"><strong>🔐 JWT Tokens</strong><br>Authentication tokens contain user data as objects</div>
+  </div>
+
+  <!-- Common Mistakes Section -->
+  <div class="section-title">⚠️ Common Object Mistakes for Beginners</div>
+  <div class="example-card">
+    <button class="btn-show" data-target="mistakesObjectResult">📖 Show Mistakes & Fixes</button>
+    <div id="mistakesObjectResult" class="result-area">
+      <div class="result-label">🚫 Avoid These Errors:</div>
+      <ul style="margin-left: 1.5rem; list-style-type: disc; line-height: 1.6;">
+        <li>❌ <strong>Using dot notation with variables:</strong> <span class="inline-code">user[variable]</span> not <span class="inline-code">user.variable</span> (brackets needed when key is dynamic)</li>
+        <li>❌ <strong>Accessing undefined nested properties:</strong> <span class="inline-code">user.address.city</span> when address is undefined → use optional chaining: <span class="inline-code">user?.address?.city</span></li>
+        <li>❌ <strong>Confusing arrays of objects vs objects with array properties</strong> → different structures for different use cases</li>
+        <li>❌ <strong>Destructuring undefined variables:</strong> provide default values: <span class="inline-code">let { name = "Guest" } = user</span></li>
+        <li>❌ <strong>Forgetting commas between properties:</strong> objects need commas between key-value pairs</li>
+        <li>❌ <strong>Modifying objects when you meant to copy:</strong> use spread <span class="inline-code">{ ...obj }</span> to create a copy</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Homework Section -->
+  <div class="section-title">📌 Homework for Students (Practice These)</div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Task 1</h3><p>Create a student object with properties: name, age, rollNumber, marks (array of 3 subjects). Print all properties using dot notation.</p></div>
+    <div class="card"><h3>🏠 Task 2</h3><p>Create a nested object "address" inside a user object (street, city, zip, country). Access and print the city using dot notation.</p></div>
+    <div class="card"><h3>📦 Task 3</h3><p>Create an array of 4 product objects (id, name, price, category). Use forEach to display each product name and price.</p></div>
+    <div class="card"><h3>📦 Task 4</h3><p>Use object destructuring to extract name and age from a person object. Rename name to fullName and set default age = 18 if missing.</p></div>
+    <div class="card"><h3>✨ Task 5</h3><p>Use spread operator to merge two objects: <span class="inline-code">defaultSettings</span> and <span class="inline-code">userSettings</span>. User settings should override defaults.</p></div>
+    <div class="card"><h3>🔑 Task 6</h3><p>Use Object.keys() and Object.values() to loop through an object and print "key: value" pairs.</p></div>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="section-title">📖 Day 12 Summary: What You Learned About Objects</div>
+  <div class="card-grid">
+    <div class="card">✔️ What objects are and how to create them (key-value pairs)</div>
+    <div class="card">✔️ Dot notation vs Bracket notation for access</div>
+    <div class="card">✔️ Adding, updating, and deleting properties</div>
+    <div class="card">✔️ Nested objects (object inside object)</div>
+    <div class="card">✔️ Arrays of objects (real API data structure)</div>
+    <div class="card">✔️ Object.keys() and Object.values() for introspection</div>
+    <div class="card">✔️ Object methods and the 'this' keyword</div>
+    <div class="card">✔️ Object destructuring (extract multiple properties)</div>
+    <div class="card">✔️ Array destructuring (unpack arrays by position)</div>
+    <div class="card">✔️ Spread operator (...) for copying and merging objects</div>
+    <div class="card">✔️ Built a product display from array of objects</div>
+  </div>
+
+  <!-- Day 12 Ending Message -->
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 12 Ending Message for Beginners</strong><br>
+    “Congratulations! You now understand how real-world data is structured using JavaScript objects. This is a critical skill — nearly everything in JavaScript (DOM elements, API responses, React state) is an object. Practice creating objects, accessing properties, and using destructuring — these skills will serve you every day as a developer.”
+  </div>
+
+  <!-- Next Day Preview -->
+  <div class="section-title">🔜 Next — Day 13 : ES6+ Modern JavaScript Features</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">📝 Template Literals (`Hello ${name}`)</span>
+    <span class="badge">✨ Spread & Rest Operators (deep dive)</span>
+    <span class="badge">⚡ Default Parameters in Functions</span>
+    <span class="badge">🏹 Arrow Functions (advanced)</span>
+    <span class="badge">🔄 for...of and for...in loops</span>
+    <span class="badge">🔗 Optional Chaining (?.)</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 12 Completed ✅<br>
+    Click "Show Result" on every card to see live object manipulations. Practice creating objects and destructuring daily!
+  </div>
+</div>
+
+<script>
+  // Add click handlers for all "Show Result" buttons with custom event triggering
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          const event = new Event('showresult');
+          resultDiv.dispatchEvent(event);
+          this.textContent = this.textContent.replace('Show Result', 'Hide Result');
+        } else {
+          this.textContent = this.textContent.replace('Hide Result', 'Show Result');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

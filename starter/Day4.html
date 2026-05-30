@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Telugu WebTech · Day 4: Advanced HTML | Beginner Friendly Deep Dive + Live Outputs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      background: #f8fafd;
+      color: #0a0f1c;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 2px solid #e9edf2;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      background: #0f172a;
+      color: #facc15;
+      font-weight: 800;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+    }
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logo-text p {
+      font-size: 0.8rem;
+      color: #2c3e66;
+    }
+    .day-chip {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e3a8a;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+      background: linear-gradient(145deg, #111827, #2d3e6e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      border-left: 6px solid #facc15;
+      padding-left: 1rem;
+    }
+    .subsection-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.8rem;
+      color: #1e293b;
+    }
+    .example-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.3rem;
+      border: 1px solid #eef2ff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+      margin-bottom: 1.5rem;
+      transition: all 0.2s;
+    }
+    .example-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    .inline-code {
+      background: #eef2ff;
+      color: #1e293b;
+      font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .explanation-bubble {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 0.9rem;
+      margin: 0.8rem 0;
+      border-left: 5px solid #facc15;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #0c1a2e;
+    }
+    .btn-show {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 0.75rem 0 0.5rem 0;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+    .btn-show:hover {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .result-area {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 24px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .result-area.show {
+      display: block;
+    }
+    .result-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #b45309;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 24px;
+      padding: 1rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e9edf2;
+    }
+    .highlight-box {
+      background: #fefce8;
+      border-left: 6px solid #facc15;
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .badge {
+      background: #eef2ff;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #4a5b7a;
+      border-top: 1px solid #e2e8f0;
+    }
+    input, button, audio, video, select {
+      margin: 4px 0;
+    }
+    .flex-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="brand-bar">
+    <div class="logo-area">
+      <div class="logo-icon">🌟</div>
+      <div class="logo-text">
+        <h1>Telugu WebTech</h1>
+        <p>Learn MERN Stack in 100 Days · Full Stack JavaScript</p>
+      </div>
+    </div>
+    <div class="day-chip">📅 Day 4 · Advanced HTML (Detailed for Beginners)</div>
+  </div>
+
+  <h1>🚀 Advanced HTML <span style="font-size: 1rem; color:#2c3e66;">Multimedia, Forms, Semantic Tags, SEO — Explained with Live Outputs</span></h1>
+
+  <!-- SECTION: Audio Tag with beginner explanation -->
+  <div class="section-title">1️⃣ Audio Tag (Adding Sound to Your Webpage)</div>
+  <div class="example-card">
+    <h3>🎵 Understanding <span class="inline-code">&lt;audio&gt;</span></h3>
+    <div class="explanation-bubble">
+      🔊 The <span class="inline-code">&lt;audio&gt;</span> tag lets you embed music, podcasts, or sound effects. The <strong>controls</strong> attribute adds play/pause, volume, and timeline. Always provide multiple <span class="inline-code">&lt;source&gt;</span> for browser compatibility. Without <strong>controls</strong>, the audio is invisible!
+    </div>
+    <div class="code-block">
+      &lt;audio controls&gt;<br>
+      &nbsp;&nbsp;&lt;source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3"&gt;<br>
+      &nbsp;&nbsp;Your browser does not support audio.<br>
+      &lt;/audio&gt;
+    </div>
+    <button class="btn-show" data-target="audioResult">🔊 Show Audio Player</button>
+    <div id="audioResult" class="result-area">
+      <div class="result-label">🎧 Live Interactive Audio:</div>
+      <audio controls src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Your browser does not support audio.</audio>
+      <p class="inline-code" style="margin-top:8px;">✅ Tip: Use <strong>autoplay</strong> carefully (often blocked by browsers). <strong>loop</strong> makes audio repeat.</p>
+    </div>
+  </div>
+
+  <!-- SECTION: Video Tag -->
+  <div class="section-title">2️⃣ Video Tag (Embed Video Files)</div>
+  <div class="example-card">
+    <h3>🎬 <span class="inline-code">&lt;video&gt;</span> Element</h3>
+    <div class="explanation-bubble">
+      📹 The video tag works like audio but shows visual content. Attributes: <strong>controls</strong> (playbar), <strong>width/height</strong>, <strong>muted</strong> (starts without sound), <strong>poster</strong> (thumbnail image). Always include multiple sources for MP4, WebM.
+    </div>
+    <div class="code-block">
+      &lt;video controls width="320" muted&gt;<br>
+      &nbsp;&nbsp;&lt;source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"&gt;<br>
+      &lt;/video&gt;
+    </div>
+    <button class="btn-show" data-target="videoResult">🎥 Show Video Player</button>
+    <div id="videoResult" class="result-area">
+      <div class="result-label">📽️ Live Video Preview:</div>
+      <video controls width="100%" muted>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+      </video>
+      <p class="inline-code">✅ Use <strong>poster="thumbnail.jpg"</strong> to show image before play.</p>
+    </div>
+  </div>
+
+  <!-- SECTION: iframe Tag -->
+  <div class="section-title">3️⃣ iframe (Embed External Content: YouTube, Maps)</div>
+  <div class="example-card">
+    <h3>📺 What is iframe?</h3>
+    <div class="explanation-bubble">
+      🌍 <span class="inline-code">&lt;iframe&gt;</span> = Inline Frame. It allows you to embed another webpage inside your page — like YouTube videos, Google Maps, or even entire websites. The <strong>src</strong> attribute points to the external content.
+    </div>
+    <div class="code-block">
+      &lt;iframe width="400" height="225" src="https://www.youtube.com/embed/HcOc7P5BM2s" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
+    </div>
+    <button class="btn-show" data-target="iframeResult">🌍 Show YouTube Embed</button>
+    <div id="iframeResult" class="result-area">
+      <div class="result-label">📺 Embedded YouTube Video:</div>
+      <iframe width="100%" height="200" src="https://www.youtube.com/embed/HcOc7P5BM2s" title="YouTube video" frameborder="0" allowfullscreen></iframe>
+      <p class="inline-code">✅ For Google Maps: use embed share link. Avoid embedding malicious sites.</p>
+    </div>
+  </div>
+
+  <!-- SECTION: HTML Entities -->
+  <div class="section-title">4️⃣ HTML Entities (Writing Reserved Characters)</div>
+  <div class="example-card">
+    <h3>🔣 Why Entities?</h3>
+    <div class="explanation-bubble">
+      💡 In HTML, characters like <, >, & have special meanings. To display them as text, we use <strong>entities</strong>: <span class="inline-code">&amp;lt;</span> for <, <span class="inline-code">&amp;gt;</span> for >, <span class="inline-code">&amp;copy;</span> for ©, <span class="inline-code">&amp;nbsp;</span> for non-breaking space.
+    </div>
+    <div class="code-block">
+      &lt;p&gt;&amp;copy; 2026 Telugu WebTech&lt;/p&gt;<br>
+      &lt;p&gt;5 &amp;lt; 10 &amp;amp; 8 &amp;gt; 3&lt;/p&gt;<br>
+      &lt;p&gt;Space &amp;nbsp; &amp;nbsp; between words&lt;/p&gt;
+    </div>
+    <button class="btn-show" data-target="entityResult">✨ See Rendered Entities</button>
+    <div id="entityResult" class="result-area">
+      <div class="result-label">📄 How Browser Shows:</div>
+      <p>© 2026 Telugu WebTech</p>
+      <p>5 < 10 & 8 > 3</p>
+      <p>Space &nbsp; &nbsp; between words (extra spaces preserved)</p>
+      <p class="inline-code">🔑 Common: &amp;nbsp; &amp;lt; &amp;gt; &amp;copy; &amp;reg;</p>
+    </div>
+  </div>
+
+  <!-- SECTION: Advanced Input Types -->
+  <div class="section-title">5️⃣ Advanced Input Types (Better User Experience)</div>
+  <div class="example-card">
+    <h3>🎛️ Moving Beyond Text</h3>
+    <div class="explanation-bubble">
+      📱 Modern HTML provides specialized input types: <strong>email</strong> (validates @), <strong>number</strong> (shows up/down arrows), <strong>date</strong> (calendar picker), <strong>color</strong> (color picker), <strong>file</strong> (upload), <strong>range</strong> (slider). They make forms easier and mobile-friendly.
+    </div>
+    <div class="code-block">
+      &lt;input type="email" placeholder="Email"&gt;<br>
+      &lt;input type="number" placeholder="Age"&gt;<br>
+      &lt;input type="date"&gt;<br>
+      &lt;input type="color"&gt;<br>
+      &lt;input type="file"&gt;<br>
+      &lt;input type="range"&gt;
+    </div>
+    <button class="btn-show" data-target="inputTypesResult">🎨 Show Interactive Inputs</button>
+    <div id="inputTypesResult" class="result-area">
+      <div class="result-label">🖱️ Try Each Field:</div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="email" placeholder="Enter your email" style="width:100%">
+        <input type="number" placeholder="Age (18-99)" style="width:100%">
+        <label>Choose a date: <input type="date"></label>
+        <label>Pick a color: <input type="color" value="#facc15"></label>
+        <input type="file">
+        <label>Volume slider: <input type="range" min="0" max="100"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: Labels & Placeholder -->
+  <div class="section-title">6️⃣ Labels & Placeholder (Accessibility & Clarity)</div>
+  <div class="example-card">
+    <h3>🏷️ Connecting Labels to Inputs</h3>
+    <div class="explanation-bubble">
+      ♿ <span class="inline-code">&lt;label&gt;</span> improves accessibility: when you click the label, the input gets focus. Use <strong>for="id"</strong> matching input <strong>id</strong>. <strong>placeholder</strong> gives a hint inside the field. Always prefer labels over just placeholders.
+    </div>
+    <div class="code-block">
+      &lt;label for="username"&gt;Your Name:&lt;/label&gt;<br>
+      &lt;input id="username" type="text" placeholder="Full name"&gt;<br>
+      &lt;label&gt;📧 Email: &lt;input type="email" placeholder="example@mail.com"&gt;&lt;/label&gt;
+    </div>
+    <button class="btn-show" data-target="labelResult">🔖 Show Label Demo</button>
+    <div id="labelResult" class="result-area">
+      <div class="result-label">📝 Better Form Fields:</div>
+      <label for="demoUser" style="font-weight:500;">Your Name:</label>
+      <input id="demoUser" type="text" placeholder="Full name" style="width: 100%; margin-top: 4px;"><br>
+      <label style="margin-top: 8px; display: inline-block;">📧 Email: <input type="email" placeholder="example@mail.com"></label>
+      <p class="inline-code">✅ Click on "Your Name" text → input gets highlighted.</p>
+    </div>
+  </div>
+
+  <!-- SECTION: Required Attribute -->
+  <div class="section-title">7️⃣ Required Attribute (Make Fields Mandatory)</div>
+  <div class="example-card">
+    <h3>⚠️ Preventing Empty Submissions</h3>
+    <div class="explanation-bubble">
+      🛑 Add <strong>required</strong> attribute to any input to force user to fill it before submitting. Browser will show a warning and stop submission. Works with text, email, number, checkbox etc.
+    </div>
+    <div class="code-block">
+      &lt;form onsubmit="return false;"&gt;<br>
+      &nbsp;&nbsp;&lt;input type="text" placeholder="Name" required&gt;<br>
+      &nbsp;&nbsp;&lt;input type="email" placeholder="Email" required&gt;<br>
+      &nbsp;&nbsp;&lt;button type="submit"&gt;Submit&lt;/button&gt;<br>
+      &lt;/form&gt;
+    </div>
+    <button class="btn-show" data-target="requiredResult">✅ Test Required Fields</button>
+    <div id="requiredResult" class="result-area">
+      <div class="result-label">❗ Try submitting empty:</div>
+      <form onsubmit="alert('Form would be submitted (demo)'); return false;">
+        <input type="text" placeholder="Full name (required)" required style="width:100%; margin:5px 0;"><br>
+        <input type="email" placeholder="Email address (required)" required style="width:100%; margin:5px 0;"><br>
+        <button type="submit">Submit</button>
+        <p class="inline-code">💡 Browser blocks empty fields and shows a friendly message.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- SECTION: Semantic HTML -->
+  <div class="section-title">8️⃣ Semantic HTML (Meaningful Layout Tags)</div>
+  <div class="example-card">
+    <h3>🏗️ Structure with Purpose</h3>
+    <div class="explanation-bubble">
+      🧱 Semantic tags describe their role: <span class="inline-code">&lt;header&gt;</span> (top banner), <span class="inline-code">&lt;nav&gt;</span> (navigation links), <span class="inline-code">&lt;main&gt;</span> (primary content), <span class="inline-code">&lt;section&gt;</span> (grouped content), <span class="inline-code">&lt;footer&gt;</span> (bottom info). They help search engines and screen readers understand page layout.
+    </div>
+    <div class="code-block">
+      &lt;header&gt;Website Header&lt;/header&gt;<br>
+      &lt;nav&gt;Home | About | Contact&lt;/nav&gt;<br>
+      &lt;main&gt;&lt;section&gt;Main Content&lt;/section&gt;&lt;/main&gt;<br>
+      &lt;footer&gt;Footer info&lt;/footer&gt;
+    </div>
+    <button class="btn-show" data-target="semanticResult">🏠 See Semantic Layout</button>
+    <div id="semanticResult" class="result-area">
+      <div class="result-label">📐 Visual Semantic Demo:</div>
+      <div style="background:#f1f5f9; border-radius: 20px; overflow: hidden;">
+        <div style="background: #0f172a; color: white; padding: 10px; font-weight: bold;">🌟 Header (Brand / Logo)</div>
+        <div style="background: #e2e8f0; padding: 8px 12px;">🔗 Nav: Home | Tutorials | Contact</div>
+        <div style="padding: 12px; background: white;"><strong>Main Section:</strong> This is the main article, semantic tags boost SEO & accessibility.</div>
+        <div style="background: #facc1530; padding: 8px; text-align: center; font-size: 0.8rem;">© 2026 Telugu WebTech | Footer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: Accessibility basics -->
+  <div class="section-title">♿ Accessibility Basics (alt, aria, structure)</div>
+  <div class="example-card">
+    <h3>🖼️ Alt Attribute for Images</h3>
+    <div class="explanation-bubble">
+      👁️ <strong>alt</strong> (alternative text) describes an image for screen readers and if image fails to load. It's mandatory for accessibility. Write descriptive alt like "happy dog playing" instead of "image1".
+    </div>
+    <div class="code-block">
+      &lt;img src="https://picsum.photos/id/20/150/100" alt="Coffee and laptop on desk"&gt;<br>
+      &lt;img src="https://picsum.photos/id/26/150/100" alt="Venice canal with boats"&gt;
+    </div>
+    <button class="btn-show" data-target="accessResult">♿ Show Accessible Images</button>
+    <div id="accessResult" class="result-area">
+      <div class="result-label">🖌️ Images with Descriptive Alt:</div>
+      <img src="https://picsum.photos/id/20/150/100" alt="Coffee and laptop on desk" style="border-radius: 12px; margin: 4px;">
+      <img src="https://picsum.photos/id/26/150/100" alt="Venice canal with boats" style="border-radius: 12px; margin: 4px;">
+      <p class="inline-code">✅ Screen readers announce alt text. Also improves SEO ranking.</p>
+    </div>
+  </div>
+
+  <!-- SECTION: SEO & Meta tags -->
+  <div class="section-title">📈 SEO Basics & Meta Tags (Search Engine Optimization)</div>
+  <div class="example-card">
+    <h3>🔍 How Search Engines See Your Page</h3>
+    <div class="explanation-bubble">
+      🧠 Meta tags provide metadata. <strong>description</strong> appears in Google search results. <strong>keywords</strong> (less important now). <strong>title</strong> tag is the most important for SEO. Good meta tags increase click-through rate.
+    </div>
+    <div class="code-block">
+      &lt;meta name="description" content="Learn Advanced HTML with Telugu WebTech"&gt;<br>
+      &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;<br>
+      &lt;title&gt;Telugu WebTech - Advanced HTML&lt;/title&gt;
+    </div>
+    <button class="btn-show" data-target="seoResult">📊 Understand SEO</button>
+    <div id="seoResult" class="result-area">
+      <div class="result-label">🧠 SEO Explanation:</div>
+      <p>✅ Meta description shows under page title in Google.<br>✅ Title tag ("Telugu WebTech - Advanced HTML") is the clickable headline.<br>✅ Viewport meta makes page responsive on mobile.</p>
+      <div class="diagram" style="background:#f0f9ff;">Google Search → Attractive meta description → More visitors</div>
+    </div>
+  </div>
+
+  <!-- SECTION: favicon -->
+  <div class="section-title">⭐ Favicon (Browser Tab Icon)</div>
+  <div class="example-card">
+    <h3>🖱️ Small Icon, Big Brand</h3>
+    <div class="explanation-bubble">
+      🔖 A favicon is the tiny icon next to the page title in browser tabs. Use <span class="inline-code">&lt;link rel="icon"&gt;</span> with an image (.ico, .png, .svg). It makes your website look professional.
+    </div>
+    <div class="code-block">
+      &lt;link rel="icon" type="image/png" href="https://favicon.twemoji.com/emoji/1f4da.png"&gt;
+    </div>
+    <button class="btn-show" data-target="faviconResult">🌟 Learn About Favicon</button>
+    <div id="faviconResult" class="result-area">
+      <div class="result-label">🔖 Favicon in Real World:</div>
+      <p>⭐ This page uses a favicon (books emoji). Check your browser tab!<br> ✅ To add your own: save a 16x16 or 32x32 image and link it.</p>
+      <div class="diagram">Browser Tab → [🔖] Telugu WebTech → Instant recognition</div>
+    </div>
+  </div>
+
+  <!-- SECTION: HTML Comments -->
+  <div class="section-title">💬 HTML Comments (Notes for Developers)</div>
+  <div class="example-card">
+    <h3>📝 Comment Syntax and Uses</h3>
+    <div class="explanation-bubble">
+      📓 Comments <span class="inline-code">&lt;!-- comment --&gt;</span> are ignored by browsers. They help you leave reminders, debug code, or temporarily hide sections. Visible only in page source (Ctrl+U).
+    </div>
+    <div class="code-block">
+      &lt;!-- This is a hidden note for developers --&gt;<br>
+      &lt;h1&gt;Visible Heading&lt;/h1&gt;<br>
+      &lt;!-- TODO: add contact form later --&gt;
+    </div>
+    <button class="btn-show" data-target="commentResult">📌 Show Comment Explanation</button>
+    <div id="commentResult" class="result-area">
+      <div class="result-label">📓 Comments Are Invisible on Page:</div>
+      <p>✅ The heading above is visible, but the comment lines are not displayed.<br> ✅ Great for organizing HTML code and collaboration.</p>
+      <div class="highlight-box" style="margin-top: 6px;">🔍 Right-click → "View Page Source" to see comments in action.</div>
+    </div>
+  </div>
+
+  <!-- SECTION: Full Advanced Project -->
+  <div class="section-title">📁 Complete Advanced HTML Project (Putting It All Together)</div>
+  <div class="example-card">
+    <h3>🚀 Real World Mini Website</h3>
+    <div class="explanation-bubble">
+      🎯 This integrated example uses audio, video, iframe, semantic tags, and forms. It's a real mini website that shows everything you learned today.
+    </div>
+    <div class="code-block" style="max-height: 220px; overflow-y: auto;">
+      &lt;!DOCTYPE html&gt;<br>
+      &lt;html&gt;<br>
+      &lt;head&gt;&lt;title&gt;Advanced HTML Demo&lt;/title&gt;<br>
+      &lt;meta name="description" content="Learn HTML5 multimedia"&gt;<br>
+      &lt;/head&gt;<br>
+      &lt;body&gt;<br>
+      &nbsp;&nbsp;&lt;header&gt;&lt;h1&gt;My Media Hub&lt;/h1&gt;&lt;/header&gt;<br>
+      &nbsp;&nbsp;&lt;section&gt;&lt;h2&gt;Listen&lt;/h2&gt;&lt;audio controls src="song.mp3"&gt;&lt;/audio&gt;&lt;/section&gt;<br>
+      &nbsp;&nbsp;&lt;section&gt;&lt;h2&gt;Watch&lt;/h2&gt;&lt;video controls width="320"&gt;&lt;source src="movie.mp4"&gt;&lt;/video&gt;&lt;/section&gt;<br>
+      &nbsp;&nbsp;&lt;footer&gt;&lt;p&gt;&amp;copy; 2026&lt;/p&gt;&lt;/footer&gt;<br>
+      &lt;/body&gt;&lt;/html&gt;
+    </div>
+    <button class="btn-show" data-target="fullProjectResult">📦 Show Complete Live Demo</button>
+    <div id="fullProjectResult" class="result-area">
+      <div class="result-label">🌐 Rendered Advanced Mini Website:</div>
+      <div style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <div style="background: #0f172a; color: white; padding: 10px 16px;"><strong>🌟 My Media Hub</strong></div>
+        <div style="padding: 12px;">
+          <h3>🎵 Audio Sample</h3>
+          <audio controls src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" style="width: 100%;"></audio>
+          <h3>📽️ Video Sample</h3>
+          <video controls width="100%" muted>
+            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+          </video>
+          <h3>🗺️ Embedded Map (iframe)</h3>
+          <iframe width="100%" height="200" src="https://www.youtube.com/embed/HcOc7P5BM2s" title="Demo" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div style="background: #f1f5f9; padding: 8px; text-align: center;">© 2026 Telugu WebTech · Advanced HTML Project</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Mistakes -->
+  <div class="section-title">⚠️ Common Mistakes Beginners Make (Day 4 Edition)</div>
+  <ul style="margin-left:1.5rem; background:#fff9e8; padding:1rem; border-radius:24px;">
+    <li>❌ Forgetting <span class="inline-code">controls</span> on audio/video → user can't play them → always include controls</li>
+    <li>❌ Using wrong YouTube URL: use <strong>embed/</strong> not <strong>watch?v=</strong> inside iframe</li>
+    <li>❌ Skipping <span class="inline-code">alt</span> attribute → bad accessibility and SEO</li>
+    <li>❌ Overusing non-semantic <span class="inline-code">&lt;div&gt;</span> → use header, nav, section, footer instead</li>
+    <li>❌ Not testing required attributes → empty submissions can break backend</li>
+  </ul>
+
+  <!-- Homework -->
+  <div class="section-title">📌 Homework for Students (Practice Advanced HTML)</div>
+  <div class="card-grid">
+    <div class="example-card"><h3>🎯 Task 1</h3><p>Create a "Media Gallery" page: an audio track, a video (local or URL), and an iframe YouTube video. Add controls.</p></div>
+    <div class="example-card"><h3>📝 Task 2</h3><p>Build an advanced registration form with: name, email, date of birth (date picker), profile picture (file upload), favorite color (color picker), and all required fields.</p></div>
+    <div class="example-card"><h3>🏗️ Task 3</h3><p>Create a semantic blog layout: header, nav (Home, About), main section with article, aside (sidebar), footer. Also add a favicon and meta description.</p></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-title">📖 Day 4 Summary (What You Mastered Today)</div>
+  <div class="card-grid">
+    <div class="example-card">✔️ Audio & Video embedding with controls</div>
+    <div class="example-card">✔️ iframe for YouTube, Maps</div>
+    <div class="example-card">✔️ HTML Entities (&copy;, &lt;, &nbsp;)</div>
+    <div class="example-card">✔️ Advanced inputs: email, date, range, color, file</div>
+    <div class="example-card">✔️ Labels & required attributes for forms</div>
+    <div class="example-card">✔️ Semantic layout: header, nav, section, footer</div>
+    <div class="example-card">✔️ Accessibility with alt text</div>
+    <div class="example-card">✔️ SEO meta tags & favicon</div>
+  </div>
+
+  <div class="highlight-box" style="background: #e6f7ec; border-left-color: #2e7d32;">
+    <strong>🌟 Day 4 Ending Message for Beginners</strong><br>
+    “You now know how to add music, videos, maps, modern forms, and build meaningful structures. These are real-world skills! Tomorrow we'll make everything beautiful with CSS.”
+  </div>
+
+  <div class="section-title">🔜 Next — Day 5 : CSS Basics (Colors, Fonts, Box Model)</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+    <span class="badge">🎨 Selectors & Properties</span>
+    <span class="badge">🌈 Colors (Hex, RGB, HSL)</span>
+    <span class="badge">🔤 Typography & Google Fonts</span>
+    <span class="badge">📦 Margin, Padding, Borders</span>
+  </div>
+  <hr>
+  <div class="footer">
+    Telugu WebTech — MERN Stack 100 Days Journey · Day 4 Completed ✅<br>
+    Click "Show Result" on any card to reveal live outputs. Build your own advanced HTML pages today!
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-show').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const resultDiv = document.getElementById(targetId);
+      if (resultDiv) {
+        resultDiv.classList.toggle('show');
+        if (resultDiv.classList.contains('show')) {
+          this.textContent = this.textContent.replace('Show', 'Hide');
+        } else {
+          this.textContent = this.textContent.replace('Hide', 'Show');
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
